@@ -7077,6 +7077,8 @@ body{
               <strong style="color:var(--text)">Formule Mifflin-St Jeor</strong><br>
               BMR calculé selon votre métabolisme de base, multiplié par votre niveau d'activité.
             </div>
+            <div class="pf-apply-hint" id="pfApplyHint" data-testid="pf-apply-hint" style="display:none">💡 Vous avez modifié vos paramètres — cliquez sur le bouton ci-dessous pour mettre à jour votre plan.</div>
+            <button class="apply-btn pf-apply-btn" id="pfApplyMacrosBtn" onclick="applyProfileMacros()" data-testid="pf-apply-macros-btn">✅ Appliquer ces macros à mon plan</button>
           </div>
         </div>
 
@@ -9043,14 +9045,17 @@ function renderResult(){
       <div class="ri-box"><strong>${m.tdee} kcal</strong>Dépense totale (TDEE)</div>
       <div class="ri-box"><strong>${m.target} kcal</strong>Objectif calorique</div>
       <div class="ri-box"><strong>${goalLabel}</strong>Objectif choisi</div>
-    </div>
-    <button class="apply-btn" onclick="applyProfileMacros()">✅ Appliquer ces macros à mon plan</button>`;
+    </div>`;
 }
 function applyProfileMacros(){
   var m=calcMacros();
   targets={fat:m.fat,prot:m.prot,carb:m.carb};
   save();
   toast('✅ Macros appliquées : '+m.fat+'g lip / '+m.prot+'g prot / '+m.carb+'g gluc');
+  try{
+    var h=document.getElementById('pfApplyHint'); if(h){ h.style.display='none'; h.classList.remove('pf-hint-pulse'); }
+    var b=document.getElementById('pfApplyMacrosBtn'); if(b) b.classList.remove('pf-apply-pending');
+  }catch(e){}
   // Update sliders in prefs if open
   $('fatSlider').value=targets.fat;$('fatVal').textContent=targets.fat+'g';
   $('protSlider').value=targets.prot;$('protVal').textContent=targets.prot+'g';
@@ -21662,6 +21667,27 @@ setTimeout(maybeShowContextualPremium, 4000);
   background:linear-gradient(135deg,#3a8a5e,#236648); color:#fff;
   font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center;
 }
+
+/* ════ Remarque « pensez à appliquer » + bouton dans Activité ════ */
+#tab-profile .pf-apply-btn{ margin-top:14px; width:100%; }
+#tab-profile .pf-apply-hint{
+  margin-top:18px; padding:12px 14px; border-radius:12px;
+  background:linear-gradient(135deg,rgba(201,162,74,.16),rgba(201,162,74,.07));
+  border:1px solid rgba(201,162,74,.40);
+  color:#7a5e1f; font-size:12.5px; line-height:1.55; font-weight:600;
+}
+#tab-profile .pf-apply-btn.pf-apply-pending{
+  animation:pfBtnPulse 1.6s ease-in-out infinite;
+}
+@keyframes pfBtnPulse{
+  0%,100%{ box-shadow:0 4px 14px rgba(35,102,72,.20); }
+  50%{ box-shadow:0 6px 22px rgba(35,102,72,.42); }
+}
+.pf-hint-pulse{ animation:pfHintIn .4s cubic-bezier(.16,1,.3,1) both; }
+@keyframes pfHintIn{
+  0%{ opacity:0; transform:translateY(-6px); }
+  100%{ opacity:1; transform:translateY(0); }
+}
 @media(max-width:380px){
   #tab-profile .pf-act-lbl{ font-size:10px; }
   #tab-profile .pf-act-emoji{ font-size:19px; }
@@ -21720,13 +21746,23 @@ window.pfActivityDescs = {
   '1.725':'Très actif — sport quasi quotidien.',
   '1.9':'Athlète — entraînement intense, 2× par jour.'
 };
+window.pfShowApplyHint = function(){
+  try{
+    var h = document.getElementById('pfApplyHint');
+    if(h){ h.style.display='block'; h.classList.remove('pf-hint-pulse'); void h.offsetWidth; h.classList.add('pf-hint-pulse'); }
+    var b = document.getElementById('pfApplyMacrosBtn');
+    if(b) b.classList.add('pf-apply-pending');
+  }catch(e){}
+};
 window.pfSetActivity = function(val){
   try{ if(typeof updateProfile==='function') updateProfile('activity', val); }catch(e){}
   try{ pfSyncActivityGoal(); }catch(e){}
+  try{ pfShowApplyHint(); }catch(e){}
 };
 window.pfSetGoal = function(val){
   try{ if(typeof updateProfile==='function') updateProfile('goal', val); }catch(e){}
   try{ pfSyncActivityGoal(); }catch(e){}
+  try{ pfShowApplyHint(); }catch(e){}
 };
 window.pfSyncActivityGoal = function(){
   try{
