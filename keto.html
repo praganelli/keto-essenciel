@@ -18805,11 +18805,14 @@ authGuest = function(){
     profile.meals[key] = newVal;
     if(typeof save === 'function') try{ save(); }catch(e){}
     kpRenderMealsToggles();
-    // Re-rendre la vue plan/jour
-    if(typeof renderPlan === 'function'){ try{ renderPlan(); }catch(e){} }
-    if(msgEl){
-      msgEl.textContent = '✓ Préférences enregistrées — pensez à régénérer un menu si nécessaire.';
-      msgEl.style.color='var(--ed-sage-dark)';
+    // Mise à jour AUTOMATIQUE de la génération des menus
+    var hasMenu = (typeof menu !== 'undefined' && menu && menu.length);
+    if(hasMenu && typeof generateMenu === 'function'){
+      try{ generateMenu(); }catch(e){}
+      if(msgEl){ msgEl.textContent = '✓ Menu régénéré automatiquement.'; msgEl.style.color='var(--ed-sage-dark)'; }
+    } else {
+      if(typeof renderPlan === 'function'){ try{ renderPlan(); }catch(e){} }
+      if(msgEl){ msgEl.textContent = '✓ Préférences enregistrées.'; msgEl.style.color='var(--ed-sage-dark)'; }
     }
   }
   window.kpToggleMeal = kpToggleMeal;
@@ -18866,10 +18869,14 @@ authGuest = function(){
     profile.courses[key] = newVal;
     if(typeof save === 'function') try{ save(); }catch(e){}
     kpRenderCoursesToggles();
-    if(typeof renderPlan === 'function'){ try{ renderPlan(); }catch(e){} }
-    if(msgEl){
-      msgEl.textContent = '✓ Composition enregistrée — régénérez votre menu pour appliquer.';
-      msgEl.style.color='var(--ed-sage-dark)';
+    // Mise à jour AUTOMATIQUE de la génération des menus
+    var hasMenu = (typeof menu !== 'undefined' && menu && menu.length);
+    if(hasMenu && typeof generateMenu === 'function'){
+      try{ generateMenu(); }catch(e){}
+      if(msgEl){ msgEl.textContent = '✓ Menu régénéré automatiquement.'; msgEl.style.color='var(--ed-sage-dark)'; }
+    } else {
+      if(typeof renderPlan === 'function'){ try{ renderPlan(); }catch(e){} }
+      if(msgEl){ msgEl.textContent = '✓ Composition enregistrée.'; msgEl.style.color='var(--ed-sage-dark)'; }
     }
   }
   window.kpToggleCourse = kpToggleCourse;
