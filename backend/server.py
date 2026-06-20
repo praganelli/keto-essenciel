@@ -45,6 +45,14 @@ async def root():
 async def serve_keto_app():
     return FileResponse(ROOT_DIR / "keto_app.html", media_type="text/html")
 
+@api_router.get("/download")
+async def download_keto_app():
+    return FileResponse(
+        ROOT_DIR / "keto_app.html",
+        media_type="text/html",
+        filename="index.html",
+    )
+
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_dict = input.dict()

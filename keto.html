@@ -11737,6 +11737,14 @@ function syncProfileToCloud(){
     weightLog:  JSON.stringify(weightLog)
   };
 
+  // Mesures corporelles & bien-être (propres au profil/compte actif)
+  try{
+    if(typeof _kpProfileKey === 'function' && typeof _kpLoadLog === 'function'){
+      data.measures = JSON.stringify(_kpLoadLog(_kpProfileKey('kp_measures_v1')));
+      data.wellness = JSON.stringify(_kpLoadLog(_kpProfileKey('kp_wellness_v1')));
+    }
+  }catch(e){}
+
   return ref.set(data, {merge:true})
     .then(function(){
       cloudSetStatus('ok','☁️ Profil synchronisé — ' + new Date().toLocaleTimeString('fr-FR'));
@@ -11770,6 +11778,13 @@ function syncProfileFromCloud(){
         if(d.mealNotes) mealNotes = JSON.parse(d.mealNotes);
         if(d.excluded)  excluded  = JSON.parse(d.excluded);
         if(d.weightLog) weightLog = JSON.parse(d.weightLog);
+        // Mesures corporelles & bien-être → restaurer dans le stockage local du profil/compte actif
+        try{
+          if(typeof _kpProfileKey === 'function'){
+            if(d.measures) localStorage.setItem(_kpProfileKey('kp_measures_v1'), d.measures);
+            if(d.wellness) localStorage.setItem(_kpProfileKey('kp_wellness_v1'), d.wellness);
+          }
+        }catch(e){}
         // Sauvegarder aussi en local pour le mode offline
         save();
         // Rafraîchir tous les onglets avec les données chargées
@@ -12456,6 +12471,7 @@ function kpLogWellness(){
   localStorage.setItem(wKey, JSON.stringify(log));
   $('wellKetones').value=''; $('wellNote').value='';
   if(typeof toast==='function') toast('✓ Bien-être enregistré');
+  if(typeof save==='function') save(); // pousse vers le cloud (sync auto)
   kpRenderWellnessHistory();
 }
 function kpRenderWellnessHistory(){
@@ -12484,6 +12500,7 @@ function kpDeleteWellness(at){
   var log = _kpLoadLog(wKey).filter(function(e){ return e && e.at !== at; });
   localStorage.setItem(wKey, JSON.stringify(log));
   if(typeof toast==='function') toast('🗑 Entrée bien-être supprimée');
+  if(typeof save==='function') save(); // pousse vers le cloud (sync auto)
   kpRenderWellnessHistory();
 }
 window.kpDeleteWellness = kpDeleteWellness;
@@ -12511,6 +12528,7 @@ function kpLogMeasures(){
   localStorage.setItem(mKey, JSON.stringify(log));
   fields.forEach(function(id){ if($(id)) $(id).value=''; });
   if(typeof toast==='function') toast('✓ Mesures enregistrées');
+  if(typeof save==='function') save(); // pousse vers le cloud (sync auto)
   kpRenderMeasuresHistory();
 }
 function kpRenderMeasuresHistory(){
@@ -12551,6 +12569,7 @@ function kpDeleteMeasure(at){
   var log = _kpLoadLog(mKey).filter(function(e){ return e && e.at !== at; });
   localStorage.setItem(mKey, JSON.stringify(log));
   if(typeof toast==='function') toast('🗑 Mesure supprimée');
+  if(typeof save==='function') save(); // pousse vers le cloud (sync auto)
   kpRenderMeasuresHistory();
 }
 window.kpDeleteMeasure = kpDeleteMeasure;
