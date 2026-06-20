@@ -7082,9 +7082,9 @@ body{
           </div>
         </div>
 
-        <!-- Accordéon 2 — Vos macros (fermé par défaut) -->
-        <div class="result-card pf-acc is-collapsed" data-acc="macros" data-testid="acc-macros">
-          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="false" data-testid="acc-head-macros">
+        <!-- Accordéon 2 — Vos macros (switch activé / ouvert par défaut) -->
+        <div class="result-card pf-acc" data-acc="macros" data-testid="acc-macros">
+          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-macros">
             <span class="pf-acc-icon">📊</span>
             <span class="pf-acc-title">Vos macros</span>
             <span class="pf-acc-switch" aria-hidden="true"></span>
@@ -21565,12 +21565,29 @@ setTimeout(maybeShowContextualPremium, 4000);
 
 /* Valeurs identité : jamais coupées */
 #tab-profile .profile-id-value{ white-space:normal; overflow:visible; text-overflow:clip; font-size:15px; }
-/* En mode 2 colonnes (écran large), empiler libellé/valeur pour gagner de la place */
-@media(min-width:721px){
-  #tab-profile .profile-id-row{ flex-direction:column; align-items:stretch; gap:3px; }
-  #tab-profile .profile-id-label{ width:auto; }
-  #tab-profile .profile-id-input{ width:100%; }
+
+/* Lignes identité alignées horizontalement (libellé à gauche, valeurs alignées) */
+#tab-profile .profile-id-row{
+  display:flex !important; flex-direction:row !important; align-items:center !important;
+  gap:14px !important; padding:11px 0 !important;
 }
+#tab-profile .profile-id-label{ flex:0 0 84px !important; width:84px !important; margin:0 !important; }
+#tab-profile .profile-id-value,
+#tab-profile .profile-id-input{ flex:1 1 auto !important; text-align:left !important; width:auto !important; }
+
+/* Lignes Prénom & Nom mises en avant (plus visibles) */
+#tab-profile .profile-id-fields .profile-id-row:nth-child(-n+2){
+  background:rgba(201,162,74,.12) !important;
+  border:1px solid rgba(201,162,74,.30) !important;
+  border-radius:12px !important;
+  padding:10px 14px !important;
+  margin-bottom:8px !important;
+}
+#tab-profile #profileIdFirstname,
+#tab-profile #profileIdLastname{
+  font-size:18px !important; font-weight:700 !important; color:#1f1810 !important;
+}
+#tab-profile #profileIdLastname{ border-bottom-color:rgba(201,162,74,.55) !important; }
 
 /* Responsive : 1 seule colonne sur mobile & tablette portrait, 2 colonnes sur écrans larges */
 @media(max-width:720px){
