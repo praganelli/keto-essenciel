@@ -6994,6 +6994,7 @@ body{
     <div class="sec-label">Mon profil</div>
     <div class="profile-grid">
       <div class="pf-acc-grid" id="pfAccordionGrid" data-testid="profile-accordion-grid">
+      <div class="pf-col" data-testid="pf-col-left">
       <div class="profile-card">
         <div class="profile-card-title">🙋 Informations personnelles</div>
 
@@ -7043,6 +7044,26 @@ body{
         </div>
       </div>
 
+        <!-- Accordéon Mode alimentaire (colonne gauche, sous Informations) -->
+        <div class="profile-mode-block pf-acc is-collapsed" data-acc="mode" data-testid="acc-mode">
+          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="false" data-testid="acc-head-mode">
+            <span class="pf-acc-icon">🌿</span>
+            <span class="pf-acc-title">Mode alimentaire</span>
+            <span class="pf-acc-switch" aria-hidden="true"></span>
+          </button>
+          <div class="pf-acc-body">
+            <div class="profile-mode-current" id="profileModeName">Keto Standard</div>
+            <div class="profile-mode-desc" id="profileModeDesc">Cétose équilibrée — tous les types d'aliments autorisés.</div>
+            <div class="profile-modes-grid" id="profileModesGrid" data-testid="profile-modes-grid">
+              <!-- rendered by renderProfileModesGrid() -->
+            </div>
+            <div class="profile-mode-warn" id="profileModeWarn" style="display:none"></div>
+          </div>
+        </div>
+      </div><!-- /.pf-col left -->
+
+      <div class="pf-col" data-testid="pf-col-right">
+
         <!-- Accordéon 1 — Activité & objectif (ouvert par défaut) -->
         <div class="profile-card pf-acc" data-acc="activite" data-testid="acc-activite">
           <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-activite">
@@ -7089,23 +7110,7 @@ body{
           </div>
         </div>
 
-        <!-- Accordéon 3 — Mode alimentaire (fermé par défaut) -->
-        <div class="profile-mode-block pf-acc is-collapsed" data-acc="mode" data-testid="acc-mode">
-          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="false" data-testid="acc-head-mode">
-            <span class="pf-acc-icon">🌿</span>
-            <span class="pf-acc-title">Mode alimentaire</span>
-            <span class="pf-acc-switch" aria-hidden="true"></span>
-          </button>
-          <div class="pf-acc-body">
-            <div class="profile-mode-current" id="profileModeName">Keto Standard</div>
-            <div class="profile-mode-desc" id="profileModeDesc">Cétose équilibrée — tous les types d'aliments autorisés.</div>
-            <div class="profile-modes-grid" id="profileModesGrid" data-testid="profile-modes-grid">
-              <!-- rendered by renderProfileModesGrid() -->
-            </div>
-            <div class="profile-mode-warn" id="profileModeWarn" style="display:none"></div>
-          </div>
-        </div>
-
+      </div><!-- /.pf-col right -->
       </div><!-- /.pf-acc-grid -->
 
       <!-- 📍 Coordonnées Essenciel O Naturel -->
@@ -12232,7 +12237,8 @@ function kpInjectProfileStatusCards(footer){
     '</div>';
   }
 
-  // Card 2 — Premium status (variant selon le type d'abonnement)
+  // Card 2 — Premium status : déplacée en haut du Profil (kpStatusBlock) pour éviter le doublon
+  if(false){
   var isPrem = false;
   try{ isPrem = (typeof window.isPremium === 'function') ? window.isPremium() : false; }catch(e){}
   var premiumInfo = _kpReadPremiumExpiry();
@@ -12313,6 +12319,7 @@ function kpInjectProfileStatusCards(footer){
       '<a class="kp-status-action kp-status-action-cta" href="javascript:openPremiumModal(\'profile\')" data-testid="premium-discover-btn">Découvrir Premium</a>'+
     '</div>';
   }
+  } // fin if(false) — carte premium déplacée en haut du Profil
 
   if(holder.innerHTML){
     footer.parentNode.insertBefore(holder, footer);
@@ -17469,7 +17476,10 @@ authGuest = function(){
     }
     var prem = isPremium();
     var statusHtml;
-    if(prem){
+    // Rendre le MÊME panneau que le bandeau "Premium" du menu Plan (présentation identique)
+    if(typeof window.kpBuildPremiumStatusCardHTML === 'function'){
+      statusHtml = window.kpBuildPremiumStatusCardHTML();
+    } else if(prem){
       statusHtml =
         '<div class="kp-status-card premium" data-testid="premium-status-card">' +
           '<div class="kp-status-icon">⭐</div>' +
@@ -21344,8 +21354,7 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile .result-card,
 #tab-profile .profile-mode-block,
 #tab-profile .profile-footer,
-#tab-profile .referral-card,
-#tab-profile .kp-status-card{
+#tab-profile .referral-card{
   background:linear-gradient(158deg,#fffefb 0%,#f7f2e8 100%) !important;
   border:1px solid rgba(201,162,74,.30) !important;
   border-radius:20px !important;
@@ -21483,16 +21492,15 @@ setTimeout(maybeShowContextualPremium, 4000);
 
 /* Cartes parrainage / statut */
 #tab-profile .referral-title{ color:#2a2114 !important; }
-#tab-profile .kp-status-eyebrow,
-#tab-profile .kp-status-sub{ color:#8a7659 !important; }
-#tab-profile .kp-status-title{ color:#2a2114 !important; }
 </style>
 
 <style id="kpProfileAccordionV1">
 /* ════ Accordéon + switches on/off (sections Profil façon réglages) ════ */
 #tab-profile .pf-acc-grid{
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px; align-items:start;
+  display:flex; gap:16px; align-items:flex-start;
+}
+#tab-profile .pf-col{
+  flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:16px;
 }
 /* Les sections gardent leur colonne (grille 2 colonnes fixe) */
 #tab-profile .pf-acc{ padding:0 !important; overflow:hidden; }
@@ -21537,7 +21545,7 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile .profile-id-input{ width:100%; }
 
 @media(max-width:380px){
-  #tab-profile .pf-acc-grid{ grid-template-columns:1fr; }
+  #tab-profile .pf-acc-grid{ flex-direction:column; }
 }
 </style>
 
