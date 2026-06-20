@@ -6554,7 +6554,10 @@ body{
 <!-- Prefs overlay -->
 <div class="prefs-overlay" id="prefsOverlay" onclick="closePrefsOnBg(event)">
   <div class="prefs-modal">
-    <div class="prefs-title">⚙️ Paramètres</div>
+    <div class="prefs-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span>⚙️ Paramètres</span>
+      <button onclick="closePrefs()" data-testid="prefs-close-x" aria-label="Fermer" style="background:rgba(58,48,34,.08);border:none;width:34px;height:34px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;color:var(--ed-ink-soft,#3a3022);flex:0 0 auto">×</button>
+    </div>
 
     <!-- ═══ ACCORDÉON 1 : Repas du jour ═══ -->
     <div class="prefs-accordion" data-testid="acc-meals">
@@ -6743,7 +6746,6 @@ body{
       </div>
     </div>
 
-    <button class="prefs-close" onclick="closePrefs()">Appliquer et fermer</button>
   </div>
 </div>
 
@@ -6994,8 +6996,7 @@ body{
     <div class="sec-label">Mon profil</div>
     <div class="profile-grid">
       <div class="pf-acc-grid" id="pfAccordionGrid" data-testid="profile-accordion-grid">
-      <div class="pf-col" data-testid="pf-col-left">
-      <div class="profile-card">
+      <div class="profile-card pf-info" data-testid="pf-info-card">
         <div class="profile-card-title">🙋 Informations personnelles</div>
 
 
@@ -7042,27 +7043,10 @@ body{
           <div class="form-label">Taille <span id="heightVal">175 cm</span></div>
           <input class="form-range" type="range" min="140" max="210" value="175" id="heightRange" oninput="updateProfile('height',this.value)">
         </div>
-      </div>
+      </div><!-- /.pf-info -->
 
-        <!-- Accordéon Mode alimentaire (colonne gauche, sous Informations) -->
-        <div class="profile-mode-block pf-acc is-collapsed" data-acc="mode" data-testid="acc-mode">
-          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="false" data-testid="acc-head-mode">
-            <span class="pf-acc-icon">🌿</span>
-            <span class="pf-acc-title">Mode alimentaire</span>
-            <span class="pf-acc-switch" aria-hidden="true"></span>
-          </button>
-          <div class="pf-acc-body">
-            <div class="profile-mode-current" id="profileModeName">Keto Standard</div>
-            <div class="profile-mode-desc" id="profileModeDesc">Cétose équilibrée — tous les types d'aliments autorisés.</div>
-            <div class="profile-modes-grid" id="profileModesGrid" data-testid="profile-modes-grid">
-              <!-- rendered by renderProfileModesGrid() -->
-            </div>
-            <div class="profile-mode-warn" id="profileModeWarn" style="display:none"></div>
-          </div>
-        </div>
-      </div><!-- /.pf-col left -->
-
-      <div class="pf-col" data-testid="pf-col-right">
+      <div class="pf-cols" data-testid="pf-cols">
+      <div class="pf-col" data-testid="pf-col-left">
 
         <!-- Accordéon 1 — Activité & objectif (ouvert par défaut) -->
         <div class="profile-card pf-acc" data-acc="activite" data-testid="acc-activite">
@@ -7109,8 +7093,27 @@ body{
             <div id="resultCard"><!-- filled by JS --></div>
           </div>
         </div>
+      </div><!-- /.pf-col (Activité + Macros) -->
 
-      </div><!-- /.pf-col right -->
+      <div class="pf-col" data-testid="pf-col-mode">
+        <!-- Accordéon Mode alimentaire (à côté d'Activité, switch activé) -->
+        <div class="profile-mode-block pf-acc" data-acc="mode" data-testid="acc-mode">
+          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-mode">
+            <span class="pf-acc-icon">🌿</span>
+            <span class="pf-acc-title">Mode alimentaire</span>
+            <span class="pf-acc-switch" aria-hidden="true"></span>
+          </button>
+          <div class="pf-acc-body">
+            <div class="profile-mode-current" id="profileModeName">Keto Standard</div>
+            <div class="profile-mode-desc" id="profileModeDesc">Cétose équilibrée — tous les types d'aliments autorisés.</div>
+            <div class="profile-modes-grid" id="profileModesGrid" data-testid="profile-modes-grid">
+              <!-- rendered by renderProfileModesGrid() -->
+            </div>
+            <div class="profile-mode-warn" id="profileModeWarn" style="display:none"></div>
+          </div>
+        </div>
+      </div><!-- /.pf-col-mode -->
+      </div><!-- /.pf-cols -->
       </div><!-- /.pf-acc-grid -->
 
       <!-- 📍 Coordonnées Essenciel O Naturel -->
@@ -14135,12 +14138,7 @@ authGuest = function(){
 
   /* ───────── 7. UI — Section modes + favoris dans Paramètres ───────── */
   function buildModesSection(){
-    var html = '<div class="prefs-label" style="margin-top:18px">🍽 Mode alimentaire</div>'
-      + '<p style="font-size:12px;color:var(--muted);margin-bottom:10px">Ajuste vos macros, filtre les recettes générées et affiche les recommandations spécifiques.</p>'
-      + '<div id="modesGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>'
-      + '<div id="modeWarn" style="margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(232,184,75,.12);border:1px solid rgba(176,122,34,.3);color:#7a5618;font-size:12px;line-height:1.5;display:none"></div>'
-
-      + '<div class="prefs-label" style="margin-top:18px">⭐ Favoris</div>'
+    var html = '<div class="prefs-label" style="margin-top:18px">⭐ Favoris</div>'
       + '<div id="favList" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;padding:6px;background:var(--s2);border-radius:10px;border:1px solid var(--border2)"></div>'
 
       + '<div class="prefs-label" style="margin-top:18px">📄 Exports PDF</div>'
@@ -21497,6 +21495,14 @@ setTimeout(maybeShowContextualPremium, 4000);
 <style id="kpProfileAccordionV1">
 /* ════ Accordéon + switches on/off (sections Profil façon réglages) ════ */
 #tab-profile .pf-acc-grid{
+  display:flex; flex-direction:column; gap:16px;
+}
+#tab-profile .pf-info{ width:100%; }
+/* "Essenciel O Naturel" toujours tout en bas de l'onglet Profil */
+#tab-profile .profile-footer{ order:100; margin-top:4px; }
+#tab-profile #lpevSectionProfile{ order:90; }
+#tab-profile .profile-logout-zone{ order:95; }
+#tab-profile .pf-cols{
   display:flex; gap:16px; align-items:flex-start;
 }
 #tab-profile .pf-col{
@@ -21549,13 +21555,8 @@ setTimeout(maybeShowContextualPremium, 4000);
 
 /* Responsive : 1 seule colonne sur mobile & tablette portrait, 2 colonnes sur écrans larges */
 @media(max-width:720px){
-  #tab-profile .pf-acc-grid{ flex-direction:column; }
-  #tab-profile .pf-col{ display:contents; }
-  /* Ordre logique en 1 colonne : Informations → Activité → Macros → Mode */
-  #tab-profile .pf-acc-grid > .pf-col > .profile-card:not(.pf-acc){ order:1; }
-  #tab-profile .pf-acc-grid [data-acc="activite"]{ order:2; }
-  #tab-profile .pf-acc-grid [data-acc="macros"]{ order:3; }
-  #tab-profile .pf-acc-grid [data-acc="mode"]{ order:4; }
+  #tab-profile .pf-cols{ flex-direction:column; }
+  #tab-profile .pf-col{ width:100%; }
 }
 </style>
 
