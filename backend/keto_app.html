@@ -6993,8 +6993,10 @@ body{
     </div>
     <div class="sec-label">Mon profil</div>
     <div class="profile-grid">
+      <div class="pf-acc-grid" id="pfAccordionGrid" data-testid="profile-accordion-grid">
       <div class="profile-card">
         <div class="profile-card-title">🙋 Informations personnelles</div>
+
 
         <!-- Carte identité (avatar + nom prénom email) -->
         <div class="profile-id-card" id="profileIdCard" data-testid="profile-id-card">
@@ -7040,7 +7042,6 @@ body{
           <input class="form-range" type="range" min="140" max="210" value="175" id="heightRange" oninput="updateProfile('height',this.value)">
         </div>
       </div>
-      <div class="pf-acc-grid" id="pfAccordionGrid" data-testid="profile-accordion-grid">
 
         <!-- Accordéon 1 — Activité & objectif (ouvert par défaut) -->
         <div class="profile-card pf-acc" data-acc="activite" data-testid="acc-activite">
@@ -21486,9 +21487,7 @@ setTimeout(maybeShowContextualPremium, 4000);
   display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
   gap:16px; align-items:start;
 }
-/* La section ouverte occupe toute la largeur pour rester lisible */
-#tab-profile .pf-acc:not(.is-collapsed){ grid-column:1 / -1 !important; }
-
+/* Les sections gardent leur colonne (grille 2 colonnes fixe) */
 #tab-profile .pf-acc{ padding:0 !important; overflow:hidden; }
 #tab-profile .pf-acc-head{
   width:100%; display:flex; align-items:center; gap:10px;
@@ -21523,6 +21522,12 @@ setTimeout(maybeShowContextualPremium, 4000);
   background:linear-gradient(135deg,#3a8a5e,#236648);
 }
 #tab-profile .pf-acc:not(.is-collapsed) .pf-acc-switch::after{ transform:translateX(18px); }
+
+/* Carte Informations en colonne étroite : libellé au-dessus, valeur complète (pas de coupe) */
+#tab-profile .profile-id-row{ flex-direction:column; align-items:stretch; gap:3px; }
+#tab-profile .profile-id-label{ width:auto; }
+#tab-profile .profile-id-value{ white-space:normal; overflow:visible; text-overflow:clip; font-size:15px; }
+#tab-profile .profile-id-input{ width:100%; }
 
 @media(max-width:380px){
   #tab-profile .pf-acc-grid{ grid-template-columns:1fr; }
