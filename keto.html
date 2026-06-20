@@ -21538,14 +21538,24 @@ setTimeout(maybeShowContextualPremium, 4000);
 }
 #tab-profile .pf-acc:not(.is-collapsed) .pf-acc-switch::after{ transform:translateX(18px); }
 
-/* Carte Informations en colonne étroite : libellé au-dessus, valeur complète (pas de coupe) */
-#tab-profile .profile-id-row{ flex-direction:column; align-items:stretch; gap:3px; }
-#tab-profile .profile-id-label{ width:auto; }
+/* Valeurs identité : jamais coupées */
 #tab-profile .profile-id-value{ white-space:normal; overflow:visible; text-overflow:clip; font-size:15px; }
-#tab-profile .profile-id-input{ width:100%; }
+/* En mode 2 colonnes (écran large), empiler libellé/valeur pour gagner de la place */
+@media(min-width:721px){
+  #tab-profile .profile-id-row{ flex-direction:column; align-items:stretch; gap:3px; }
+  #tab-profile .profile-id-label{ width:auto; }
+  #tab-profile .profile-id-input{ width:100%; }
+}
 
-@media(max-width:380px){
+/* Responsive : 1 seule colonne sur mobile & tablette portrait, 2 colonnes sur écrans larges */
+@media(max-width:720px){
   #tab-profile .pf-acc-grid{ flex-direction:column; }
+  #tab-profile .pf-col{ display:contents; }
+  /* Ordre logique en 1 colonne : Informations → Activité → Macros → Mode */
+  #tab-profile .pf-acc-grid > .pf-col > .profile-card:not(.pf-acc){ order:1; }
+  #tab-profile .pf-acc-grid [data-acc="activite"]{ order:2; }
+  #tab-profile .pf-acc-grid [data-acc="macros"]{ order:3; }
+  #tab-profile .pf-acc-grid [data-acc="mode"]{ order:4; }
 }
 </style>
 
