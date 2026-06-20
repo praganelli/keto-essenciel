@@ -7040,46 +7040,72 @@ body{
           <input class="form-range" type="range" min="140" max="210" value="175" id="heightRange" oninput="updateProfile('height',this.value)">
         </div>
       </div>
-      <div class="profile-card">
-        <div class="profile-card-title">🎯 Activité & objectif</div>
-        <div class="form-row">
-          <div class="form-label" style="margin-bottom:8px">Niveau d'activité</div>
-          <select class="form-select" id="activitySelect" onchange="updateProfile('activity',this.value)">
-            <option value="1.2">Sédentaire (bureau, peu de sport)</option>
-            <option value="1.375">Légèrement actif (1–3 fois/sem)</option>
-            <option value="1.55" selected>Modérément actif (3–5 fois/sem)</option>
-            <option value="1.725">Très actif (sport quotidien)</option>
-            <option value="1.9">Athlète (2× par jour)</option>
-          </select>
-        </div>
-        <div class="form-row" style="margin-top:16px">
-          <div class="form-label" style="margin-bottom:8px">Objectif</div>
-          <select class="form-select" id="goalSelect" onchange="updateProfile('goal',this.value)">
-            <option value="-500">🔥 Perte de poids (-500 kcal)</option>
-            <option value="-250">⚖️ Perte douce (-250 kcal)</option>
-            <option value="0" selected>✅ Maintien du poids</option>
-            <option value="200">💪 Prise de muscle (+200 kcal)</option>
-          </select>
-        </div>
-        <div style="margin-top:20px;padding:14px;background:var(--s2);border-radius:12px;font-size:12px;color:var(--muted);line-height:1.7">
-          <strong style="color:var(--text)">Formule Mifflin-St Jeor</strong><br>
-          BMR calculé selon votre métabolisme de base, multiplié par votre niveau d'activité.
-        </div>
-      </div>
-      <div class="result-card" id="resultCard">
-        <!-- filled by JS -->
-      </div>
+      <div class="pf-acc-grid" id="pfAccordionGrid" data-testid="profile-accordion-grid">
 
-      <!-- 🌿 Mode alimentaire — sélection directe -->
-      <div class="profile-mode-block" data-testid="profile-mode-block">
-        <div class="profile-mode-title">🌿 Mode alimentaire</div>
-        <div class="profile-mode-current" id="profileModeName">Keto Standard</div>
-        <div class="profile-mode-desc" id="profileModeDesc">Cétose équilibrée — tous les types d'aliments autorisés.</div>
-        <div class="profile-modes-grid" id="profileModesGrid" data-testid="profile-modes-grid">
-          <!-- rendered by renderProfileModesGrid() -->
+        <!-- Accordéon 1 — Activité & objectif (ouvert par défaut) -->
+        <div class="profile-card pf-acc" data-acc="activite" data-testid="acc-activite">
+          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-activite">
+            <span class="pf-acc-icon">🎯</span>
+            <span class="pf-acc-title">Activité &amp; objectif</span>
+            <span class="pf-acc-switch" aria-hidden="true"></span>
+          </button>
+          <div class="pf-acc-body">
+            <div class="form-row">
+              <div class="form-label" style="margin-bottom:8px">Niveau d'activité</div>
+              <select class="form-select" id="activitySelect" onchange="updateProfile('activity',this.value)">
+                <option value="1.2">Sédentaire (bureau, peu de sport)</option>
+                <option value="1.375">Légèrement actif (1–3 fois/sem)</option>
+                <option value="1.55" selected>Modérément actif (3–5 fois/sem)</option>
+                <option value="1.725">Très actif (sport quotidien)</option>
+                <option value="1.9">Athlète (2× par jour)</option>
+              </select>
+            </div>
+            <div class="form-row" style="margin-top:16px">
+              <div class="form-label" style="margin-bottom:8px">Objectif</div>
+              <select class="form-select" id="goalSelect" onchange="updateProfile('goal',this.value)">
+                <option value="-500">🔥 Perte de poids (-500 kcal)</option>
+                <option value="-250">⚖️ Perte douce (-250 kcal)</option>
+                <option value="0" selected>✅ Maintien du poids</option>
+                <option value="200">💪 Prise de muscle (+200 kcal)</option>
+              </select>
+            </div>
+            <div style="margin-top:20px;padding:14px;background:var(--s2);border-radius:12px;font-size:12px;color:var(--muted);line-height:1.7">
+              <strong style="color:var(--text)">Formule Mifflin-St Jeor</strong><br>
+              BMR calculé selon votre métabolisme de base, multiplié par votre niveau d'activité.
+            </div>
+          </div>
         </div>
-        <div class="profile-mode-warn" id="profileModeWarn" style="display:none"></div>
-      </div>
+
+        <!-- Accordéon 2 — Vos macros (fermé par défaut) -->
+        <div class="result-card pf-acc is-collapsed" data-acc="macros" data-testid="acc-macros">
+          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="false" data-testid="acc-head-macros">
+            <span class="pf-acc-icon">📊</span>
+            <span class="pf-acc-title">Vos macros</span>
+            <span class="pf-acc-switch" aria-hidden="true"></span>
+          </button>
+          <div class="pf-acc-body">
+            <div id="resultCard"><!-- filled by JS --></div>
+          </div>
+        </div>
+
+        <!-- Accordéon 3 — Mode alimentaire (fermé par défaut) -->
+        <div class="profile-mode-block pf-acc is-collapsed" data-acc="mode" data-testid="acc-mode">
+          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="false" data-testid="acc-head-mode">
+            <span class="pf-acc-icon">🌿</span>
+            <span class="pf-acc-title">Mode alimentaire</span>
+            <span class="pf-acc-switch" aria-hidden="true"></span>
+          </button>
+          <div class="pf-acc-body">
+            <div class="profile-mode-current" id="profileModeName">Keto Standard</div>
+            <div class="profile-mode-desc" id="profileModeDesc">Cétose équilibrée — tous les types d'aliments autorisés.</div>
+            <div class="profile-modes-grid" id="profileModesGrid" data-testid="profile-modes-grid">
+              <!-- rendered by renderProfileModesGrid() -->
+            </div>
+            <div class="profile-mode-warn" id="profileModeWarn" style="display:none"></div>
+          </div>
+        </div>
+
+      </div><!-- /.pf-acc-grid -->
 
       <!-- 📍 Coordonnées Essenciel O Naturel -->
       <div class="profile-footer" data-testid="profile-essenciel-footer">
@@ -21453,6 +21479,68 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile .kp-status-sub{ color:#8a7659 !important; }
 #tab-profile .kp-status-title{ color:#2a2114 !important; }
 </style>
+
+<style id="kpProfileAccordionV1">
+/* ════ Accordéon + switches on/off (sections Profil façon réglages) ════ */
+#tab-profile .pf-acc-grid{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px; align-items:start;
+}
+/* La section ouverte occupe toute la largeur pour rester lisible */
+#tab-profile .pf-acc:not(.is-collapsed){ grid-column:1 / -1 !important; }
+
+#tab-profile .pf-acc{ padding:0 !important; overflow:hidden; }
+#tab-profile .pf-acc-head{
+  width:100%; display:flex; align-items:center; gap:10px;
+  background:transparent; border:none; cursor:pointer; text-align:left;
+  padding:16px 18px; font-family:inherit; color:inherit;
+}
+#tab-profile .pf-acc-icon{ font-size:18px; line-height:1; flex:0 0 auto; }
+#tab-profile .pf-acc-title{
+  flex:1; min-width:0; font-family:var(--font-display),Georgia,serif;
+  font-size:15px; font-weight:600; color:#2a2114;
+  white-space:normal; overflow:visible; line-height:1.2;
+}
+#tab-profile .pf-acc-body{
+  padding:0 18px 18px; padding-top:16px;
+  border-top:1px solid rgba(201,162,74,.18);
+}
+#tab-profile .pf-acc.is-collapsed .pf-acc-body{ display:none; }
+/* Titre dynamique des macros masqué (déjà dans l'en-tête) */
+#tab-profile .pf-acc .result-title{ display:none !important; }
+
+/* Switch on/off façon réglages */
+#tab-profile .pf-acc-switch{
+  position:relative; flex:0 0 auto; width:42px; height:24px; border-radius:999px;
+  background:rgba(138,118,89,.30); transition:background .22s ease;
+}
+#tab-profile .pf-acc-switch::after{
+  content:''; position:absolute; top:3px; left:3px; width:18px; height:18px;
+  border-radius:50%; background:#fffdf6; box-shadow:0 1px 3px rgba(0,0,0,.25);
+  transition:transform .22s ease;
+}
+#tab-profile .pf-acc:not(.is-collapsed) .pf-acc-switch{
+  background:linear-gradient(135deg,#3a8a5e,#236648);
+}
+#tab-profile .pf-acc:not(.is-collapsed) .pf-acc-switch::after{ transform:translateX(18px); }
+
+@media(max-width:380px){
+  #tab-profile .pf-acc-grid{ grid-template-columns:1fr; }
+}
+</style>
+
+<script id="kpProfileAccordionJs">
+window.pfToggleAcc = function(btn){
+  var card = btn.closest ? btn.closest('.pf-acc') : null;
+  if(!card){ var p = btn.parentNode; while(p && !(p.classList && p.classList.contains('pf-acc'))) p = p.parentNode; card = p; }
+  if(!card) return;
+  var collapsed = card.classList.toggle('is-collapsed');
+  btn.setAttribute('aria-expanded', String(!collapsed));
+  var sw = btn.querySelector('.pf-acc-switch');
+  if(sw) sw.setAttribute('aria-checked', String(!collapsed));
+};
+</script>
+
 
 
 <!-- ═══════════════════════════════════════════════════════════════
