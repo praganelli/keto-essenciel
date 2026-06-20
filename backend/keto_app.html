@@ -21579,6 +21579,39 @@ setTimeout(maybeShowContextualPremium, 4000);
 }
 </style>
 
+<style id="kpProfileHarmonyV2">
+/* ── Présentation plus harmonieuse de l'onglet Profil ── */
+
+/* Carte identité : rythme régulier, dernière ligne sans séparateur */
+#tab-profile .profile-id-card{ padding:16px 18px !important; }
+#tab-profile .profile-id-row{ padding:9px 0 !important; }
+#tab-profile .profile-id-row:last-child{ border-bottom:none !important; }
+
+/* Champ "Nom" éditable harmonisé : même rendu que les autres valeurs (plus de boîte blanche) */
+#tab-profile .profile-id-input{
+  background:transparent !important; border:none !important;
+  border-bottom:1px dashed rgba(138,118,89,.35) !important;
+  border-radius:0 !important; padding:2px 0 4px !important;
+  font-family:var(--font-display),Georgia,serif !important;
+  font-size:16px !important; font-weight:600 !important; color:#2a2114 !important;
+}
+#tab-profile .profile-id-input::placeholder{ font-style:italic; font-weight:400; }
+#tab-profile .profile-id-input:focus{ outline:none !important; border-bottom-color:rgba(201,162,74,.85) !important; }
+
+/* Boutons genre : compacts et équilibrés */
+#tab-profile .gender-row{ gap:12px !important; margin:18px 0 6px !important; }
+#tab-profile .gender-btn{
+  padding:14px 10px !important; gap:6px !important;
+  min-height:0 !important; border-radius:14px !important;
+}
+#tab-profile .gender-btn .g-emoji{ font-size:24px !important; }
+#tab-profile .gender-btn .g-label{ font-size:13px !important; font-weight:700 !important; letter-spacing:.02em !important; }
+
+/* Curseurs (Âge / Poids / Taille) : espacement régulier */
+#tab-profile .pf-info .form-row{ margin:16px 0 0 !important; }
+#tab-profile .pf-info .form-label{ margin-bottom:10px !important; }
+</style>
+
 <script id="kpProfileAccordionJs">
 window.pfToggleAcc = function(btn){
   var card = btn.closest ? btn.closest('.pf-acc') : null;
