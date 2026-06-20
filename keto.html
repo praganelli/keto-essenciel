@@ -21296,7 +21296,7 @@ setTimeout(maybeShowContextualPremium, 4000);
 
 <style id="kpProfileHarmonyV1">
 /* ════════════════════════════════════════════════════════════════
-   HARMONISATION ONGLET PROFIL — présentation unifiée, premium sombre
+   HARMONISATION ONGLET PROFIL — présentation unifiée, claire & élégante
    (cartes, typographie des données & contrôles cohérents partout)
 ════════════════════════════════════════════════════════════════ */
 
@@ -21305,26 +21305,26 @@ setTimeout(maybeShowContextualPremium, 4000);
   display:flex !important; flex-direction:column !important; gap:16px !important;
 }
 
-/* Conteneurs de cartes : une seule et même surface premium sombre */
+/* Conteneurs de cartes : une seule et même surface claire premium */
 #tab-profile .profile-card,
 #tab-profile .result-card,
 #tab-profile .profile-mode-block,
 #tab-profile .profile-footer,
 #tab-profile .referral-card,
 #tab-profile .kp-status-card{
-  background:linear-gradient(158deg,#15241b 0%,#0f1a14 100%) !important;
-  border:1px solid rgba(201,162,74,.20) !important;
+  background:linear-gradient(158deg,#fffefb 0%,#f7f2e8 100%) !important;
+  border:1px solid rgba(201,162,74,.30) !important;
   border-radius:20px !important;
-  box-shadow:0 16px 42px rgba(0,0,0,.30) !important;
+  box-shadow:0 10px 30px rgba(80,60,20,.10) !important;
   padding:22px !important;
   margin:0 !important;
-  color:#e9e1d4 !important;
+  color:#3a3022 !important;
   grid-column:auto !important;
 }
 
 /* Libellé de section "Mon profil" */
 #tab-profile .sec-label{
-  color:#c9a24a !important; font-weight:800 !important;
+  color:#a9802a !important; font-weight:800 !important;
   letter-spacing:.14em !important; text-transform:uppercase !important;
 }
 
@@ -21334,9 +21334,9 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile .profile-mode-title{
   font-family:var(--font-display),Georgia,serif !important;
   font-size:18px !important; font-weight:600 !important;
-  color:#f4ede0 !important; margin:0 0 16px !important;
+  color:#2a2114 !important; margin:0 0 16px !important;
   padding-bottom:12px !important;
-  border-bottom:1px solid rgba(201,162,74,.20) !important;
+  border-bottom:1px solid rgba(201,162,74,.28) !important;
   display:flex; align-items:center; gap:10px;
 }
 
@@ -21345,7 +21345,7 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile .form-label,
 #tab-profile .rm-lab,
 #tab-profile .ri-box{
-  color:#9fb1a3 !important;
+  color:#8a7659 !important;
 }
 #tab-profile .profile-id-label,
 #tab-profile .form-label{
@@ -21358,101 +21358,102 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile .profile-id-value{
   font-family:var(--font-display),Georgia,serif !important;
   font-style:normal !important; font-weight:600 !important;
-  color:#f4ede0 !important; font-size:16px !important;
+  color:#2a2114 !important; font-size:16px !important;
 }
 #tab-profile .profile-id-value.profile-id-mail,
-#tab-profile .profile-id-empty{ color:#9fb1a3 !important; font-size:14px !important; }
+#tab-profile .profile-id-empty{ color:#8a7659 !important; font-size:14px !important; }
 #tab-profile .form-label span{
   font-family:var(--font-display),Georgia,serif !important;
   font-style:normal !important; font-weight:700 !important;
-  color:#e7c873 !important;
+  color:#a9802a !important;
 }
 
 /* Carte identité (avatar + champs) */
 #tab-profile .profile-id-card{
-  background:rgba(255,255,255,.04) !important;
-  border:1px solid rgba(255,255,255,.09) !important;
+  background:rgba(138,118,89,.06) !important;
+  border:1px solid rgba(138,118,89,.16) !important;
   border-radius:16px !important;
 }
-#tab-profile .profile-id-row{ border-bottom-color:rgba(255,255,255,.07) !important; }
+#tab-profile .profile-id-row{ border-bottom-color:rgba(138,118,89,.14) !important; }
 #tab-profile .profile-id-avatar{
-  background:rgba(255,255,255,.06) !important;
-  border-color:rgba(201,162,74,.35) !important;
+  background:rgba(201,162,74,.10) !important;
+  border-color:rgba(201,162,74,.40) !important;
 }
-#tab-profile .profile-id-avatar-hint{ color:#9fb1a3 !important; }
+#tab-profile .profile-id-avatar-hint{ color:#8a7659 !important; }
 
 /* Champs de saisie & sélecteurs */
 #tab-profile .form-select,
 #tab-profile .profile-id-input{
-  background:rgba(255,255,255,.05) !important;
-  border:1px solid rgba(255,255,255,.12) !important;
-  color:#f4ede0 !important; backdrop-filter:none !important;
+  background:#fffefb !important;
+  border:1px solid rgba(138,118,89,.28) !important;
+  color:#2a2114 !important; backdrop-filter:none !important;
 }
-#tab-profile .profile-id-input::placeholder{ color:#7d9384 !important; }
-#tab-profile .form-select option{ color:#102016 !important; background:#f4ede0 !important; }
-#tab-profile .form-range{ accent-color:#c9a24a !important; }
+#tab-profile .profile-id-input::placeholder{ color:#a89a82 !important; }
+#tab-profile .form-select option{ color:#2a2114 !important; background:#fffefb !important; }
+#tab-profile .form-range{ accent-color:#a9802a !important; }
 
 /* Boutons genre */
 #tab-profile .gender-btn{
-  background:rgba(255,255,255,.04) !important;
-  border:1px solid rgba(255,255,255,.10) !important;
-  color:#cfd9cf !important;
+  background:rgba(138,118,89,.05) !important;
+  border:1px solid rgba(138,118,89,.20) !important;
+  color:#5a4d39 !important;
 }
 #tab-profile .gender-btn.active{
-  background:linear-gradient(135deg,rgba(201,162,74,.20),rgba(35,102,72,.22)) !important;
-  border-color:rgba(201,162,74,.55) !important; color:#f4ede0 !important;
+  background:linear-gradient(135deg,rgba(201,162,74,.18),rgba(35,102,72,.14)) !important;
+  border-color:rgba(201,162,74,.60) !important; color:#2a2114 !important;
 }
 #tab-profile .g-label{ color:inherit !important; }
 
 /* Encadré "Formule Mifflin" & autres boîtes claires inline */
 #tab-profile [style*="background:var(--s2)"]{
-  background:rgba(255,255,255,.045) !important; color:#bfcabf !important;
-  border:1px solid rgba(255,255,255,.08) !important;
+  background:rgba(138,118,89,.07) !important; color:#5a4d39 !important;
+  border:1px solid rgba(138,118,89,.16) !important;
 }
-#tab-profile [style*="background:var(--s2)"] strong{ color:#f4ede0 !important; }
+#tab-profile [style*="background:var(--s2)"] strong{ color:#2a2114 !important; }
 
 /* Macros : tuiles uniformes (valeurs colorées conservées) */
 #tab-profile .result-macro,
 #tab-profile .ri-box{
-  background:rgba(255,255,255,.04) !important;
-  border:1px solid rgba(255,255,255,.08) !important;
+  background:rgba(255,255,255,.65) !important;
+  border:1px solid rgba(138,118,89,.16) !important;
   border-radius:14px !important;
 }
-#tab-profile .rm-lab{ color:#9fb1a3 !important; }
-#tab-profile .ri-box strong{ color:#f4ede0 !important; }
+#tab-profile .rm-lab{ color:#8a7659 !important; }
+#tab-profile .ri-box strong{ color:#2a2114 !important; }
 #tab-profile .apply-btn{
   background:linear-gradient(135deg,#c9a24a,#a9802a) !important;
-  color:#1a1206 !important; border:none !important;
-  box-shadow:0 8px 22px rgba(201,162,74,.28) !important;
+  color:#fffdf6 !important; border:none !important;
+  box-shadow:0 8px 22px rgba(201,162,74,.30) !important;
 }
 
 /* Mode alimentaire */
-#tab-profile .profile-mode-current{ color:#e7c873 !important; }
-#tab-profile .profile-mode-desc{ color:#9fb1a3 !important; }
+#tab-profile .profile-mode-current{ color:#a9802a !important; }
+#tab-profile .profile-mode-desc{ color:#8a7659 !important; }
 #tab-profile .pmd-card{
-  background:rgba(255,255,255,.04) !important;
-  border:1px solid rgba(255,255,255,.10) !important; color:#e9e1d4 !important;
+  background:rgba(255,255,255,.70) !important;
+  border:1px solid rgba(138,118,89,.18) !important; color:#3a3022 !important;
 }
 #tab-profile .pmd-card.active{
-  background:linear-gradient(135deg,rgba(35,102,72,.40),rgba(201,162,74,.20)) !important;
-  border-color:rgba(201,162,74,.55) !important;
+  background:linear-gradient(135deg,rgba(35,102,72,.16),rgba(201,162,74,.14)) !important;
+  border-color:rgba(201,162,74,.60) !important;
 }
-#tab-profile .pmd-name{ color:#f4ede0 !important; }
-#tab-profile .pmd-ratios{ color:#9fb1a3 !important; }
+#tab-profile .pmd-name{ color:#2a2114 !important; }
+#tab-profile .pmd-ratios{ color:#8a7659 !important; }
 
 /* Pied de page Essenciel O Naturel */
-#tab-profile .profile-footer-brand{ color:#f4ede0 !important; }
-#tab-profile .profile-footer-tagline{ color:#9fb1a3 !important; }
-#tab-profile .profile-footer-row{ color:#cdbf9a !important; }
-#tab-profile .profile-footer-row a{ color:#e7c873 !important; }
+#tab-profile .profile-footer-brand{ color:#2a2114 !important; }
+#tab-profile .profile-footer-tagline{ color:#8a7659 !important; }
+#tab-profile .profile-footer-row{ color:#5a4d39 !important; }
+#tab-profile .profile-footer-row a{ color:#a9802a !important; }
 #tab-profile .profile-footer-icon{ filter:none !important; }
 
 /* Cartes parrainage / statut */
-#tab-profile .referral-title{ color:#f4ede0 !important; }
+#tab-profile .referral-title{ color:#2a2114 !important; }
 #tab-profile .kp-status-eyebrow,
-#tab-profile .kp-status-sub{ color:#9fb1a3 !important; }
-#tab-profile .kp-status-title{ color:#f4ede0 !important; }
+#tab-profile .kp-status-sub{ color:#8a7659 !important; }
+#tab-profile .kp-status-title{ color:#2a2114 !important; }
 </style>
+
 
 <!-- ═══════════════════════════════════════════════════════════════
      SPLASH / LANDING PUBLIQUE — accessible via /#welcome
