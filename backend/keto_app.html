@@ -7045,11 +7045,8 @@ body{
         </div>
       </div><!-- /.pf-info -->
 
-      <div class="pf-cols" data-testid="pf-cols">
-      <div class="pf-col" data-testid="pf-col-left">
-
-        <!-- Accordéon 1 — Activité & objectif (ouvert par défaut) -->
-        <div class="profile-card pf-acc" data-acc="activite" data-testid="acc-activite">
+        <!-- Accordéon Activité & objectif — pleine largeur -->
+        <div class="profile-card pf-acc pf-full-acc" data-acc="activite" data-testid="acc-activite">
           <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-activite">
             <span class="pf-acc-icon">🎯</span>
             <span class="pf-acc-title">Activité &amp; objectif</span>
@@ -7082,40 +7079,44 @@ body{
           </div>
         </div>
 
-        <!-- Accordéon 2 — Vos macros (switch activé / ouvert par défaut) -->
-        <div class="result-card pf-acc" data-acc="macros" data-testid="acc-macros">
-          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-macros">
-            <span class="pf-acc-icon">📊</span>
-            <span class="pf-acc-title">Vos macros</span>
-            <span class="pf-acc-switch" aria-hidden="true"></span>
-          </button>
-          <div class="pf-acc-body">
-            <div id="resultCard"><!-- filled by JS --></div>
-          </div>
-        </div>
-      </div><!-- /.pf-col (Activité + Macros) -->
-
-      <div class="pf-col" data-testid="pf-col-mode">
-        <!-- Accordéon Mode alimentaire (à côté d'Activité, switch activé) -->
-        <div class="profile-mode-block pf-acc" data-acc="mode" data-testid="acc-mode">
-          <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-mode">
-            <span class="pf-acc-icon">🌿</span>
-            <span class="pf-acc-title">Mode alimentaire</span>
-            <span class="pf-acc-switch" aria-hidden="true"></span>
-          </button>
-          <div class="pf-acc-body">
-            <div class="profile-mode-current" id="profileModeName">Keto Standard</div>
-            <div class="profile-mode-desc" id="profileModeDesc">Cétose équilibrée — tous les types d'aliments autorisés.</div>
-            <div class="profile-modes-grid" id="profileModesGrid" data-testid="profile-modes-grid">
-              <!-- rendered by renderProfileModesGrid() -->
+      <div class="pf-cols" data-testid="pf-cols">
+        <div class="pf-col" data-testid="pf-col-macros">
+          <!-- Accordéon Vos macros (sur la même ligne que Mode alimentaire) -->
+          <div class="result-card pf-acc" data-acc="macros" data-testid="acc-macros">
+            <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-macros">
+              <span class="pf-acc-icon">📊</span>
+              <span class="pf-acc-title">Vos macros</span>
+              <span class="pf-acc-switch" aria-hidden="true"></span>
+            </button>
+            <div class="pf-acc-body">
+              <div id="resultCard"><!-- filled by JS --></div>
             </div>
-            <div class="profile-mode-warn" id="profileModeWarn" style="display:none"></div>
           </div>
         </div>
-      </div><!-- /.pf-col-mode -->
+
+        <div class="pf-col" data-testid="pf-col-mode">
+          <!-- Accordéon Mode alimentaire (sur la même ligne que Vos macros) -->
+          <div class="profile-mode-block pf-acc" data-acc="mode" data-testid="acc-mode">
+            <button class="pf-acc-head" type="button" onclick="pfToggleAcc(this)" aria-expanded="true" data-testid="acc-head-mode">
+              <span class="pf-acc-icon">🌿</span>
+              <span class="pf-acc-title">Mode alimentaire</span>
+              <span class="pf-acc-switch" aria-hidden="true"></span>
+            </button>
+            <div class="pf-acc-body">
+              <div class="profile-mode-current" id="profileModeName">Keto Standard</div>
+              <div class="profile-mode-desc" id="profileModeDesc">Cétose équilibrée — tous les types d'aliments autorisés.</div>
+              <div class="profile-modes-grid" id="profileModesGrid" data-testid="profile-modes-grid">
+                <!-- rendered by renderProfileModesGrid() -->
+              </div>
+              <div class="profile-mode-warn" id="profileModeWarn" style="display:none"></div>
+            </div>
+          </div>
+        </div>
       </div><!-- /.pf-cols -->
       </div><!-- /.pf-acc-grid -->
 
+      <!-- 📍 Bas de page : Parrainez (injecté à gauche) + Essenciel O Naturel, côte à côte -->
+      <div class="pf-bottom-row" id="pfBottomRow" data-testid="pf-bottom-row">
       <!-- 📍 Coordonnées Essenciel O Naturel -->
       <div class="profile-footer" data-testid="profile-essenciel-footer">
         <div class="profile-footer-brand">Essenciel O Naturel</div>
@@ -7124,6 +7125,7 @@ body{
         <div class="profile-footer-row"><span class="profile-footer-icon">✉️</span><a href="mailto:infos@essencielonaturel.fr">infos@essencielonaturel.fr</a></div>
         <div class="profile-footer-row"><span class="profile-footer-icon">🌿</span>Consultations sur rendez-vous · Téléphone & visioconférence</div>
       </div>
+      </div><!-- /.pf-bottom-row -->
 
       <!-- 💊 Suppléments LPEV recommandés -->
       <div id="lpevSectionProfile" class="kp-lpev-section" data-testid="lpev-section-profile" style="display:none"></div>
@@ -21522,10 +21524,22 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile #lpevSectionProfile{ order:90; }
 #tab-profile .profile-logout-zone{ order:95; }
 #tab-profile .pf-cols{
-  display:flex; gap:16px; align-items:flex-start;
+  display:flex; gap:16px; align-items:stretch;
 }
 #tab-profile .pf-col{
   flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:16px;
+}
+/* La carte interne de chaque colonne occupe toute la hauteur => hauteurs égales */
+#tab-profile .pf-col > .pf-acc{ flex:1 1 auto; display:flex; flex-direction:column; }
+#tab-profile .pf-col > .pf-acc .pf-acc-body{ flex:1 1 auto; }
+
+/* ════ Bas de page : Parrainez + Essenciel O Naturel côte à côte ════ */
+#tab-profile .pf-bottom-row{
+  display:flex; gap:16px; align-items:stretch; order:100; margin-top:4px;
+}
+#tab-profile .pf-bottom-row > .referral-card,
+#tab-profile .pf-bottom-row > .profile-footer{
+  flex:1 1 0; min-width:0; margin:0 !important;
 }
 /* Les sections gardent leur colonne (grille 2 colonnes fixe) */
 #tab-profile .pf-acc{ padding:0 !important; overflow:hidden; }

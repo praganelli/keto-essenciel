@@ -21524,10 +21524,22 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile #lpevSectionProfile{ order:90; }
 #tab-profile .profile-logout-zone{ order:95; }
 #tab-profile .pf-cols{
-  display:flex; gap:16px; align-items:flex-start;
+  display:flex; gap:16px; align-items:stretch;
 }
 #tab-profile .pf-col{
   flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:16px;
+}
+/* La carte interne de chaque colonne occupe toute la hauteur => hauteurs égales */
+#tab-profile .pf-col > .pf-acc{ flex:1 1 auto; display:flex; flex-direction:column; }
+#tab-profile .pf-col > .pf-acc .pf-acc-body{ flex:1 1 auto; }
+
+/* ════ Bas de page : Parrainez + Essenciel O Naturel côte à côte ════ */
+#tab-profile .pf-bottom-row{
+  display:flex; gap:16px; align-items:stretch; order:100; margin-top:4px;
+}
+#tab-profile .pf-bottom-row > .referral-card,
+#tab-profile .pf-bottom-row > .profile-footer{
+  flex:1 1 0; min-width:0; margin:0 !important;
 }
 /* Les sections gardent leur colonne (grille 2 colonnes fixe) */
 #tab-profile .pf-acc{ padding:0 !important; overflow:hidden; }
