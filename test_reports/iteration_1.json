@@ -1,0 +1,51 @@
+{
+  "summary": "Verified MAIN BUG FIX: After an existing user logs out and logs back in, the app opens directly on the Plan tab and the obWelcomeScreen picker ('Créer un nouveau profil' / 'Choisir un profil existant' / 'Récupérer depuis le cloud') does NOT appear. Also verified REGRESSION: a fresh guest (Continuer sans compte) with no profile still sees the welcome picker with all 3 options. Both scenarios pass. Tests run against https://body-metrics-bug.preview.emergentagent.com/api/app (the keto.html app served by FastAPI).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Profile tab / renderProfile()",
+        "issue": "renderProfile() throws 'Cannot set properties of null (setting value)' at keto.html:8842 because element #activitySelect is missing in the DOM. This prevents the profileLogoutZone (containing data-testid=profile-logout-big-btn) from being un-hidden, so users cannot reach the logout button via the Profil tab UI. Logout still works if called programmatically (authLogout()), but the in-app UI is broken. Reference: /app/keto.html:8842 and :7137 (profileLogoutZone style=display:none until renderProfile sets it).",
+        "testID": "profile-logout-big-btn",
+        "priority": "HIGH"
+      },
+      {
+        "component": "Auth screen / Welcome resend endpoints",
+        "issue": "Console 404s during registration: '[Resend welcome] failed 404 page not found' and '[Resend] failed 404 page not found'. Registration itself completes (Firebase Auth), but the welcome-email backend endpoints return 404.",
+        "testID": "",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Firestore sync",
+        "issue": "Firestore reports 'Could not reach Cloud Firestore backend. Connection failed [code=unavailable]' on every load. App falls back to localStorage so auth/login/onboarding work, but cloud sync of the profile across devices will silently fail. Re-login still works because Firebase Auth state is independent.",
+        "affected_testIDs": []
+      }
+    ],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/tmp/05_in_app.png",
+    "/tmp/06_after_logout.png",
+    "/tmp/07_after_relogin.png",
+    "/tmp/08_guest_welcome.png"
+  ],
+  "action_items": [
+    "Fix renderProfile() in /app/keto.html (~line 8842): guard against missing #activitySelect / #goalSelect / etc., otherwise the error breaks the Profil tab and hides the logout button (profile-logout-big-btn). Bug is independent of the welcome-screen fix but blocks the documented UI logout path.",
+    "Fix or remove the resend-welcome backend endpoint that returns 404 (called right after registration).",
+    "Investigate Firestore 'unavailable' error if cloud sync is expected to work in this preview environment."
+  ],
+  "critical_code_review_comments": [
+    "appBoot launch() correctly distinguishes guest vs logged-in users: 'if(!profileLoaded && !currentUser)' — logged-in users (currentUser truthy) always enter the app, never the picker. Implementation matches the bug-fix requirement (keto.html lines 13194-13230).",
+    "renderProfile() at keto.html:8839-8842 sets values on $('ageRange'), $('activitySelect'), etc. without null-checking. If any of those elements is missing in the current DOM (which happens here), the function throws and downstream side-effects (e.g. unhiding profileLogoutZone at line 8858-8864) never execute."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "n/a", "frontend": "100% (MAIN FIX + REGRESSION both pass)" },
+  "seed_data_creation": "Created throwaway Firebase users during testing: keto_test_<timestamp>@example.com / Test1234! (multiple test runs). These accounts live in the Firebase project tied to this preview.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Test directly against <EXPO_PUBLIC_BACKEND_URL>/api/app. To create a 'logged-in existing user', register via the S'inscrire tab (3 sub-steps), complete the 7-step onboarding wizard (just click each .ob-btn-next inside .ob-step.active; on obStep6 click .ob-btn-start to finish). The in-app logout button (data-testid=profile-logout-big-btn) is currently UNREACHABLE via UI because renderProfile() throws and never un-hides profileLogoutZone — call window.authLogout() directly in JS instead. After re-login, assert: document.getElementById('obOverlay').classList.contains('hidden') === true AND document.querySelector('.bnav-tab.active').id === 'nt-plan'.",
+  "rca_of_issue": "Original bug: after an existing user logged in, appBoot opened the obOverlay picker (Créer / Choisir / Cloud) instead of entering the app. Fix in keto.html launch() now gates the welcome screen behind '!profileLoaded && !currentUser' so any authenticated user (currentUser truthy) bypasses the picker even if no profile exists yet (in that case syncProfileToCloud is invoked and the user lands on the Plan tab). Verified by an end-to-end run: register → onboard → logout (via authLogout) → re-login → obOverlay stays hidden and Plan tab is active."
+}

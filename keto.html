@@ -13192,39 +13192,40 @@ function appBoot(isNewUser, user){
     }, 400);
 
   } else {
-    /* ── COMPTE EXISTANT → charger le profil depuis le cloud puis lancer l'app ── */
+    /* ── COMPTE EXISTANT → charger le profil puis ENTRER DIRECTEMENT dans l'app ── */
     var launch = function(profileLoaded){
-      if(profileLoaded && profile && profile.firstname){
-        // Profil connu → lancer directement le plan
-        var tagEl = document.querySelector('header .tagline');
-        if(tagEl) tagEl.textContent = 'Bonjour ' + profile.firstname + ' ! Plan · Bibliothèque · Suivi · Profil';
-        var titleEl = $('appTitle');
-        if(titleEl) titleEl.innerHTML = 'Bonjour <em>' + profile.firstname + '</em>';
-        // Fermer l'overlay — nettoyer TOUS les styles inline
-        var ov = $('obOverlay');
-        if(ov){
-          ov.style.display = '';
-          ov.style.opacity = '';
-          ov.style.pointerEvents = '';
-          ov.classList.add('hidden');
-        }
-        renderPlan();
-        renderLibrary();
-        // Rafraîchir l'onglet Suivi avec les données du profil chargé
-        renderConseil();
-        renderSuivi();
-        switchTab('plan');
-      } else {
-        // Pas encore de profil → wizard de bienvenue
-        var ov = $('obOverlay');
-        if(ov){
-          ov.style.display = '';
-          ov.style.opacity = '';
-          ov.style.pointerEvents = '';
-          ov.classList.remove('hidden');
+      // Invité (mode local sans compte) SANS aucun profil → assistant de bienvenue.
+      // Un utilisateur CONNECTÉ arrive TOUJOURS dans l'app (jamais l'écran créer/choisir/cloud).
+      if(!profileLoaded && !currentUser){
+        var ovw = $('obOverlay');
+        if(ovw){
+          ovw.style.display = '';
+          ovw.style.opacity = '';
+          ovw.style.pointerEvents = '';
+          ovw.classList.remove('hidden');
         }
         obShowWelcome();
+        refreshHeaderLogout();
+        return;
       }
+      var fn = (profile && profile.firstname) ? profile.firstname : '';
+      var tagEl = document.querySelector('header .tagline');
+      if(tagEl) tagEl.textContent = (fn ? ('Bonjour ' + fn + ' ! ') : '') + 'Plan · Bibliothèque · Suivi · Profil';
+      var titleEl = $('appTitle');
+      if(titleEl && fn) titleEl.innerHTML = 'Bonjour <em>' + fn + '</em>';
+      // Fermer l'overlay d'onboarding — nettoyer TOUS les styles inline
+      var ov = $('obOverlay');
+      if(ov){
+        ov.style.display = '';
+        ov.style.opacity = '';
+        ov.style.pointerEvents = '';
+        ov.classList.add('hidden');
+      }
+      renderPlan();
+      renderLibrary();
+      renderConseil();
+      renderSuivi();
+      switchTab('plan');
       refreshHeaderLogout();
     };
 

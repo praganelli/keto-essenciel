@@ -101,3 +101,15 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+## Test Session — Existing-user login bypasses onboarding picker (June 2026)
+
+### Change implemented
+- File: /app/keto.html (also copied to /app/backend/keto_app.html served at /api/app)
+- In appBoot() -> launch() (existing-account branch): a LOGGED-IN user (currentUser set) now ALWAYS enters the app directly (switchTab('plan')). The legacy welcome/picker screen ("Créer un nouveau profil / Choisir un profil existant / Récupérer depuis le cloud", id=obWelcomeScreen inside #obOverlay) is NO LONGER shown after login.
+- Guests (mode local, no currentUser) with NO local profile still see the welcome screen (onboarding preserved).
+
+### Needs testing (frontend, web)
+- Test URL: <EXPO_PUBLIC_BACKEND_URL>/api/app  (standalone HTML app)
+- Scenario A (MAIN FIX): Register a brand-new account (email+password) -> complete the 7-step wizard minimally -> then LOG OUT (Profil tab -> Déconnexion) -> LOG IN again with the same credentials. EXPECTED: after login the user lands DIRECTLY on the Plan tab. The welcome/picker screen (obWelcomeScreen) must NOT appear.
+- Scenario B (regression): "Continuer sans compte (mode local)" as a fresh guest should STILL show the welcome screen with the 3 options.
+- needs_retesting: true
