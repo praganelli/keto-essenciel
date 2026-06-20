@@ -8839,8 +8839,7 @@ function renderProfile(){
   $('ageRange').value=p.age; $('ageVal').textContent=p.age+' ans';
   $('weightRange').value=p.weight; $('weightVal').textContent=p.weight+' kg';
   $('heightRange').value=p.height; $('heightVal').textContent=p.height+' cm';
-  $('activitySelect').value=p.activity;
-  $('goalSelect').value=p.goal;
+  if(typeof pfSyncActivityGoal==='function') pfSyncActivityGoal();
   $('gb-homme').classList.toggle('active',p.gender==='homme');
   $('gb-femme').classList.toggle('active',p.gender==='femme');
   // ─── Identité (prénom / nom / email + avatar)
