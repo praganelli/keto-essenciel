@@ -3843,6 +3843,30 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
 /* Désactiver les anciens halos / particules s'ils existent encore */
 .kp-auth-halo, .kp-auth-particles, .splash-ring{ display:none !important; }
 
+/* ─── Indicateur de défilement écran de connexion (visible surtout sur mobile) ─── */
+.auth-scroll-hint{ display:none; }
+@media (max-width: 980px){
+  #authScreen .auth-scroll-hint{
+    display:flex; align-items:center; gap:7px;
+    position:fixed; left:50%; bottom:calc(14px + env(safe-area-inset-bottom));
+    transform:translateX(-50%);
+    z-index:100002;
+    padding:9px 16px 9px 18px; border:none; cursor:pointer;
+    border-radius:999px; font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:13px; font-weight:700; color:#fffdf6; letter-spacing:.2px;
+    background:linear-gradient(135deg,#3a8a5e,#236648);
+    box-shadow:0 8px 24px rgba(8,40,24,.38);
+    animation:authHintBounce 1.5s ease-in-out infinite;
+    transition:opacity .3s ease, visibility .3s ease;
+  }
+  #authScreen .auth-scroll-hint.is-hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  .auth-scroll-hint-chev{ font-size:18px; line-height:1; display:inline-block; margin-top:-2px; }
+}
+@keyframes authHintBounce{
+  0%,100%{ transform:translateX(-50%) translateY(0); }
+  50%{ transform:translateX(-50%) translateY(5px); }
+}
+
 /* ═════════ AUTH GLASS BOTANICAL — Halo animé + particules ═════════ */
 .kp-auth-halo{
   position:absolute;
@@ -5872,8 +5896,44 @@ body{
       <div class="auth-coord-mini">Vos données restent privées et sécurisées</div>
     </div>
   </div>
+
+  <!-- Indicateur de défilement (mobile) — montre qu'on peut faire défiler vers le bas -->
+  <button type="button" id="authScrollHint" class="auth-scroll-hint" data-testid="auth-scroll-hint" aria-label="Faire défiler vers le bas" onclick="authScrollDown()">
+    <span class="auth-scroll-hint-txt">Faire défiler</span>
+    <span class="auth-scroll-hint-chev">⌄</span>
+  </button>
 </div>
 <!-- ══ fin authScreen ══ -->
+
+<script id="authScrollHintJs">
+(function(){
+  function el(id){ return document.getElementById(id); }
+  function update(){
+    var s = el('authScreen'); var hint = el('authScrollHint');
+    if(!s || !hint) return;
+    var scrollable = (s.scrollHeight - s.clientHeight) > 24;
+    var atBottom = (s.scrollTop + s.clientHeight) >= (s.scrollHeight - 28);
+    var authVisible = !s.classList.contains('hide') && getComputedStyle(s).display !== 'none';
+    if(scrollable && !atBottom && authVisible){ hint.classList.remove('is-hidden'); }
+    else { hint.classList.add('is-hidden'); }
+  }
+  window.authScrollDown = function(){
+    var s = el('authScreen'); if(!s) return;
+    s.scrollBy({ top: Math.round(s.clientHeight * 0.72), behavior:'smooth' });
+  };
+  window.kpAuthHintUpdate = update;
+  function bind(){
+    var s = el('authScreen');
+    if(s && !s._hintBound){ s.addEventListener('scroll', update, {passive:true}); s._hintBound = true; }
+    window.addEventListener('resize', update);
+    setTimeout(update, 400);
+    setTimeout(update, 1200);
+    setTimeout(update, 2500);
+  }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', bind); }
+  else { bind(); }
+})();
+</script>
 
 <!-- ══════════════════════════════════════════
      ÉCRAN DE CONFIGURATION FIREBASE
@@ -11525,6 +11585,7 @@ function authSwitchTab(tab){
     if(typeof _wireReferralLivePreview === 'function'){ try{ _wireReferralLivePreview(); }catch(e){} }
     if(typeof regGoToStep === 'function') regGoToStep(1);
   }
+  if(typeof window.kpAuthHintUpdate === 'function'){ setTimeout(window.kpAuthHintUpdate, 120); }
 }
 window.switchAuthTab = authSwitchTab;
 
