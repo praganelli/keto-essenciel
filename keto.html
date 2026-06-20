@@ -11699,6 +11699,18 @@ function authSetupAuthStateListener(){
     if(user){
       currentUser = user;
       refreshHeaderLogout();
+      // Sync Premium sur CET appareil après connexion (fix : premium non synchronisé sur mobile)
+      if(typeof kpCheckPremium === 'function'){
+        var _syncPrem = function(){
+          kpCheckPremium().then(function(){
+            try{ if(typeof kpRefreshUI === 'function') kpRefreshUI(); }catch(e){}
+            try{ if(typeof kpApplyPremiumGate === 'function') kpApplyPremiumGate(); }catch(e){}
+            try{ if(typeof renderProfile === 'function') renderProfile(); }catch(e){}
+          }).catch(function(){});
+        };
+        setTimeout(_syncPrem, 1200);
+        setTimeout(_syncPrem, 4000);
+      }
       // Pré-remplir l'email pour faciliter la re-connexion future
       var emailEl = $('loginEmail');
       if(emailEl && user.email && !emailEl.value) emailEl.value = user.email;
@@ -17085,6 +17097,13 @@ authGuest = function(){
           } catch(e){}
           // Notifie l'utilisateur
           try { if(typeof toast === 'function') toast('⚠️ Votre accès Premium a été révoqué. Contactez Essenciel O Naturel pour plus d\'informations.', 8000); } catch(e){}
+        }
+        // Détecte la TRANSITION false → true (Premium accordé) — fix sync mobile
+        else if(!wasPremium && nowPremium){
+          console.info('[premium watcher] Accès Premium détecté (raison: ' + reason + ') — mise à jour UI');
+          try { if(typeof kpRefreshUI === 'function') kpRefreshUI(); } catch(e){}
+          try { if(typeof kpApplyPremiumGate === 'function') kpApplyPremiumGate(); } catch(e){}
+          try { if(typeof toast === 'function') toast('🎉 Votre compte est passé en Premium ! Profitez de toutes les fonctionnalités.', 6000); } catch(e){}
         }
       }).catch(function(){ /* silencieux */ });
     }
