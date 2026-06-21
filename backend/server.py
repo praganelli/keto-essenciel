@@ -155,6 +155,22 @@ async def download_functions():
         filename="keto-firebase-functions.zip",
     )
 
+@api_router.get("/promo-pack")
+async def download_promo_pack():
+    return FileResponse(
+        ROOT_DIR / "promo_pack.zip",
+        media_type="application/zip",
+        filename="keto-visuels-promo.zip",
+    )
+
+@api_router.get("/promo/{name}")
+async def get_promo_image(name: str):
+    safe = os.path.basename(name)
+    path = ROOT_DIR / "promo" / safe
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="not found")
+    return FileResponse(path, media_type="image/png", filename=safe)
+
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_dict = input.dict()
