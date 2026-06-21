@@ -1,0 +1,5081 @@
+[
+ {
+  "cat": "breakfast",
+  "id": 0,
+  "name": "Omelette au fromage",
+  "desc": "Classique keto crémeux, protéiné et rapide.",
+  "ingredients": [
+   "Œufs entiers",
+   "Fromage râpé",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1,
+  "name": "Œufs brouillés crémeux",
+  "desc": "Onctueux, riches en lipides, le petit-déj keto parfait.",
+  "ingredients": [
+   "Œufs entiers",
+   "Crème épaisse",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 2,
+  "name": "Bacon & œufs au plat",
+  "desc": "Puissant apport lipidique pour tenir toute la matinée.",
+  "ingredients": [
+   "Bacon fumé",
+   "Œufs entiers",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 3,
+  "name": "Avocat & œufs pochés",
+  "desc": "Oméga-3 et graisses saines pour un réveil idéal.",
+  "ingredients": [
+   "Avocat mûr",
+   "Œufs pochés",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 4,
+  "name": "Saumon fumé & fromage frais",
+  "desc": "Zéro cuisson, maximum de protéines et d'oméga-3.",
+  "ingredients": [
+   "Saumon fumé",
+   "Fromage frais",
+   "Concombre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 5,
+  "name": "Pancakes keto amandes",
+  "desc": "Le plaisir du dimanche matin, version keto.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Œufs entiers",
+   "Fromage frais"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 6,
+  "name": "Bowl chia & noix",
+  "desc": "Parfait à préparer la veille, onctueux et rassasiant.",
+  "ingredients": [
+   "Noix & amandes",
+   "Graines de chia",
+   "Crème de coco"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 7,
+  "name": "Œufs en cocotte à la crème",
+  "desc": "Fondants, crémeux et élégants — le brunch keto parfait.",
+  "ingredients": [
+   "Œufs entiers",
+   "Crème épaisse",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 8,
+  "name": "Galettes de courgettes & feta",
+  "desc": "Croustillantes dehors, fondantes dedans — un petit-déj original.",
+  "ingredients": [
+   "Courgette râpée",
+   "Feta émiettée",
+   "Œufs entiers"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 9,
+  "name": "Smoothie keto avocat-épinards",
+  "desc": "Crémeux, nourrissant et prêt en 2 minutes. Zéro cuisson.",
+  "ingredients": [
+   "Avocat mûr",
+   "Épinards frais",
+   "Lait de coco"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 10,
+  "name": "Assiette charcuterie & fromage",
+  "desc": "Zéro cuisson, maximum de plaisir. L'idéal les matins pressés.",
+  "ingredients": [
+   "Jambon de Bayonne",
+   "Comté affiné",
+   "Noix de cajou"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 11,
+  "name": "Muffins keto bacon & fromage",
+  "desc": "À préparer en batch le dimanche pour toute la semaine.",
+  "ingredients": [
+   "Bacon haché",
+   "Cheddar râpé",
+   "Œufs entiers"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 12,
+  "name": "Pain keto aux graines",
+  "desc": "Le seul pain keto qui ressemble vraiment à du pain.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Graines de lin moulues",
+   "Œufs entiers"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 13,
+  "name": "Porridge keto graines de chanvre",
+  "desc": "Chaud, réconfortant, ultra-protéiné et sans glucides.",
+  "ingredients": [
+   "Graines de chanvre",
+   "Lait d'amande non sucré",
+   "Poudre d'amandes"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 14,
+  "name": "Tacos keto au jambon & œuf",
+  "desc": "La tortilla est remplacée par une crêpe d'œuf — brillant !",
+  "ingredients": [
+   "Œufs entiers",
+   "Jambon blanc",
+   "Fromage râpé"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 15,
+  "name": "Yaourt grec & graines keto",
+  "desc": "Rapide, frais et parfaitement équilibré pour une journée active.",
+  "ingredients": [
+   "Yaourt grec entier",
+   "Beurre de cacahuète naturel",
+   "Graines de courge"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 16,
+  "name": "Crêpes keto ricotta & citron",
+  "desc": "Légères comme l'air, acidulées et fondantes. Le dimanche parfait.",
+  "ingredients": [
+   "Ricotta",
+   "Œufs entiers",
+   "Poudre d'amandes"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 17,
+  "name": "Avocat farci aux œufs de caille",
+  "desc": "Élégant et ultra-simple — l'entrée keto qui épate sans effort.",
+  "ingredients": [
+   "Avocat mûr",
+   "Œufs de caille",
+   "Crème fraîche"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 18,
+  "name": "Hash browns keto au chou-fleur",
+  "desc": "La version keto des hash browns américains — croustillants à souhait.",
+  "ingredients": [
+   "Chou-fleur râpé",
+   "Œufs entiers",
+   "Fromage râpé"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 19,
+  "name": "Bowl smoothie açaï keto",
+  "desc": "Violet intense, onctueux et prêt en 2 minutes. Anti-oxydants au max.",
+  "ingredients": [
+   "Purée d'açaï (sans sucre)",
+   "Lait de coco",
+   "Poudre de protéines"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 20,
+  "name": "Shakshuka keto aux épinards",
+  "desc": "Le classique moyen-oriental réinventé version keto avec épinards.",
+  "ingredients": [
+   "Œufs entiers",
+   "Épinards frais",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 22,
+  "name": "Frittata poivrons & fromage",
+  "desc": "L'omelette italienne cuite au four — généreuse et parfumée.",
+  "ingredients": [
+   "Œufs entiers",
+   "Poivron rouge émincé",
+   "Parmesan râpé"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 23,
+  "name": "Mug cake amandes-cacao",
+  "desc": "Petit-déjeuner express au micro-ondes — moelleux et chocolaté.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Œufs entiers",
+   "Cacao en poudre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 24,
+  "name": "Tartine keto saumon & cream cheese",
+  "desc": "Pain keto au lin, saumon fumé et cream cheese aromatisé.",
+  "ingredients": [
+   "Pain keto au lin (2 tranches)",
+   "Saumon fumé",
+   "Cream cheese"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 25,
+  "name": "Yaourt coco & framboises",
+  "desc": "Doux, acidulé, keto-friendly — le bol du matin express.",
+  "ingredients": [
+   "Yaourt de coco (entier)",
+   "Framboises fraîches",
+   "Graines de chia"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 26,
+  "name": "Oeufs mimosa keto",
+  "desc": "Classique des buffets, réinventé en brunch keto élégant.",
+  "ingredients": [
+   "Œufs durs",
+   "Mayonnaise maison",
+   "Moutarde de Dijon"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 27,
+  "name": "Smoothie keto avocat-épinards",
+  "desc": "Vert, dense, nourrissant — le smoothie keto qui cale toute la matinée.",
+  "ingredients": [
+   "Avocat mûr",
+   "Épinards frais",
+   "Lait de coco"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 28,
+  "name": "Granola keto au four",
+  "desc": "Croustillant, parfumé, prêt en semaine — préparez-en pour 5 jours.",
+  "ingredients": [
+   "Noix mélangées (amandes, noix, pécan)",
+   "Graines de citrouille & tournesol",
+   "Huile de coco fondue"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 29,
+  "name": "Wrap keto laitue & jambon",
+  "desc": "Zéro cuisson, zéro glucide, maximal en protéines. Le wrap sans glucide.",
+  "ingredients": [
+   "Laitue romaine",
+   "Jambon blanc (sans sucre)",
+   "Fromage à tartiner"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 30,
+  "name": "Crêpes keto ricotta-citron",
+  "desc": "Fines et légères, acidulées — les crêpes keto qui émerveillent.",
+  "ingredients": [
+   "Ricotta",
+   "Œufs entiers",
+   "Poudre d'amandes"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 31,
+  "name": "Bowl açai keto (noix de coco)",
+  "desc": "Tropical, crémeux et keto — le bol exotique du week-end.",
+  "ingredients": [
+   "Crème de coco",
+   "Noix mélangées",
+   "Myrtilles ou framboises"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 32,
+  "name": "Tortilla keto aux œufs & fromage",
+  "desc": "L'espagnol revisité keto — dense, rassasiant, sans pommes de terre.",
+  "ingredients": [
+   "Œufs entiers",
+   "Cheddar râpé",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 33,
+  "name": "Beurre de noix & céleri rémoulade keto",
+  "desc": "Snack-déjeuner anti-faim — croquant, riche et nutritif.",
+  "ingredients": [
+   "Céleri croquant",
+   "Beurre d'amandes (naturel)",
+   "Noix de Grenoble"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 34,
+  "name": "Œufs Bénédicte keto",
+  "desc": "Le brunch chic version cétogène — sans toast, avec sauce hollandaise.",
+  "ingredients": [
+   "Œufs pochés",
+   "Saumon fumé ou jambon",
+   "Sauce hollandaise"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 35,
+  "name": "Keto coffee (Bulletproof)",
+  "desc": "Le café gras qui démarre la journée en mode cétose maximale.",
+  "ingredients": [
+   "Café fort",
+   "Beurre non salé",
+   "Huile MCT ou coco"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 36,
+  "name": "Salade d'œufs durs & bacon",
+  "desc": "Copieuse, protéinée et parfumée au bacon — le déjeuner keto express.",
+  "ingredients": [
+   "Œufs durs",
+   "Bacon grillé croustillant",
+   "Mayonnaise maison"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 37,
+  "name": "Tasse de fromage blanc & graines",
+  "desc": "Simple, rapide, nutritif — le petit-déjeuner minimaliste keto.",
+  "ingredients": [
+   "Fromage blanc (40% MG)",
+   "Noix concassées",
+   "Graines de lin moulues"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 38,
+  "name": "Bouchées de chorizo & fromage",
+  "desc": "Intense, savoureux et zéro glucide — snack du matin protéiné.",
+  "ingredients": [
+   "Chorizo en tranches",
+   "Cheddar en dés",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 39,
+  "name": "Flocons de coco & fruits secs keto",
+  "desc": "Le bol express zéro cuisson — croquant et exotique.",
+  "ingredients": [
+   "Flocons de coco (toastés)",
+   "Amandes entières",
+   "Lait d'amandes non sucré"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 40,
+  "name": "Mini-muffins keto aux herbes",
+  "desc": "Préparés le dimanche, mangés toute la semaine — batch cooking keto.",
+  "ingredients": [
+   "Œufs entiers",
+   "Poudre d'amandes",
+   "Feta émiettée"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 41,
+  "name": "Œufs mayo & avocat",
+  "desc": "Combo gagnant — protéines, lipides sains et satiété garantie.",
+  "ingredients": [
+   "Œufs durs",
+   "Avocat mûr",
+   "Mayonnaise"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 42,
+  "name": "Chia pudding mangue-coco",
+  "desc": "Préparé la veille, le pudding keto tropical du lendemain matin.",
+  "ingredients": [
+   "Graines de chia",
+   "Lait de coco",
+   "Mangue fraîche en dés"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 43,
+  "name": "Salade de thon & fenouil",
+  "desc": "Rafraîchissant et nutritif — le déjeuner d'été keto sans cuisson.",
+  "ingredients": [
+   "Thon à l'huile d'olive",
+   "Fenouil en tranches fines",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 44,
+  "name": "Pain keto grillé & œuf au plat",
+  "desc": "Le combo réconfort keto — pain croustillant, œuf coulant, beurre fondant.",
+  "ingredients": [
+   "Pain keto (lin + amandes)",
+   "Œufs entiers",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 45,
+  "name": "Assiette nordique saumon & légumes",
+  "desc": "Inspirée des brunchs scandinaves — fraîche et nutritive.",
+  "ingredients": [
+   "Saumon gravlax ou fumé",
+   "Concombre en rondelles",
+   "Fromage de chèvre frais"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 46,
+  "name": "Boudin blanc & œufs brouillés",
+  "desc": "Tradition française réinventée — le brunch keto du dimanche.",
+  "ingredients": [
+   "Boudin blanc (sans amidon)",
+   "Œufs entiers",
+   "Crème épaisse"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 47,
+  "name": "Wrap de laitue au poulet & avocat",
+  "desc": "Restes de poulet, avocat et laitue — le breakfast keto express.",
+  "ingredients": [
+   "Feuilles de laitue iceberg",
+   "Poulet cuit en lamelles",
+   "Avocat en tranches"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 48,
+  "name": "Soufflé aux champignons",
+  "desc": "Aérien et parfumé — le soufflé keto pour un brunch impressionnant.",
+  "ingredients": [
+   "Champignons de Paris",
+   "Œufs (jaunes & blancs séparés)",
+   "Gruyère râpé"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 49,
+  "name": "Beurre de cacahuète sur batonnets de céleri",
+  "desc": "Le duo légendaire keto — croquant, savoureux, zéro préparation.",
+  "ingredients": [
+   "Céleri frais",
+   "Beurre de cacahuète naturel",
+   "Noix concassées"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 50,
+  "name": "Assiette copieuse keto du dimanche",
+  "desc": "Le grand brunch keto complet — pour les jours de fête.",
+  "ingredients": [
+   "Bacon grillé",
+   "Œufs au plat",
+   "Champignons grillés"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1100,
+  "name": "Avocat œuf au four",
+  "desc": "Petit-déjeuner spécial mode vegetarien.",
+  "ingredients": [
+   "Avocat",
+   "Œufs",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1101,
+  "name": "Bowl chia coco",
+  "desc": "Petit-déjeuner spécial mode vegetarien.",
+  "ingredients": [
+   "Graines chia",
+   "Lait coco",
+   "Amandes"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1102,
+  "name": "Pancakes amandes-vanille",
+  "desc": "Petit-déjeuner spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Farine amandes",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1103,
+  "name": "Smoothie verts gras",
+  "desc": "Petit-déjeuner spécial mode vegetarien.",
+  "ingredients": [
+   "Épinards",
+   "Avocat",
+   "Huile coco"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1104,
+  "name": "Œufs brouillés feta",
+  "desc": "Petit-déjeuner spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Feta",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1105,
+  "name": "Yaourt grec amandes",
+  "desc": "Petit-déjeuner spécial mode vegetarien.",
+  "ingredients": [
+   "Yaourt grec",
+   "Amandes",
+   "Beurre coco"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1106,
+  "name": "Tartine fromage frais",
+  "desc": "Petit-déjeuner spécial mode vegetarien.",
+  "ingredients": [
+   "Fromage frais",
+   "Pain keto",
+   "Avocat"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1107,
+  "name": "Bouillie graines lin",
+  "desc": "Petit-déjeuner spécial mode vegetarien.",
+  "ingredients": [
+   "Graines lin moulues",
+   "Lait coco",
+   "Beurre amande"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1108,
+  "name": "Œufs bacon classique",
+  "desc": "Petit-déjeuner spécial mode carnivore.",
+  "ingredients": [
+   "Œufs",
+   "Bacon",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1109,
+  "name": "Saumon fumé crème",
+  "desc": "Petit-déjeuner spécial mode carnivore.",
+  "ingredients": [
+   "Saumon fumé",
+   "Crème épaisse",
+   "Œufs durs"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1110,
+  "name": "Œufs jambon chèvre",
+  "desc": "Petit-déjeuner spécial mode carnivore.",
+  "ingredients": [
+   "Œufs",
+   "Jambon cru",
+   "Chèvre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1111,
+  "name": "Foie gras toast",
+  "desc": "Petit-déjeuner spécial mode carnivore.",
+  "ingredients": [
+   "Foie gras",
+   "Pain keto",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1112,
+  "name": "Œufs au plat saucisse",
+  "desc": "Petit-déjeuner spécial mode carnivore.",
+  "ingredients": [
+   "Œufs",
+   "Saucisse merguez",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1113,
+  "name": "Bacon œufs avocat",
+  "desc": "Petit-déjeuner spécial mode carnivore.",
+  "ingredients": [
+   "Œufs",
+   "Bacon",
+   "Avocat"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1114,
+  "name": "Tartare saumon œufs",
+  "desc": "Petit-déjeuner spécial mode carnivore.",
+  "ingredients": [
+   "Saumon frais",
+   "Œufs",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1115,
+  "name": "Pancetta œufs",
+  "desc": "Petit-déjeuner spécial mode carnivore.",
+  "ingredients": [
+   "Pancetta",
+   "Œufs",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1116,
+  "name": "Œufs brouillés saumon",
+  "desc": "Petit-déjeuner spécial mode diabete.",
+  "ingredients": [
+   "Œufs",
+   "Saumon fumé",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1117,
+  "name": "Yaourt myrtilles amandes",
+  "desc": "Petit-déjeuner spécial mode diabete.",
+  "ingredients": [
+   "Yaourt grec",
+   "Myrtilles",
+   "Amandes"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1118,
+  "name": "Avocat tomate basilic",
+  "desc": "Petit-déjeuner spécial mode diabete.",
+  "ingredients": [
+   "Avocat",
+   "Tomates cerises",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1119,
+  "name": "Œufs brouillés crémeux",
+  "desc": "Petit-déjeuner spécial mode diabete.",
+  "ingredients": [
+   "Œufs",
+   "Crème épaisse",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1120,
+  "name": "Bowl coco amandes",
+  "desc": "Petit-déjeuner spécial mode diabete.",
+  "ingredients": [
+   "Lait coco",
+   "Amandes",
+   "Graines chia"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1121,
+  "name": "Frittata épinards",
+  "desc": "Petit-déjeuner spécial mode diabete.",
+  "ingredients": [
+   "Œufs",
+   "Épinards",
+   "Fromage râpé"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1122,
+  "name": "Tartine pain keto pesto",
+  "desc": "Petit-déjeuner spécial mode diabete.",
+  "ingredients": [
+   "Pain keto",
+   "Pesto",
+   "Mozzarella"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1123,
+  "name": "Œufs cocotte champignons",
+  "desc": "Petit-déjeuner spécial mode diabete.",
+  "ingredients": [
+   "Œufs",
+   "Champignons",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1124,
+  "name": "Avocat huile MCT",
+  "desc": "Petit-déjeuner spécial mode epilepsie.",
+  "ingredients": [
+   "Avocat",
+   "Huile MCT",
+   "Noix"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1125,
+  "name": "Bombes coco-cacao",
+  "desc": "Petit-déjeuner spécial mode epilepsie.",
+  "ingredients": [
+   "Beurre coco",
+   "Cacao",
+   "Beurre amande"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1126,
+  "name": "Smoothie graisse",
+  "desc": "Petit-déjeuner spécial mode epilepsie.",
+  "ingredients": [
+   "Lait coco",
+   "Huile MCT",
+   "Beurre amande"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1127,
+  "name": "Mascarpone amandes",
+  "desc": "Petit-déjeuner spécial mode epilepsie.",
+  "ingredients": [
+   "Mascarpone",
+   "Amandes",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1128,
+  "name": "Bouillon gras matin",
+  "desc": "Petit-déjeuner spécial mode epilepsie.",
+  "ingredients": [
+   "Beurre",
+   "Huile MCT",
+   "Bouillon os"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1129,
+  "name": "Œufs cocotte foie gras",
+  "desc": "Petit-déjeuner spécial mode epilepsie.",
+  "ingredients": [
+   "Œufs",
+   "Foie gras",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1130,
+  "name": "Pâte tartiner MCT",
+  "desc": "Petit-déjeuner spécial mode epilepsie.",
+  "ingredients": [
+   "Huile MCT",
+   "Cacao",
+   "Beurre amande"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1131,
+  "name": "Crème dessert avocat",
+  "desc": "Petit-déjeuner spécial mode epilepsie.",
+  "ingredients": [
+   "Avocat",
+   "Crème épaisse",
+   "Huile MCT"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1200,
+  "name": "Porridge chia coco-cannelle",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Graines chia",
+   "Lait coco",
+   "Amandes effilées"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1201,
+  "name": "Smoothie bowl vert-chanvre",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Épinards",
+   "Avocat",
+   "Graines chanvre"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1202,
+  "name": "Tofu brouillé curcuma",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Tofu soyeux",
+   "Huile coco",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1203,
+  "name": "Pancakes amande-banane verte",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Farine amande",
+   "Lait amande",
+   "Beurre coco"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1204,
+  "name": "Bouillie graines lin-coco",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Graines lin moulues",
+   "Lait coco",
+   "Beurre amande"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1205,
+  "name": "Avocat-toast pain keto-vegan",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Pain keto vegan",
+   "Tahini"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1206,
+  "name": "Pudding chia-cacao-noisettes",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Graines chia",
+   "Lait amande",
+   "Cacao cru"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1207,
+  "name": "Granola keto-vegan maison",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Amandes",
+   "Noix pécan",
+   "Huile coco"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1208,
+  "name": "Smoothie matcha-avocat-coco",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Lait coco",
+   "Poudre matcha"
+  ]
+ },
+ {
+  "cat": "breakfast",
+  "id": 1209,
+  "name": "Crème dessert avocat-cacao matin",
+  "desc": "Petit-déjeuner spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Lait coco",
+   "Cacao cru"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 300,
+  "name": "Saumon citron-aneth",
+  "desc": "Poêlé parfait, peau croustillante, chair rosée.",
+  "ingredients": [
+   "Filet de saumon",
+   "Beurre",
+   "Épinards frais"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 301,
+  "name": "Poulet aux herbes de Provence",
+  "desc": "Doré, juteux, parfumé. Un classique qui ne déçoit jamais.",
+  "ingredients": [
+   "Blanc de poulet",
+   "Huile d'olive",
+   "Champignons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 302,
+  "name": "Steak au beurre d'herbes",
+  "desc": "La cuisson parfaite, le repos indispensable.",
+  "ingredients": [
+   "Steak (rumsteck)",
+   "Beurre d'herbes",
+   "Haricots verts"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 303,
+  "name": "Crevettes à l'ail et crème",
+  "desc": "Rapide, savoureux, sauce crémeuse à l'ail irrésistible.",
+  "ingredients": [
+   "Grosses crevettes",
+   "Crème épaisse",
+   "Courgettes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 304,
+  "name": "Porc au paprika fumé",
+  "desc": "Viande tendre et parfumée, sauce légèrement fumée.",
+  "ingredients": [
+   "Filet de porc",
+   "Crème fraîche",
+   "Poivrons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 305,
+  "name": "Dinde à la moutarde & haricots verts",
+  "desc": "Escalope tendre, sauce moutarde crémeuse, haricots verts croquants.",
+  "ingredients": [
+   "Escalope de dinde",
+   "Crème légère",
+   "Haricots verts fins"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 306,
+  "name": "Boeuf aux champignons",
+  "desc": "Fondu et riche, sauce umami intense aux champignons.",
+  "ingredients": [
+   "Boeuf (bavette)",
+   "Champignons",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 307,
+  "name": "Cabillaud beurre citron",
+  "desc": "Fondant, nacré, avec un beurre citronné parfumé irrésistible.",
+  "ingredients": [
+   "Filet de cabillaud",
+   "Beurre",
+   "Brocolis vapeur"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 308,
+  "name": "Poulet tikka masala keto",
+  "desc": "Le curry préféré de toute l'Europe, version keto sans riz.",
+  "ingredients": [
+   "Blanc de poulet",
+   "Crème de coco",
+   "Épinards frais"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 309,
+  "name": "Carpaccio de bœuf & parmesan",
+  "desc": "Élégant, raffiné et keto parfait. Aucune cuisson nécessaire.",
+  "ingredients": [
+   "Bœuf très finement tranché",
+   "Roquette fraîche",
+   "Parmesan en copeaux"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 310,
+  "name": "Œufs cocotte au jambon",
+  "desc": "Fondant et savoureux — un classique bistrot en version keto.",
+  "ingredients": [
+   "Œufs entiers",
+   "Jambon blanc",
+   "Épinards frais"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 311,
+  "name": "Ratatouille keto au four",
+  "desc": "Le plat provençal qui se prépare seul au four — légumes fondants et parfumés.",
+  "ingredients": [
+   "Aubergine en rondelles",
+   "Courgette en rondelles",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 312,
+  "name": "Salade niçoise keto",
+  "desc": "Complète, fraîche et 100% keto — sans pommes de terre !",
+  "ingredients": [
+   "Thon à l'huile",
+   "Haricots verts & tomates cerises",
+   "Œufs durs"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 313,
+  "name": "Moules marinières à la crème",
+  "desc": "Rapide, festif et naturellement keto. Le plaisir du bord de mer.",
+  "ingredients": [
+   "Moules fraîches",
+   "Crème épaisse",
+   "Vin blanc sec"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 314,
+  "name": "Côtes d'agneau aux herbes",
+  "desc": "Luxueux et rapide — l'agneau est à son meilleur grillé simplement.",
+  "ingredients": [
+   "Côtes d'agneau",
+   "Huile d'olive",
+   "Haricots verts"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 315,
+  "name": "Omelette soufflée au chèvre",
+  "desc": "Légère comme un nuage — la technique qui impressionne toujours.",
+  "ingredients": [
+   "Œufs (blancs & jaunes séparés)",
+   "Champignons & épinards",
+   "Chèvre frais"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 316,
+  "name": "Wok de bœuf & légumes asiatique",
+  "desc": "Explosif de saveurs, rapide et keto-friendly. Le wok idéal.",
+  "ingredients": [
+   "Bœuf en lanières",
+   "Champignons shiitaké",
+   "Huile de sésame"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 317,
+  "name": "Bavette à l'échalote",
+  "desc": "Un grand classique bistrot — la bavette bien saisie avec sa sauce échalote fondante.",
+  "ingredients": [
+   "Bavette de bœuf",
+   "Échalotes émincées",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 318,
+  "name": "Lieu noir en papillote au citron vert",
+  "desc": "Cuisson douce, chair fondante — zéro matière grasse inutile.",
+  "ingredients": [
+   "Filet de lieu noir",
+   "Huile d'olive",
+   "Citron vert"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 319,
+  "name": "Cuisse de poulet confite à l'ail",
+  "desc": "Fondante à l'os, peau croustillante — la cuisse de poulet parfaite.",
+  "ingredients": [
+   "Cuisses de poulet",
+   "Huile d'olive",
+   "Ail en gousses"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 320,
+  "name": "Tartare de saumon à l'avocat",
+  "desc": "Frais, élégant, zéro cuisson — le plat d'été keto par excellence.",
+  "ingredients": [
+   "Saumon très frais",
+   "Concombre & radis",
+   "Avocat mûr"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 321,
+  "name": "Gratin de chou-fleur au fromage",
+  "desc": "Fondant, gratiné, réconfortant — le comfort food keto ultime.",
+  "ingredients": [
+   "Chou-fleur en fleurettes",
+   "Crème épaisse",
+   "Gruyère râpé"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 322,
+  "name": "Brochettes de dinde marinées",
+  "desc": "Marinées dans les épices, grillées à la perfection — le barbecue keto.",
+  "ingredients": [
+   "Dinde en dés",
+   "Huile d'olive",
+   "Poivron rouge en morceaux"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 323,
+  "name": "Magret de canard aux baies roses",
+  "desc": "Le luxe keto — peau croustillante, chair rosée, sauce au poivre.",
+  "ingredients": [
+   "Magret de canard",
+   "Haricots verts fins",
+   "Crème épaisse"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 324,
+  "name": "Émincé de veau à la crème & estragon",
+  "desc": "Fondant et parfumé — la blanquette revisitée en version keto express.",
+  "ingredients": [
+   "Émincé de veau",
+   "Crème fraîche épaisse",
+   "Haricots verts"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 325,
+  "name": "Thon albacore en croûte de sésame",
+  "desc": "Saisi cru à cœur — la technique japonaise pour un thon exceptionnel.",
+  "ingredients": [
+   "Pavé de thon albacore",
+   "Salade d'algues & concombre",
+   "Graines de sésame mixtes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 326,
+  "name": "Côte de veau au beurre de sauge",
+  "desc": "Noble, parfumé — la côte de veau poêlée à la façon romaine.",
+  "ingredients": [
+   "Côte de veau (250g)",
+   "Brocolis vapeur",
+   "Beurre non salé"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 327,
+  "name": "Poulet basquaise keto",
+  "desc": "Soleil et saveurs du Pays Basque — le plat convivial keto par excellence.",
+  "ingredients": [
+   "Cuisses de poulet",
+   "Poivrons (1 rouge + 1 vert)",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 328,
+  "name": "Saumon mi-cuit & asperges vertes",
+  "desc": "Cuisson basse température — nacré, fondant, élégant.",
+  "ingredients": [
+   "Filet de saumon épais",
+   "Asperges vertes",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 329,
+  "name": "Bœuf bourguignon keto",
+  "desc": "Le grand classique mijoté — sans pommes de terre, avec champignons et lardons.",
+  "ingredients": [
+   "Bœuf à braiser en cubes",
+   "Champignons de Paris",
+   "Lardons fumés"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 330,
+  "name": "Filet de bar en sauce vierge",
+  "desc": "Technique pointue, résultat éblouissant — le bar au restaurant chez vous.",
+  "ingredients": [
+   "Filet de bar (loup)",
+   "Huile d'olive",
+   "Tomates cerises"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 331,
+  "name": "Entrecôte sauce au poivre vert",
+  "desc": "Bistrot à domicile — la sauce au poivre vert comme les grands.",
+  "ingredients": [
+   "Entrecôte de bœuf",
+   "Épinards sautés au beurre",
+   "Crème épaisse"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 332,
+  "name": "Curry de crevettes à la coco",
+  "desc": "Exotique, parfumé et satiété garantie — le curry keto thaï.",
+  "ingredients": [
+   "Grosses crevettes décortiquées",
+   "Lait de coco",
+   "Épinards frais"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 333,
+  "name": "Filet mignon de porc à l'orange",
+  "desc": "Tendre et légèrement acidulé — le filet mignon dans un registre fruité.",
+  "ingredients": [
+   "Filet mignon de porc",
+   "Orange (jus + zeste)",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 334,
+  "name": "Suprême de pintade aux champignons",
+  "desc": "La pintade — plus savoureuse que le poulet, parfaite pour un dîner raffiné.",
+  "ingredients": [
+   "Suprême de pintade (200g)",
+   "Champignons shiitake",
+   "Crème fraîche"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 335,
+  "name": "Gambas flambées au cognac",
+  "desc": "Spectaculaire et délicieux — les gambas au cognac d'un grand restaurant.",
+  "ingredients": [
+   "Gambas entières",
+   "Courgettes grillées",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 336,
+  "name": "Escalope cordon bleu keto",
+  "desc": "Le classique de la cantine, version keto sans chapelure de blé.",
+  "ingredients": [
+   "Escalopes de veau (150g chacune)",
+   "Salade verte & tomates cerises",
+   "Emmental en tranches"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 337,
+  "name": "Tartare de bœuf au couteau",
+  "desc": "Le tartare classique au couteau — texture incomparable, fraîcheur totale.",
+  "ingredients": [
+   "Bœuf très frais (rumsteck)",
+   "Roquette & mesclun",
+   "Jaune d'œuf"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 338,
+  "name": "Poisson à la chermoula",
+  "desc": "Marinée dans la sauce nord-africaine parfumée aux herbes et épices.",
+  "ingredients": [
+   "Filet de dorade ou loup",
+   "Huile d'olive",
+   "Coriandre + persil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 339,
+  "name": "Rôti de porc basse température",
+  "desc": "4h au four à 80°C — la perfection faite viande, fondante et juteuse.",
+  "ingredients": [
+   "Rôti de porc ficelé",
+   "Chou-fleur rôti",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 340,
+  "name": "Fricassée de lapin aux olives",
+  "desc": "Rustique et parfumé — le plat du dimanche provençal version keto.",
+  "ingredients": [
+   "Lapin (cuisse + râble)",
+   "Olives vertes dénoyautées",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 341,
+  "name": "Salade de chèvre chaud & noix",
+  "desc": "Le classique bistrot version keto — sans croutons, avec noix et roquette.",
+  "ingredients": [
+   "Chèvre bûche",
+   "Roquette & mâche",
+   "Noix de Grenoble"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 342,
+  "name": "Ris de veau aux câpres",
+  "desc": "Abat noble et fondant — pour les palais curieux et les dîners élégants.",
+  "ingredients": [
+   "Ris de veau (blanchis 10 min)",
+   "Épinards à la crème",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 343,
+  "name": "Salade César keto",
+  "desc": "La salade iconique sans croutons — avec anchois, parmesan et sauce crémeuse.",
+  "ingredients": [
+   "Salade romaine",
+   "Blanc de poulet grillé",
+   "Parmesan en copeaux"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 344,
+  "name": "Palourdes à la marinière keto",
+  "desc": "Express, festif et très keto — les palourdes fondent dans la bouche.",
+  "ingredients": [
+   "Palourdes fraîches",
+   "Beurre",
+   "Vin blanc sec"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 345,
+  "name": "Poulet à la crème & moutarde à l'ancienne",
+  "desc": "Sauce riche et veloutée — le bistrot français dans un plat.",
+  "ingredients": [
+   "Blanc de poulet",
+   "Brocolis vapeur",
+   "Crème fraîche"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 346,
+  "name": "Carpaccio de saint-jacques",
+  "desc": "Élégance pure — les noix de Saint-Jacques crues en carpaccio.",
+  "ingredients": [
+   "Noix de Saint-Jacques fraîches",
+   "Mâche & roquette",
+   "Huile d'olive extra vierge"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 347,
+  "name": "Tilapia poêlé aux citrons confits",
+  "desc": "Poisson léger et peu coûteux, sublimé par le citron confit et les olives.",
+  "ingredients": [
+   "Filets de tilapia",
+   "Courgettes & tomates cerises",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 348,
+  "name": "Poitrine de porc croustillante",
+  "desc": "La peau croustillante à souhait — le rêve keto des amateurs de pork belly.",
+  "ingredients": [
+   "Poitrine de porc",
+   "Chou rouge & pomme verte (1/4)",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 349,
+  "name": "Morue à la brandade (version keto)",
+  "desc": "La brandade provençale sans pommes de terre — crémeuse et parfumée.",
+  "ingredients": [
+   "Morue dessalée",
+   "Huile d'olive",
+   "Chou-fleur cuit"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 350,
+  "name": "Blanquette de saumon printanière",
+  "desc": "Sauce crème légère et parfumée — le saumon en version mijotée.",
+  "ingredients": [
+   "Pavé de saumon",
+   "Crème fraîche",
+   "Asperges + courgettes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 351,
+  "name": "Tataki de bœuf au sésame",
+  "desc": "La technique japonaise — saisi à l'extérieur, cru à l'intérieur.",
+  "ingredients": [
+   "Filet de bœuf",
+   "Salade de concombre & radis",
+   "Graines de sésame noir"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 352,
+  "name": "Poulet tandoori au four",
+  "desc": "Marinade indienne parfumée, cuisson au four — sans naan.",
+  "ingredients": [
+   "Hauts de cuisse de poulet",
+   "Salade de concombre & menthe",
+   "Yaourt grec entier"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 353,
+  "name": "Côtelettes d'agneau grillées",
+  "desc": "Rapide, noble et parfumé — les côtelettes grillées au romarin.",
+  "ingredients": [
+   "Côtelettes d'agneau",
+   "Ratatouille provençale",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 354,
+  "name": "Crumble de thon aux courgettes",
+  "desc": "Un plat réconfortant du four avec crumble keto à la poudre d'amandes.",
+  "ingredients": [
+   "Thon en conserve à l'huile",
+   "Courgettes en rondelles",
+   "Poudre d'amandes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 355,
+  "name": "Osso-buco keto (sans gremolata sucrée)",
+  "desc": "Le classique milanais — sans risotto, avec purée de chou-fleur.",
+  "ingredients": [
+   "Jarret de veau",
+   "Huile d'olive",
+   "Céleri + carottes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 356,
+  "name": "Dorade royale au sel",
+  "desc": "La technique la plus simple pour une dorade parfaite — cuisson en croûte de sel.",
+  "ingredients": [
+   "Dorade royale (500g)",
+   "Gros sel de mer",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 357,
+  "name": "Filet de bœuf Wellington (version keto)",
+  "desc": "Le roi des plats — adapté keto avec crêpe d'œuf au lieu de la pâte feuilletée.",
+  "ingredients": [
+   "Filet de bœuf",
+   "Duxelles de champignons",
+   "Foie gras mi-cuit"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 358,
+  "name": "Poulpe grillé à l'huile d'olive",
+  "desc": "Tendre à souhait après cuisson longue — le poulpe grillé comme en Grèce.",
+  "ingredients": [
+   "Poulpe frais ou surgelé",
+   "Poivrons grillés & câpres",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 359,
+  "name": "Filet de maquereau moutarde-herbes",
+  "desc": "Le poisson gras le plus keto — riche en oméga-3 et délicieux.",
+  "ingredients": [
+   "Maquereau frais",
+   "Salade de fenouil & citron",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 360,
+  "name": "Fondue bourguignonne keto",
+  "desc": "Conviviale et keto parfaite — viande à cuire dans l'huile, sauces maison.",
+  "ingredients": [
+   "Filet de bœuf en cubes 3cm",
+   "Crudités : champignons, courgettes, poivrons",
+   "Huile de tournesol (caquelon)"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 361,
+  "name": "Steak haché keto & salade verte",
+  "desc": "Le burger sans pain — beau steak haché, salade et sauce keto.",
+  "ingredients": [
+   "Steak haché 20% MG",
+   "Mesclun & roquette",
+   "Cheddar fondu"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 362,
+  "name": "Merlu à la basquaise",
+  "desc": "Le mariage basque parfait — merlu fondant dans une sauce poivrons-tomates.",
+  "ingredients": [
+   "Dos de merlu",
+   "Poivron rouge",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 600,
+  "name": "Halloumi grillé & courgettes",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Halloumi",
+   "Courgettes",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 601,
+  "name": "Œufs brouillés crémeux & avocat",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Beurre",
+   "Avocat"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 602,
+  "name": "Tofu mariné sésame & brocolis",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Tofu ferme",
+   "Huile sésame",
+   "Brocolis"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 603,
+  "name": "Omelette aux champignons & comté",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Comté râpé",
+   "Champignons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 604,
+  "name": "Curry de tofu lait coco",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Tofu ferme",
+   "Lait de coco",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 605,
+  "name": "Salade burrata & avocat",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Burrata",
+   "Avocat",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 606,
+  "name": "Paneer tikka aux poivrons",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Paneer",
+   "Ghee",
+   "Poivrons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 607,
+  "name": "Tempeh sauté aux épinards",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Tempeh",
+   "Huile d'olive",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 608,
+  "name": "Frittata fromage de chèvre",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Fromage de chèvre",
+   "Courgettes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 609,
+  "name": "Aubergines gratinées mozzarella",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Mozzarella",
+   "Aubergines",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 610,
+  "name": "Salade roquette parmesan noix",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Parmesan",
+   "Roquette",
+   "Noix"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 611,
+  "name": "Seitan poêlé champignons-crème",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Seitan",
+   "Crème",
+   "Champignons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 612,
+  "name": "Avocat farci œufs mimosa",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Avocat",
+   "Œufs durs",
+   "Mayonnaise"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 613,
+  "name": "Ricotta cuite herbes & courgettes",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Ricotta",
+   "Courgettes",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 614,
+  "name": "Œufs cocotte épinards & crème",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Crème épaisse",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 700,
+  "name": "Saumon vapeur asperges",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Saumon",
+   "Beurre",
+   "Asperges vertes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 701,
+  "name": "Poulet citron-thym",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Blanc de poulet",
+   "Huile d'olive",
+   "Haricots verts"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 702,
+  "name": "Œufs durs salade verte",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Œufs durs",
+   "Huile d'olive",
+   "Laitue"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 703,
+  "name": "Cabillaud poêlé brocolis",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Cabillaud",
+   "Beurre",
+   "Brocolis"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 704,
+  "name": "Filet de dinde aux courgettes",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Escalope de dinde",
+   "Huile d'olive",
+   "Courgettes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 705,
+  "name": "Maquereaux grillés salade",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Maquereaux",
+   "Huile d'olive",
+   "Roquette"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 706,
+  "name": "Tofu sauté aux épinards",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Tofu",
+   "Huile sésame",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 707,
+  "name": "Truite amandes haricots",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Truite",
+   "Amandes",
+   "Haricots verts"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 708,
+  "name": "Poulet grillé chou-fleur",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Poulet",
+   "Huile d'olive",
+   "Chou-fleur"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 709,
+  "name": "Lieu noir aux poireaux",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Lieu noir",
+   "Beurre",
+   "Poireaux"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 710,
+  "name": "Sardines grillées concombre",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Sardines",
+   "Huile d'olive",
+   "Concombre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 711,
+  "name": "Steak haché salade-tomate",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Steak haché 15%",
+   "Huile d'olive",
+   "Salade"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 712,
+  "name": "Filet de bar fenouil",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Bar",
+   "Beurre",
+   "Fenouil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 713,
+  "name": "Crevettes grillées brocolis",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Crevettes",
+   "Huile d'olive",
+   "Brocolis"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 714,
+  "name": "Frittata légumes verts",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Œufs",
+   "Beurre",
+   "Épinards-courgettes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 800,
+  "name": "Saumon crème citronnée",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Saumon",
+   "Crème entière",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 801,
+  "name": "Avocat au thon mayo",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Thon huile",
+   "Avocat",
+   "Mayonnaise"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 802,
+  "name": "Omelette beurre-fromage",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Œufs",
+   "Beurre",
+   "Comté"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 803,
+  "name": "Sardines beurre huile olive",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Sardines",
+   "Beurre",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 804,
+  "name": "Bavette beurre noisette",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Bavette",
+   "Beurre",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 805,
+  "name": "Cabillaud sauce hollandaise",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Cabillaud",
+   "Beurre",
+   "Jaunes d'œuf"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 806,
+  "name": "Poulet crème & lardons",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Poulet",
+   "Crème entière",
+   "Lardons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 807,
+  "name": "Œufs bénédicte au beurre",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Œufs",
+   "Beurre",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 808,
+  "name": "Tartare bœuf à l'huile",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Bœuf cru",
+   "Huile d'olive",
+   "Jaune d'œuf"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 809,
+  "name": "Crevettes beurre-coco",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Crevettes",
+   "Beurre",
+   "Huile de coco"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 810,
+  "name": "Foie de veau au beurre",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Foie de veau",
+   "Beurre",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 811,
+  "name": "Œufs mayonnaise à l'huile",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Œufs durs",
+   "Mayonnaise maison",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 812,
+  "name": "Maquereaux beurre échalotes",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Maquereaux",
+   "Beurre",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 813,
+  "name": "Poulet beurre cacahuète",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Poulet",
+   "Beurre cacahuète",
+   "Lait de coco"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 814,
+  "name": "Avocat-saumon mayo",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Saumon fumé",
+   "Avocat",
+   "Mayonnaise"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 900,
+  "name": "Côte de bœuf au beurre",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Côte de bœuf",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 901,
+  "name": "Tartare bœuf classique",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Bœuf haché cru",
+   "Jaune d'œuf",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 902,
+  "name": "Foie de veau poêlé",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Foie de veau",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 903,
+  "name": "Bacon œufs au beurre",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Bacon",
+   "Œufs",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 904,
+  "name": "Saumon vapeur au beurre",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Saumon",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 905,
+  "name": "Burger nu double-cheese",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Bœuf haché",
+   "Cheddar",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 906,
+  "name": "Magret de canard rosé",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Magret canard"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 907,
+  "name": "Côtelettes d'agneau grillées",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Côtelettes d'agneau",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 908,
+  "name": "Tartare de saumon",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Saumon cru",
+   "Jaune d'œuf",
+   "Crème épaisse"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 909,
+  "name": "Crevettes au beurre",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Crevettes",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 910,
+  "name": "Onglet à la moelle",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Onglet",
+   "Moelle osseuse"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 911,
+  "name": "Brochettes de poulet beurre",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Poulet",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 912,
+  "name": "Œufs brouillés crème",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Œufs",
+   "Crème entière",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 913,
+  "name": "Travers de porc rôtis",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Travers de porc",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 914,
+  "name": "Pavé de bœuf au roquefort",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Pavé de bœuf",
+   "Roquefort",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 920,
+  "name": "Saumon teriyaki keto",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Pavé de saumon",
+   "Huile sésame",
+   "Brocoli"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 921,
+  "name": "Cabillaud beurre noisette",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Cabillaud",
+   "Beurre",
+   "Asperges"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 922,
+  "name": "Curry coco poulet",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Cuisses poulet",
+   "Lait coco",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 923,
+  "name": "Tartare de bœuf classique",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Filet de bœuf",
+   "Jaune d'œuf",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 924,
+  "name": "Aubergine farcie au chèvre",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Aubergine",
+   "Chèvre",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 925,
+  "name": "Crevettes ail-persil",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Crevettes",
+   "Beurre",
+   "Persil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 926,
+  "name": "Steak haché à l'oignon",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Steak haché 15%",
+   "Beurre",
+   "Oignon rouge"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 927,
+  "name": "Poulet citron-thym au four",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Cuisses poulet",
+   "Huile olive",
+   "Citron"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 928,
+  "name": "Truite amandes au beurre",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Truite",
+   "Amandes effilées",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 929,
+  "name": "Côte de veau morilles",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Côte de veau",
+   "Crème",
+   "Morilles"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 930,
+  "name": "Salade César au poulet",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Blanc de poulet",
+   "Parmesan",
+   "Mayonnaise"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 931,
+  "name": "Bavette à l'échalote",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Bavette",
+   "Beurre",
+   "Échalotes"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 932,
+  "name": "Lieu jaune sauce vierge",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Lieu jaune",
+   "Huile olive",
+   "Tomates cerises"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 933,
+  "name": "Magret de canard sauce poivre",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Magret",
+   "Crème",
+   "Poivre vert"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 934,
+  "name": "Espadon grillé chimichurri",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Espadon",
+   "Huile olive",
+   "Persil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 935,
+  "name": "Saucisses de Toulouse choucroute",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Saucisse Toulouse",
+   "Choucroute",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 936,
+  "name": "Pintade aux choux",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Pintade",
+   "Choux verts",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 937,
+  "name": "Daurade royale en croûte de sel",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Daurade",
+   "Huile olive",
+   "Gros sel"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 938,
+  "name": "Lapin moutarde",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Râble de lapin",
+   "Crème",
+   "Moutarde"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 939,
+  "name": "Foie de veau persillade",
+  "desc": "Recette keto premium.",
+  "ingredients": [
+   "Foie de veau",
+   "Beurre",
+   "Persil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 940,
+  "name": "Curry de tofu coco",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Tofu ferme",
+   "Lait coco",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 941,
+  "name": "Œufs cocotte champignons",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Crème épaisse",
+   "Champignons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 942,
+  "name": "Salade burrata avocat",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Burrata",
+   "Avocat",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 943,
+  "name": "Tofu mariné soja-sésame",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Tofu ferme",
+   "Huile sésame",
+   "Sauce soja"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 944,
+  "name": "Gratin courgettes mozza",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Courgettes",
+   "Mozzarella",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 945,
+  "name": "Risotto chou-fleur parmesan",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Chou-fleur râpé",
+   "Parmesan",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 946,
+  "name": "Crêpes coco œufs",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Farine coco",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 947,
+  "name": "Frittata épinards-feta",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Épinards",
+   "Feta"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 948,
+  "name": "Pesto courgettes spaghetti",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Courgettes",
+   "Pesto",
+   "Pignons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 949,
+  "name": "Avocat gratiné chèvre",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Avocat",
+   "Chèvre frais",
+   "Œuf"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 950,
+  "name": "Soupe miso tofu",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Tofu soyeux",
+   "Miso",
+   "Algues wakamé"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 951,
+  "name": "Œufs benedicte hollandaise",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs pochés",
+   "Jaunes",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 952,
+  "name": "Halloumi-tomates rôties",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Halloumi",
+   "Tomates cerises",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 953,
+  "name": "Brouillade truffée",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Crème",
+   "Truffe"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 954,
+  "name": "Aubergines parmesane",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Aubergines",
+   "Mozzarella",
+   "Parmesan"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 955,
+  "name": "Velouté chou-fleur amandes",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Chou-fleur",
+   "Amandes",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 956,
+  "name": "Œufs mimosa avocat",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs durs",
+   "Avocat",
+   "Mayonnaise"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 957,
+  "name": "Poêlée champignons mascarpone",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Champignons",
+   "Mascarpone",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 958,
+  "name": "Tartare avocat-tomate",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Avocats",
+   "Tomates cerises",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 959,
+  "name": "Œufs brouillés crémeux",
+  "desc": "Recette spécial mode vegetarien.",
+  "ingredients": [
+   "Œufs",
+   "Crème fraîche",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 960,
+  "name": "Côte de bœuf grillée",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Côte de bœuf",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 961,
+  "name": "Saumon entier au beurre",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Filet saumon",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 962,
+  "name": "Foie gras poêlé",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Foie gras frais",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 963,
+  "name": "Œufs au plat lardons",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Œufs",
+   "Lardons",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 964,
+  "name": "Burger sans pain",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Steak haché 20%",
+   "Bacon",
+   "Cheddar"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 965,
+  "name": "Magret cru entier",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Magret",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 966,
+  "name": "Tartare bœuf jaune d'œuf",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Filet bœuf",
+   "Jaune d'œuf",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 967,
+  "name": "Travers de porc rôtis",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Travers de porc",
+   "Saindoux"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 968,
+  "name": "Brochettes de poulet beurre",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Aiguillettes poulet",
+   "Beurre clarifié"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 969,
+  "name": "Os à moelle rôtis",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Os à moelle",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 970,
+  "name": "Gésiers confits",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Gésiers confits",
+   "Graisse de canard"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 971,
+  "name": "Ribeye sauce béarnaise",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Ribeye",
+   "Jaunes",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 972,
+  "name": "Sardines à l'huile",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Sardines",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 973,
+  "name": "Cuisses de canard confites",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Cuisse confit",
+   "Graisse canard"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 974,
+  "name": "Tartare de saumon classique",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Saumon frais",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 975,
+  "name": "Œufs cocotte au saumon",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Œufs",
+   "Saumon fumé",
+   "Crème épaisse"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 976,
+  "name": "Cabillaud beurre seul",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Cabillaud",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 977,
+  "name": "Poulet rôti entier",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Poulet",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 978,
+  "name": "Joue de bœuf braisée",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Joue de bœuf",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 979,
+  "name": "Pancetta croquante",
+  "desc": "Recette spécial mode carnivore.",
+  "ingredients": [
+   "Pancetta",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 980,
+  "name": "Saumon avocat citron",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Saumon",
+   "Avocat",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 981,
+  "name": "Poulet épinards crémeux",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Blanc poulet",
+   "Épinards",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 982,
+  "name": "Tofu sauté courgettes",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Tofu ferme",
+   "Courgettes",
+   "Huile sésame"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 983,
+  "name": "Œufs brouillés saumon",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Œufs",
+   "Saumon fumé",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 984,
+  "name": "Crevettes ail-coco",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Crevettes",
+   "Lait coco",
+   "Persil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 985,
+  "name": "Bavette épinards crème",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Bavette",
+   "Épinards",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 986,
+  "name": "Œufs durs avocat",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Œufs durs",
+   "Avocat",
+   "Mayonnaise"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 987,
+  "name": "Poulet brocoli sésame",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Blanc poulet",
+   "Brocoli",
+   "Huile sésame"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 988,
+  "name": "Cabillaud aux herbes",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Cabillaud",
+   "Huile olive",
+   "Persil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 989,
+  "name": "Steak champignons crème",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Steak",
+   "Champignons",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 990,
+  "name": "Tartine pain keto avocat",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Avocat",
+   "Œufs pochés",
+   "Pain keto"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 991,
+  "name": "Truite épinards beurre",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Truite",
+   "Épinards",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 992,
+  "name": "Salade roquette parmesan",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Roquette",
+   "Parmesan",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 993,
+  "name": "Lapin moutarde-thym",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Lapin",
+   "Crème",
+   "Moutarde"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 994,
+  "name": "Foie de veau échalotes",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Foie de veau",
+   "Échalotes",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 995,
+  "name": "Espadon sauce vierge",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Espadon",
+   "Tomates cerises",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 996,
+  "name": "Poulet curry coco",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Poulet",
+   "Lait coco",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 997,
+  "name": "Sardines beurre persillé",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Sardines",
+   "Beurre",
+   "Persil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 998,
+  "name": "Côte d'agneau aux herbes",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Côtes agneau",
+   "Huile olive",
+   "Romarin"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 999,
+  "name": "Daurade fenouil",
+  "desc": "Recette spécial mode diabete.",
+  "ingredients": [
+   "Daurade",
+   "Fenouil",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1000,
+  "name": "Bouillon gras au beurre",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Beurre",
+   "Bouillon de bœuf",
+   "Huile MCT"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1001,
+  "name": "Avocat huile coco",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Avocat",
+   "Huile coco",
+   "Noix"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1002,
+  "name": "Œufs au beurre noisette",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Œufs",
+   "Beurre",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1003,
+  "name": "Smoothie keto coco",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Lait coco",
+   "Beurre amande",
+   "Huile MCT"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1004,
+  "name": "Saumon crème citron",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Saumon",
+   "Crème épaisse",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1005,
+  "name": "Bombes graisses chocolat",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Beurre coco",
+   "Cacao",
+   "Beurre amande"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1006,
+  "name": "Crème dessert avocat",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Avocat",
+   "Crème épaisse",
+   "Cacao"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1007,
+  "name": "Bacon œufs crème",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Bacon",
+   "Œufs",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1008,
+  "name": "Poulet beurre clarifié",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Poulet",
+   "Beurre clarifié",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1009,
+  "name": "Smoothie verts gras",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Épinards",
+   "Avocat",
+   "Huile MCT"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1010,
+  "name": "Mascarpone vanille",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Mascarpone",
+   "Beurre",
+   "Noix"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1011,
+  "name": "Crème champignons truffe",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Champignons",
+   "Crème épaisse",
+   "Truffe"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1012,
+  "name": "Bavette beurre maître hôtel",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Bavette",
+   "Beurre",
+   "Persil"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1013,
+  "name": "Œufs cocotte foie gras",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Œufs",
+   "Foie gras",
+   "Crème"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1014,
+  "name": "Salade burrata huile",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Burrata",
+   "Huile olive",
+   "Pignons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1015,
+  "name": "Saumon huile MCT",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Saumon",
+   "Huile MCT",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1016,
+  "name": "Œufs durs mayo huile",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Œufs durs",
+   "Mayonnaise",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1017,
+  "name": "Crème de coco dessert",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Crème coco",
+   "Beurre amande",
+   "Cacao"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1018,
+  "name": "Foie poêlé crème",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Foie veau",
+   "Crème",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1019,
+  "name": "Tartine MCT chocolat",
+  "desc": "Recette spécial mode epilepsie.",
+  "ingredients": [
+   "Huile MCT",
+   "Cacao",
+   "Beurre amande"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1100,
+  "name": "Tofu mariné soja-sésame",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu ferme",
+   "Huile sésame",
+   "Sauce soja"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1101,
+  "name": "Tempeh sauté brocolis",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tempeh",
+   "Brocoli",
+   "Huile coco"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1102,
+  "name": "Curry de tofu coco-épinards",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu ferme",
+   "Lait coco",
+   "Épinards"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1103,
+  "name": "Avocat farci au tofu lacto-fermenté",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Tofu lacto-fermenté",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1104,
+  "name": "Seitan grillé sauce moutarde",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Seitan",
+   "Crème soja",
+   "Moutarde"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1105,
+  "name": "Salade chou-kale-tofu",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Kale",
+   "Tofu fumé",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1106,
+  "name": "Bowl tempeh-avocat-graines",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tempeh",
+   "Avocat",
+   "Graines chanvre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1107,
+  "name": "Champignons à la crème de coco",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Champignons mixés",
+   "Crème coco",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1108,
+  "name": "Curry rouge tofu-coco",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu ferme",
+   "Lait coco",
+   "Pak choï"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1109,
+  "name": "Spaghetti de courgette pesto chanvre",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Courgettes spiralisées",
+   "Pesto chanvre maison",
+   "Pignons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1110,
+  "name": "Aubergines miso-sésame",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Aubergine",
+   "Tahini",
+   "Miso blanc"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1111,
+  "name": "Avocat-tomates-graines",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Tomates cerises",
+   "Graines tournesol"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1112,
+  "name": "Wok légumes-tofu-sésame",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu ferme",
+   "Mix wok légumes",
+   "Huile sésame"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1113,
+  "name": "Soupe Tom Kha végétalienne",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Lait coco",
+   "Champignons",
+   "Tofu soyeux"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1114,
+  "name": "Houmous de courgette-chanvre",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Courgette cuite",
+   "Tahini",
+   "Graines chanvre"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1115,
+  "name": "Tofu général Tso keto",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu ferme",
+   "Huile sésame",
+   "Brocoli"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1116,
+  "name": "Crème champignons-thym végétale",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Champignons",
+   "Crème soja",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1117,
+  "name": "Tartare d'algues-avocat",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Algues mixtes séchées",
+   "Huile sésame"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1118,
+  "name": "Currie d'aubergine-coco",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Aubergine",
+   "Lait coco",
+   "Huile coco"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1119,
+  "name": "Bowl quinoa-tempeh keto-friendly",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tempeh",
+   "Épinards",
+   "Avocat"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1120,
+  "name": "Tofu général à la sichuanaise",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu ferme",
+   "Huile sésame",
+   "Poivrons"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1121,
+  "name": "Salade thaï mangue verte-tofu",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu fumé",
+   "Mangue verte",
+   "Huile arachide"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1122,
+  "name": "Crème d'avocat-cacao dessert",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Lait coco",
+   "Cacao cru"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1123,
+  "name": "Pad thaï konjac-tofu",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu ferme",
+   "Nouilles konjac",
+   "Beurre cacahuète"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1124,
+  "name": "Tartare d'avocat-tomate-câpres",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Tomates cerises",
+   "Câpres"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1125,
+  "name": "Mousseline chou-fleur-tahini",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Chou-fleur",
+   "Tahini",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1126,
+  "name": "Tofu sauce arachide thaï",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Tofu ferme",
+   "Beurre cacahuète",
+   "Lait coco"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1127,
+  "name": "Salade avocat-noix-vinaigrette balsamique",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Avocat",
+   "Noix",
+   "Roquette"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1128,
+  "name": "Champignons portobello farcis",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Champignons portobello",
+   "Tofu émietté",
+   "Huile olive"
+  ]
+ },
+ {
+  "cat": "main",
+  "id": 1129,
+  "name": "Smoothie vert keto-vegan",
+  "desc": "Recette spécial mode vegan.",
+  "ingredients": [
+   "Épinards",
+   "Avocat",
+   "Huile coco"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 400,
+  "name": "Velouté de courgette & menthe",
+  "desc": "Léger, frais et parfumé — l'entrée keto idéale avant un plat copieux.",
+  "ingredients": [
+   "Courgettes",
+   "Crème épaisse",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 401,
+  "name": "Salade roquette & parmesan",
+  "desc": "Croquante, acidulée et riche en lipides — l'entrée express qui ouvre l'appétit.",
+  "ingredients": [
+   "Roquette fraîche",
+   "Parmesan en copeaux",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 402,
+  "name": "Carpaccio de courgette & pesto",
+  "desc": "Fines tranches de courgette, pesto maison — une entrée élégante sans cuisson.",
+  "ingredients": [
+   "Courgettes fines",
+   "Pignons de pin",
+   "Parmesan"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 403,
+  "name": "Tartare d'avocat & saumon fumé",
+  "desc": "Crémeux et iodé — l'entrée keto chic en 5 minutes.",
+  "ingredients": [
+   "Avocat mûr",
+   "Saumon fumé",
+   "Concombre"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 404,
+  "name": "Œufs mimosa keto",
+  "desc": "Classique des buffets revisité — crémeux, protéiné et sans glucides.",
+  "ingredients": [
+   "Œufs durs",
+   "Mayonnaise keto",
+   "Ciboulette"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 405,
+  "name": "Bouchées chèvre & noix",
+  "desc": "Fondantes et croquantes — l'entrée chaude qui fait sensation.",
+  "ingredients": [
+   "Chèvre frais",
+   "Noix concassées",
+   "Épinards frais"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 406,
+  "name": "Céleri rémoulade keto",
+  "desc": "Croquant et acidulé — l'entrée fraîche parfaite avant un plat riche.",
+  "ingredients": [
+   "Céleri-rave",
+   "Crème épaisse",
+   "Moutarde"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 407,
+  "name": "Soupe froide concombre & menthe",
+  "desc": "Ultra-fraîche, sans cuisson — l'entrée estivale keto par excellence.",
+  "ingredients": [
+   "Concombres",
+   "Yaourt grec",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 408,
+  "name": "Rillettes de thon & citron",
+  "desc": "Onctueuses et parfumées — à tartiner ou servir en verrine.",
+  "ingredients": [
+   "Thon à l'huile",
+   "Fromage frais",
+   "Céleri branche"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 409,
+  "name": "Chips de parmesan croustillantes",
+  "desc": "Croustillantes, savoureuses — l'entrée qui remplace les crackers.",
+  "ingredients": [
+   "Parmesan râpé",
+   "Mozzarella râpée",
+   "Roquette"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 410,
+  "name": "Guacamole & bâtonnets de céleri",
+  "desc": "Crémeux et croquant — l'entrée mexicaine 100% keto.",
+  "ingredients": [
+   "Avocats mûrs",
+   "Branches de céleri",
+   "Tomate concassée"
+  ]
+ },
+ {
+  "cat": "starter",
+  "id": 411,
+  "name": "Velouté de champignons",
+  "desc": "Parfumé, réconfortant et umami — l'entrée chaude des soirées d'hiver.",
+  "ingredients": [
+   "Champignons de Paris",
+   "Crème épaisse",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 500,
+  "name": "Mousse chocolat noir 85%",
+  "desc": "Aérienne et intense — le dessert keto qui satisfait toute envie de chocolat.",
+  "ingredients": [
+   "Chocolat noir 85%",
+   "Crème liquide entière",
+   "Œufs"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 501,
+  "name": "Panna cotta vanille keto",
+  "desc": "Tremblante et soyeuse — le dessert italien adapté sans sucre.",
+  "ingredients": [
+   "Crème de coco entière",
+   "Gélatine",
+   "Extrait de vanille"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 502,
+  "name": "Crème brûlée keto",
+  "desc": "Caramel croustillant à l'érythritol — le grand classique français en version cétogène.",
+  "ingredients": [
+   "Crème épaisse",
+   "Jaunes d'œufs",
+   "Gélatine"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 503,
+  "name": "Cheesecake sans cuisson",
+  "desc": "Crémeux et fondant — le cheesecake keto qui ne demande pas de four.",
+  "ingredients": [
+   "Cream cheese",
+   "Crème épaisse",
+   "Poudre d'amandes"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 504,
+  "name": "Brownie keto fondant",
+  "desc": "Dense, chocolaté et moelleux — le brownie qui ne trahit pas le régime.",
+  "ingredients": [
+   "Chocolat noir 85%",
+   "Beurre",
+   "Poudre d'amandes"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 505,
+  "name": "Tiramisu keto",
+  "desc": "Mascarpone onctueux et café intense — le dessert italien réinventé.",
+  "ingredients": [
+   "Mascarpone",
+   "Crème liquide",
+   "Œufs"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 506,
+  "name": "Crumble framboises-amandes",
+  "desc": "Acidulé sous un croustillant doré — le dessert réconfortant du dimanche.",
+  "ingredients": [
+   "Framboises fraîches",
+   "Poudre d'amandes",
+   "Beurre froid"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 507,
+  "name": "Flan coco anti-sucre",
+  "desc": "Onctueux et exotique — le flan qui rappelle les vacances sans sucre.",
+  "ingredients": [
+   "Lait de coco entier",
+   "Œufs entiers",
+   "Crème de coco"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 508,
+  "name": "Gâteau au citron keto",
+  "desc": "Moelleux et acidulé — le gâteau du goûter version cétogène.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Beurre",
+   "Œufs"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 509,
+  "name": "Cookies beurre de cacahuète",
+  "desc": "Croustillants dehors, fondants dedans — le cookie keto par excellence.",
+  "ingredients": [
+   "Beurre de cacahuète",
+   "Poudre d'amandes",
+   "Œuf"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 510,
+  "name": "Parfait chocolat-noix",
+  "desc": "Gelé, croquant et chocolaté — le dessert glacé keto sans sorbetière.",
+  "ingredients": [
+   "Chocolat noir 85%",
+   "Crème liquide",
+   "Noix concassées"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 511,
+  "name": "Île flottante keto",
+  "desc": "Blancs mousseux sur crème vanillée — le dessert rétro en version sans sucre.",
+  "ingredients": [
+   "Crème épaisse",
+   "Blancs d'œufs",
+   "Jaunes d'œufs"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 512,
+  "name": "Clafoutis cerises keto",
+  "desc": "Le dessert limousin revisité — cerises juteuses dans une pâte moelleuse.",
+  "ingredients": [
+   "Cerises dénoyautées",
+   "Poudre d'amandes",
+   "Œufs"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 513,
+  "name": "Muffins citron-pavot",
+  "desc": "Moelleux et parfumés — le muffin du brunch keto.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Beurre fondu",
+   "Œufs"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 514,
+  "name": "Bavarois framboise",
+  "desc": "Aérien et fruité — le dessert gastronomique accessible à tous.",
+  "ingredients": [
+   "Framboises",
+   "Crème liquide",
+   "Gélatine"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 515,
+  "name": "Crème au citron keto",
+  "desc": "Acidulée et onctueuse — la crème anglaise du citron sans sucre.",
+  "ingredients": [
+   "Œufs entiers",
+   "Beurre",
+   "Citrons (jus + zeste)"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 516,
+  "name": "Truffes chocolat-noix de coco",
+  "desc": "Bouchées fondantes enrobées de coco — le bonbon maison keto.",
+  "ingredients": [
+   "Chocolat noir 85%",
+   "Crème liquide",
+   "Noix de coco râpée"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 517,
+  "name": "Gâteau marbré keto",
+  "desc": "Vanille et chocolat dans chaque bouchée — le gâteau d'enfance sans sucre.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Beurre",
+   "Œufs"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 518,
+  "name": "Pudding chia chocolat",
+  "desc": "Préparé la veille — le dessert express qui cale sans cuisson.",
+  "ingredients": [
+   "Graines de chia",
+   "Lait d'amande",
+   "Cacao cru"
+  ]
+ },
+ {
+  "cat": "dessert",
+  "id": 519,
+  "name": "Soufflé chocolat individuel",
+  "desc": "Gonflé à la sortie du four — le dessert chaud qui impressionne à chaque fois.",
+  "ingredients": [
+   "Chocolat noir 85%",
+   "Œufs",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 100,
+  "name": "Mayonnaise maison keto",
+  "desc": "Onctueuse, sans sucre ajouté, bien meilleure que celle du commerce.",
+  "ingredients": [
+   "Jaunes d'œufs",
+   "Huile neutre",
+   "Moutarde de Dijon"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 101,
+  "name": "Sauce avocat-citron",
+  "desc": "Fraîche, crémeuse, polyvalente. Parfaite avec poisson et légumes.",
+  "ingredients": [
+   "Avocat mûr",
+   "Citron (jus)",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 102,
+  "name": "Beurre blanc keto",
+  "desc": "Sauce classique française, naturellement keto. Idéale pour le poisson.",
+  "ingredients": [
+   "Beurre froid coupé",
+   "Vin blanc sec",
+   "Échalote émincée"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 103,
+  "name": "Sauce hollandaise",
+  "desc": "Sauce royale pour les œufs, asperges et viandes blanches.",
+  "ingredients": [
+   "Jaunes d'œufs",
+   "Beurre clarifié",
+   "Jus de citron"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 104,
+  "name": "Vinaigrette moutarde-citron",
+  "desc": "La vinaigrette keto universelle, prête en 3 minutes.",
+  "ingredients": [
+   "Huile d'olive",
+   "Moutarde de Dijon",
+   "Jus de citron"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 105,
+  "name": "Sauce crème & herbes",
+  "desc": "Douce, aromatique. Parfaite avec poulet, légumes vapeur ou poisson.",
+  "ingredients": [
+   "Crème épaisse",
+   "Gousse d'ail",
+   "Herbes fraîches"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 106,
+  "name": "Chimichurri keto",
+  "desc": "Sauce argentine vive et piquante. Sublime les viandes grillées.",
+  "ingredients": [
+   "Persil plat frais",
+   "Huile d'olive",
+   "Vinaigre de vin rouge"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 107,
+  "name": "Sauce Caesar keto",
+  "desc": "Crémeuse et intense. Parfaite sur salade romaine et poulet grillé.",
+  "ingredients": [
+   "Mayonnaise maison",
+   "Parmesan râpé",
+   "Jus de citron"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 108,
+  "name": "Sauce tahini citron",
+  "desc": "Onctueuse, noisettée et fraîche. Parfaite avec légumes grillés et viandes.",
+  "ingredients": [
+   "Tahini (purée de sésame)",
+   "Jus de citron",
+   "Ail frais"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 109,
+  "name": "Beurre maître d'hôtel",
+  "desc": "Le classique des restaurants étoilés, fait maison en 5 minutes.",
+  "ingredients": [
+   "Beurre mou",
+   "Persil plat frais",
+   "Citron (jus & zeste)"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 110,
+  "name": "Sauce pesto keto",
+  "desc": "Sans pâtes mais tout aussi délicieux. Parfait avec légumes et viandes.",
+  "ingredients": [
+   "Basilic frais",
+   "Parmesan râpé",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 111,
+  "name": "Sauce roquefort & noix",
+  "desc": "Intense, crémeuse et luxueuse. Sublime les steaks et noix de saint-jacques.",
+  "ingredients": [
+   "Roquefort",
+   "Crème épaisse",
+   "Noix concassées"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 112,
+  "name": "Aïoli maison keto",
+  "desc": "L'authentique sauce provençale — ail, huile, rien de plus.",
+  "ingredients": [
+   "Ail frais",
+   "Huile d'olive",
+   "Jaune d'œuf"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 113,
+  "name": "Sauce satay keto",
+  "desc": "Inspirée de la cuisine thaïe, sans sucre et keto-friendly.",
+  "ingredients": [
+   "Beurre de cacahuète naturel",
+   "Sauce soja (tamari)",
+   "Huile de coco"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 114,
+  "name": "Sauce vierge à la tomate",
+  "desc": "Fraîche, crue, parfumée — la sauce de l'été sur vos poissons grillés.",
+  "ingredients": [
+   "Tomates mûres dés",
+   "Huile d'olive",
+   "Citron (jus)"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 115,
+  "name": "Guacamole maison keto",
+  "desc": "L'indétrônable. Riche en graisses saines, prêt en 5 minutes.",
+  "ingredients": [
+   "Avocats mûrs",
+   "Citron vert (jus)",
+   "Oignon rouge"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 116,
+  "name": "Sauce miso-gingembre",
+  "desc": "Umami intense et légèrement sucrée naturellement. Parfaite avec le saumon.",
+  "ingredients": [
+   "Pâte miso blanc",
+   "Huile de sésame",
+   "Gingembre frais râpé"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 117,
+  "name": "Sauce aux anchois & câpres",
+  "desc": "Intense et salée — une seule cuillère suffit pour transformer un plat.",
+  "ingredients": [
+   "Anchois à l'huile",
+   "Câpres égouttées",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 118,
+  "name": "Crème de poivrons rouges",
+  "desc": "Douce, fumée et colorée — sublime les viandes blanches et poissons.",
+  "ingredients": [
+   "Poivrons rouges rôtis",
+   "Huile d'olive",
+   "Gousse d'ail"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 119,
+  "name": "Sauce teriyaki keto",
+  "desc": "Sans sucre, toute la saveur. Idéale pour marinades et glazes.",
+  "ingredients": [
+   "Sauce soja tamari",
+   "Huile de sésame",
+   "Érythritol"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 120,
+  "name": "Tapenade keto maison",
+  "desc": "Méditerranéenne, intense et prête en 2 minutes au mixeur.",
+  "ingredients": [
+   "Olives noires dénoyautées",
+   "Huile d'olive",
+   "Câpres"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 121,
+  "name": "Beurre de cacahuète épicé",
+  "desc": "Dip asiatique rapide pour légumes crus, poulet ou brochettes.",
+  "ingredients": [
+   "Beurre de cacahuète naturel",
+   "Sauce soja tamari",
+   "Huile de sésame"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 122,
+  "name": "Chimichurri argentin",
+  "desc": "La sauce verte d'Argentine — intense, herbeuse, parfaite avec la viande grillée.",
+  "ingredients": [
+   "Persil plat",
+   "Huile d'olive",
+   "Vinaigre de vin rouge"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 123,
+  "name": "Tzatziki keto",
+  "desc": "Le dip grec frais et crémeux — parfait avec les crudités et viandes.",
+  "ingredients": [
+   "Yaourt grec entier",
+   "Concombre râpé et essoré",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 124,
+  "name": "Sauce béarnaise keto",
+  "desc": "La reine des sauces françaises pour le steak — onctueuse et parfumée à l'estragon.",
+  "ingredients": [
+   "Jaunes d'œufs",
+   "Beurre clarifié tiède",
+   "Estragon frais haché"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 125,
+  "name": "Sauce gribiche keto",
+  "desc": "La cousine piquante de la mayonnaise — parfaite avec les poissons froids.",
+  "ingredients": [
+   "Œufs durs (jaunes écrasés)",
+   "Huile neutre",
+   "Câpres hachées"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 126,
+  "name": "Sauce vierge aux herbes",
+  "desc": "Froide et fraîche — la sauce estivale parfaite pour le poisson et les légumes.",
+  "ingredients": [
+   "Huile d'olive",
+   "Tomates cerises coupées",
+   "Câpres"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 127,
+  "name": "Beurre maître d'hôtel",
+  "desc": "Classique des restaurants — un beurre parfumé qui fond sur le steak.",
+  "ingredients": [
+   "Beurre doux en pommade",
+   "Persil plat haché",
+   "Jus de citron"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 128,
+  "name": "Guacamole keto authentique",
+  "desc": "Le vrai guacamole mexicain — jamais mixé, toujours grossier.",
+  "ingredients": [
+   "Avocats mûrs",
+   "Tomate épépinée",
+   "Oignon rouge haché fin"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 129,
+  "name": "Pesto keto sans pignons",
+  "desc": "Le pesto classique adapté — avec amandes à la place des pignons.",
+  "ingredients": [
+   "Basilic frais",
+   "Huile d'olive extra vierge",
+   "Parmesan râpé"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 130,
+  "name": "Tapenade noire provençale",
+  "desc": "Intense, méditerranéenne et naturellement keto — pour tartines, viandes et légumes.",
+  "ingredients": [
+   "Olives noires dénoyautées",
+   "Huile d'olive",
+   "Câpres"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 131,
+  "name": "Sauce teriyaki keto (sans sucre)",
+  "desc": "La sauce teriyaki sans sucre ni mirin — grâce à l'érythritol.",
+  "ingredients": [
+   "Sauce soja tamari",
+   "Érythritol liquide",
+   "Huile de sésame"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 132,
+  "name": "Sauce tahini-citron",
+  "desc": "La sauce libanaise aux sésames — polyvalente, crémeuse et nutritive.",
+  "ingredients": [
+   "Tahini (purée de sésame)",
+   "Jus de citron",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 133,
+  "name": "Sauce romesco keto",
+  "desc": "La sauce catalane aux poivrons rôtis et amandes — intense et fumée.",
+  "ingredients": [
+   "Poivrons rouges rôtis",
+   "Amandes grillées",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 134,
+  "name": "Sauce créole keto",
+  "desc": "Piquante, parfumée et colorée — pour les viandes grillées et poissons.",
+  "ingredients": [
+   "Tomates fraîches épépinées",
+   "Oignon rouge",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 135,
+  "name": "Huile aromatique au basilic",
+  "desc": "L'huile verte parfumée — quelques gouttes transforment n'importe quel plat.",
+  "ingredients": [
+   "Basilic frais",
+   "Huile d'olive extra vierge",
+   "Gousses d'ail"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 136,
+  "name": "Sauce mojo verde (îles Canaries)",
+  "desc": "La sauce des Canaries — piquante et herbeuse, parfaite avec le poisson.",
+  "ingredients": [
+   "Coriandre fraîche",
+   "Huile d'olive",
+   "Gousses d'ail"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 137,
+  "name": "Sauce cacahuètes à la thaïe",
+  "desc": "Onctueuse, épicée et légèrement sucrée — pour le satay et les légumes crus.",
+  "ingredients": [
+   "Beurre de cacahuètes naturel",
+   "Lait de coco",
+   "Tamari"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 138,
+  "name": "Sauce citron-câpres (piccata)",
+  "desc": "La sauce italienne acidulée qui transforme veau, poulet et poisson.",
+  "ingredients": [
+   "Beurre froid",
+   "Jus de citron",
+   "Câpres"
+  ]
+ },
+ {
+  "cat": "sauces",
+  "id": 139,
+  "name": "Sauce au gorgonzola",
+  "desc": "Intense et crémeuse — pour les steaks, poires et noix.",
+  "ingredients": [
+   "Gorgonzola piccante",
+   "Crème épaisse",
+   "Beurre"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 200,
+  "name": "Noix épicées rôties",
+  "desc": "Le snack keto parfait à préparer en grand batch pour la semaine.",
+  "ingredients": [
+   "Noix mélangées",
+   "Beurre fondu",
+   "Paprika fumé"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 201,
+  "name": "Rouleaux jambon & fromage",
+  "desc": "Prêt en 3 minutes. Idéal pour un snack protéiné rapide.",
+  "ingredients": [
+   "Jambon blanc",
+   "Fromage en tranche",
+   "Moutarde"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 202,
+  "name": "Chips de parmesan",
+  "desc": "Croustillantes, salées, zéro glucides. La chips keto ultime.",
+  "ingredients": [
+   "Parmesan râpé",
+   "Paprika",
+   "Origan séché"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 203,
+  "name": "Céleri & cream cheese",
+  "desc": "Croquant et frais. Excellent en version salée ou avec des herbes.",
+  "ingredients": [
+   "Céleri",
+   "Cream cheese",
+   "Aneth frais"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 204,
+  "name": "Œufs durs à la mayo",
+  "desc": "Snack ultra-satiétant, portable et 100% keto.",
+  "ingredients": [
+   "Œufs durs",
+   "Mayonnaise",
+   "Paprika fumé"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 205,
+  "name": "Radis au beurre & sel",
+  "desc": "Le classique français revisité. Simple, keto, délicieux.",
+  "ingredients": [
+   "Radis frais",
+   "Beurre ramolli",
+   "Fleur de sel"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 206,
+  "name": "Olives marinées maison",
+  "desc": "Riches en graisses mono-insaturées. Se préparent en 5 min.",
+  "ingredients": [
+   "Olives vertes & noires",
+   "Huile d'olive",
+   "Ail"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 207,
+  "name": "Avocat au sel & citron",
+  "desc": "Le snack keto le plus simple et le plus nutritif.",
+  "ingredients": [
+   "Avocat mûr",
+   "Jus de citron",
+   "Fleur de sel"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 208,
+  "name": "Crackers graines keto",
+  "desc": "Croustillants et nutritifs. Remplacent le pain en 20 minutes.",
+  "ingredients": [
+   "Graines de lin",
+   "Graines de tournesol",
+   "Graines de sésame"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 209,
+  "name": "Bouchées de thon & avocat",
+  "desc": "Protéiné, crémeux et prêt en 5 minutes chrono.",
+  "ingredients": [
+   "Thon au naturel",
+   "Avocat mûr",
+   "Jus de citron"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 210,
+  "name": "Chips de chou kale",
+  "desc": "Le snack végétal ultra-croustillant, riche en minéraux.",
+  "ingredients": [
+   "Feuilles de kale",
+   "Huile d'olive",
+   "Parmesan râpé"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 211,
+  "name": "Boules énergie coco-cacao",
+  "desc": "Le snack sucré keto — à préparer en batch et garder au frigo.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Cacao non sucré",
+   "Beurre de cacahuète"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 212,
+  "name": "Concombre farci au saumon",
+  "desc": "Frais, élégant et parfait pour recevoir ou grignoter.",
+  "ingredients": [
+   "Concombre",
+   "Saumon fumé",
+   "Cream cheese"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 213,
+  "name": "Bacon bits croustillants",
+  "desc": "Zéro glucides, 100% plaisir. À saupoudrer partout ou grignoter tel quel.",
+  "ingredients": [
+   "Bacon en tranches",
+   "Poivre noir",
+   "Paprika fumé"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 214,
+  "name": "Verrines mozza & tomates séchées",
+  "desc": "Frais et savoureux — comme une caprese en version snack.",
+  "ingredients": [
+   "Mozzarella di bufala",
+   "Tomates séchées à l'huile",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 215,
+  "name": "Œufs de caille à la fleur de sel",
+  "desc": "Mini, élégants et parfaitement keto. Une bouchée = une protéine.",
+  "ingredients": [
+   "Œufs de caille",
+   "Fleur de sel",
+   "Mayonnaise"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 216,
+  "name": "Dip de poivrons rôtis",
+  "desc": "Smoky, doux et onctueux — un dip méditerranéen irrésistible.",
+  "ingredients": [
+   "Poivrons rouges",
+   "Huile d'olive",
+   "Ail rôti"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 217,
+  "name": "Mini brochettes caprese",
+  "desc": "Trois ingrédients, zéro cuisson, tout le goût de l'Italie.",
+  "ingredients": [
+   "Mini mozzarella (ciliegine)",
+   "Tomates cerises",
+   "Basilic frais"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 218,
+  "name": "Beurre de noix maison",
+  "desc": "Onctueux, naturel, sans additifs. Parfait sur pain keto ou légumes.",
+  "ingredients": [
+   "Noix mélangées rôties",
+   "Huile de coco",
+   "Fleur de sel"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 219,
+  "name": "Rollés de laitue au bœuf épicé",
+  "desc": "Légers, frais et protéinés — parfaits pour un snack rapide.",
+  "ingredients": [
+   "Feuilles de laitue",
+   "Bœuf haché",
+   "Huile de sésame"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 220,
+  "name": "Graines de citrouille épicées",
+  "desc": "Croustillantes, protéinées et irrésistibles. À grignoter partout.",
+  "ingredients": [
+   "Graines de courge",
+   "Huile d'olive",
+   "Cumin"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 221,
+  "name": "Panna cotta keto vanille",
+  "desc": "Dessert keto élégant — tremblant, soyeux, vanillé.",
+  "ingredients": [
+   "Crème entière",
+   "Gélatine en poudre",
+   "Érythritol"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 222,
+  "name": "Toast keto à l'avocat",
+  "desc": "Sur pain keto maison — l'avocat légèrement assaisonné change tout.",
+  "ingredients": [
+   "Pain keto aux graines",
+   "Avocat mûr",
+   "Œufs de caille durs"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 223,
+  "name": "Barres énergétiques keto maison",
+  "desc": "Préparez-en 12 d'un coup — une semaine de snacks keto faits maison.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Purée d'amandes",
+   "Pépites de chocolat 90%"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 224,
+  "name": "Crackers aux graines maison",
+  "desc": "Croustillants et parfumés — la base de nombreux dips keto.",
+  "ingredients": [
+   "Graines de lin moulues",
+   "Graines de sésame",
+   "Graines de tournesol"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 225,
+  "name": "Chocolat noir 90% & beurre de noix",
+  "desc": "Le snack keto parfait — deux ingrédients, plaisir immédiat.",
+  "ingredients": [
+   "Chocolat noir 90%",
+   "Beurre d'amandes naturel",
+   "Noix de macadamia"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 226,
+  "name": "Verrines concombre & guacamole",
+  "desc": "Frais, léger et zéro cuisson — le snack apéro keto élégant.",
+  "ingredients": [
+   "Concombre en rondelles épaisses",
+   "Guacamole maison",
+   "Graines de sésame"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 227,
+  "name": "Tartare de thon express",
+  "desc": "Protéiné, frais et élégant — le snack des jours actifs.",
+  "ingredients": [
+   "Thon à l'huile d'olive",
+   "Avocat en dés",
+   "Sauce soja tamari"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 228,
+  "name": "Olives marinées maison",
+  "desc": "Des olives basiques transformées en olives de restaurant en 5 minutes.",
+  "ingredients": [
+   "Olives mixtes",
+   "Huile d'olive aromatique",
+   "Citron (zeste + quartiers)"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 229,
+  "name": "Caprese keto (mozzarella & tomates)",
+  "desc": "L'assiette italienne estivale — simple, fraîche et parfumée.",
+  "ingredients": [
+   "Mozzarella buffalo",
+   "Tomates cerises coupées",
+   "Huile d'olive extra vierge"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 230,
+  "name": "Truffes keto chocolat-coco",
+  "desc": "Le plaisir chocolaté sans culpabilité — à préparer en batch le week-end.",
+  "ingredients": [
+   "Chocolat 85% fondu",
+   "Crème de coco",
+   "Poudre de cacao"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 231,
+  "name": "Jambon fumé & melon keto",
+  "desc": "Le classique été version keto — melon en petite portion pour rester sage.",
+  "ingredients": [
+   "Jambon fumé en tranches",
+   "Melon (50g)",
+   "Roquette"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 232,
+  "name": "Edamame grillés au sel",
+  "desc": "Le snack japonais protéiné — légèrement keto avec modération.",
+  "ingredients": [
+   "Edamame surgelés",
+   "Huile de sésame",
+   "Sel fumé"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 233,
+  "name": "Mini-brochettes fromage & olives",
+  "desc": "L'apéro keto en 2 minutes — élégant et savoureux.",
+  "ingredients": [
+   "Comté ou Manchego en dés",
+   "Olives vertes farcies",
+   "Tomates cerises"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 234,
+  "name": "Beurre d'amandes & graines de lin",
+  "desc": "Le shot nutritionnel keto — simple, dense et rassasiant.",
+  "ingredients": [
+   "Beurre d'amandes naturel",
+   "Graines de lin moulues",
+   "Cacao 100%"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 235,
+  "name": "Petits flans keto au fromage",
+  "desc": "Petits flans salés à préparer la veille — snack ou entrée keto.",
+  "ingredients": [
+   "Œufs entiers",
+   "Crème liquide",
+   "Chèvre frais"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 236,
+  "name": "Soupe froide de concombre keto",
+  "desc": "Fraîche, légère et rafraîchissante — le snack d'été keto liquide.",
+  "ingredients": [
+   "Concombre entier",
+   "Yaourt grec entier",
+   "Huile d'olive"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 237,
+  "name": "Mousse au chocolat keto",
+  "desc": "Légère, aérienne et chocolatée — le dessert keto qui impressionne.",
+  "ingredients": [
+   "Chocolat 85% fondu",
+   "Crème liquide entière froide",
+   "Blancs d'œufs"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 238,
+  "name": "Crevettes cocktail & sauce keto",
+  "desc": "L'apéro classique reinventé — sauce cocktail maison sans sucre.",
+  "ingredients": [
+   "Crevettes cuites décortiquées",
+   "Mayonnaise maison",
+   "Sauce tomate (sans sucre)"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 239,
+  "name": "Tortillas de courgettes au fromage",
+  "desc": "La tortilla keto végétale — à garnir selon l'humeur.",
+  "ingredients": [
+   "Courgette râpée",
+   "Œufs entiers",
+   "Parmesan râpé"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 240,
+  "name": "Sablés keto amandes-citron",
+  "desc": "Biscuits keto friables et citronnés — le goûter sans culpabilité.",
+  "ingredients": [
+   "Poudre d'amandes",
+   "Œuf entier",
+   "Beurre fondu"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 241,
+  "name": "Bouillon de poulet maison",
+  "desc": "Le bouillon miracle du keto — reminéralisant, anti-grippe cétogène.",
+  "ingredients": [
+   "Carcasse de poulet rôti",
+   "Carottes coupées",
+   "Céleri"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 242,
+  "name": "Crème brûlée keto",
+  "desc": "Le dessert classique français adapté keto — caramel à l'érythritol.",
+  "ingredients": [
+   "Crème liquide entière",
+   "Jaunes d'œufs",
+   "Érythritol"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 243,
+  "name": "Tartine fromage frais & noix",
+  "desc": "Snack raffiné et nourrissant — le combo parfait avant le sport.",
+  "ingredients": [
+   "Pain keto grillé",
+   "Fromage frais (type St-Moret)",
+   "Cerneaux de noix"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 244,
+  "name": "Smoothie protéiné keto vanille",
+  "desc": "Le shake récupération post-sport — crémeux et naturellement sucré.",
+  "ingredients": [
+   "Lait d'amandes non sucré",
+   "Yaourt grec entier",
+   "Purée d'amandes"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 245,
+  "name": "Velouté de céleri-rave & noisettes",
+  "desc": "Soyeux, légèrement fumé — la soupe du dimanche soir qui réconforte.",
+  "ingredients": [
+   "Céleri-rave en cubes",
+   "Crème de coco",
+   "Noisettes grillées"
+  ]
+ },
+ {
+  "cat": "snacks",
+  "id": 246,
+  "name": "Panna cotta coco & coulis de framboises",
+  "desc": "Le dessert keto qui bluffera vos invités — élégant et tropical.",
+  "ingredients": [
+   "Crème de coco entière",
+   "Gélatine en feuille",
+   "Framboises fraîches"
+  ]
+ }
+]

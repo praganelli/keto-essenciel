@@ -9188,6 +9188,7 @@ function renderLibrary(){
     return `<div class="lib-card ${r.modeTag==='vegan'?'is-vegan':''}" data-cat="${r.cat}" onclick="openRecipe(${r.id})">
       <div class="lib-card-emoji">
         <div class="lib-card-emoji-bg"></div>
+        <img class="lib-card-emoji-photo" src="https://storage.googleapis.com/testprojet-721cb-recipes/recipe-photos/${r.cat}-${r.id}.jpg" alt="" loading="lazy" onload="this.classList.add('loaded'); this.parentElement.classList.add('has-photo');" onerror="this.remove();">
         <div class="lib-card-emoji-icon">${r.emoji}</div>
         ${veganBadge}
         <!-- Hover overlay -->
