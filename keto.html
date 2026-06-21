@@ -5688,27 +5688,28 @@ body{
   body::after{ display:none !important; }
   body::before{ display:none !important; }
 
-  /* ───────────── BARRE LATÉRALE GAUCHE ───────────── */
+  /* ───────────── BARRE LATÉRALE GAUCHE (panneau clair) ───────────── */
   .bottom-nav{
     position:fixed !important; left:0 !important; top:0 !important; bottom:0 !important; right:auto !important;
     width:272px !important; height:100vh !important; padding:0 !important; margin:0 !important;
     z-index:300 !important; display:block !important; transform:none !important;
-    background:linear-gradient(180deg,#1d3022 0%,#263c27 50%,#324d38 100%) !important;
-    box-shadow:16px 0 60px -28px rgba(0,0,0,.55) !important;
+    background:linear-gradient(180deg,#fbf7ec 0%,#f1ecdb 55%,#e8e6cf 100%) !important;
+    border-right:1px solid rgba(94,124,97,.18) !important;
+    box-shadow:14px 0 50px -34px rgba(61,90,64,.35) !important;
   }
   .bottom-nav-inner{
     flex-direction:column !important; align-items:stretch !important; justify-content:flex-start !important;
     height:100% !important; width:100% !important; max-width:none !important;
     background:transparent !important; border:none !important; box-shadow:none !important;
-    border-radius:0 !important; gap:5px !important; padding:30px 18px 24px !important;
+    border-radius:0 !important; gap:5px !important; padding:34px 18px 24px !important;
     backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
   }
   .bottom-nav-inner::before{
     content:"🌿  Le Keto" !important;
     font-family:'Fraunces',serif !important; font-size:27px !important; font-weight:600 !important;
-    color:#f5ecd6 !important; letter-spacing:.005em !important;
-    padding:4px 14px 20px !important; margin-bottom:8px !important;
-    border-bottom:1px solid rgba(255,255,255,.12) !important;
+    color:#2a3f2d !important; letter-spacing:.005em !important;
+    padding:6px 14px 22px !important; margin-bottom:22px !important;
+    border-bottom:1px solid rgba(94,124,97,.20) !important;
   }
   .bottom-nav-pill{ display:none !important; }
 
@@ -5716,21 +5717,23 @@ body{
     flex:0 0 auto !important; flex-direction:row !important; justify-content:flex-start !important;
     align-items:center !important; gap:15px !important; width:100% !important; height:auto !important;
     padding:13px 16px !important; border-radius:14px !important; opacity:1 !important;
-    color:rgba(244,236,214,.78) !important;
+    color:rgba(42,63,45,.72) !important;
     transition:background .2s ease,color .2s ease,transform .2s ease !important;
   }
   .bnav-tab .bnav-icon{ font-size:21px !important; width:26px !important; text-align:center !important; transform:none !important; }
   .bnav-tab .bnav-label{ font-size:15.5px !important; font-weight:600 !important; letter-spacing:.01em !important; opacity:1 !important; }
-  .bnav-tab:hover{ background:rgba(255,255,255,.08) !important; color:#fdf8ec !important; }
+  .bnav-tab:hover{ background:rgba(94,124,97,.12) !important; color:#1d3022 !important; }
   .bnav-tab.active{
-    background:linear-gradient(100deg,rgba(255,255,255,.18),rgba(255,255,255,.08)) !important;
-    color:#ffffff !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.14) !important;
+    background:linear-gradient(100deg,#5e7c61 0%,#42603f 100%) !important;
+    color:#ffffff !important;
+    box-shadow:0 8px 20px -10px rgba(61,90,64,.65), inset 0 0 0 1px rgba(255,255,255,.10) !important;
   }
+  .bnav-tab.active .bnav-label{ color:#ffffff !important; }
   .bnav-tab.active .bnav-icon{ transform:scale(1.08) !important; }
   /* Réglages + Déconnexion poussés en bas */
-  .bnav-settings{ margin-top:auto !important; border-top:1px solid rgba(255,255,255,.1) !important; padding-top:16px !important; margin-bottom:2px !important; }
-  .bnav-logout{ color:rgba(255,210,200,.85) !important; }
-  .bnav-logout:hover{ background:rgba(255,120,100,.16) !important; color:#fff !important; }
+  .bnav-settings{ margin-top:auto !important; border-top:1px solid rgba(94,124,97,.18) !important; padding-top:16px !important; margin-bottom:2px !important; }
+  .bnav-logout{ color:rgba(176,74,58,.92) !important; }
+  .bnav-logout:hover{ background:rgba(176,74,58,.12) !important; color:#8f3322 !important; }
 
   /* ───────────── ZONE DE CONTENU (pleine largeur) ───────────── */
   .app{
