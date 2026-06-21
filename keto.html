@@ -2122,6 +2122,17 @@ body.dark .day-macro-tile{border-color:rgba(255,255,255,.08)}
   font-size:9px;font-weight:700;color:var(--muted3);
   background:var(--s2);border-radius:100px;padding:1px 6px;
 }
+/* ─── Anneaux de progression macros (jour) ─── */
+.dmt-ring{ position:relative; width:58px; height:58px; margin:0 auto 8px; }
+.dmt-ring-svg{ width:58px; height:58px; transform:rotate(-90deg); display:block; }
+.dmt-ring-bg{ fill:none; stroke:rgba(20,40,28,.10); stroke-width:5; }
+.dmt-ring-fg{
+  fill:none; stroke:var(--ring-c,#3f9163); stroke-width:5; stroke-linecap:round;
+  stroke-dasharray:138.23; stroke-dashoffset:138.23;
+  transition:stroke-dashoffset 1.15s cubic-bezier(.16,1,.3,1);
+}
+.dmt-ring-emoji{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:22px; }
+body.dark .dmt-ring-bg{ stroke:rgba(255,255,255,.13); }
 
 /* Section title magazine style */
 .mag-section-title{
@@ -2386,7 +2397,11 @@ input[type=text],input[type=password],textarea{cursor:text}
 
 /* Tab slide transitions */
 .tab-slide{animation:tab-slide-in .32s cubic-bezier(.16,1,.3,1) both}
-@keyframes tab-slide-in{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tab-slide-in{from{opacity:0}to{opacity:1}}
+/* ─── Arrivée douce des cartes (fondu + glissement vertical, décalé) ─── */
+.kp-card-in{animation:kpCardIn .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes kpCardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){.kp-card-in{animation:none!important}}
 
 /* Focus ring */
 :focus-visible{outline:2px solid var(--em);outline-offset:3px;border-radius:4px}
@@ -8754,7 +8769,16 @@ function load(){
     return true;
   }catch(e){return false}
 }
-function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
+function toast(msg, type){
+  var t=$('toast'); if(!t) return;
+  t.textContent=msg;
+  t.classList.remove('toast-success','toast-info','toast-error','toast-premium');
+  if(type){ t.classList.add('toast-'+type); }
+  t.classList.add('show');
+  if(t._hideTimer){ clearTimeout(t._hideTimer); }
+  var dur = (msg && String(msg).length > 42) ? 3600 : 2500;
+  t._hideTimer = setTimeout(function(){ t.classList.remove('show'); }, dur);
+}
 
 /* ═══════════════════════ TAB ROUTING ═══════════════════════ */
 function switchTab(tab){
@@ -8795,6 +8819,26 @@ function switchTab(tab){
   if(tab==='profile') renderProfile();
   if(tab==='suivi'){ renderConseil(); renderSuivi(); }
   if(tab==='help' && typeof renderHelp==='function') renderHelp();
+  setTimeout(function(){ try{ kpAnimateCards(tab); }catch(e){} }, 30);
+}
+
+/* ─── Animation d'arrivée décalée des cartes (1a) ─── */
+function kpAnimateCards(tab){
+  try{
+    var root = document.getElementById('tab-'+tab);
+    if(!root) return;
+    var sel = '.day-hero, .day-macro-tile, .mag-section-title, .lib-card, .conseil-card, .kp-status-card, .pf-info, .pf-acc, .pf-bottom-row, .streak-banner, .suivi-card';
+    var els = root.querySelectorAll(sel);
+    var i = 0;
+    els.forEach(function(el){
+      if(i > 14) return;
+      el.classList.remove('kp-card-in');
+      void el.offsetWidth;
+      el.style.animationDelay = (i * 55) + 'ms';
+      el.classList.add('kp-card-in');
+      i++;
+    });
+  }catch(e){}
 }
 
 /* ═══ HELP / Aide tab ═══ */
@@ -9640,22 +9684,28 @@ function renderDayPanel(){
       <div class="dmt-lab">kcal / jour</div>
     </div>
     <div class="day-macro-tile dmt-fat">
-      <span class="dmt-icon">🥑</span>
+      <div class="dmt-ring" data-pct="${fp}" style="--ring-c:#3f9163">
+        <svg viewBox="0 0 52 52" class="dmt-ring-svg"><circle class="dmt-ring-bg" cx="26" cy="26" r="22"></circle><circle class="dmt-ring-fg" cx="26" cy="26" r="22"></circle></svg>
+        <span class="dmt-ring-emoji">🥑</span>
+      </div>
       <div class="dmt-val" id="cnt-fat">0</div>
-      <div class="dmt-lab">g lipides</div>
-      <div class="dmt-pct">${fp}%</div>
+      <div class="dmt-lab">g lipides · ${fp}%</div>
     </div>
     <div class="day-macro-tile dmt-prot">
-      <span class="dmt-icon">💪</span>
+      <div class="dmt-ring" data-pct="${pp}" style="--ring-c:#c0815a">
+        <svg viewBox="0 0 52 52" class="dmt-ring-svg"><circle class="dmt-ring-bg" cx="26" cy="26" r="22"></circle><circle class="dmt-ring-fg" cx="26" cy="26" r="22"></circle></svg>
+        <span class="dmt-ring-emoji">💪</span>
+      </div>
       <div class="dmt-val" id="cnt-prot">0</div>
-      <div class="dmt-lab">g protéines</div>
-      <div class="dmt-pct">${pp}%</div>
+      <div class="dmt-lab">g protéines · ${pp}%</div>
     </div>
     <div class="day-macro-tile dmt-carb">
-      <span class="dmt-icon">🌾</span>
+      <div class="dmt-ring" data-pct="${cp}" style="--ring-c:#c9a24a">
+        <svg viewBox="0 0 52 52" class="dmt-ring-svg"><circle class="dmt-ring-bg" cx="26" cy="26" r="22"></circle><circle class="dmt-ring-fg" cx="26" cy="26" r="22"></circle></svg>
+        <span class="dmt-ring-emoji">🌾</span>
+      </div>
       <div class="dmt-val" id="cnt-carb">0</div>
-      <div class="dmt-lab">g glucides</div>
-      <div class="dmt-pct">${cp}%</div>
+      <div class="dmt-lab">g glucides · ${cp}%</div>
     </div>
   </div>
 
@@ -9699,6 +9749,17 @@ function renderDayPanel(){
   animateCounter('cnt-fat',  fatG,  700);
   animateCounter('cnt-prot', protG, 700);
   animateCounter('cnt-carb', carbG, 700);
+  // Animate macro distribution rings
+  setTimeout(function(){
+    try{
+      document.querySelectorAll('#day-panel .dmt-ring, .day-macro-strip .dmt-ring').forEach(function(r){
+        var pct = Math.max(0, Math.min(100, parseFloat(r.getAttribute('data-pct'))||0));
+        var circ = 138.23;
+        var fg = r.querySelector('.dmt-ring-fg');
+        if(fg){ fg.style.strokeDashoffset = (circ*(1 - pct/100)).toFixed(2); }
+      });
+    }catch(e){}
+  }, 140);
 }
 
 function animateCounter(id, target, duration){
@@ -19693,6 +19754,11 @@ body.dark .toast{
   border-color:rgba(255,255,255,.12) !important;
   color:#e8efe5 !important;
 }
+/* Variantes de message (accent coloré à gauche) */
+.toast.toast-success{ border-left:4px solid #3a8a5e !important; }
+.toast.toast-info{ border-left:4px solid #4a86c4 !important; }
+.toast.toast-error{ border-left:4px solid #c8553a !important; color:#7a2d1c !important; }
+.toast.toast-premium{ border-left:4px solid #c9a24a !important; color:#7a5e1f !important; }
 
 /* ─── FAB Help — Liquid Glass orb with gold tint ─── */
 .fab-help{
