@@ -14,6 +14,7 @@
  */
 
 const { onRequest } = require("firebase-functions/v2/https");
+const functionsV1 = require("firebase-functions/v1");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const Stripe = require("stripe");
@@ -56,19 +57,44 @@ async function writeDoc(email, data) {
   return key;
 }
 
-async function sendWelcomeEmail(resend, email) {
+// Email de REMERCIEMENT — envoyé quand un client vient de passer en Premium
+async function sendPremiumThankYouEmail(resend, email) {
   await resend.emails.send({
     from: FROM_EMAIL,
     to: [email],
-    subject: "Bienvenue dans Keto Premium 🌿",
+    subject: "Merci pour votre passage en Premium 🌿",
     html: `
       <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;color:#2a2114">
-        <h1 style="color:#236648">Bienvenue dans Keto Premium</h1>
-        <p>Merci pour votre abonnement à <strong>Keto Premium — Essenciel O Naturel</strong>.</p>
-        <p>Votre accès Premium est désormais activé : modes alimentaires, suivi avancé
-        et toutes les recettes sont débloqués dans l'application.</p>
-        <p>Connectez-vous avec l'email de votre paiement pour en profiter immédiatement.</p>
+        <h1 style="color:#236648">Un grand merci 🙏</h1>
+        <p>Merci d'avoir rejoint <strong>Keto Premium — Essenciel O Naturel</strong> !</p>
+        <p>Votre accès Premium est dès maintenant activé : tous les <strong>modes alimentaires</strong>,
+        le <strong>suivi avancé</strong> et l'ensemble des <strong>recettes</strong> sont débloqués dans l'application.</p>
+        <p>Connectez-vous avec l'email de votre paiement pour en profiter immédiatement.
+        Nous sommes ravis de vous accompagner vers plus d'énergie et de légèreté.</p>
         <p style="margin-top:24px;color:#8a7659">Belle cétose,<br>Essenciel O Naturel · Naturopathie</p>
+      </div>
+    `,
+  });
+}
+
+// Email de BIENVENUE — envoyé à la création d'un nouveau compte (inscription)
+async function sendSignupWelcomeEmail(resend, email, firstname) {
+  const hello = firstname ? `Bonjour ${firstname},` : "Bonjour,";
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: [email],
+    subject: "Bienvenue chez Essenciel O Naturel 🌿",
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;color:#2a2114">
+        <h1 style="color:#236648">Bienvenue 🌿</h1>
+        <p>${hello}</p>
+        <p>Votre compte vient d'être créé sur <strong>Le Keto par un Naturopathe — Essenciel O Naturel</strong>.
+        Nous sommes heureux de vous compter parmi nous !</p>
+        <p>Vous pouvez dès à présent renseigner votre profil pour obtenir un
+        <strong>programme alimentaire personnalisé</strong>, suivre vos mesures et découvrir nos recettes.</p>
+        <p>Pour débloquer tous les modes alimentaires et le suivi avancé, pensez à passer en <strong>Premium</strong>
+        directement depuis l'application.</p>
+        <p style="margin-top:24px;color:#8a7659">À très vite,<br>Essenciel O Naturel · Naturopathie</p>
       </div>
     `,
   });
@@ -112,7 +138,7 @@ exports.stripeWebhook = onRequest({ region: "europe-west1" }, async (req, res) =
         ));
         try {
           const resend = new Resend(process.env.RESEND_API_KEY);
-          await sendWelcomeEmail(resend, email);
+          await sendPremiumThankYouEmail(resend, email);
           await resend.emails.send({
             from: FROM_EMAIL,
             to: [ADMIN_EMAIL],
@@ -191,4 +217,36 @@ exports.cancelSubscription = onRequest({ region: "europe-west1", cors: true }, a
     logger.error("cancelSubscription:", e.message);
     return res.status(500).json({ error: "server_error", message: e.message });
   }
+});
+
+// ════════════════════ BIENVENUE À L'INSCRIPTION ════════════════════
+// Déclencheur Firebase Auth : s'exécute automatiquement à la création
+// de tout nouveau compte (email/mot de passe OU Google) et envoie :
+//   - un email de bienvenue au nouveau client
+//   - une notification à l'administrateur
+exports.welcomeOnSignup = functionsV1.auth.user().onCreate(async (user) => {
+  const email = (user.email || "").trim().toLowerCase();
+  if (!email) return null;
+
+  // Prénom : displayName si dispo, sinon partie locale de l'email
+  let firstname = "";
+  if (user.displayName) firstname = user.displayName.split(" ")[0];
+  else firstname = email.split("@")[0];
+
+  try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    await sendSignupWelcomeEmail(resend, email, firstname);
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [ADMIN_EMAIL],
+      subject: "👋 Nouvelle inscription",
+      html: `<p>Nouveau compte créé : <strong>${email}</strong>${
+        firstname ? " (" + firstname + ")" : ""
+      }</p>`,
+    });
+    logger.info("Welcome email sent to", email);
+  } catch (e) {
+    logger.error("welcomeOnSignup Resend:", e.message);
+  }
+  return null;
 });

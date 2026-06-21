@@ -336,18 +336,19 @@ h1 em{color:var(--gold2)}
   left:0;
   top:7px;height:calc(100% - 14px);
   background:
-    linear-gradient(180deg, rgba(255,255,255,.42) 0%, rgba(255,255,255,.22) 100%);
-  backdrop-filter:blur(28px) saturate(180%);
-  -webkit-backdrop-filter:blur(28px) saturate(180%);
-  border:1px solid rgba(255,255,255,.55);
+    linear-gradient(180deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,.12) 100%);
+  backdrop-filter:blur(22px) saturate(165%);
+  -webkit-backdrop-filter:blur(22px) saturate(165%);
+  border:1px solid rgba(255,255,255,.38);
   border-radius:999px;
-  transition:transform .5s cubic-bezier(.34,1.28,.4,1), width .5s cubic-bezier(.34,1.28,.4,1);
+  /* iOS 26 Liquid Glass — gel-like spring travel + elastic stretch settle */
+  transition:transform .62s cubic-bezier(.22,1.2,.32,1), width .62s cubic-bezier(.22,1.2,.32,1);
   will-change:transform, width;
   box-shadow:
-    0 1px 0 rgba(255,255,255,.85) inset,
-    0 -1px 0 rgba(94,124,97,.12) inset,
-    0 4px 12px -3px rgba(58,94,61,.14),
-    0 8px 22px -8px rgba(58,94,61,.18);
+    0 1px 0 rgba(255,255,255,.6) inset,
+    0 -1px 0 rgba(94,124,97,.08) inset,
+    0 3px 10px -3px rgba(58,94,61,.1),
+    0 6px 18px -8px rgba(58,94,61,.14);
   z-index:1;
 }
 /* Subtle highlight at the top of the pill — iOS specular */
@@ -10061,6 +10062,7 @@ function toggleTheme(){
 applyTheme();
 
 /* ═══════════════════════ BOTTOM NAV PILL ═══════════════════════ */
+var _bnavPillOffset=null;
 function updateBottomNav(tab){
   ['plan','library','suivi','profile','help'].forEach(function(t){
     var el=$('nt-'+t); if(el) el.classList.toggle('active',t===tab);
@@ -10072,8 +10074,25 @@ function updateBottomNav(tab){
     var parentRect=document.querySelector('.bottom-nav-inner').getBoundingClientRect();
     var tabRect=active.getBoundingClientRect();
     var offset=(tabRect.left-parentRect.left-6);
-    pill.style.transform='translateX('+offset+'px)';
+    var prev=(_bnavPillOffset===null)?offset:_bnavPillOffset;
+    var delta=offset-prev;
+    _bnavPillOffset=offset;
     pill.style.width=tabRect.width+'px';
+    if(Math.abs(delta)<1){
+      // No travel — just settle in place, no stretch
+      pill.style.transform='translateX('+offset+'px) scaleX(1)';
+      return;
+    }
+    // iOS 26 "Liquid Glass": pill stretches toward the direction of travel,
+    // anchored on the trailing edge, then elastically snaps back to a capsule.
+    pill.style.transformOrigin=(delta>0?'left center':'right center');
+    var stretch=Math.min(1+Math.abs(delta)/340,1.32);
+    pill.style.transform='translateX('+offset+'px) scaleX('+stretch+')';
+    // Settle back to its natural rounded shape mid-flight (elastic wobble)
+    setTimeout(function(){
+      pill.style.transformOrigin='center center';
+      pill.style.transform='translateX('+offset+'px) scaleX(1)';
+    },210);
   },10);
 }
 setTimeout(function(){updateBottomNav('plan')},150);
@@ -12093,11 +12112,9 @@ function authOnSuccess(user, isNewUser){
   authShowMsg('✅ Bienvenue ' + name + ' !', 'success');
   // Log activity to Firestore (login or signup)
   try { logUserActivity(isNewUser ? 'signup' : 'login', user); } catch(e){}
-  // Notify admin by email on new signup (Resend via backend)
-  if(isNewUser){
-    try { notifyAdminSignup(user, name); } catch(e){}
-    try { notifyWelcomeUser(user, name); } catch(e){}
-  }
+  // Notify admin + send welcome email on new signup —
+  // géré côté serveur par la Cloud Function Firebase `welcomeOnSignup`
+  // (déclencheur Auth onCreate), permanent et fiable même après déploiement Netlify.
   // Apply pending referral code (entered at signup) — async, non-blocking
   if(isNewUser && window._pendingReferralCode){
     try { kpApplyReferralCodeOnSignup(window._pendingReferralCode, user); } catch(e){ console.warn('referral apply err', e); }
