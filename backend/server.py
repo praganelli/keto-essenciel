@@ -147,6 +147,14 @@ async def download_keto_app():
         filename="index.html",
     )
 
+@api_router.get("/download-functions")
+async def download_functions():
+    return FileResponse(
+        ROOT_DIR / "keto-firebase-functions.zip",
+        media_type="application/zip",
+        filename="keto-firebase-functions.zip",
+    )
+
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_dict = input.dict()
