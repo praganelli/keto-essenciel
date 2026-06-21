@@ -359,8 +359,8 @@ h1 em{color:var(--gold2)}
   mix-blend-mode:overlay;
 }
 
-/* Brand block — only shown in the desktop left sidebar */
-.bnav-brand{ display:none; }
+/* Brand block & desktop-only sidebar extras — only shown in the desktop left sidebar */
+.bnav-brand, .bnav-section, .bnav-premium-cta, .bnav-profile-card{ display:none; }
 
 /* Tab buttons — icon-only style closer to iOS dock */
 .bnav-tab{
@@ -5698,8 +5698,14 @@ body{
     z-index:300 !important; display:block !important; transform:none !important;
     background:linear-gradient(180deg,#fbf7ec 0%,#f1ecdb 55%,#e8e6cf 100%) !important;
     border-right:1px solid rgba(94,124,97,.18) !important;
-    box-shadow:14px 0 50px -34px rgba(61,90,64,.35) !important;
+    box-shadow:14px 0 50px -34px rgba(61,90,64,.35), inset -1px 0 0 rgba(255,255,255,.5) !important;
   }
+  /* Texture/voile subtil sur le panneau */
+  .bottom-nav::after{
+    content:'' !important; position:absolute !important; inset:0 !important; pointer-events:none !important; z-index:0 !important;
+    background:radial-gradient(120% 40% at 0% 0%, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 55%) !important;
+  }
+  .bottom-nav-inner{ position:relative !important; z-index:1 !important; }
   .bottom-nav-inner{
     flex-direction:column !important; align-items:stretch !important; justify-content:flex-start !important;
     height:100% !important; width:100% !important; max-width:none !important;
@@ -5708,48 +5714,125 @@ body{
     backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
   }
   .bottom-nav-inner::before{ display:none !important; }
+  /* ── Bloc branding (logo avocat + titre) ── */
   .bnav-brand{
     display:block !important; text-align:left !important;
-    padding:2px 14px 22px !important; margin-bottom:24px !important;
-    border-bottom:1px solid rgba(94,124,97,.20) !important;
+    padding:2px 14px 20px !important; margin-bottom:18px !important;
+    border-bottom:1px solid rgba(94,124,97,.18) !important;
+  }
+  .bnav-brand-head{ display:flex !important; align-items:center !important; gap:10px !important; }
+  .bnav-brand-logo{
+    width:38px !important; height:38px !important; flex:0 0 auto !important; border-radius:50% !important;
+    display:flex !important; align-items:center !important; justify-content:center !important; font-size:21px !important;
+    background:radial-gradient(120% 120% at 30% 25%, #ffffff 0%, #eef3e6 60%, #e2ecd6 100%) !important;
+    box-shadow:0 4px 12px -5px rgba(61,90,64,.5), inset 0 0 0 1px rgba(94,124,97,.18) !important;
   }
   .bnav-brand-title{
-    font-family:'Fraunces',serif !important; font-size:25px !important; font-weight:600 !important;
-    color:#2a3f2d !important; letter-spacing:.005em !important; line-height:1.1 !important;
+    font-family:'Fraunces',serif !important; font-size:23px !important; font-weight:600 !important;
+    color:#2a3f2d !important; letter-spacing:.005em !important; line-height:1.05 !important;
   }
   .bnav-brand-title em{ font-style:italic !important; color:#5e7c61 !important; }
   .bnav-brand-sub{
     font-family:'Fraunces',serif !important; font-size:10.5px !important; font-weight:600 !important;
-    letter-spacing:.22em !important; color:rgba(42,63,45,.62) !important; margin-top:5px !important;
+    letter-spacing:.22em !important; color:rgba(42,63,45,.62) !important; margin-top:9px !important;
   }
   .bnav-brand-tag{
     font-size:12px !important; font-style:italic !important; color:rgba(42,63,45,.7) !important;
-    margin-top:8px !important; line-height:1.35 !important;
+    margin-top:7px !important; line-height:1.35 !important;
   }
   .bnav-brand-tag em{ font-style:italic !important; font-weight:600 !important; color:var(--ed-sage-dark) !important; }
   .bottom-nav-pill{ display:none !important; }
 
+  /* ── Label de section ── */
+  .bnav-section{
+    display:block !important; font-size:10px !important; font-weight:700 !important;
+    letter-spacing:.18em !important; text-transform:uppercase !important;
+    color:rgba(42,63,45,.42) !important; padding:0 16px !important; margin:0 0 9px !important;
+  }
+
+  /* ── Onglets ── */
   .bnav-tab{
     flex:0 0 auto !important; flex-direction:row !important; justify-content:flex-start !important;
     align-items:center !important; gap:15px !important; width:100% !important; height:auto !important;
-    padding:13px 16px !important; border-radius:14px !important; opacity:1 !important;
+    padding:13px 16px !important; border-radius:14px !important; opacity:1 !important; position:relative !important;
     color:rgba(42,63,45,.72) !important;
-    transition:background .2s ease,color .2s ease,transform .2s ease !important;
+    transition:background .22s ease,color .22s ease,transform .22s cubic-bezier(.22,1,.36,1) !important;
   }
-  .bnav-tab .bnav-icon{ font-size:21px !important; width:26px !important; text-align:center !important; transform:none !important; }
+  .bnav-tab .bnav-icon{ font-size:21px !important; width:24px !important; height:24px !important; text-align:center !important; transform:none !important; }
   .bnav-tab .bnav-label{ font-size:15.5px !important; font-weight:600 !important; letter-spacing:.01em !important; opacity:1 !important; }
-  .bnav-tab:hover{ background:rgba(94,124,97,.12) !important; color:#1d3022 !important; }
+  /* Icônes ligne fines (mask SVG, héritent de la couleur du texte) */
+  #nt-plan .bnav-icon, #nt-library .bnav-icon, #nt-suivi .bnav-icon, #nt-profile .bnav-icon, .bnav-settings .bnav-icon{
+    font-size:0 !important; position:relative !important;
+  }
+  #nt-plan .bnav-icon::after, #nt-library .bnav-icon::after, #nt-suivi .bnav-icon::after, #nt-profile .bnav-icon::after, .bnav-settings .bnav-icon::after{
+    content:'' !important; position:absolute !important; inset:0 !important; background:currentColor !important;
+    -webkit-mask-repeat:no-repeat !important; mask-repeat:no-repeat !important;
+    -webkit-mask-position:center !important; mask-position:center !important;
+    -webkit-mask-size:22px 22px !important; mask-size:22px 22px !important;
+    transition:transform .22s cubic-bezier(.22,1,.36,1) !important;
+  }
+  #nt-plan .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E") !important; }
+  #nt-library .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E") !important; }
+  #nt-suivi .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-4l-3 9L9 3l-3 9H2'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-4l-3 9L9 3l-3 9H2'/%3E%3C/svg%3E") !important; }
+  #nt-profile .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") !important; }
+  .bnav-settings .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='4' y1='21' x2='4' y2='14'/%3E%3Cline x1='4' y1='10' x2='4' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12' y2='3'/%3E%3Cline x1='20' y1='21' x2='20' y2='16'/%3E%3Cline x1='20' y1='12' x2='20' y2='3'/%3E%3Cline x1='1' y1='14' x2='7' y2='14'/%3E%3Cline x1='9' y1='8' x2='15' y2='8'/%3E%3Cline x1='17' y1='16' x2='23' y2='16'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='4' y1='21' x2='4' y2='14'/%3E%3Cline x1='4' y1='10' x2='4' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12' y2='3'/%3E%3Cline x1='20' y1='21' x2='20' y2='16'/%3E%3Cline x1='20' y1='12' x2='20' y2='3'/%3E%3Cline x1='1' y1='14' x2='7' y2='14'/%3E%3Cline x1='9' y1='8' x2='15' y2='8'/%3E%3Cline x1='17' y1='16' x2='23' y2='16'/%3E%3C/svg%3E") !important; }
+  /* Hover : léger glissement + icône qui grandit */
+  .bnav-tab:hover{ background:rgba(94,124,97,.12) !important; color:#1d3022 !important; transform:translateX(4px) !important; }
+  .bnav-tab:hover .bnav-icon::after{ transform:scale(1.12) !important; }
+  /* Onglet actif : pastille verte + barre d'accent à gauche */
   .bnav-tab.active{
     background:linear-gradient(100deg,#5e7c61 0%,#42603f 100%) !important;
     color:#ffffff !important;
     box-shadow:0 8px 20px -10px rgba(61,90,64,.65), inset 0 0 0 1px rgba(255,255,255,.10) !important;
   }
   .bnav-tab.active .bnav-label{ color:#ffffff !important; }
-  .bnav-tab.active .bnav-icon{ transform:scale(1.08) !important; }
-  /* Réglages + Déconnexion poussés en bas */
-  .bnav-settings{ margin-top:auto !important; border-top:1px solid rgba(94,124,97,.18) !important; padding-top:16px !important; margin-bottom:2px !important; }
+  .bnav-tab.active .bnav-icon::after{ transform:scale(1.06) !important; }
+  .bnav-tab.active::before{
+    content:'' !important; position:absolute !important; left:8px !important; top:50% !important;
+    transform:translateY(-50%) !important; width:4px !important; height:20px !important;
+    border-radius:999px !important; background:rgba(255,255,255,.9) !important;
+    box-shadow:0 0 8px rgba(255,255,255,.45) !important;
+  }
+
+  /* ── Bouton « Découvrir Premium » doré ── */
+  .bnav-premium-cta{
+    display:flex !important; align-items:center !important; gap:11px !important; width:100% !important;
+    margin:auto 0 8px !important; padding:12px 14px !important; border:none !important; cursor:pointer !important;
+    border-radius:15px !important; text-align:left !important;
+    background:linear-gradient(120deg,#cda349 0%,#b8862f 58%,#a9761f 100%) !important;
+    box-shadow:0 10px 22px -12px rgba(168,118,31,.85) !important;
+    transition:transform .18s ease, box-shadow .18s ease !important;
+  }
+  .bnav-premium-cta:hover{ transform:translateY(-1px) !important; box-shadow:0 14px 26px -12px rgba(168,118,31,.95) !important; }
+  .bnav-premium-spark{ font-size:17px !important; }
+  .bnav-premium-txt{ display:flex !important; flex-direction:column !important; line-height:1.15 !important; }
+  .bnav-premium-txt b{ color:#fff !important; font-size:13.5px !important; font-weight:700 !important; }
+  .bnav-premium-txt small{ color:rgba(255,255,255,.82) !important; font-size:10.5px !important; margin-top:2px !important; }
+
+  /* ── Carte mini-profil ── */
+  .bnav-profile-card{
+    display:flex !important; align-items:center !important; gap:11px !important;
+    margin:0 0 4px !important; padding:10px 12px !important; border-radius:14px !important;
+    background:rgba(94,124,97,.10) !important; border:1px solid rgba(94,124,97,.16) !important;
+  }
+  .bnav-pc-avatar{
+    width:36px !important; height:36px !important; border-radius:50% !important; flex:0 0 auto !important;
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    font-size:18px !important; background:#fff !important; box-shadow:0 2px 6px -2px rgba(61,90,64,.4) !important;
+  }
+  .bnav-pc-meta{ display:flex !important; flex-direction:column !important; line-height:1.2 !important; min-width:0 !important; }
+  .bnav-pc-meta b{ font-size:13px !important; color:#2a3f2d !important; font-weight:600 !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; }
+  .bnav-pc-badge{
+    align-self:flex-start !important; margin-top:3px !important; font-size:9.5px !important; font-weight:700 !important;
+    letter-spacing:.06em !important; text-transform:uppercase !important; padding:2px 8px !important; border-radius:999px !important;
+    background:rgba(94,124,97,.18) !important; color:var(--ed-sage-dark) !important;
+  }
+  .bnav-pc-badge.is-premium{ background:linear-gradient(120deg,#cda349,#a9761f) !important; color:#fff !important; }
+
+  /* Réglages + Déconnexion en bas */
+  .bnav-settings{ border-top:1px solid rgba(94,124,97,.18) !important; padding-top:14px !important; margin-bottom:2px !important; }
   .bnav-logout{ color:rgba(176,74,58,.92) !important; }
-  .bnav-logout:hover{ background:rgba(176,74,58,.12) !important; color:#8f3322 !important; }
+  .bnav-logout:hover{ background:rgba(176,74,58,.12) !important; color:#8f3322 !important; transform:translateX(4px) !important; }
 
   /* ───────────── ZONE DE CONTENU (pleine largeur) ───────────── */
   .app{
@@ -7480,10 +7563,14 @@ body{
   <div class="bottom-nav-inner">
     <div class="bottom-nav-pill" id="bnavPill"></div>
     <div class="bnav-brand" aria-hidden="true">
-      <div class="bnav-brand-title">Keto <em>Premium</em></div>
+      <div class="bnav-brand-head">
+        <span class="bnav-brand-logo">🥑</span>
+        <div class="bnav-brand-title">Keto <em>Premium</em></div>
+      </div>
       <div class="bnav-brand-sub">ESSENCIEL O NATUREL</div>
       <div class="bnav-brand-tag">Le keto sans effort, <em>par un naturopathe</em></div>
     </div>
+    <div class="bnav-section" aria-hidden="true">Menu</div>
     <button class="bnav-tab active" id="nt-plan" onclick="switchTab('plan')">
       <span class="bnav-icon">📅</span>
       <span class="bnav-label">Plan</span>
@@ -7504,6 +7591,17 @@ body{
       <span class="bnav-icon">🛡️</span>
       <span class="bnav-label">Admin</span>
     </button>
+    <button class="bnav-premium-cta" type="button" aria-hidden="true" onclick="openPremiumModal&&openPremiumModal('sidebar')">
+      <span class="bnav-premium-spark">✨</span>
+      <span class="bnav-premium-txt"><b>Découvrir Premium</b><small>Modes, suivi évolué &amp; 200+ recettes</small></span>
+    </button>
+    <div class="bnav-profile-card" aria-hidden="true">
+      <span class="bnav-pc-avatar">🥑</span>
+      <span class="bnav-pc-meta">
+        <b id="bnavPcName">Espace membre</b>
+        <span class="bnav-pc-badge" id="bnavPcPlan">Plan Gratuit</span>
+      </span>
+    </div>
     <button class="bnav-tab bnav-settings" onclick="openPrefs()">
       <span class="bnav-icon">⚙️</span>
       <span class="bnav-label">Réglages</span>
@@ -13309,6 +13407,34 @@ function refreshHeaderLogout(){
   // Sync profile tab banner too (kept hidden — replaced by profile-id-card)
   var banner = $('authUserBanner');
   if(banner){ banner.style.display='none'; }
+  // ── Sync desktop sidebar mini-profile card ──
+  try {
+    var pcName = $('bnavPcName');
+    var pcPlan = $('bnavPcPlan');
+    if(pcName){
+      var nm = '';
+      if(currentUser){
+        nm = (currentUser.displayName || '').trim();
+        if(!nm){
+          var pf = ((profile && profile.firstname) || '') + ' ' + ((profile && profile.lastname) || '');
+          nm = pf.trim();
+        }
+        if(!nm){
+          nm = ((currentUser.email || '').split('@')[0].replace(/[._-]/g,' ').trim()) || 'Mon compte';
+          nm = nm.split(' ').map(function(w){ return w ? w.charAt(0).toUpperCase()+w.slice(1) : ''; }).join(' ');
+        }
+      } else {
+        nm = 'Mode local';
+      }
+      pcName.textContent = nm;
+    }
+    if(pcPlan){
+      var prem = false;
+      try { prem = (typeof window.isPremium === 'function') ? window.isPremium() === true : false; } catch(e){}
+      pcPlan.textContent = prem ? 'Premium' : (currentUser ? 'Plan Gratuit' : 'Hors-ligne');
+      pcPlan.classList.toggle('is-premium', prem);
+    }
+  } catch(e){}
 }
 
 /* ── Reset password ── */
