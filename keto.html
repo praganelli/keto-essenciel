@@ -17428,6 +17428,12 @@ authGuest = function(){
           };
           try { localStorage.setItem(KP_KEY, JSON.stringify(window.kpState)); } catch(e){}
 
+          // Rafraîchit TOUJOURS l'UI à chaque changement du document abonnement
+          // (date de renouvellement, annulation programmée, jours bonus…),
+          // même sans bascule du statut premium → le cadre Plan se met à jour
+          // immédiatement.
+          try { if(typeof kpRefreshUI === 'function') kpRefreshUI(); } catch(e){}
+
           // Détecte la transition true → false (révocation)
           if(wasPremium && !nowPremium){
             console.warn('[premium realtime] Accès Premium révoqué — propagation temps réel');
@@ -17716,6 +17722,10 @@ authGuest = function(){
     try{ kpDecorateModesGrid(); }catch(e){}
     try{ if(typeof renderLibrary==='function') renderLibrary(); }catch(e){}
     try{ kpUpdateSuiviLock(); }catch(e){}
+    // 3. Cadre abonnement sur la page Plan + cartes statut du Profil
+    //    (doivent refléter immédiatement tout changement d'abonnement)
+    try{ if(typeof window.kpRenderPremiumStatusCardInPlan==='function') window.kpRenderPremiumStatusCardInPlan(); }catch(e){}
+    try{ if(typeof injectReferralCard==='function') injectReferralCard(); }catch(e){}
   }
   window.kpRefreshUI = kpRefreshUI;
 
