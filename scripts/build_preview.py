@@ -1,71 +1,82 @@
-import io
 SRC="/app/keto.html"
 OUT="/app/backend/keto_preview.html"
 
-LEAF = ("data:image/svg+xml;utf8,"
-        "<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'>"
-        "<g fill='none' stroke='%23ffffff' stroke-width='1.1' opacity='0.7'>"
-        "<path d='M34 22 q22 20 0 44 q-22 -24 0 -44z'/>"
-        "<path d='M98 74 q19 17 0 38 q-19 -21 0 -38z'/>"
-        "<path d='M70 110 q14 12 0 28 q-14 -16 0 -28z'/>"
-        "</g></svg>")
-
 CSS = """
-<style id="kp-desktop-AC">
-/* ═══════════════ EXPÉRIENCE DESKTOP — Concept A + C (min-width:1024px) ═══════════════ */
+<style id="kp-desktop-dashboard">
+/* ═══════════════ DESKTOP — « Dashboard Naturo » (min-width:1024px) ═══════════════ */
 @media (min-width:1024px){
-  /* Décor de fond éditorial plein écran (vert sauge profond) */
-  body{
-    background:
-      radial-gradient(1100px 560px at 82% -8%, rgba(150,182,150,.30), transparent 60%),
-      radial-gradient(900px 520px at -5% 105%, rgba(94,124,97,.26), transparent 55%),
-      linear-gradient(157deg, #1d3022 0%, #294029 44%, #36523a 72%, #41613f 100%) !important;
-    background-attachment:fixed !important;
-  }
-  /* on retire le voile crème mobile pour laisser respirer le fond sombre */
+  body{ background:#f1e9d6 !important; }
   body::after{ display:none !important; }
-  /* texture botanique subtile */
-  body::before{
-    content:''; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.09;
-    background-image:url("__LEAF__"); background-size:240px; background-repeat:repeat;
-  }
+  body::before{ display:none !important; }
 
-  /* L'app posée dans un cadre centré flottant (effet application premium) */
+  /* ───────────── BARRE LATÉRALE GAUCHE ───────────── */
+  .bottom-nav{
+    position:fixed !important; left:0 !important; top:0 !important; bottom:0 !important; right:auto !important;
+    width:272px !important; height:100vh !important; padding:0 !important; margin:0 !important;
+    z-index:300 !important; display:block !important; transform:none !important;
+    background:linear-gradient(180deg,#1d3022 0%,#263c27 50%,#324d38 100%) !important;
+    box-shadow:16px 0 60px -28px rgba(0,0,0,.55) !important;
+  }
+  .bottom-nav-inner{
+    flex-direction:column !important; align-items:stretch !important; justify-content:flex-start !important;
+    height:100% !important; width:100% !important; max-width:none !important;
+    background:transparent !important; border:none !important; box-shadow:none !important;
+    border-radius:0 !important; gap:5px !important; padding:30px 18px 24px !important;
+    backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+  }
+  .bottom-nav-inner::before{
+    content:"🌿  Le Keto" !important;
+    font-family:'Fraunces',serif !important; font-size:27px !important; font-weight:600 !important;
+    color:#f5ecd6 !important; letter-spacing:.005em !important;
+    padding:4px 14px 20px !important; margin-bottom:8px !important;
+    border-bottom:1px solid rgba(255,255,255,.12) !important;
+  }
+  .bottom-nav-pill{ display:none !important; }
+
+  .bnav-tab{
+    flex:0 0 auto !important; flex-direction:row !important; justify-content:flex-start !important;
+    align-items:center !important; gap:15px !important; width:100% !important; height:auto !important;
+    padding:13px 16px !important; border-radius:14px !important; opacity:1 !important;
+    color:rgba(244,236,214,.78) !important;
+    transition:background .2s ease,color .2s ease,transform .2s ease !important;
+  }
+  .bnav-tab .bnav-icon{ font-size:21px !important; width:26px !important; text-align:center !important; transform:none !important; }
+  .bnav-tab .bnav-label{ font-size:15.5px !important; font-weight:600 !important; letter-spacing:.01em !important; opacity:1 !important; }
+  .bnav-tab:hover{ background:rgba(255,255,255,.08) !important; color:#fdf8ec !important; }
+  .bnav-tab.active{
+    background:linear-gradient(100deg,rgba(255,255,255,.18),rgba(255,255,255,.08)) !important;
+    color:#ffffff !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.14) !important;
+  }
+  .bnav-tab.active .bnav-icon{ transform:scale(1.08) !important; }
+  /* Réglages + Déconnexion poussés en bas */
+  .bnav-settings{ margin-top:auto !important; border-top:1px solid rgba(255,255,255,.1) !important; padding-top:16px !important; margin-bottom:2px !important; }
+  .bnav-logout{ color:rgba(255,210,200,.85) !important; }
+  .bnav-logout:hover{ background:rgba(255,120,100,.16) !important; color:#fff !important; }
+
+  /* ───────────── ZONE DE CONTENU (pleine largeur) ───────────── */
   .app{
-    max-width:1200px !important;
-    margin:112px auto 64px !important;
-    padding:10px 44px 72px !important;
-    background:rgba(252,246,231,.97);
-    border:1px solid rgba(255,255,255,.55);
-    border-radius:30px;
-    box-shadow:0 50px 130px -34px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.6) inset;
+    margin:0 0 0 272px !important; max-width:none !important; width:auto !important;
+    padding:38px 60px 84px !important; min-height:100vh !important;
+    background:transparent !important; border:none !important; box-shadow:none !important; border-radius:0 !important;
   }
-  body.dark .app{ background:rgba(17,27,20,.97); border-color:rgba(255,255,255,.08); }
+  /* En-tête en barre du haut, aligné à gauche */
+  header{ text-align:left !important; align-items:flex-start !important; max-width:1180px !important; margin:0 0 6px !important; padding:4px 0 24px !important; }
+  header h1{ font-size:38px !important; line-height:1.05 !important; text-align:left !important; }
+  header .tagline, header p{ text-align:left !important; }
 
-  /* Navigation déplacée EN HAUT — barre flottante glassmorphe */
-  .bottom-nav{ top:22px !important; bottom:auto !important; padding-top:0 !important; padding-bottom:0 !important; }
-  .bottom-nav-inner{ margin:0 auto; box-shadow:0 18px 50px -16px rgba(0,0,0,.45); }
-
-  /* En-tête plus imposant et éditorial */
-  header{ padding:30px 0 24px !important; }
-  header h1{ font-size:48px !important; line-height:1.02 !important; }
-  header .tagline{ font-size:15px !important; }
-
-  /* Concept C — grilles adaptatives : bibliothèque 4 colonnes */
-  .lib-grid{ grid-template-columns:repeat(4, 1fr) !important; gap:20px !important; }
-  /* plus de respiration pour le planning de la semaine */
+  /* Concept C — grilles larges */
+  .lib-grid{ grid-template-columns:repeat(4,1fr) !important; gap:20px !important; }
   .week-grid{ gap:12px !important; }
+  /* limite de lecture confortable pour les blocs pleine largeur */
+  #tab-plan, #tab-library, #tab-suivi, #tab-profile{ max-width:1320px !important; }
 }
-@media (min-width:1440px){
-  .app{ max-width:1340px !important; padding-left:56px !important; padding-right:56px !important; }
-  .lib-grid{ grid-template-columns:repeat(5, 1fr) !important; }
-  header h1{ font-size:54px !important; }
+@media (min-width:1540px){
+  .lib-grid{ grid-template-columns:repeat(5,1fr) !important; }
 }
 </style>
-""".replace("__LEAF__", LEAF)
+"""
 
 html = open(SRC, encoding="utf-8").read()
-# Inject just before </head> so it wins the cascade
 assert "</head>" in html
 html = html.replace("</head>", CSS + "\n</head>", 1)
 open(OUT, "w", encoding="utf-8").write(html)
