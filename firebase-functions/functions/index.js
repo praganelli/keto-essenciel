@@ -1,12 +1,16 @@
 /**
- * Keto Premium — Webhook Stripe (Firebase Cloud Function, 2e génération)
+ * Keto Premium — Webhook Stripe + Résiliation (Firebase Cloud Functions, 2e gén.)
  *
- * À chaque abonnement Stripe :
- *   1. Vérifie la signature du webhook (sécurité)
- *   2. Écrit le statut Premium dans Firestore (collection "premium_emails")
- *   3. Envoie un email de confirmation via Resend
+ * stripeWebhook :
+ *   - checkout.session.completed     -> active Premium + stocke détails abonnement + email
+ *   - customer.subscription.updated  -> met à jour dates / type / résiliation prévue
+ *   - customer.subscription.deleted  -> désactive Premium
  *
- * Les clés sont lues depuis le fichier functions/.env (déployé avec la fonction).
+ * cancelSubscription (appelée par l'app) :
+ *   - vérifie le jeton Firebase de l'utilisateur
+ *   - résilie l'abonnement Stripe À LA FIN DE LA PÉRIODE PAYÉE (cancel_at_period_end)
+ *
+ * Les clés sont lues depuis functions/.env.
  */
 
 const { onRequest } = require("firebase-functions/v2/https");
@@ -18,22 +22,37 @@ const { Resend } = require("resend");
 admin.initializeApp();
 const db = admin.firestore();
 
-// ─── Configuration ───
 const PREMIUM_COLLECTION = "premium_emails";
-// Tant que le domaine n'est pas vérifié dans Resend, gardez onboarding@resend.dev.
-// Après vérification du domaine essencielonaturel.fr, remplacez par :
+// Après vérification du domaine dans Resend, remplacez par :
 //   "Essenciel O Naturel <infos@essencielonaturel.fr>"
 const FROM_EMAIL = "Essenciel O Naturel <onboarding@resend.dev>";
 const ADMIN_EMAIL = "infos@essencielonaturel.fr";
 
-async function setPremium(email, active, source) {
+function stripeClient() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY);
+}
+
+// Détails utiles d'un abonnement Stripe -> objet Firestore
+function subData(sub) {
+  const item = sub.items && sub.items.data && sub.items.data[0];
+  const interval =
+    item && item.price && item.price.recurring ? item.price.recurring.interval : null; // 'month' | 'year'
+  return {
+    subscriptionId: sub.id,
+    customerId: typeof sub.customer === "string" ? sub.customer : (sub.customer && sub.customer.id),
+    interval: interval,
+    currentPeriodEnd: sub.current_period_end
+      ? new Date(sub.current_period_end * 1000).toISOString()
+      : null,
+    cancelAtPeriodEnd: !!sub.cancel_at_period_end,
+    status: sub.status,
+  };
+}
+
+async function writeDoc(email, data) {
   const key = (email || "").trim().toLowerCase();
   if (!key) return null;
-  const data = active
-    ? { active: true, source: source || "stripe", since: new Date().toISOString(), expires: null }
-    : { active: false };
   await db.collection(PREMIUM_COLLECTION).doc(key).set(data, { merge: true });
-  logger.info(`Premium ${active ? "activé" : "désactivé"} pour ${key}`);
   return key;
 }
 
@@ -55,58 +74,121 @@ async function sendWelcomeEmail(resend, email) {
   });
 }
 
-exports.stripeWebhook = onRequest(
-  { region: "europe-west1" },
-  async (req, res) => {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// ════════════════════ WEBHOOK STRIPE ════════════════════
+exports.stripeWebhook = onRequest({ region: "europe-west1" }, async (req, res) => {
+  const stripe = stripeClient();
 
-    // 1) Vérification de la signature avec le corps BRUT (req.rawBody)
-    let event;
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.rawBody,
-        req.headers["stripe-signature"],
-        process.env.STRIPE_WEBHOOK_SECRET
-      );
-    } catch (err) {
-      logger.error("Signature invalide:", err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.rawBody,
+      req.headers["stripe-signature"],
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    logger.error("Signature invalide:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
 
-    // 2) Traitement de l'événement
-    try {
-      const obj = event.data.object;
+  try {
+    const obj = event.data.object;
 
-      if (event.type === "checkout.session.completed") {
-        const email =
-          (obj.customer_details && obj.customer_details.email) || obj.customer_email;
-        if (email) {
-          await setPremium(email, true, "stripe");
+    if (event.type === "checkout.session.completed") {
+      const email =
+        (obj.customer_details && obj.customer_details.email) || obj.customer_email;
+      if (email) {
+        let extra = {};
+        if (obj.subscription) {
           try {
-            const resend = new Resend(process.env.RESEND_API_KEY);
-            await sendWelcomeEmail(resend, email);
-            await resend.emails.send({
-              from: FROM_EMAIL,
-              to: [ADMIN_EMAIL],
-              subject: "🎉 Nouvel abonné Premium",
-              html: `<p>Nouvel abonnement Keto Premium : <strong>${email}</strong></p>`,
-            });
+            const sub = await stripe.subscriptions.retrieve(obj.subscription);
+            extra = subData(sub);
           } catch (e) {
-            logger.error("Erreur email Resend:", e.message);
+            logger.error("retrieve sub:", e.message);
           }
         }
-      } else if (event.type === "customer.subscription.created") {
-        const cust = await stripe.customers.retrieve(obj.customer);
-        if (cust && cust.email) await setPremium(cust.email, true, "stripe");
-      } else if (event.type === "customer.subscription.deleted") {
-        const cust = await stripe.customers.retrieve(obj.customer);
-        if (cust && cust.email) await setPremium(cust.email, false, "stripe");
+        await writeDoc(email, Object.assign(
+          { active: true, source: "stripe", since: new Date().toISOString(), expires: null },
+          extra
+        ));
+        try {
+          const resend = new Resend(process.env.RESEND_API_KEY);
+          await sendWelcomeEmail(resend, email);
+          await resend.emails.send({
+            from: FROM_EMAIL,
+            to: [ADMIN_EMAIL],
+            subject: "🎉 Nouvel abonné Premium",
+            html: `<p>Nouvel abonnement Keto Premium : <strong>${email}</strong></p>`,
+          });
+        } catch (e) {
+          logger.error("Resend:", e.message);
+        }
       }
-    } catch (e) {
-      logger.error("Erreur de traitement:", e.message);
-      // On répond quand même 200 pour éviter les ré-essais infinis de Stripe
+    } else if (event.type === "customer.subscription.updated") {
+      const sub = obj;
+      const cust = await stripe.customers.retrieve(sub.customer);
+      if (cust && cust.email) {
+        const active = sub.status === "active" || sub.status === "trialing";
+        await writeDoc(cust.email, Object.assign({ active: active, source: "stripe" }, subData(sub)));
+      }
+    } else if (event.type === "customer.subscription.created") {
+      const sub = obj;
+      const cust = await stripe.customers.retrieve(sub.customer);
+      if (cust && cust.email) {
+        await writeDoc(cust.email, Object.assign({ active: true, source: "stripe" }, subData(sub)));
+      }
+    } else if (event.type === "customer.subscription.deleted") {
+      const cust = await stripe.customers.retrieve(obj.customer);
+      if (cust && cust.email) {
+        await writeDoc(cust.email, { active: false, cancelAtPeriodEnd: false, status: "canceled" });
+      }
     }
-
-    return res.json({ received: true });
+  } catch (e) {
+    logger.error("Erreur de traitement:", e.message);
   }
-);
+
+  return res.json({ received: true });
+});
+
+// ════════════════════ RÉSILIATION (appelée par l'app) ════════════════════
+exports.cancelSubscription = onRequest({ region: "europe-west1", cors: true }, async (req, res) => {
+  try {
+    if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
+
+    const authH = req.headers.authorization || "";
+    const m = authH.match(/^Bearer (.+)$/);
+    if (!m) return res.status(401).json({ error: "no_token" });
+
+    let decoded;
+    try {
+      decoded = await admin.auth().verifyIdToken(m[1]);
+    } catch (e) {
+      return res.status(401).json({ error: "invalid_token" });
+    }
+    const email = (decoded.email || "").trim().toLowerCase();
+    if (!email) return res.status(401).json({ error: "no_email" });
+
+    const doc = await db.collection(PREMIUM_COLLECTION).doc(email).get();
+    const data = doc.exists ? doc.data() : null;
+    if (!data || !data.subscriptionId) return res.status(404).json({ error: "no_subscription" });
+
+    const stripe = stripeClient();
+    const sub = await stripe.subscriptions.update(data.subscriptionId, {
+      cancel_at_period_end: true,
+    });
+
+    const periodEnd = sub.current_period_end
+      ? new Date(sub.current_period_end * 1000).toISOString()
+      : data.currentPeriodEnd || null;
+
+    await writeDoc(email, {
+      cancelAtPeriodEnd: true,
+      currentPeriodEnd: periodEnd,
+      status: sub.status,
+    });
+
+    return res.json({ ok: true, cancelAtPeriodEnd: true, currentPeriodEnd: periodEnd });
+  } catch (e) {
+    logger.error("cancelSubscription:", e.message);
+    return res.status(500).json({ error: "server_error", message: e.message });
+  }
+});

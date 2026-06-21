@@ -12487,7 +12487,11 @@ function _kpReadPremiumExpiry(){
     source: state.source || '',
     totalDays: state.totalDays || null,
     since: state.since || null,
-    premium: !!state.premium
+    premium: !!state.premium,
+    interval: state.interval || null,
+    currentPeriodEnd: state.currentPeriodEnd || null,
+    cancelAtPeriodEnd: state.cancelAtPeriodEnd === true,
+    subscriptionId: state.subscriptionId || null
   };
 }
 
@@ -12555,6 +12559,29 @@ function kpBuildPremiumStatusCardHTML(){
     else if(src.indexOf('promo') >= 0 || src.indexOf('code') >= 0) sourceLabel = 'Code promo activé';
     else if(src.indexOf('admin') >= 0) sourceLabel = 'Activé par l\'admin';
     else sourceLabel = 'Statut Premium';
+
+    // ─── Bloc gestion abonnement Stripe (type + date + résiliation) ───
+    var subBlock = '';
+    var isStripe = src.indexOf('stripe') >= 0 && premiumInfo && premiumInfo.subscriptionId;
+    if(isStripe){
+      var typeLbl = premiumInfo.interval === 'year' ? 'Annuel' : (premiumInfo.interval === 'month' ? 'Mensuel' : 'Abonnement');
+      var endStr2 = '';
+      if(premiumInfo.currentPeriodEnd){
+        try{ endStr2 = new Date(premiumInfo.currentPeriodEnd).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}); }catch(e){}
+      }
+      subBlock += '<div class="kp-sub-meta">'+
+        '<div class="kp-sub-row"><span class="kp-sub-lbl">Formule</span><span class="kp-sub-val">'+typeLbl+'</span></div>';
+      if(endStr2){
+        subBlock += '<div class="kp-sub-row"><span class="kp-sub-lbl">'+(premiumInfo.cancelAtPeriodEnd ? 'Accès jusqu\'au' : 'Renouvellement le')+'</span><span class="kp-sub-val">'+endStr2+'</span></div>';
+      }
+      subBlock += '</div>';
+      if(premiumInfo.cancelAtPeriodEnd){
+        subBlock += '<div class="kp-sub-canceled" data-testid="sub-canceled-note">✓ Résiliation enregistrée — vous gardez l\'accès jusqu\'à la date ci-dessus, sans renouvellement.</div>';
+      } else {
+        subBlock += '<button type="button" class="kp-sub-cancel-btn" data-testid="sub-cancel-btn" onclick="kpCancelSubscription(this)">Résilier mon abonnement</button>';
+      }
+    }
+
     return '<div class="kp-status-card kp-status-premium-active" data-testid="premium-active-card">'+
       '<div class="kp-status-eyebrow">✨ Mon abonnement</div>'+
       '<div class="kp-status-title"><em>Premium actif</em></div>'+
@@ -12564,6 +12591,7 @@ function kpBuildPremiumStatusCardHTML(){
         '<span class="kp-status-perk">✓ Tous les modes</span>'+
         '<span class="kp-status-perk">✓ Suivi évolué</span>'+
       '</div>'+
+      subBlock+
     '</div>';
   } else {
     // ─── Pas Premium ─── carte invitation
@@ -12576,6 +12604,51 @@ function kpBuildPremiumStatusCardHTML(){
   }
 }
 window.kpBuildPremiumStatusCardHTML = kpBuildPremiumStatusCardHTML;
+
+/* ─── Résiliation de l'abonnement Stripe (à la fin de la période payée) ─── */
+var KP_FUNCTIONS_BASE = 'https://europe-west1-testprojet-721cb.cloudfunctions.net';
+window.kpCancelSubscription = function(btn){
+  try{
+    var ok = window.confirm('Résilier votre abonnement ?\n\nVous conserverez l\'accès Premium jusqu\'à la fin de la période déjà payée, sans renouvellement automatique.');
+    if(!ok) return;
+  }catch(e){}
+  var user = null;
+  try{ if(typeof currentUser !== 'undefined' && currentUser) user = currentUser; }catch(e){}
+  if(!user && window.currentUser) user = window.currentUser;
+  if(!user){
+    try{ var inst = (typeof authInstance !== 'undefined') ? authInstance : (window.firebase && window.firebase.auth()); if(inst) user = inst.currentUser; }catch(e){}
+  }
+  if(!user || typeof user.getIdToken !== 'function'){
+    if(typeof toast==='function') toast('⚠️ Veuillez vous reconnecter pour gérer votre abonnement', 'error');
+    return;
+  }
+  if(btn){ btn.disabled = true; btn.textContent = 'Résiliation en cours…'; }
+  user.getIdToken().then(function(token){
+    return fetch(KP_FUNCTIONS_BASE + '/cancelSubscription', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+  }).then(function(r){ return r.json().then(function(j){ return {status:r.status, body:j}; }); })
+  .then(function(res){
+    if(res.status === 200 && res.body && res.body.ok){
+      try{
+        window.kpState.cancelAtPeriodEnd = true;
+        if(res.body.currentPeriodEnd) window.kpState.currentPeriodEnd = res.body.currentPeriodEnd;
+        kpSaveCache();
+      }catch(e){}
+      if(typeof toast==='function') toast('✅ Abonnement résilié — accès maintenu jusqu\'à l\'échéance', 'success');
+      try{ if(typeof kpRefreshUI==='function') kpRefreshUI(); }catch(e){}
+      try{ if(typeof renderProfile==='function') renderProfile(); }catch(e){}
+    } else {
+      var msg = (res.body && res.body.error === 'no_subscription') ? 'Aucun abonnement actif à résilier' : 'Échec de la résiliation, réessayez';
+      if(typeof toast==='function') toast('⚠️ ' + msg, 'error');
+      if(btn){ btn.disabled = false; btn.textContent = 'Résilier mon abonnement'; }
+    }
+  }).catch(function(err){
+    if(typeof toast==='function') toast('⚠️ Erreur réseau, réessayez', 'error');
+    if(btn){ btn.disabled = false; btn.textContent = 'Résilier mon abonnement'; }
+  });
+};
 
 /* ─── Injection dans le Plan (en haut, avant la grille de la semaine) ─── */
 function kpRenderPremiumStatusCardInPlan(){
@@ -15144,6 +15217,25 @@ authGuest = function(){
   letter-spacing:-.01em;
 }
 .kp-status-card.premium .kp-status-name{ color:var(--ed-terra-dark); }
+
+/* ─── Gestion abonnement (type, dates, résiliation) ─── */
+.kp-sub-meta{ margin-top:14px; padding-top:12px; border-top:1px solid rgba(176,122,34,.18); display:flex; flex-direction:column; gap:7px; }
+.kp-sub-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.kp-sub-lbl{ font-size:12.5px; color:var(--ed-muted,#8a7659); }
+.kp-sub-val{ font-size:13px; font-weight:700; color:var(--ed-ink,#2a2114); }
+.kp-sub-cancel-btn{
+  margin-top:13px; width:100%; padding:11px 14px; border-radius:12px; cursor:pointer;
+  font-family:inherit; font-size:13px; font-weight:700; letter-spacing:.2px;
+  color:#9a3b28; background:rgba(200,85,58,.08); border:1.5px solid rgba(200,85,58,.32);
+  transition:background .2s ease, border-color .2s ease, transform .12s ease;
+}
+.kp-sub-cancel-btn:hover{ background:rgba(200,85,58,.14); border-color:rgba(200,85,58,.5); }
+.kp-sub-cancel-btn:active{ transform:scale(.98); }
+.kp-sub-cancel-btn:disabled{ opacity:.6; cursor:default; }
+.kp-sub-canceled{
+  margin-top:13px; padding:11px 13px; border-radius:12px; font-size:12.5px; line-height:1.5;
+  color:#5a4a2a; background:rgba(176,122,34,.10); border:1px solid rgba(176,122,34,.28);
+}
 .kp-status-cta{
   margin-left:auto;
   background:linear-gradient(135deg, var(--ed-gold), var(--ed-gold-light));
@@ -17173,6 +17265,10 @@ authGuest = function(){
             since: since,
             expires: expires,
             source: source,
+            interval: (doc && doc.exists && doc.data()) ? (doc.data().interval || null) : null,
+            currentPeriodEnd: (doc && doc.exists && doc.data()) ? (doc.data().currentPeriodEnd || null) : null,
+            cancelAtPeriodEnd: (doc && doc.exists && doc.data()) ? (doc.data().cancelAtPeriodEnd === true) : false,
+            subscriptionId: (doc && doc.exists && doc.data()) ? (doc.data().subscriptionId || null) : null,
             checkedAt: Date.now()
           };
           kpSaveCache();
