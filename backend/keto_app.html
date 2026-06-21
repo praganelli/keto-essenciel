@@ -222,8 +222,9 @@ h1 em{color:var(--gold2)}
 /* ─── Header logout button — VISIBLE sur tous les écrans ─── */
 .header-logout-btn{
   display:none;
-  align-items:center;gap:10px;
-  padding:9px 18px 9px 13px;
+  width:100%;box-sizing:border-box;
+  align-items:center;justify-content:center;gap:10px;
+  padding:11px 18px;
   border:none;border-radius:99px;
   background:linear-gradient(135deg, #c66651 0%, #9b3a28 100%);
   color:#fff;
@@ -258,7 +259,7 @@ h1 em{color:var(--gold2)}
   display:flex;align-items:center;justify-content:center;
   font-size:14px;line-height:1;
 }
-.header-logout-text{display:flex;flex-direction:column;line-height:1.15;gap:2px;min-width:0;max-width:260px}
+.header-logout-text{display:flex;flex-direction:column;line-height:1.15;gap:2px;min-width:0;max-width:none}
 .header-logout-lead{
   font-family:'Fraunces',Georgia,serif;
   font-size:15px;font-weight:500;font-style:italic;letter-spacing:-.005em;
@@ -271,9 +272,9 @@ h1 em{color:var(--gold2)}
 }
 .header-logout-sub:empty{display:none}
 @media(max-width:520px){
-  .header-logout-btn{padding:7px 14px 7px 9px;gap:7px;max-width:88vw}
+  .header-logout-btn{padding:10px 14px;gap:7px}
   .header-logout-icon{width:26px;height:26px;font-size:12px}
-  .header-logout-text{max-width:200px}
+  .header-logout-text{max-width:none}
   .header-logout-lead{font-size:13px}
   .header-logout-sub{font-size:9.5px}
 }
@@ -6837,7 +6838,7 @@ body{
 
 <div class="app">
   <header>
-    <div class="eyebrow"><span class="pulse"></span> Keto Premium V9 — 200 recettes · Naturopathie</div>
+    <div class="eyebrow"><span class="pulse"></span> Le keto par un naturopathe</div>
     <h1 id="appTitle">Votre coach<br><em>keto premium</em></h1>
     <p class="tagline" id="appTagline">Plan · Bibliothèque · Suivi · Profil · Collations</p>
     <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center">
