@@ -333,6 +333,7 @@ h1 em{color:var(--gold2)}
 /* Liquid pill — translucent capsule that slides between tabs */
 .bottom-nav-pill{
   position:absolute;
+  left:0;
   top:7px;height:calc(100% - 14px);
   background:
     linear-gradient(180deg, rgba(255,255,255,.42) 0%, rgba(255,255,255,.22) 100%);
@@ -340,7 +341,8 @@ h1 em{color:var(--gold2)}
   -webkit-backdrop-filter:blur(28px) saturate(180%);
   border:1px solid rgba(255,255,255,.55);
   border-radius:999px;
-  transition:left .55s cubic-bezier(.32,1.6,.48,1), width .55s cubic-bezier(.32,1.6,.48,1);
+  transition:transform .5s cubic-bezier(.34,1.28,.4,1), width .5s cubic-bezier(.34,1.28,.4,1);
+  will-change:transform, width;
   box-shadow:
     0 1px 0 rgba(255,255,255,.85) inset,
     0 -1px 0 rgba(94,124,97,.12) inset,
@@ -370,9 +372,10 @@ h1 em{color:var(--gold2)}
 .bnav-icon{
   font-size:21px;line-height:1;
   filter:saturate(105%);
-  transition:transform .35s cubic-bezier(.34,1.7,.45,1), filter .25s;
+  transition:transform .4s cubic-bezier(.34,1.4,.4,1), filter .25s;
   display:inline-flex;align-items:center;justify-content:center;
 }
+.bnav-tab.active .bnav-icon{ transform:translateY(-1px) scale(1.16); filter:saturate(115%); }
 .bnav-label{
   font-size:9.5px;font-weight:600;letter-spacing:.04em;
   color:var(--muted);
@@ -10068,7 +10071,8 @@ function updateBottomNav(tab){
   setTimeout(function(){
     var parentRect=document.querySelector('.bottom-nav-inner').getBoundingClientRect();
     var tabRect=active.getBoundingClientRect();
-    pill.style.left=(tabRect.left-parentRect.left-6)+'px';
+    var offset=(tabRect.left-parentRect.left-6);
+    pill.style.transform='translateX('+offset+'px)';
     pill.style.width=tabRect.width+'px';
   },10);
 }
