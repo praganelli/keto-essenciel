@@ -250,3 +250,131 @@ exports.welcomeOnSignup = functionsV1.auth.user().onCreate(async (user) => {
   }
   return null;
 });
+
+
+// Email de notification au parrain (un filleul a utilisé son code)
+async function sendReferralParrainEmail(resend, parrainEmail, filleulMasked, code, bonusDays) {
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: [parrainEmail],
+    subject: "🎁 Votre parrainage Keto a été utilisé !",
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;color:#2a2114">
+        <h1 style="color:#236648">Merci de faire rayonner le keto 🌿</h1>
+        <p>Bonne nouvelle : votre code de parrainage <strong>${code}</strong> vient d'être
+        utilisé${filleulMasked ? " par <strong>" + filleulMasked + "</strong>" : ""}.</p>
+        <p>En remerciement, <strong>${bonusDays} jours de Premium</strong> viennent d'être
+        ajoutés à votre compte. Ils s'appliquent automatiquement à l'email de ce compte.</p>
+        <p>Continuez à partager votre code : chaque filleul reçoit 3 mois Premium offerts,
+        et vous gagnez 1 mois bonus à chaque utilisation.</p>
+        <p style="margin-top:24px;color:#8a7659">Belle cétose,<br>Essenciel O Naturel · Naturopathie</p>
+      </div>
+    `,
+  });
+}
+
+// ════════════════════ RÉCOMPENSE PARRAIN (parrainage) ════════════════════
+// Appelée par l'app quand un filleul applique un code de parrainage.
+//   - vérifie le jeton Firebase du filleul
+//   - crédite le PARRAIN de N jours Premium (Admin SDK — contourne les règles
+//     Firestore qui empêchent le filleul d'écrire le doc d'un autre email)
+//   - envoie un email de notification au parrain
+//   - idempotent : un même filleul ne crédite qu'une fois par code
+exports.referralReward = onRequest({ region: "europe-west1", cors: true }, async (req, res) => {
+  try {
+    if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
+
+    const authH = req.headers.authorization || "";
+    const m = authH.match(/^Bearer (.+)$/);
+    if (!m) return res.status(401).json({ error: "no_token" });
+
+    let decoded;
+    try {
+      decoded = await admin.auth().verifyIdToken(m[1]);
+    } catch (e) {
+      return res.status(401).json({ error: "invalid_token" });
+    }
+    const filleulEmail = (decoded.email || "").trim().toLowerCase();
+    if (!filleulEmail) return res.status(401).json({ error: "no_email" });
+
+    const code = String((req.body && req.body.code) || "")
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "");
+    if (!code) return res.status(400).json({ error: "no_code" });
+
+    const codeRef = db.collection("referral_codes").doc(code);
+    const codeSnap = await codeRef.get();
+    if (!codeSnap.exists) return res.status(404).json({ error: "code_not_found" });
+
+    const cdata = codeSnap.data() || {};
+    if (cdata.active === false) return res.status(400).json({ error: "code_inactive" });
+    const ownerEmail = (cdata.owner_email || "").trim().toLowerCase();
+    if (!ownerEmail) return res.status(400).json({ error: "no_owner" });
+    if (ownerEmail === filleulEmail) return res.status(400).json({ error: "self_referral" });
+    const bonusDays = parseInt(cdata.bonus_days_for_owner || 30, 10);
+
+    // Idempotence : un filleul ne crédite qu'une fois ce code
+    const ledgerRef = db.collection("referral_parrain_grants").doc(code + "__" + filleulEmail);
+    const ledgerSnap = await ledgerRef.get();
+    if (ledgerSnap.exists) return res.json({ ok: true, already: true, bonusDays });
+
+    // Créditer le parrain dans premium_emails/{ownerEmail}
+    const pRef = db.collection("premium_emails").doc(ownerEmail);
+    const pSnap = await pRef.get();
+    const now = new Date();
+    let base = now;
+    let since = now.toISOString();
+    let hasActiveSub = false;
+    if (pSnap.exists) {
+      const pd = pSnap.data() || {};
+      since = pd.since || since;
+      if (pd.subscriptionId && !pd.expires &&
+          (pd.status === "active" || pd.status === "trialing" || pd.active === true)) {
+        hasActiveSub = true; // abonnement Stripe en cours, sans date de fin
+      }
+      if (pd.expires) {
+        const cur = new Date(pd.expires);
+        if (cur > now) base = cur;
+      }
+    }
+    if (hasActiveSub) {
+      // Ne pas imposer d'expiration à un abonné Stripe : on mémorise le bonus
+      await pRef.set({
+        last_referral_bonus_at: now.toISOString(),
+        referral_bonus_pending_days: admin.firestore.FieldValue.increment(bonusDays),
+      }, { merge: true });
+    } else {
+      const newExpires = new Date(base.getTime() + bonusDays * 86400000);
+      await pRef.set({
+        active: true,
+        since: since,
+        expires: newExpires.toISOString(),
+        source: "referral_owner_bonus",
+        last_referral_bonus_at: now.toISOString(),
+      }, { merge: true });
+    }
+
+    await ledgerRef.set({
+      code: code,
+      filleul_email: filleulEmail,
+      owner_email: ownerEmail,
+      bonus_days: bonusDays,
+      at: now.toISOString(),
+    });
+
+    // Email au parrain
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const parts = filleulEmail.split("@");
+      const masked = parts.length === 2 ? (parts[0].slice(0, 2) + "***@" + parts[1]) : "";
+      await sendReferralParrainEmail(resend, ownerEmail, masked, code, bonusDays);
+    } catch (e) {
+      logger.error("referral email:", e.message);
+    }
+
+    return res.json({ ok: true, bonusDays: bonusDays });
+  } catch (e) {
+    logger.error("referralReward:", e.message);
+    return res.status(500).json({ error: "server_error", message: e.message });
+  }
+});

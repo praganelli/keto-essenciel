@@ -12206,6 +12206,27 @@ function notifyReferralParrain(parrainEmail, parrainFirstname, filleulFirstname,
   } catch(e) { console.warn('[Resend parrain] sync err', e); }
 }
 
+/* Récompense parrain via Cloud Function Firebase (Admin SDK).
+   Crédite le parrain + lui envoie un email. Idempotent côté serveur. */
+function kpRewardParrainViaFunction(code, userObj){
+  try{
+    var u = userObj || (typeof currentUser !== 'undefined' ? currentUser : null);
+    if(!u || typeof u.getIdToken !== 'function'){ console.warn('[referral] no user for reward'); return; }
+    u.getIdToken().then(function(token){
+      fetch(KP_FUNCTIONS_BASE + '/referralReward', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body: JSON.stringify({ code: code })
+      }).then(function(r){
+        if(r.ok){ console.log('[referral] parrain récompensé via function pour', code); }
+        else { r.text().then(function(t){ console.warn('[referral] reward failed', t); }); }
+      }).catch(function(e){ console.warn('[referral] reward err', e); });
+    }).catch(function(e){ console.warn('[referral] token err', e); });
+  }catch(e){ console.warn('[referral] reward sync err', e); }
+}
+window.kpRewardParrainViaFunction = kpRewardParrainViaFunction;
+
+
 /* ── Activity logging (admin analytics) ── */
 function logUserActivity(type, user){
   try{
@@ -12338,35 +12359,11 @@ window.kpEnsureReferralCodeRegistered = kpEnsureReferralCodeRegistered;
    and apply them to the user's own premium_emails record (which Firestore
    security rules DO allow since they own the doc). */
 function kpClaimPendingReferralBonuses(user){
-  if(!user || !user.email) return;
-  var emailKey = user.email.trim().toLowerCase();
-  fetch(KP_API_BASE + '/api/pending-bonuses/' + encodeURIComponent(emailKey))
-    .then(function(r){ return r.ok ? r.json() : null; })
-    .then(function(data){
-      if(!data || !data.total_bonus_days || data.total_bonus_days <= 0) return;
-      var totalDays = parseInt(data.total_bonus_days, 10);
-      console.log('[referral] claiming', totalDays, 'bonus days from', data.count, 'grants');
-      _grantPremiumDays(emailKey, user.uid, totalDays, 'referral_bonus_claim').then(function(newExpires){
-        // Notify backend that we claimed them
-        var ids = (data.bonuses || []).map(function(b){ return b.id; });
-        fetch(KP_API_BASE + '/api/claim-referral-bonuses', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ parrain_email: emailKey, claimed_ids: ids })
-        }).catch(function(){});
-        if(typeof toast === 'function'){
-          var msg = '🎁 +'+totalDays+' jour'+(totalDays>1?'s':'')+' Premium grâce à votre parrainage !';
-          setTimeout(function(){ toast(msg); }, 800);
-        }
-        // Refresh Premium UI
-        try{ if(typeof kpCheckPremium==='function') kpCheckPremium().then(function(){ try{ kpRefreshUI(); }catch(e){} }); }catch(e){}
-      }).catch(function(err){
-        console.warn('[referral] claim error', err && err.message);
-      });
-    })
-    .catch(function(err){
-      console.warn('[referral] fetch pending err', err && err.message);
-    });
+  // Obsolète : le bonus du parrain est désormais crédité immédiatement et côté
+  // serveur par la Cloud Function `referralReward` (premium_emails est indexé
+  // par email, donc pas besoin que le parrain soit connecté). Aucun appel à
+  // l'ancien backend "pending-bonuses".
+  return;
 }
 window.kpClaimPendingReferralBonuses = kpClaimPendingReferralBonuses;
 
@@ -12958,28 +12955,11 @@ function kpApplyReferralCodeOnSignup(rawCode, newUser){
       if(typeof toast==='function') toast('⚠️ Code valide, mais erreur lors de l\'activation.');
     });
 
-    // 2) Reward the owner (parrain) — 30 days bonus via BACKEND QUEUE
-    // (we can't write directly to parrain's premium_emails because of Firestore rules)
+    // 2) Reward the owner (parrain) — bonus via Cloud Function Firebase (Admin SDK).
+    //    La fonction crédite le parrain dans premium_emails + lui envoie l'email.
+    //    Plus besoin de file d'attente "pending" (premium indexé par email).
     if(ownerEmail){
-      try{
-        fetch(KP_API_BASE + '/api/grant-referral-bonus', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({
-            parrain_email: ownerEmail,
-            bonus_days: ownerBonusDays,
-            code: code,
-            filleul_email: newEmailKey
-          })
-        }).then(function(r){
-          if(r.ok) console.log('[referral] parrain bonus queued for', ownerEmail);
-        }).catch(function(e){ console.warn('[referral] queue err', e); });
-      }catch(e){ console.warn('[referral] queue sync err', e); }
-      // Notify the parrain by email
-      try{
-        var filleulFirst = (newUser.displayName||'').split(' ')[0] || (newUser.email||'').split('@')[0];
-        notifyReferralParrain(ownerEmail, '', filleulFirst, newUser.email, code, ownerBonusDays);
-      }catch(e){ console.warn('[referral] parrain notif err', e); }
+      kpRewardParrainViaFunction(code, newUser);
     }
 
     // 3) Update the referral code stats
@@ -13069,26 +13049,8 @@ window.kpRedeemReferralCode = function(){
       msgEl.style.color='var(--ed-sage-dark)';
       input.value = '';
       if(ownerEmail){
-        // Queue parrain bonus via backend (Firestore rules block direct write)
-        try{
-          fetch(KP_API_BASE + '/api/grant-referral-bonus', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({
-              parrain_email: ownerEmail,
-              bonus_days: ownerBonusDays,
-              code: code,
-              filleul_email: newEmailKey
-            })
-          }).then(function(r){
-            if(r.ok) console.log('[referral] parrain bonus queued for', ownerEmail);
-          }).catch(function(){});
-        }catch(e){}
-        // Notify the parrain by email
-        try{
-          var filleulFirst = (user.displayName||'').split(' ')[0] || (user.email||'').split('@')[0];
-          notifyReferralParrain(ownerEmail, '', filleulFirst, user.email, code, ownerBonusDays);
-        }catch(e){ console.warn('[referral] parrain notif err', e); }
+        // Crédit du parrain via Cloud Function Firebase (Admin SDK) + email serveur.
+        kpRewardParrainViaFunction(code, user);
       }
       var prevCount = parseInt(data.use_count || 0, 10);
       docRef.set({
