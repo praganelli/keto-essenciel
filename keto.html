@@ -7429,6 +7429,15 @@ body{
 
 <script>
 /* ═══════════════════════ BREAKFAST DATA ═══════════════════════ */
+/* ── Photos de recettes disponibles (hébergées sur Firebase Storage).
+   Seules les recettes listées ici affichent une photo ; les autres gardent
+   l'emoji (évite toute requête 404). Liste régénérée automatiquement
+   depuis le bucket par scripts/update_photo_manifest.py. ── */
+var KP_RECIPE_PHOTO_BASE = 'https://storage.googleapis.com/testprojet-721cb-recipes/recipe-photos';
+/* KP_RECIPE_PHOTOS_START */
+var KP_RECIPE_PHOTOS = new Set(["breakfast-0","breakfast-1","main-300","main-301","starter-400","dessert-500","snacks-200","sauces-100"]);
+/* KP_RECIPE_PHOTOS_END */
+
 var BFAST_RECIPES = [
   {id:0,name:"Omelette au fromage",emoji:"🍳",cat:"breakfast",time:"8 min",diff:"Facile",kcal:420,fat:34,prot:28,carb:2,desc:"Classique keto crémeux, protéiné et rapide.",
    ingredients:[{qty:"3",name:"Œufs entiers",emoji:"🥚",type:"prot"},{qty:"40g",name:"Fromage râpé",emoji:"🧀",type:"fat"},{qty:"15g",name:"Beurre",emoji:"🧈",type:"fat"}],
@@ -9188,7 +9197,7 @@ function renderLibrary(){
     return `<div class="lib-card ${r.modeTag==='vegan'?'is-vegan':''}" data-cat="${r.cat}" onclick="openRecipe(${r.id})">
       <div class="lib-card-emoji">
         <div class="lib-card-emoji-bg"></div>
-        <img class="lib-card-emoji-photo" src="https://storage.googleapis.com/testprojet-721cb-recipes/recipe-photos/${r.cat}-${r.id}.jpg" alt="" loading="lazy" onload="this.classList.add('loaded'); this.parentElement.classList.add('has-photo');" onerror="this.remove();">
+        ${KP_RECIPE_PHOTOS.has(r.cat+'-'+r.id) ? '<img class="lib-card-emoji-photo" src="'+KP_RECIPE_PHOTO_BASE+'/'+r.cat+'-'+r.id+'.jpg" alt="" loading="lazy" onload="this.classList.add(\'loaded\'); this.parentElement.classList.add(\'has-photo\');" onerror="this.remove();">' : ''}
         <div class="lib-card-emoji-icon">${r.emoji}</div>
         ${veganBadge}
         <!-- Hover overlay -->
