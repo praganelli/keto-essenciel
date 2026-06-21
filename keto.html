@@ -12378,6 +12378,15 @@ function kpClaimPendingReferralBonuses(user){
 window.kpClaimPendingReferralBonuses = kpClaimPendingReferralBonuses;
 
 /* ─── Profile status cards: "Mon parrain" + "Temps Premium restant" ─── */
+/* Clé "code de parrainage utilisé" SCOPÉE par UID (corrige la fuite : sans
+   scope, un code utilisé par un compte s'affichait chez tous les comptes du
+   même navigateur). Retourne null si aucun utilisateur connecté. */
+function _kpUsedRefKey(uid){
+  var u = uid;
+  if(!u){ try{ u = (typeof currentUser!=='undefined' && currentUser) ? currentUser.uid : null; }catch(e){ u=null; } }
+  return u ? ('kp_used_referral_v1__'+u) : null;
+}
+
 function kpInjectProfileStatusCards(footer){
   if(!footer) return;
   var holder = document.getElementById('kpProfileStatusCards');
@@ -12389,7 +12398,13 @@ function kpInjectProfileStatusCards(footer){
 
   // Card 1 — Parrain
   var usedRef = null;
-  try{ usedRef = JSON.parse(localStorage.getItem('kp_used_referral_v1') || 'null'); }catch(e){}
+  try{
+    // Migration : supprime l'ancienne clé GLOBALE qui fuitait entre comptes
+    // (même navigateur) et lit désormais une clé propre à l'utilisateur (UID).
+    try{ localStorage.removeItem('kp_used_referral_v1'); }catch(e){}
+    var _urk = _kpUsedRefKey();
+    if(_urk){ usedRef = JSON.parse(localStorage.getItem(_urk) || 'null'); }
+  }catch(e){}
   if(usedRef && usedRef.code){
     var maskedEmail = '';
     if(usedRef.parrain_email){
@@ -12953,7 +12968,7 @@ function kpApplyReferralCodeOnSignup(rawCode, newUser){
     _grantPremiumDays(newEmailKey, newUser.uid, rewardDays, 'referral:'+code).then(function(expires){
       // Persist the used referral code locally so the profile card can display it
       try{
-        localStorage.setItem('kp_used_referral_v1', JSON.stringify({
+        localStorage.setItem(_kpUsedRefKey(newUser.uid), JSON.stringify({
           code: code,
           parrain_email: ownerEmail || '',
           activated_at: new Date().toISOString(),
@@ -13055,7 +13070,7 @@ window.kpRedeemReferralCode = function(){
     _grantPremiumDays(newEmailKey, user.uid, rewardDays, 'referral:'+code).then(function(){
       // Persist used referral code so profile shows the parrain
       try{
-        localStorage.setItem('kp_used_referral_v1', JSON.stringify({
+        localStorage.setItem(_kpUsedRefKey(user.uid), JSON.stringify({
           code: code,
           parrain_email: ownerEmail || '',
           activated_at: new Date().toISOString(),
