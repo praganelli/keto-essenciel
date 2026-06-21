@@ -139,6 +139,10 @@ async def root():
 async def serve_keto_app():
     return FileResponse(ROOT_DIR / "keto_app.html", media_type="text/html")
 
+@api_router.get("/app-preview")
+async def serve_keto_preview():
+    return FileResponse(ROOT_DIR / "keto_preview.html", media_type="text/html")
+
 @api_router.get("/download")
 async def download_keto_app():
     return FileResponse(
