@@ -359,6 +359,9 @@ h1 em{color:var(--gold2)}
   mix-blend-mode:overlay;
 }
 
+/* Brand block — only shown in the desktop left sidebar */
+.bnav-brand{ display:none; }
+
 /* Tab buttons — icon-only style closer to iOS dock */
 .bnav-tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -5704,13 +5707,26 @@ body{
     border-radius:0 !important; gap:5px !important; padding:34px 18px 24px !important;
     backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
   }
-  .bottom-nav-inner::before{
-    content:"🌿  Le Keto" !important;
-    font-family:'Fraunces',serif !important; font-size:27px !important; font-weight:600 !important;
-    color:#2a3f2d !important; letter-spacing:.005em !important;
-    padding:6px 14px 22px !important; margin-bottom:22px !important;
+  .bottom-nav-inner::before{ display:none !important; }
+  .bnav-brand{
+    display:block !important; text-align:left !important;
+    padding:2px 14px 22px !important; margin-bottom:24px !important;
     border-bottom:1px solid rgba(94,124,97,.20) !important;
   }
+  .bnav-brand-title{
+    font-family:'Fraunces',serif !important; font-size:25px !important; font-weight:600 !important;
+    color:#2a3f2d !important; letter-spacing:.005em !important; line-height:1.1 !important;
+  }
+  .bnav-brand-title em{ font-style:italic !important; color:#5e7c61 !important; }
+  .bnav-brand-sub{
+    font-family:'Fraunces',serif !important; font-size:10.5px !important; font-weight:600 !important;
+    letter-spacing:.22em !important; color:rgba(42,63,45,.62) !important; margin-top:5px !important;
+  }
+  .bnav-brand-tag{
+    font-size:12px !important; font-style:italic !important; color:rgba(42,63,45,.7) !important;
+    margin-top:8px !important; line-height:1.35 !important;
+  }
+  .bnav-brand-tag em{ font-style:italic !important; font-weight:600 !important; color:var(--ed-sage-dark) !important; }
   .bottom-nav-pill{ display:none !important; }
 
   .bnav-tab{
@@ -7463,6 +7479,11 @@ body{
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <div class="bottom-nav-pill" id="bnavPill"></div>
+    <div class="bnav-brand" aria-hidden="true">
+      <div class="bnav-brand-title">Keto <em>Premium</em></div>
+      <div class="bnav-brand-sub">ESSENCIEL O NATUREL</div>
+      <div class="bnav-brand-tag">Le keto sans effort, <em>par un naturopathe</em></div>
+    </div>
     <button class="bnav-tab active" id="nt-plan" onclick="switchTab('plan')">
       <span class="bnav-icon">📅</span>
       <span class="bnav-label">Plan</span>
