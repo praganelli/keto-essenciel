@@ -6,14 +6,10 @@
  *   2. Écrit le statut Premium dans Firestore (collection "premium_emails")
  *   3. Envoie un email de confirmation via Resend
  *
- * Événements gérés :
- *   - checkout.session.completed      -> active le Premium + email
- *   - customer.subscription.created   -> active le Premium
- *   - customer.subscription.deleted   -> désactive le Premium
+ * Les clés sont lues depuis le fichier functions/.env (déployé avec la fonction).
  */
 
 const { onRequest } = require("firebase-functions/v2/https");
-const { defineSecret } = require("firebase-functions/params");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const Stripe = require("stripe");
@@ -22,15 +18,9 @@ const { Resend } = require("resend");
 admin.initializeApp();
 const db = admin.firestore();
 
-// Secrets (configurés via "firebase functions:secrets:set ...")
-const STRIPE_SECRET_KEY = defineSecret("STRIPE_SECRET_KEY");
-const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
-const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
-
 // ─── Configuration ───
 const PREMIUM_COLLECTION = "premium_emails";
-// Tant que le domaine n'est pas vérifié dans Resend, gardez onboarding@resend.dev
-// (les emails ne partiront qu'au propriétaire du compte Resend).
+// Tant que le domaine n'est pas vérifié dans Resend, gardez onboarding@resend.dev.
 // Après vérification du domaine essencielonaturel.fr, remplacez par :
 //   "Essenciel O Naturel <infos@essencielonaturel.fr>"
 const FROM_EMAIL = "Essenciel O Naturel <onboarding@resend.dev>";
@@ -66,12 +56,9 @@ async function sendWelcomeEmail(resend, email) {
 }
 
 exports.stripeWebhook = onRequest(
-  {
-    region: "europe-west1",
-    secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY],
-  },
+  { region: "europe-west1" },
   async (req, res) => {
-    const stripe = new Stripe(STRIPE_SECRET_KEY.value());
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     // 1) Vérification de la signature avec le corps BRUT (req.rawBody)
     let event;
@@ -79,7 +66,7 @@ exports.stripeWebhook = onRequest(
       event = stripe.webhooks.constructEvent(
         req.rawBody,
         req.headers["stripe-signature"],
-        STRIPE_WEBHOOK_SECRET.value()
+        process.env.STRIPE_WEBHOOK_SECRET
       );
     } catch (err) {
       logger.error("Signature invalide:", err.message);
@@ -96,7 +83,7 @@ exports.stripeWebhook = onRequest(
         if (email) {
           await setPremium(email, true, "stripe");
           try {
-            const resend = new Resend(RESEND_API_KEY.value());
+            const resend = new Resend(process.env.RESEND_API_KEY);
             await sendWelcomeEmail(resend, email);
             await resend.emails.send({
               from: FROM_EMAIL,
