@@ -363,6 +363,13 @@ h1 em{color:var(--gold2)}
 .bnav-brand, .bnav-section, .bnav-premium-cta, .bnav-profile-card{ display:none; }
 /* Bandeau Premium masqué quand l'utilisateur est déjà Premium */
 .bnav-premium-cta.is-hidden{ display:none !important; }
+/* Reflet brillant qui balaie le sticker Premium */
+@keyframes bnavShine{
+  0%   { left:-45%; opacity:0; }
+  12%  { opacity:1; }
+  48%  { left:130%; opacity:0; }
+  100% { left:130%; opacity:0; }
+}
 /* Date du jour : visible uniquement dans l'en-tête desktop */
 .kp-hero-date{ display:none; }
 /* Colonne latérale Plan : visible uniquement en desktop */
@@ -5819,18 +5826,37 @@ body{
 
   /* ── Bouton « Découvrir Premium » doré ── */
   .bnav-premium-cta{
-    display:flex !important; align-items:center !important; gap:11px !important; width:100% !important;
-    margin:auto 0 8px !important; padding:12px 14px !important; border:none !important; cursor:pointer !important;
-    border-radius:15px !important; text-align:left !important;
-    background:linear-gradient(120deg,#cda349 0%,#b8862f 58%,#a9761f 100%) !important;
-    box-shadow:0 10px 22px -12px rgba(168,118,31,.85) !important;
-    transition:transform .18s ease, box-shadow .18s ease !important;
+    position:relative !important; overflow:hidden !important;
+    display:flex !important; align-items:center !important; gap:12px !important; width:100% !important;
+    margin:auto 0 8px !important; padding:14px 14px !important; border:none !important; cursor:pointer !important;
+    border-radius:18px !important; text-align:left !important;
+    background:linear-gradient(135deg,#f7e0a0 0%,#e6bd61 24%,#cc9a30 52%,#b07e22 78%,#d2a849 100%) !important;
+    box-shadow:0 16px 32px -12px rgba(168,118,31,.9), 0 2px 0 0 rgba(255,255,255,.45) inset, 0 -12px 20px -14px rgba(110,72,8,.6) inset !important;
+    transition:transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease !important;
   }
-  .bnav-premium-cta:hover{ transform:translateY(-1px) !important; box-shadow:0 14px 26px -12px rgba(168,118,31,.95) !important; }
-  .bnav-premium-spark{ font-size:17px !important; }
-  .bnav-premium-txt{ display:flex !important; flex-direction:column !important; line-height:1.15 !important; }
-  .bnav-premium-txt b{ color:#fff !important; font-size:13.5px !important; font-weight:700 !important; }
-  .bnav-premium-txt small{ color:rgba(255,255,255,.82) !important; font-size:10.5px !important; margin-top:2px !important; }
+  .bnav-premium-cta::after{
+    content:'' !important; position:absolute !important; inset:0 !important; border-radius:18px !important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.4) !important; pointer-events:none !important;
+  }
+  .bnav-premium-cta:hover{ transform:translateY(-2px) !important; box-shadow:0 22px 40px -12px rgba(168,118,31,1), 0 2px 0 0 rgba(255,255,255,.5) inset !important; }
+  .bnav-premium-shine{
+    position:absolute !important; top:-60% !important; left:-40% !important; width:42% !important; height:220% !important;
+    transform:rotate(18deg) !important; pointer-events:none !important; z-index:0 !important;
+    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.65) 50%, rgba(255,255,255,0) 100%) !important;
+    animation:bnavShine 4.8s ease-in-out infinite !important;
+  }
+  .bnav-premium-badge{
+    flex:0 0 auto !important; width:38px !important; height:38px !important; border-radius:50% !important;
+    display:flex !important; align-items:center !important; justify-content:center !important; font-size:19px !important;
+    background:radial-gradient(120% 120% at 30% 22%, #fffaef 0%, #ffeec0 52%, #f2cf80 100%) !important;
+    box-shadow:0 4px 9px -3px rgba(110,72,8,.7), inset 0 0 0 1px rgba(255,255,255,.65) !important;
+    position:relative !important; z-index:1 !important;
+  }
+  .bnav-premium-txt{ display:flex !important; flex-direction:column !important; line-height:1.15 !important; position:relative !important; z-index:1 !important; flex:1 1 auto !important; min-width:0 !important; }
+  .bnav-premium-txt b{ color:#4a3208 !important; font-size:14px !important; font-weight:800 !important; letter-spacing:.01em !important; text-shadow:0 1px 0 rgba(255,255,255,.4) !important; }
+  .bnav-premium-txt small{ color:rgba(74,50,8,.78) !important; font-size:10.5px !important; margin-top:3px !important; font-weight:600 !important; }
+  .bnav-premium-arrow{ position:relative !important; z-index:1 !important; color:#4a3208 !important; font-size:16px !important; font-weight:800 !important; transition:transform .2s ease !important; flex:0 0 auto !important; }
+  .bnav-premium-cta:hover .bnav-premium-arrow{ transform:translateX(3px) !important; }
 
   /* ── Carte mini-profil ── */
   .bnav-profile-card{
@@ -7701,8 +7727,10 @@ body{
       <span class="bnav-label">Admin</span>
     </button>
     <button class="bnav-premium-cta" type="button" aria-hidden="true" onclick="openPremiumModal&&openPremiumModal('sidebar')">
-      <span class="bnav-premium-spark">✨</span>
-      <span class="bnav-premium-txt"><b>Découvrir Premium</b><small>Modes, suivi évolué &amp; 200+ recettes</small></span>
+      <span class="bnav-premium-shine" aria-hidden="true"></span>
+      <span class="bnav-premium-badge">👑</span>
+      <span class="bnav-premium-txt"><b>Passez Premium</b><small>Modes, suivi évolué &amp; 200+ recettes</small></span>
+      <span class="bnav-premium-arrow" aria-hidden="true">→</span>
     </button>
     <div class="bnav-profile-card" aria-hidden="true">
       <span class="bnav-pc-avatar">🥑</span>
