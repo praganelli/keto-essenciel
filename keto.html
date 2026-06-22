@@ -5941,7 +5941,8 @@ body{
   .suivi-empty, .empty-state{ border-radius:18px !important; }
 
   /* (1) Mise en page 2 colonnes du Plan + colonne droite collante */
-  #tab-plan{
+  /* NB: scopé via :not([style*="none"]) pour ne PAS empêcher le masquage de l'onglet (display:none inline) */
+  #tab-plan:not([style*="none"]){
     display:grid !important;
     grid-template-columns:minmax(0,1fr) 336px !important;
     gap:26px !important; align-items:start !important;
