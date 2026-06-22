@@ -377,6 +377,75 @@ h1 em{color:var(--gold2)}
 /* Colonne latérale Plan : visible uniquement en desktop */
 .plan-rail{ display:none; }
 
+/* ════════ Ajustements UI Mobile — onglet Plan ════════ */
+/* Statut Premium / Gratuit sous le titre "Bonjour …" (mobile uniquement) */
+.plan-status-mobile{
+  display:none;
+  align-items:center;justify-content:center;gap:7px;
+  margin:12px auto 0;padding:5px 15px;width:fit-content;max-width:90%;
+  border-radius:999px;
+  font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  background:rgba(35,102,72,.1);border:1px solid rgba(35,102,72,.28);color:var(--em);
+}
+.plan-status-dot{width:7px;height:7px;border-radius:50%;background:var(--em2);flex-shrink:0}
+.plan-status-mobile.is-premium{
+  background:linear-gradient(135deg,#f5d88a,#c49030);
+  border:1px solid #b07a22;color:#4a3208;
+  box-shadow:0 5px 16px -5px rgba(176,122,34,.55);
+}
+.plan-status-mobile.is-premium .plan-status-dot{background:#7a5410}
+
+/* Carte d'accès "Compléments recommandés" — mobile uniquement (ruban doré) */
+.lpev-plan-card{display:none}
+.lpev-plan-card{
+  position:relative;align-items:center;gap:14px;
+  margin:0 0 22px;padding:16px 18px;
+  border-radius:20px;cursor:pointer;
+  background:linear-gradient(135deg, rgba(245,216,138,.42), rgba(255,253,247,.96));
+  border:1px solid rgba(176,122,34,.3);
+  box-shadow:0 1px 0 rgba(255,255,255,.75) inset, 0 14px 30px -14px rgba(176,122,34,.45);
+  overflow:hidden;-webkit-tap-highlight-color:transparent;
+  transition:transform .18s ease, box-shadow .25s ease;
+}
+.lpev-plan-card:active{transform:scale(.99)}
+.lpev-plan-card-ribbon{
+  position:absolute;top:13px;right:-32px;transform:rotate(45deg);
+  background:linear-gradient(135deg,var(--gold2),var(--gold3));
+  color:#fff;font-size:8.5px;font-weight:800;letter-spacing:.1em;
+  padding:3px 36px;box-shadow:0 4px 10px rgba(176,122,34,.4);
+}
+.lpev-plan-card-icon{
+  width:46px;height:46px;flex-shrink:0;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  background:linear-gradient(135deg, rgba(196,144,48,.2), rgba(245,216,138,.4));
+  border:1px solid rgba(176,122,34,.22);
+}
+.lpev-plan-card-body{flex:1;min-width:0}
+.lpev-plan-card-title{font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--text);line-height:1.15}
+.lpev-plan-card-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
+.lpev-plan-card-arrow{font-size:21px;color:var(--gold2);flex-shrink:0;font-weight:300}
+
+/* Bouton retour en haut de la vue Compléments (mobile uniquement) */
+.lpev-back-mobile{display:none}
+.lpev-back-mobile{
+  align-items:center;gap:7px;margin-bottom:14px;padding:9px 16px;
+  width:fit-content;border-radius:999px;cursor:pointer;
+  background:var(--glass);border:1px solid var(--border2);
+  font-size:13px;font-weight:600;color:var(--em);
+  box-shadow:var(--shadow-sm);-webkit-tap-highlight-color:transparent;
+}
+
+@media (max-width:1023px){
+  .plan-status-mobile{ display:flex; }
+  #planPremiumStatusHost{ display:none !important; }
+  #lpevSectionPlan{ display:none !important; }
+  .lpev-plan-card.has-items{ display:flex; }
+  .lpev-back-mobile{ display:flex; }
+  /* Sélecteur Semaine / Jour en pleine largeur */
+  .view-toggle{ flex:1 1 100%;width:100%; }
+  .view-toggle .vtab{ flex:1;text-align:center; }
+}
+
 /* Tab buttons — icon-only style closer to iOS dock */
 .bnav-tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -7186,6 +7255,7 @@ body{
   <header>
     <div class="eyebrow"><span class="pulse"></span> Le keto par un naturopathe</div>
     <h1 id="appTitle">Votre coach<br><em>keto premium</em></h1>
+    <div id="planStatusMobile" class="plan-status-mobile" data-testid="plan-status-mobile"><span class="plan-status-dot"></span><span id="planStatusMobileTxt">Version Gratuite</span></div>
     <p class="tagline" id="appTagline">Plan · Bibliothèque · Suivi · Profil · Collations</p>
     <div class="kp-hero-date" id="kpHeroDate"></div>
     <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center">
@@ -7235,6 +7305,16 @@ body{
     </div>
     <div id="day-panel"></div>
     <div id="shopping-wrap" style="margin-top:28px"></div>
+    <!-- 💊 Carte d'accès Compléments (mobile uniquement) -->
+    <div id="lpevPlanCard" class="lpev-plan-card" data-testid="lpev-plan-card" onclick="switchTab('lpev')">
+      <div class="lpev-plan-card-ribbon">RECOMMANDÉ</div>
+      <div class="lpev-plan-card-icon">💊</div>
+      <div class="lpev-plan-card-body">
+        <div class="lpev-plan-card-title">Compléments recommandés</div>
+        <div class="lpev-plan-card-sub">Sélection LPEV adaptée à votre profil keto</div>
+      </div>
+      <div class="lpev-plan-card-arrow">→</div>
+    </div>
     <!-- 💊 Suppléments LPEV recommandés -->
     <div id="lpevSectionPlan" class="kp-lpev-section" data-testid="lpev-section-plan" style="display:none"></div>
     <!-- Colonne latérale droite (desktop uniquement) -->
@@ -7577,6 +7657,7 @@ body{
 
   <!-- ═══ COMPLÉMENTS ALIMENTAIRES TAB (desktop) ═══ -->
   <div id="tab-lpev" style="display:none" data-testid="tab-lpev">
+    <div class="lpev-back-mobile" data-testid="lpev-back-mobile" onclick="switchTab('plan')">← Retour au plan</div>
     <div id="lpevSectionTab" class="kp-lpev-section" data-testid="lpev-section-tab"></div>
     <div id="lpevTabEmpty" class="kp-lpev-empty" style="display:none">Aucun complément alimentaire disponible pour le moment.</div>
   </div>
@@ -13622,6 +13703,11 @@ function refreshHeaderLogout(){
     var stTxt = $('bnavStatusTxt');
     if(stTxt){ stTxt.textContent = prem ? 'Version Premium' : 'Version Gratuite'; }
     if(stEl){ stEl.classList.toggle('is-premium', prem); }
+    // Statut Premium/Gratuit sous le titre "Bonjour …" (mobile)
+    var msEl = $('planStatusMobile');
+    var msTxt = $('planStatusMobileTxt');
+    if(msTxt){ msTxt.textContent = prem ? 'Version Premium' : 'Version Gratuite'; }
+    if(msEl){ msEl.classList.toggle('is-premium', prem); }
     var pcCta = document.querySelector('.bnav-premium-cta');
     if(pcCta){ pcCta.classList.toggle('is-hidden', prem); }
     // Date du jour dans le bandeau d'accueil (desktop)
@@ -14027,6 +14113,8 @@ authGuest = function(){
       if(typeof exportPDF === 'function') exportPDF();
     });
     updateWeekPulse();
+    // Repositionne la bannière Quiz juste au-dessus de cette carte (mobile)
+    try{ if(typeof window.kpSyncPlanRail === 'function') window.kpSyncPlanRail(); }catch(e){}
   }
   function ensureRecipeTools(){
     var grid = $('libGrid');
@@ -19000,6 +19088,11 @@ authGuest = function(){
     if(!container) return;
     var emptyEl = document.getElementById('lpevTabEmpty');
     _kpLpevFetchUser(function(items){
+      // Carte d'accès Compléments (mobile) — visible seulement s'il y a des items
+      if(containerId === 'lpevSectionPlan'){
+        var planCard = document.getElementById('lpevPlanCard');
+        if(planCard) planCard.classList.toggle('has-items', items.length > 0);
+      }
       if(!items.length){
         container.innerHTML = '';
         container.style.display = 'none';
@@ -21221,9 +21314,12 @@ function kpSyncPlanRail(){
     if(quiz && quiz.parentNode !== rail) rail.appendChild(quiz);
   } else {
     var weekGrid = document.getElementById('weekGrid');
-    var dayPanel = document.getElementById('day-panel');
+    var pulse = document.getElementById('kpWeekPulse');
+    // Ancre = carte "Progression de la semaine" (kpWeekPulse), sinon la grille de la semaine
+    var anchor = pulse || weekGrid;
     if(recipe && recipe.parentNode === rail && weekGrid) plan.insertBefore(recipe, weekGrid);
-    if(quiz && quiz.parentNode === rail && dayPanel) plan.insertBefore(quiz, dayPanel);
+    // Bannière Quiz placée juste AU-DESSUS de "Progression de la semaine"
+    if(quiz && anchor && quiz !== anchor.previousElementSibling){ plan.insertBefore(quiz, anchor); }
   }
 }
 window.kpSyncPlanRail = kpSyncPlanRail;
@@ -21785,6 +21881,14 @@ setTimeout(maybeShowContextualPremium, 4000);
       + '<button class="quiz-result-restart" onclick="window.kpQuizRestart()">↻ Recommencer le quiz</button>';
     // Persist score for further use
     try{ localStorage.setItem('kp_quiz_score', JSON.stringify({pct:pct,level:level,at:Date.now()})); }catch(e){}
+    // Score 100% keto → masque définitivement la bannière du quiz
+    if(pct >= 100){
+      try{
+        localStorage.setItem('kp_quiz_perfect','1');
+        var _qb = document.getElementById('quizPromoBanner');
+        if(_qb) _qb.style.display = 'none';
+      }catch(e){}
+    }
   }
   window.kpQuizSelect = function(idx){ quizState.answers[quizState.step] = idx; renderQuiz(); };
   window.kpQuizNext = function(){ if(quizState.answers[quizState.step]==null) return; quizState.step++; renderQuiz(); };
@@ -21797,15 +21901,38 @@ setTimeout(maybeShowContextualPremium, 4000);
   document.addEventListener('DOMContentLoaded', function(){
     var ov = document.getElementById('quizOverlay');
     if(ov){ ov.addEventListener('click', function(e){ if(e.target === ov) closeKetoQuiz(); }); }
-    // Show promo banner if quiz not completed yet
+    // Bannière du quiz : visible tant que le score 100% keto n'est pas atteint
     setTimeout(function(){
       var banner = document.getElementById('quizPromoBanner');
       if(banner){
-        var done = false;
-        try { done = !!JSON.parse(localStorage.getItem('kp_quiz_score')||'null'); } catch(e){}
-        banner.style.display = done ? 'none' : 'flex';
+        var perfect = false;
+        try { perfect = localStorage.getItem('kp_quiz_perfect') === '1'; } catch(e){}
+        banner.style.display = perfect ? 'none' : 'flex';
       }
     }, 1500);
+    // Auto-lancement du quiz à la toute première connexion (une seule fois)
+    (function(){
+      var tries = 0;
+      function isVisible(el){ try{ return el && getComputedStyle(el).display !== 'none'; }catch(e){ return false; } }
+      function tryAutoQuiz(){
+        tries++;
+        try{
+          if(localStorage.getItem('kp_quiz_autostart') || localStorage.getItem('kp_quiz_score')) return;
+          var ob = document.getElementById('obOverlay');
+          var obVisible = ob && !ob.classList.contains('hidden') && isVisible(ob);
+          var auth = document.getElementById('authScreen');
+          var authVisible = auth && !auth.classList.contains('hide') && isVisible(auth);
+          var planVisible = isVisible(document.getElementById('tab-plan'));
+          if(!obVisible && !authVisible && planVisible && typeof window.openKetoQuiz === 'function'){
+            localStorage.setItem('kp_quiz_autostart','1');
+            window.openKetoQuiz();
+            return;
+          }
+        }catch(e){}
+        if(tries < 14) setTimeout(tryAutoQuiz, 1500);
+      }
+      setTimeout(tryAutoQuiz, 3500);
+    })();
   });
 })();
 </script>

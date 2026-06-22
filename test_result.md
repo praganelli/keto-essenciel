@@ -191,3 +191,24 @@ agent_communication:
         - The right rail (#planRail) is hidden; "Recette du jour" and Quiz appear in the normal single-column flow.
       NOTE: This app uses Firebase (client-side) + dynamic JS injection. There are NO backend API changes. Only test FRONTEND/WEB behavior. Ignore Firebase network warnings in guest/local mode.
       needs_retesting: true
+
+#====================================================================================================
+## Test Session — Mobile Plan UI adjustments (June 2026)
+#====================================================================================================
+## Source of truth: /app/keto.html  → synced to /app/backend/keto_app.html (served at /api/app & /api/download)
+## Scope: MOBILE (<1024px) only, desktop (>=1024px) must stay unchanged.
+
+### Changes implemented (FRONTEND / WEB only)
+1. Carte d'accès "💊 Compléments recommandés" (ruban doré) ajoutée dans le Plan mobile (#lpevPlanCard, onclick switchTab('lpev')). La section LPEV inline complète (#lpevSectionPlan) est masquée sur mobile. La carte n'apparaît que s'il y a des compléments (classe .has-items togglée dans kpRenderLpevSupplements('lpevSectionPlan')). Bouton "← Retour au plan" ajouté en haut de #tab-lpev (mobile uniquement).
+2. Panneau "Mon abonnement" (#planPremiumStatusHost) masqué sur mobile (display:none via @media max-width:1023px). Conservé sur desktop.
+3. Statut Gratuit/Premium affiché sous le titre "Bonjour …" sur mobile (#planStatusMobile, pill vert "Version Gratuite" / ruban doré "Version Premium"), mis à jour dans refreshHeaderLogout().
+4. Sélecteur "Semaine/Jour" (.view-toggle) en pleine largeur sur mobile.
+5. Bannière Quiz (#quizPromoBanner) déplacée JUSTE AU-DESSUS de la carte "Progression de la semaine" (#kpWeekPulse) sur mobile via kpSyncPlanRail() (mobile branch) + appel dans ensureWeekPulse().
+6. Auto-lancement du Quiz à la 1ère connexion (poller dans le bloc quiz DOMContentLoaded ; flag localStorage kp_quiz_autostart ; ne s'ouvre que si #tab-plan visible et ni authScreen ni obOverlay visibles).
+7. Bannière Quiz masquée définitivement une fois le score 100% keto atteint (flag localStorage kp_quiz_perfect, posé dans renderQuizResult quand pct>=100 ; logique d'affichage de la bannière mise à jour).
+
+### Verification done by main agent (screenshot tool, mobile 390x844 + desktop 1440x950)
+- Mobile: "VERSION GRATUITE" sous le titre ✓ ; planPremiumStatusHost masqué ✓ ; toggle pleine largeur (358px) ✓ ; ordre Plan = [quizPromoBanner, kpWeekPulse, recipeOfDayCard, weekGrid, ...] ✓ ; carte "Compléments recommandés" (ruban doré) visible ✓.
+- Desktop: sidebar + layout 2 colonnes intacts ; rail = [quizPromoBanner, recipeOfDayCard] ; planPremiumStatusHost=block ; planStatusMobile & lpevPlanCard = none ✓. Aucune régression.
+- BLOCKER for live login flow: demo account (demo.keto.1782045313@gmail.com) rejected by Firebase ("Email ou mot de passe incorrect") — unrelated to these changes; verification done via guest/forced render.
+- needs_retesting: false (verified via screenshots)
