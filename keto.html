@@ -361,6 +361,8 @@ h1 em{color:var(--gold2)}
 
 /* Brand block & desktop-only sidebar extras — only shown in the desktop left sidebar */
 .bnav-brand, .bnav-section, .bnav-premium-cta, .bnav-profile-card{ display:none; }
+/* Bandeau Premium masqué quand l'utilisateur est déjà Premium */
+.bnav-premium-cta.is-hidden{ display:none !important; }
 
 /* Tab buttons — icon-only style closer to iOS dock */
 .bnav-tab{
@@ -5828,6 +5830,8 @@ body{
     background:rgba(94,124,97,.18) !important; color:var(--ed-sage-dark) !important;
   }
   .bnav-pc-badge.is-premium{ background:linear-gradient(120deg,#cda349,#a9761f) !important; color:#fff !important; }
+
+  .bnav-premium-cta.is-hidden + .bnav-profile-card{ margin-top:auto !important; }
 
   /* Réglages + Déconnexion en bas */
   .bnav-settings{ border-top:1px solid rgba(94,124,97,.18) !important; padding-top:14px !important; margin-bottom:2px !important; }
@@ -13431,8 +13435,11 @@ function refreshHeaderLogout(){
     if(pcPlan){
       var prem = false;
       try { prem = (typeof window.isPremium === 'function') ? window.isPremium() === true : false; } catch(e){}
-      pcPlan.textContent = prem ? 'Premium' : (currentUser ? 'Plan Gratuit' : 'Hors-ligne');
+      pcPlan.textContent = prem ? 'Version Premium' : 'Version Gratuite';
       pcPlan.classList.toggle('is-premium', prem);
+      // Masquer le bandeau « Découvrir Premium » dans la barre si déjà Premium
+      var pcCta = document.querySelector('.bnav-premium-cta');
+      if(pcCta){ pcCta.classList.toggle('is-hidden', prem); }
     }
   } catch(e){}
 }
@@ -17948,6 +17955,8 @@ authGuest = function(){
     //    (doivent refléter immédiatement tout changement d'abonnement)
     try{ if(typeof window.kpRenderPremiumStatusCardInPlan==='function') window.kpRenderPremiumStatusCardInPlan(); }catch(e){}
     try{ if(typeof injectReferralCard==='function') injectReferralCard(); }catch(e){}
+    // 4. Barre latérale desktop : carte profil (Version Gratuite/Premium) + bandeau Premium
+    try{ if(typeof refreshHeaderLogout==='function') refreshHeaderLogout(); }catch(e){}
   }
   window.kpRefreshUI = kpRefreshUI;
 
