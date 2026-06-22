@@ -5767,35 +5767,35 @@ body{
     width:6px !important; height:6px !important; border-radius:50% !important; flex:0 0 auto !important;
     background:#7c9a6f !important; box-shadow:0 0 0 3px rgba(124,154,111,.18) !important;
   }
-  /* PREMIUM — vert sauge profond + monogramme doré (feuille) */
+  /* PREMIUM — Glassmorphism (verre dépoli translucide + étincelle dorée) */
   .bnav-status.is-premium{
     position:relative !important; overflow:hidden !important; isolation:isolate !important; margin-top:13px !important;
     display:inline-flex !important; align-items:center !important; gap:8px !important;
-    padding:5px 14px 5px 6px !important; border-radius:999px !important;
-    font-size:11px !important; font-weight:600 !important; letter-spacing:.05em !important; text-transform:none !important;
-    background:linear-gradient(135deg,#47634b 0%,#324c39 52%,#3d5742 100%) !important;
-    color:#f3ead4 !important; border:1px solid rgba(212,176,120,.38) !important; text-shadow:none !important;
-    box-shadow:0 9px 22px -12px rgba(28,46,32,.85), inset 0 1px 0 rgba(255,255,255,.1) !important;
+    padding:7px 15px !important; border-radius:14px !important;
+    font-size:11px !important; font-weight:700 !important; letter-spacing:.04em !important; text-transform:none !important;
+    background:linear-gradient(135deg, rgba(255,255,255,.6) 0%, rgba(255,248,232,.32) 55%, rgba(231,209,160,.3) 100%) !important;
+    -webkit-backdrop-filter:blur(14px) saturate(165%) !important; backdrop-filter:blur(14px) saturate(165%) !important;
+    color:#3c5a42 !important; border:1px solid rgba(255,255,255,.75) !important; text-shadow:0 1px 0 rgba(255,255,255,.55) !important;
+    box-shadow:0 12px 28px -14px rgba(61,90,64,.55), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -10px 16px -12px rgba(205,163,73,.5) !important;
   }
-  .bnav-status.is-premium::after{            /* reflet doux très subtil */
+  .bnav-status.is-premium::before{           /* halo doré doux en coin */
+    content:'' !important; position:absolute !important; inset:0 !important; border-radius:14px !important; z-index:0 !important; pointer-events:none !important;
+    background:radial-gradient(80% 120% at 88% -10%, rgba(212,176,120,.55) 0%, rgba(212,176,120,0) 60%) !important;
+  }
+  .bnav-status.is-premium::after{            /* reflet vitré qui balaie */
     content:'' !important; position:absolute !important; top:-60% !important; left:-50% !important;
     width:36% !important; height:220% !important; transform:rotate(18deg) !important; pointer-events:none !important; z-index:0 !important;
-    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.16) 50%, rgba(255,255,255,0) 100%) !important;
-    animation:bnavShine 6s ease-in-out infinite !important;
+    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 100%) !important;
+    animation:bnavShine 5.5s ease-in-out infinite !important;
   }
   .bnav-status.is-premium > span{ position:relative !important; z-index:1 !important; }
-  .bnav-status.is-premium #bnavStatusTxt{ color:#f3ead4 !important; font-weight:600 !important; }
-  /* Médaillon doré rond avec feuille en réserve (monogramme) */
+  .bnav-status.is-premium #bnavStatusTxt{ color:#3c5a42 !important; font-weight:700 !important; }
   .bnav-status.is-premium .bnav-status-dot{
-    width:21px !important; height:21px !important; border-radius:50% !important; flex:0 0 auto !important;
-    background:radial-gradient(120% 120% at 32% 24%, #fbe9b6 0%, #d7ab50 62%, #b9871f 100%) !important;
-    box-shadow:0 2px 4px -1px rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,255,255,.45) !important;
-    display:flex !important; align-items:center !important; justify-content:center !important; position:relative !important;
+    width:auto !important; height:auto !important; background:none !important; box-shadow:none !important;
   }
   .bnav-status.is-premium .bnav-status-dot::before{
-    content:'' !important; width:12px !important; height:12px !important; background:#2f4636 !important;
-    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z'/%3E%3Cpath d='M2 21c0-3 1.85-5.36 5.08-6'/%3E%3C/svg%3E") center/12px no-repeat !important;
-    mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z'/%3E%3Cpath d='M2 21c0-3 1.85-5.36 5.08-6'/%3E%3C/svg%3E") center/12px no-repeat !important;
+    content:'✦' !important; font-size:12px !important; line-height:1 !important; color:#c79a36 !important;
+    text-shadow:0 1px 2px rgba(176,126,34,.45) !important;
   }
   .bottom-nav-pill{ display:none !important; }
 
