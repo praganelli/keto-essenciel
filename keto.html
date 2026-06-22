@@ -5767,35 +5767,37 @@ body{
     width:6px !important; height:6px !important; border-radius:50% !important; flex:0 0 auto !important;
     background:#7c9a6f !important; box-shadow:0 0 0 3px rgba(124,154,111,.18) !important;
   }
-  /* PREMIUM — Glassmorphism (verre dépoli translucide + étincelle dorée) */
+  /* PREMIUM — ruban / sceau doré (label de qualité, extrémités en pointe) */
   .bnav-status.is-premium{
-    position:relative !important; overflow:hidden !important; isolation:isolate !important; margin-top:13px !important;
-    display:inline-flex !important; align-items:center !important; gap:8px !important;
-    padding:7px 15px !important; border-radius:14px !important;
-    font-size:11px !important; font-weight:700 !important; letter-spacing:.04em !important; text-transform:none !important;
-    background:linear-gradient(135deg, rgba(255,255,255,.6) 0%, rgba(255,248,232,.32) 55%, rgba(231,209,160,.3) 100%) !important;
-    -webkit-backdrop-filter:blur(14px) saturate(165%) !important; backdrop-filter:blur(14px) saturate(165%) !important;
-    color:#3c5a42 !important; border:1px solid rgba(255,255,255,.75) !important; text-shadow:0 1px 0 rgba(255,255,255,.55) !important;
-    box-shadow:0 12px 28px -14px rgba(61,90,64,.55), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -10px 16px -12px rgba(205,163,73,.5) !important;
+    position:relative !important; overflow:hidden !important; isolation:isolate !important; margin-top:14px !important;
+    display:inline-flex !important; align-items:center !important; gap:7px !important;
+    padding:7px 20px !important; border-radius:0 !important;
+    font-size:10.5px !important; font-weight:800 !important; letter-spacing:.12em !important; text-transform:uppercase !important;
+    background:linear-gradient(135deg,#f7e0a0 0%,#e3b85a 38%,#c8962e 72%,#e0bc62 100%) !important;
+    color:#4a3208 !important; border:none !important; text-shadow:0 1px 0 rgba(255,255,255,.45) !important;
+    -webkit-clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%,9px 50%) !important;
+    clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%,9px 50%) !important;
+    filter:drop-shadow(0 6px 9px rgba(168,118,31,.55)) !important;
+    box-shadow:none !important;
   }
-  .bnav-status.is-premium::before{           /* halo doré doux en coin */
-    content:'' !important; position:absolute !important; inset:0 !important; border-radius:14px !important; z-index:0 !important; pointer-events:none !important;
-    background:radial-gradient(80% 120% at 88% -10%, rgba(212,176,120,.55) 0%, rgba(212,176,120,0) 60%) !important;
+  .bnav-status.is-premium::before{           /* lisérés sombres internes (effet pli du ruban) */
+    content:'' !important; position:absolute !important; inset:0 !important; z-index:0 !important; pointer-events:none !important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.4), inset 0 -3px 6px -3px rgba(120,80,10,.55), inset 0 3px 4px -3px rgba(255,255,255,.6) !important;
   }
-  .bnav-status.is-premium::after{            /* reflet vitré qui balaie */
+  .bnav-status.is-premium::after{            /* reflet brillant qui balaie */
     content:'' !important; position:absolute !important; top:-60% !important; left:-50% !important;
-    width:36% !important; height:220% !important; transform:rotate(18deg) !important; pointer-events:none !important; z-index:0 !important;
-    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 100%) !important;
-    animation:bnavShine 5.5s ease-in-out infinite !important;
+    width:34% !important; height:220% !important; transform:rotate(18deg) !important; pointer-events:none !important; z-index:0 !important;
+    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.75) 50%, rgba(255,255,255,0) 100%) !important;
+    animation:bnavShine 5s ease-in-out infinite !important;
   }
   .bnav-status.is-premium > span{ position:relative !important; z-index:1 !important; }
-  .bnav-status.is-premium #bnavStatusTxt{ color:#3c5a42 !important; font-weight:700 !important; }
+  .bnav-status.is-premium #bnavStatusTxt{ color:#4a3208 !important; font-weight:800 !important; }
   .bnav-status.is-premium .bnav-status-dot{
     width:auto !important; height:auto !important; background:none !important; box-shadow:none !important;
   }
   .bnav-status.is-premium .bnav-status-dot::before{
-    content:'✦' !important; font-size:12px !important; line-height:1 !important; color:#c79a36 !important;
-    text-shadow:0 1px 2px rgba(176,126,34,.45) !important;
+    content:'★' !important; font-size:11px !important; line-height:1 !important; color:#7a5410 !important;
+    text-shadow:0 1px 0 rgba(255,255,255,.4) !important;
   }
   .bottom-nav-pill{ display:none !important; }
 
