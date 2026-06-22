@@ -5767,29 +5767,35 @@ body{
     width:6px !important; height:6px !important; border-radius:50% !important; flex:0 0 auto !important;
     background:#7c9a6f !important; box-shadow:0 0 0 3px rgba(124,154,111,.18) !important;
   }
-  /* PREMIUM — emblème RECTANGULAIRE vert nuit & or, gemme + reflet (forme + couleurs + typo différentes) */
+  /* PREMIUM — liseré dégradé animé (vert→or) autour d'un intérieur clair */
   .bnav-status.is-premium{
-    position:relative !important; overflow:hidden !important; margin-top:13px !important;
-    display:inline-flex !important; align-items:center !important; gap:8px !important;
-    padding:7px 14px 7px 11px !important; border-radius:11px !important;
-    font-size:10.5px !important; font-weight:800 !important; letter-spacing:.16em !important; text-transform:uppercase !important;
-    background:linear-gradient(135deg,#2b4530 0%,#172a1d 55%,#243b29 100%) !important;
-    color:#f3d488 !important; border:1px solid rgba(212,176,120,.55) !important;
-    text-shadow:0 1px 1px rgba(0,0,0,.35) !important;
-    box-shadow:0 11px 24px -12px rgba(0,0,0,.6), 0 0 0 1px rgba(212,176,120,.12), inset 0 1px 0 rgba(255,255,255,.06) !important;
+    position:relative !important; overflow:hidden !important; isolation:isolate !important; margin-top:13px !important;
+    display:inline-flex !important; align-items:center !important; gap:7px !important;
+    padding:7px 15px !important; border-radius:999px !important;
+    font-size:11px !important; font-weight:700 !important; letter-spacing:.03em !important; text-transform:none !important;
+    background:transparent !important; color:#3a5240 !important; border:none !important; text-shadow:none !important;
+    box-shadow:0 8px 20px -12px rgba(94,124,97,.5) !important;
   }
-  .bnav-status.is-premium::after{
-    content:'' !important; position:absolute !important; top:-60% !important; left:-50% !important;
-    width:38% !important; height:220% !important; transform:rotate(18deg) !important; pointer-events:none !important; z-index:0 !important;
-    background:linear-gradient(90deg, rgba(243,212,136,0) 0%, rgba(243,212,136,.5) 50%, rgba(243,212,136,0) 100%) !important;
-    animation:bnavShine 4.8s ease-in-out infinite !important;
+  .bnav-status.is-premium::before{           /* dégradé qui tourne */
+    content:'' !important; position:absolute !important; left:50% !important; top:50% !important;
+    width:180% !important; height:0 !important; padding-bottom:180% !important;
+    transform:translate(-50%,-50%) !important; z-index:0 !important; pointer-events:none !important;
+    background:conic-gradient(from 0deg, #6f9462, #cda349, #f6dc94, #aecb97, #cda349, #6f9462) !important;
+    animation:bnavSpin 5s linear infinite !important;
   }
-  .bnav-status.is-premium > span{ position:relative !important; z-index:1 !important; }
+  .bnav-status.is-premium::after{            /* intérieur clair (laisse un fin liseré) */
+    content:'' !important; position:absolute !important; inset:1.6px !important; border-radius:999px !important;
+    background:linear-gradient(180deg,#fcf8ee 0%,#f3eedb 100%) !important; z-index:1 !important; pointer-events:none !important;
+  }
+  .bnav-status.is-premium > span{ position:relative !important; z-index:2 !important; }
+  .bnav-status.is-premium #bnavStatusTxt{ color:#3a5240 !important; font-weight:700 !important; }
   .bnav-status.is-premium .bnav-status-dot{
     width:auto !important; height:auto !important; background:none !important; box-shadow:none !important;
-    filter:drop-shadow(0 1px 2px rgba(0,0,0,.45)) !important;
   }
-  .bnav-status.is-premium .bnav-status-dot::before{ content:'💎' !important; font-size:12px !important; line-height:1 !important; }
+  .bnav-status.is-premium .bnav-status-dot::before{
+    content:'✦' !important; font-size:12px !important; line-height:1 !important; color:#c79a36 !important;
+    text-shadow:0 0 6px rgba(205,163,73,.45) !important;
+  }
   .bottom-nav-pill{ display:none !important; }
 
   /* ── Label de section ── */
