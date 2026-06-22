@@ -1,0 +1,41 @@
+{
+  "summary": "Frontend-only validation of /api/app (keto.html). All requested features pass on desktop (1440x950) and mobile (390x844). Desktop: left sidebar correctly shows 'Keto Premium' brand + avocado logo, 'Version Gratuite' badge under title, 'Menu' label, 4 tabs (nt-plan / nt-library / nt-suivi / nt-profile) with line icons, gold 'Découvrir Premium' CTA and mini-profile card. Plan tab is a true 2-column layout: #planRail computed display='flex' with 2 children (recipeOfDayCard + quizPromoBanner). Premium toggle works: kpState.premium=true → status text becomes 'Version Premium', .bnav-premium-cta becomes display:none + .is-hidden; premium=false reverts both. generateMenu() populates weekGrid (3 children rendered) while #planRail stays intact (2 children). Mobile: desktop sidebar hidden, bottom 5-tab pill nav visible, #planRail display='none', recipe+quiz visible inline, .plan-topbar first row contains exactly 'GÉNÉRER LA SEMAINE' + 'COURSES' (2 buttons, top=601), other 4 ghost buttons wrap to row 2 (top=655) and row 3 (top=709). No horizontal overflow. Resize mobile→desktop: kpSyncPlanRail() correctly moves cards back into the rail with NO duplicates (recipeCount=1, quizCount=1) and no page errors. Sidebar tab IDs are nt-plan/nt-library/nt-suivi/nt-profile (note: requested IDs nt-recettes/nt-profil do NOT exist — likely a spec naming mismatch, not a bug).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Firestore connectivity",
+        "issue": "Firestore still reports 'Could not reach Cloud Firestore backend [code=unavailable]' and 'Missing or insufficient permissions' (same as iteration_1). Not blocking the tested UI changes; app falls back to localStorage / mode local. Pre-existing.",
+        "affected_testIDs": []
+      }
+    ],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/tmp/test_results.json",
+    "/tmp/tab_nav.json",
+    "/tmp/desktop_after_auth.png",
+    "/tmp/desktop_plan.png",
+    "/tmp/desktop_plan_generated.png",
+    "/tmp/mobile_plan.png"
+  ],
+  "action_items": [
+    "(Spec/doc only) Update the test brief — the sidebar tabs in keto.html use IDs nt-plan, nt-library, nt-suivi, nt-profile (not nt-recettes / nt-profil). All 4 still render with line icons + Plan / Recettes / Suivi / Profil labels and behave correctly.",
+    "(Pre-existing, not part of this iteration) Firestore unavailable / permission errors still flood the console; consider tightening rules or silencing in preview if not used."
+  ],
+  "critical_code_review_comments": [
+    "kpSyncPlanRail() (keto.html ~21118) correctly gates on matchMedia('(min-width:1024px)'): on desktop it appends #recipeOfDayCard + #quizPromoBanner into #planRail; on smaller widths it re-inserts them inline before #weekGrid / #day-panel. Resize listener + 2.6s safety re-sync are wired, so transitions desktop ↔ mobile preserve a single instance of each card (verified).",
+    "refreshHeaderLogout() (keto.html ~13544-13551) correctly drives both the badge text (#bnavStatusTxt 'Version Premium' / 'Version Gratuite') and the .bnav-premium-cta visibility via the .is-hidden class, using window.isPremium() as source of truth. Verified live.",
+    "Plan top buttons order in .plan-topbar puts the two .btn-primary / .btn-gold elements first (Générer la semaine, Courses) followed by four .btn-ghost buttons, which combined with the mobile CSS grid (50%/50% rows + flex-wrap) yields the requested 'big two on row 1, others below' layout. Verified on 390x844 (row1=top 601, row2=655, row3=709).",
+    "Sidebar contains all required structural blocks (.bnav-brand, .bnav-section 'Menu', .bnav-tab×4, .bnav-premium-cta, .bnav-profile-card with #bnavPcName 'Mode local') and is properly hidden on mobile breakpoint (display:none for .bnav-brand / .bnav-section / .bnav-premium-cta / .bnav-profile-card)."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "n/a (skipped per request)", "frontend": "100% on the 9 requested checks" },
+  "seed_data_creation": "None. Used guest mode (window.authGuest()).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "App is the standalone /api/app HTML. Bypass auth via window.authGuest() + hide overlays (kpWelcomeScreen, authScreen, obOverlay, profilePickerOverlay, premiumTrialBanner). Toggle premium with `window.kpState = {...window.kpState, premium:true}; refreshHeaderLogout();`. Use matchMedia-driven helpers: switchTab('plan'|'library'|'suivi'|'profile'), generateMenu(), kpSyncPlanRail(). Sidebar tab IDs are nt-plan / nt-library / nt-suivi / nt-profile. The mini-profile card name comes from #bnavPcName, status text from #bnavStatusTxt; gold CTA toggled via .bnav-premium-cta.is-hidden. Tab navigation observed to switch active class + content correctly; window.scrollY measurements may be non-zero after switches because the main column scrolls internally rather than the window, so don't rely on window.scrollY alone to assert scroll-to-top.",
+  "rca_of_issue": "No new bugs introduced. The redesigned desktop sidebar + dynamic Premium badge / CTA hide, the desktop 2-column plan rail (#planRail), the mobile single-column flow + plan-topbar two-row layout, and the kpSyncPlanRail resize sync all behave as specified."
+}
