@@ -5743,6 +5743,23 @@ body{
     margin-top:7px !important; line-height:1.35 !important;
   }
   .bnav-brand-tag em{ font-style:italic !important; font-weight:600 !important; color:var(--ed-sage-dark) !important; }
+  /* Badge statut Premium/Gratuit juste sous le titre */
+  .bnav-status{
+    display:inline-flex !important; align-items:center !important; gap:7px !important;
+    margin-top:13px !important; padding:5px 12px !important; border-radius:999px !important;
+    font-size:11px !important; font-weight:700 !important; letter-spacing:.04em !important;
+    background:rgba(94,124,97,.14) !important; color:var(--ed-sage-dark) !important;
+    border:1px solid rgba(94,124,97,.22) !important;
+  }
+  .bnav-status-dot{
+    width:7px !important; height:7px !important; border-radius:50% !important; flex:0 0 auto !important;
+    background:#5e7c61 !important; box-shadow:0 0 0 3px rgba(94,124,97,.16) !important;
+  }
+  .bnav-status.is-premium{
+    background:linear-gradient(120deg,rgba(205,163,73,.24),rgba(169,118,31,.16)) !important;
+    color:#9a6b18 !important; border-color:rgba(169,118,31,.4) !important;
+  }
+  .bnav-status.is-premium .bnav-status-dot{ background:#cda349 !important; box-shadow:0 0 0 3px rgba(205,163,73,.22) !important; }
   .bottom-nav-pill{ display:none !important; }
 
   /* ── Label de section ── */
@@ -7573,6 +7590,7 @@ body{
       </div>
       <div class="bnav-brand-sub">ESSENCIEL O NATUREL</div>
       <div class="bnav-brand-tag">Le keto sans effort, <em>par un naturopathe</em></div>
+      <div class="bnav-status" id="bnavStatus"><span class="bnav-status-dot"></span><span id="bnavStatusTxt">Version Gratuite</span></div>
     </div>
     <div class="bnav-section" aria-hidden="true">Menu</div>
     <button class="bnav-tab active" id="nt-plan" onclick="switchTab('plan')">
@@ -7603,7 +7621,6 @@ body{
       <span class="bnav-pc-avatar">🥑</span>
       <span class="bnav-pc-meta">
         <b id="bnavPcName">Espace membre</b>
-        <span class="bnav-pc-badge" id="bnavPcPlan">Plan Gratuit</span>
       </span>
     </div>
     <button class="bnav-tab bnav-settings" onclick="openPrefs()">
@@ -9034,6 +9051,10 @@ function switchTab(tab){
   if(tab==='suivi'){ renderConseil(); renderSuivi(); }
   if(tab==='help' && typeof renderHelp==='function') renderHelp();
   setTimeout(function(){ try{ kpAnimateCards(tab); }catch(e){} }, 30);
+  // Toujours afficher le haut de l'écran au changement d'onglet
+  try{ window.scrollTo({top:0, behavior:'instant'}); }catch(e){ try{ window.scrollTo(0,0); }catch(_e){} }
+  try{ var _se=document.scrollingElement||document.documentElement; if(_se) _se.scrollTop=0; }catch(e){}
+  try{ var _ap=document.querySelector('.app'); if(_ap) _ap.scrollTop=0; }catch(e){}
 }
 
 /* ─── Animation d'arrivée décalée des cartes (1a) ─── */
@@ -13432,15 +13453,15 @@ function refreshHeaderLogout(){
       }
       pcName.textContent = nm;
     }
-    if(pcPlan){
-      var prem = false;
-      try { prem = (typeof window.isPremium === 'function') ? window.isPremium() === true : false; } catch(e){}
-      pcPlan.textContent = prem ? 'Version Premium' : 'Version Gratuite';
-      pcPlan.classList.toggle('is-premium', prem);
-      // Masquer le bandeau « Découvrir Premium » dans la barre si déjà Premium
-      var pcCta = document.querySelector('.bnav-premium-cta');
-      if(pcCta){ pcCta.classList.toggle('is-hidden', prem); }
-    }
+    // Statut Premium/Gratuit sous le titre + masquage du bandeau Premium si déjà Premium
+    var prem = false;
+    try { prem = (typeof window.isPremium === 'function') ? window.isPremium() === true : false; } catch(e){}
+    var stEl = $('bnavStatus');
+    var stTxt = $('bnavStatusTxt');
+    if(stTxt){ stTxt.textContent = prem ? 'Version Premium' : 'Version Gratuite'; }
+    if(stEl){ stEl.classList.toggle('is-premium', prem); }
+    var pcCta = document.querySelector('.bnav-premium-cta');
+    if(pcCta){ pcCta.classList.toggle('is-hidden', prem); }
   } catch(e){}
 }
 
