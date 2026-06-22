@@ -361,6 +361,8 @@ h1 em{color:var(--gold2)}
 
 /* Brand block & desktop-only sidebar extras — only shown in the desktop left sidebar */
 .bnav-brand, .bnav-section, .bnav-premium-cta, .bnav-profile-card{ display:none; }
+/* Onglet « Compléments » : visible uniquement dans la barre desktop */
+#nt-lpev{ display:none; }
 /* Bandeau Premium masqué quand l'utilisateur est déjà Premium */
 .bnav-premium-cta.is-hidden{ display:none !important; }
 /* Reflet brillant qui balaie le sticker Premium */
@@ -5819,10 +5821,10 @@ body{
   .bnav-tab .bnav-icon{ font-size:21px !important; width:24px !important; height:24px !important; text-align:center !important; transform:none !important; }
   .bnav-tab .bnav-label{ font-size:15.5px !important; font-weight:600 !important; letter-spacing:.01em !important; opacity:1 !important; }
   /* Icônes ligne fines (mask SVG, héritent de la couleur du texte) */
-  #nt-plan .bnav-icon, #nt-library .bnav-icon, #nt-suivi .bnav-icon, #nt-profile .bnav-icon, .bnav-settings .bnav-icon{
+  #nt-plan .bnav-icon, #nt-library .bnav-icon, #nt-suivi .bnav-icon, #nt-profile .bnav-icon, #nt-lpev .bnav-icon, .bnav-settings .bnav-icon{
     font-size:0 !important; position:relative !important;
   }
-  #nt-plan .bnav-icon::after, #nt-library .bnav-icon::after, #nt-suivi .bnav-icon::after, #nt-profile .bnav-icon::after, .bnav-settings .bnav-icon::after{
+  #nt-plan .bnav-icon::after, #nt-library .bnav-icon::after, #nt-suivi .bnav-icon::after, #nt-profile .bnav-icon::after, #nt-lpev .bnav-icon::after, .bnav-settings .bnav-icon::after{
     content:'' !important; position:absolute !important; inset:0 !important; background:currentColor !important;
     -webkit-mask-repeat:no-repeat !important; mask-repeat:no-repeat !important;
     -webkit-mask-position:center !important; mask-position:center !important;
@@ -5834,6 +5836,11 @@ body{
   #nt-suivi .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-4l-3 9L9 3l-3 9H2'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-4l-3 9L9 3l-3 9H2'/%3E%3C/svg%3E") !important; }
   #nt-profile .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") !important; }
   .bnav-settings .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='4' y1='21' x2='4' y2='14'/%3E%3Cline x1='4' y1='10' x2='4' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12' y2='3'/%3E%3Cline x1='20' y1='21' x2='20' y2='16'/%3E%3Cline x1='20' y1='12' x2='20' y2='3'/%3E%3Cline x1='1' y1='14' x2='7' y2='14'/%3E%3Cline x1='9' y1='8' x2='15' y2='8'/%3E%3Cline x1='17' y1='16' x2='23' y2='16'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='4' y1='21' x2='4' y2='14'/%3E%3Cline x1='4' y1='10' x2='4' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12' y2='3'/%3E%3Cline x1='20' y1='21' x2='20' y2='16'/%3E%3Cline x1='20' y1='12' x2='20' y2='3'/%3E%3Cline x1='1' y1='14' x2='7' y2='14'/%3E%3Cline x1='9' y1='8' x2='15' y2='8'/%3E%3Cline x1='17' y1='16' x2='23' y2='16'/%3E%3C/svg%3E") !important; }
+  /* Onglet Compléments : icône gélule + visible uniquement en desktop */
+  #nt-lpev{ display:flex !important; }
+  #nt-lpev .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7Z'/%3E%3Cpath d='m8.5 8.5 7 7'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7Z'/%3E%3Cpath d='m8.5 8.5 7 7'/%3E%3C/svg%3E") !important; }
+  /* LPEV déplacé dans son propre menu : masqué dans Plan & Profil en desktop */
+  #lpevSectionPlan, #lpevSectionProfile{ display:none !important; }
   /* Hover : léger glissement + icône qui grandit */
   .bnav-tab:hover{ background:rgba(94,124,97,.12) !important; color:#1d3022 !important; transform:translateX(4px) !important; }
   .bnav-tab:hover .bnav-icon::after{ transform:scale(1.12) !important; }
@@ -5928,7 +5935,7 @@ body{
   .lib-grid{ grid-template-columns:repeat(4,1fr) !important; gap:20px !important; }
   .week-grid{ gap:12px !important; }
   /* limite de lecture confortable pour les blocs pleine largeur */
-  #tab-plan, #tab-library, #tab-suivi, #tab-profile{ max-width:1320px !important; }
+  #tab-plan, #tab-library, #tab-suivi, #tab-profile, #tab-lpev{ max-width:1320px !important; }
 
   /* ═══════════ EMBELLISSEMENT DU CONTENU (page de droite) ═══════════ */
   /* (3) Cartes raffinées + effet de survol cohérent */
@@ -7568,6 +7575,12 @@ body{
   <!-- ═══ ADMIN TAB (visible uniquement pour infos@essencielonaturel.fr) ═══ -->
   <div id="tab-admin" style="display:none" data-testid="tab-admin"></div>
 
+  <!-- ═══ COMPLÉMENTS ALIMENTAIRES TAB (desktop) ═══ -->
+  <div id="tab-lpev" style="display:none" data-testid="tab-lpev">
+    <div id="lpevSectionTab" class="kp-lpev-section" data-testid="lpev-section-tab"></div>
+    <div id="lpevTabEmpty" class="kp-lpev-empty" style="display:none">Aucun complément alimentaire disponible pour le moment.</div>
+  </div>
+
   <!-- ═══ HELP TAB (Aide) ═══ -->
   <div id="tab-help" style="display:none">
     <div class="help-hero" data-testid="help-hero">
@@ -7749,6 +7762,10 @@ body{
     <button class="bnav-tab" id="nt-profile" onclick="switchTab('profile')">
       <span class="bnav-icon">👤</span>
       <span class="bnav-label">Profil</span>
+    </button>
+    <button class="bnav-tab bnav-lpev-tab" id="nt-lpev" onclick="switchTab('lpev')" data-testid="bnav-lpev">
+      <span class="bnav-icon">💊</span>
+      <span class="bnav-label">Compléments</span>
     </button>
     <button class="bnav-tab bnav-admin" id="nt-admin" onclick="switchTab('admin')" data-testid="bnav-admin" style="display:none">
       <span class="bnav-icon">🛡️</span>
@@ -9174,7 +9191,7 @@ function switchTab(tab){
     return;
   }
   currentTab=tab;
-  ['plan','library','suivi','profile','help','admin'].forEach(function(t){
+  ['plan','library','suivi','profile','lpev','help','admin'].forEach(function(t){
     var el=$('tab-'+t);
     if(!el) return;
     if(t===tab){
@@ -9192,6 +9209,7 @@ function switchTab(tab){
   if(tab==='library') renderLibrary();
   if(tab==='profile') renderProfile();
   if(tab==='suivi'){ renderConseil(); renderSuivi(); }
+  if(tab==='lpev' && typeof window.kpRenderLpevSupplements==='function') window.kpRenderLpevSupplements('lpevSectionTab');
   if(tab==='help' && typeof renderHelp==='function') renderHelp();
   setTimeout(function(){ try{ kpAnimateCards(tab); }catch(e){} }, 30);
   if(tab==='plan'){ try{ if(typeof kpSyncPlanRail==='function') kpSyncPlanRail(); }catch(e){} }
@@ -18897,17 +18915,33 @@ authGuest = function(){
     return (Date.now() - ts) < sevenDaysMs;
   }
 
+  // 3 catégories fixes demandées + matching par mots-clés (accents/casse ignorés)
+  function _kpLpevNorm(s){
+    return String(s==null?'':s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  }
+  var KP_LPEV_CATEGORIES = [
+    { id:'poids',    label:'Protocole perte de poids', kw:['perte de poids','poids','minceur','keto','ceto','cetog','brule','satiet','appetit','graisse','silhouette','drainage','draine','metabolisme'] },
+    { id:'diabete',  label:'Diabète',                  kw:['diab','glyc','sucre','insulin','glucose','glucide'] },
+    { id:'bienetre', label:'Bien-être',                kw:['bien-etre','bien etre','bienetre','stress','sommeil','energie','detente','relax','immun','digest','vitalit','serenit','anti-age','antiage','fatigue','equilibre','confort'] }
+  ];
+  function _kpLpevMatchCat(item, catId){
+    var cat = null;
+    for(var i=0;i<KP_LPEV_CATEGORIES.length;i++){ if(KP_LPEV_CATEGORIES[i].id===catId){ cat=KP_LPEV_CATEGORIES[i]; break; } }
+    if(!cat) return false;
+    var hay = _kpLpevNorm([ (item.pathologies||[]).join(' '), item.name, item.description, item.category, (item.tags||[]).join(' ') ].join(' '));
+    for(var j=0;j<cat.kw.length;j++){ if(hay.indexOf(cat.kw[j])>=0) return true; }
+    return false;
+  }
+
   function _kpLpevRenderInto(container, items, filter){
     if(!container) return;
-    var allPaths = _kpLpevAllPathologies(items);
     var filtered = (filter && filter !== 'all')
-      ? items.filter(function(it){ return (it.pathologies||[]).indexOf(filter) >= 0; })
+      ? items.filter(function(it){ return _kpLpevMatchCat(it, filter); })
       : items;
 
-    var chipsHtml = '<button class="kp-lpev-chip ' + (filter==='all'?'active':'') + '" data-lpev-filter="all">Tous</button>';
-    chipsHtml += allPaths.map(function(p){
-      var safe = _kpLpevEscape(p);
-      return '<button class="kp-lpev-chip ' + (filter===p?'active':'') + '" data-lpev-filter="' + safe + '">' + safe + '</button>';
+    var chipsHtml = '<button class="kp-lpev-chip ' + (filter==='all'||!filter?'active':'') + '" data-lpev-filter="all">Tous</button>';
+    chipsHtml += KP_LPEV_CATEGORIES.map(function(c){
+      return '<button class="kp-lpev-chip ' + (filter===c.id?'active':'') + '" data-lpev-filter="' + c.id + '">' + _kpLpevEscape(c.label) + '</button>';
     }).join('');
 
     var cardsHtml = '';
@@ -18946,7 +18980,7 @@ authGuest = function(){
       '<div class="kp-lpev-eyebrow">Recommandés par Essenciel O Naturel</div>' +
       '<div class="kp-lpev-title">Suppléments <em>LPEV</em></div>' +
       '<div class="kp-lpev-sub">Une sélection de compléments alimentaires de la gamme Laboratoires Phytothérapie & Énergétique du Vivant, choisis pour leur efficacité ciblée. Filtrez par pathologie pour affiner.</div>' +
-      (allPaths.length ? '<div class="kp-lpev-filters" data-testid="lpev-filters">' + chipsHtml + '</div>' : '') +
+      '<div class="kp-lpev-filters" data-testid="lpev-filters">' + chipsHtml + '</div>' +
       cardsHtml +
       '<div class="kp-lpev-disclaim">⚠️ Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée. Demandez conseil à votre praticien de santé.</div>';
 
@@ -18964,12 +18998,15 @@ authGuest = function(){
   window.kpRenderLpevSupplements = function(containerId){
     var container = document.getElementById(containerId);
     if(!container) return;
+    var emptyEl = document.getElementById('lpevTabEmpty');
     _kpLpevFetchUser(function(items){
       if(!items.length){
         container.innerHTML = '';
         container.style.display = 'none';
+        if(containerId === 'lpevSectionTab' && emptyEl) emptyEl.style.display = 'block';
         return;
       }
+      if(emptyEl) emptyEl.style.display = 'none';
       container.style.display = 'block';
       _kpLpevRenderInto(container, items, kpLpevUserFilter);
     });
@@ -18979,7 +19016,7 @@ authGuest = function(){
   window.kpRefreshLpevUser = function(){
     kpLpevUserCache = [];
     kpLpevUserCacheAt = 0;
-    ['lpevSectionProfile','lpevSectionPlan'].forEach(function(id){
+    ['lpevSectionProfile','lpevSectionPlan','lpevSectionTab'].forEach(function(id){
       var el = document.getElementById(id);
       if(el && el.offsetParent !== null) window.kpRenderLpevSupplements(id);
     });
