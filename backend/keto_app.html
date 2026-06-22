@@ -5767,10 +5767,24 @@ body{
     background:#5e7c61 !important; box-shadow:0 0 0 3px rgba(94,124,97,.16) !important;
   }
   .bnav-status.is-premium{
-    background:linear-gradient(120deg,rgba(205,163,73,.24),rgba(169,118,31,.16)) !important;
-    color:#9a6b18 !important; border-color:rgba(169,118,31,.4) !important;
+    position:relative !important; overflow:hidden !important;
+    padding:6px 14px !important; font-weight:800 !important; letter-spacing:.05em !important;
+    background:linear-gradient(120deg,#f7e0a0 0%,#e3b85a 42%,#c8962e 78%,#dcb35a 100%) !important;
+    color:#4a3208 !important; border:none !important;
+    text-shadow:0 1px 0 rgba(255,255,255,.4) !important;
+    box-shadow:0 7px 18px -8px rgba(168,118,31,.9), inset 0 0 0 1px rgba(255,255,255,.5), inset 0 1px 0 rgba(255,255,255,.55) !important;
   }
-  .bnav-status.is-premium .bnav-status-dot{ background:#cda349 !important; box-shadow:0 0 0 3px rgba(205,163,73,.22) !important; }
+  .bnav-status.is-premium::after{
+    content:'' !important; position:absolute !important; top:-60% !important; left:-45% !important;
+    width:40% !important; height:220% !important; transform:rotate(18deg) !important; pointer-events:none !important; z-index:0 !important;
+    background:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 100%) !important;
+    animation:bnavShine 4.8s ease-in-out infinite !important;
+  }
+  .bnav-status.is-premium > span{ position:relative !important; z-index:1 !important; }
+  .bnav-status.is-premium .bnav-status-dot{
+    width:auto !important; height:auto !important; background:none !important; box-shadow:none !important;
+  }
+  .bnav-status.is-premium .bnav-status-dot::before{ content:'👑' !important; font-size:12px !important; line-height:1 !important; }
   .bottom-nav-pill{ display:none !important; }
 
   /* ── Label de section ── */
