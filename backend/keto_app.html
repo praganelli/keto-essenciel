@@ -2491,6 +2491,23 @@ input[type=text],input[type=password],textarea{cursor:text}
 /* Tab slide transitions */
 .tab-slide{animation:tab-slide-in .44s cubic-bezier(.22,1,.28,1) both}
 @keyframes tab-slide-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ═══════════ Filet de sécurité responsive global ═══════════ */
+html,body{ max-width:100%; overflow-x:hidden; }
+img,svg,video,canvas{ max-width:100%; height:auto; }
+input,textarea,select{ max-width:100%; box-sizing:border-box; }
+.profile-id-fields{ min-width:0; flex:1 1 auto; }
+.profile-id-row{ min-width:0; }
+.profile-id-input{ width:100%; min-width:0; box-sizing:border-box; }
+.profile-id-value{ min-width:0; overflow-wrap:anywhere; }
+.result-macro{ min-width:0; }
+.bnav-tab{ min-width:0; }
+@media (max-width:400px){
+  .result-macros{ gap:8px; }
+  .result-macro{ padding:12px 6px; }
+  .rm-val{ font-size:22px !important; }
+  .rm-lab{ font-size:9px; letter-spacing:.04em; }
+}
 /* ─── Arrivée douce des cartes (fondu + glissement vertical, décalé) ─── */
 .kp-card-in{animation:kpCardIn .5s cubic-bezier(.16,1,.3,1) both}
 @keyframes kpCardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -18523,6 +18540,14 @@ authGuest = function(){
     try{ navigator.clipboard.writeText(txt).then(function(){ if(btn){ var o=btn.textContent; btn.textContent='✓ Copié'; setTimeout(function(){ btn.textContent=o; },1400); } }); }catch(e){}
   };
   function kpCcUser(){ var u=(typeof currentUser!=='undefined'&&currentUser)?currentUser:(window.currentUser||null); return u; }
+  // Base API du générateur : relatif sur Emergent, absolu ailleurs (Netlify) — CORS autorisé côté backend
+  var KP_CONTENT_BASE = (location.hostname.indexOf('emergentagent.com') >= 0) ? '/api' : 'https://body-metrics-bug.preview.emergentagent.com/api';
+  function kpContentApi(path){ return KP_CONTENT_BASE + path; }
+  async function kpSafeJson(r){
+    var t = await r.text();
+    try{ return JSON.parse(t); }
+    catch(e){ throw new Error('Réponse inattendue du serveur (HTTP '+r.status+'). Utilisez l\'outil depuis le lien Emergent.'); }
+  }
 
   window.kpContentRenderDays = function(content){
     window._kpLastContent = content;
@@ -18554,8 +18579,8 @@ authGuest = function(){
     if(imgEl) imgEl.innerHTML = '<div class="kp-cc-img-ph">🎨 Génération…</div>';
     try{
       if(!prompt){ if(imgEl) imgEl.innerHTML='<div class="kp-cc-img-ph">—</div>'; return; }
-      var r = await fetch('/api/content/generate-image', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({weekId:weekId,dayIdx:dayIdx,kind:kind,prompt:prompt})});
-      var j = await r.json();
+      var r = await fetch(kpContentApi('/content/generate-image'), {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({weekId:weekId,dayIdx:dayIdx,kind:kind,prompt:prompt})});
+      var j = await kpSafeJson(r);
       if(!r.ok || !j.ok) throw new Error((j&&j.error)||('HTTP '+r.status));
       if(imgEl) imgEl.innerHTML = '<img src="'+j.url+'" alt=""><a class="kp-cc-dl" href="'+j.url+'" target="_blank" rel="noopener">⬇︎</a>';
     }catch(e){
@@ -18582,8 +18607,8 @@ authGuest = function(){
     if(results) results.innerHTML='';
     try{
       var token = await user.getIdToken();
-      var r = await fetch('/api/content/generate-text', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:'{}'});
-      var j = await r.json();
+      var r = await fetch(kpContentApi('/content/generate-text'), {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:'{}'});
+      var j = await kpSafeJson(r);
       if(!r.ok || !j.ok){ throw new Error((j&&(j.message||j.error))||('HTTP '+r.status)); }
       var content = j.content;
       window.kpContentRenderDays(content);
