@@ -1,0 +1,22 @@
+{
+  "summary": "Verified horizontal centering fix on mobile auth screen at both 390x844 and 375x667 viewports. All targeted elements on the LOGIN tab (.auth-logo, .auth-tabs, #loginEmail, #loginPassword, #btnLogin, #btnGoogle, footer/auth-coordinates) and REGISTER tab step 1 (.auth-plans-link, #regFirstname, #regLastname, #regEmail, footer) show identical left/right gaps of 38px (diff = 0.00px on both viewports). auth-card itself is centered with 14px equal side margins. No top editorial image inside auth-card. Tab switching (login->register->login) leaves fields visible with opacity 1 (no blank regression). regPassword not present on step 1 (multi-step register: étape 1 sur 3 = Identité), which is by design — not a misalignment.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Firestore reports 'unavailable' (offline mode) in console — expected since Firebase demo credentials are not configured in this fork; unrelated to the centering fix."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Vanilla HTML app at /api/app. Landing screen (#kpWelcomeScreen) shown first — click data-testid='welcome-cta-login' to reach auth card. Register form is multi-step (etape 1 sur 3 = Identite: Prenom/Nom/Email only); regPassword appears in a later step. Centering fix on .auth-card via horizontal padding + per-element margin/padding reset is working perfectly (measured diff 0.00px for all inputs, buttons, tabs, logo, footer at both 390x844 and 375x667).",
+  "rca_of_issue": "Original bug: form inputs on mobile had asymmetric horizontal margins (~60px left vs ~16px right) causing visual right-shift. Fix moved horizontal padding onto .auth-card and reset per-element horizontal margins/paddings to 0 with width:100%/box-sizing:border-box in @media (max-width:980px). Verified: getBoundingClientRect().left === (innerWidth - right) for every measured element on both LOGIN and REGISTER tabs."
+}

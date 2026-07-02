@@ -3940,7 +3940,7 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
     border-left:none !important;
     box-shadow:none !important;
     overflow:visible !important;              /* ne coupe jamais le contenu (coordonnées incluses) */
-    padding:12px 0 calc(12px + env(safe-area-inset-bottom)) !important;
+    padding:12px 24px calc(12px + env(safe-area-inset-bottom)) !important;
     animation: kpAuthCardSlideUp .7s cubic-bezier(.16,1,.3,1) both;
   }
   @keyframes kpAuthCardSlideUp{
@@ -3951,7 +3951,7 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
   #authScreen .auth-plans-info{ display:none !important; }
 
   /* Espacements compacts */
-  #authScreen .auth-card .auth-logo{ margin:0 auto 10px !important; padding:0 24px !important; text-align:center !important; }
+  #authScreen .auth-card .auth-logo{ margin:0 auto 10px !important; padding:0 !important; text-align:center !important; }
   #authScreen .auth-card .auth-logo-avo{ width:46px !important; height:46px !important; margin:0 auto 7px !important; }
   #authScreen .auth-card .auth-brand{ font-size:28px !important; }
   #authScreen .auth-card .auth-tabs{ margin:0 auto 12px !important; }
@@ -3960,14 +3960,24 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
   #authScreen .auth-card .reg-stepper{ margin:-2px 0 12px !important; }
   #authScreen .auth-card .reg-step-hero{ margin-bottom:12px !important; padding-bottom:10px !important; }
   #authScreen .auth-card .auth-footer{ margin-top:10px !important; }
+  /* Centrage horizontal : padding porté par la carte, marges/paddings horizontaux des enfants remis à zéro */
   #authScreen .auth-card .auth-logo,
   #authScreen .auth-card .auth-tabs,
   #authScreen .auth-card #authLoginForm,
   #authScreen .auth-card #authRegisterForm,
+  #authScreen .auth-card .auth-reset-overlay,
   #authScreen .auth-card .auth-msg,
   #authScreen .auth-card .auth-guest-btn,
   #authScreen .auth-card .auth-footer{
-    padding-left:24px !important; padding-right:24px !important;
+    margin-left:0 !important; margin-right:0 !important;
+    padding-left:0 !important; padding-right:0 !important;
+    width:100% !important; box-sizing:border-box !important;
+  }
+  #authScreen .auth-card #authLoginForm > *,
+  #authScreen .auth-card #authRegisterForm > *,
+  #authScreen .auth-card #authRegisterForm .reg-step > *{
+    margin-left:0 !important; margin-right:0 !important;
+    width:100% !important; box-sizing:border-box !important;
   }
   /* Le formulaire est visible directement : plus besoin de l'indicateur de défilement */
   #authScreen .auth-scroll-hint{ display:none !important; }
