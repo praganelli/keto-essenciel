@@ -26,7 +26,7 @@ const db = admin.firestore();
 const PREMIUM_COLLECTION = "premium_emails";
 // Après vérification du domaine dans Resend, remplacez par :
 //   "Essenciel O Naturel <infos@essencielonaturel.fr>"
-const FROM_EMAIL = "Essenciel O Naturel <onboarding@resend.dev>";
+const FROM_EMAIL = process.env.FROM_EMAIL || "Essenciel O Naturel <onboarding@resend.dev>";
 const ADMIN_EMAIL = "infos@essencielonaturel.fr";
 
 function stripeClient() {
