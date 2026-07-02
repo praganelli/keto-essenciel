@@ -16467,6 +16467,28 @@ authGuest = function(){
   display:none;
 }
 .kp-admin-panel.open{ display:block; }
+/* Générateur de contenu */
+.kp-admin-msg{ font-size:12.5px; margin:8px 0; min-height:16px; }
+.kp-cc-card{ background:var(--ed-paper); border:1px solid var(--ed-hair-soft); border-radius:10px; padding:14px; margin-bottom:14px; }
+.kp-cc-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.kp-cc-day{ font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:15px; color:var(--ed-ink); }
+.kp-cc-theme{ font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#fff; background:linear-gradient(135deg,var(--ed-sage-dark,#236648),#2f8a5f); padding:3px 10px; border-radius:999px; }
+.kp-cc-imgs{ display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+.kp-cc-img{ position:relative; width:150px; height:150px; border-radius:10px; overflow:hidden; background:var(--ed-paper-warm); border:1px solid var(--ed-hair-soft); display:flex; align-items:center; justify-content:center; }
+.kp-cc-img-story{ width:100px; height:150px; }
+.kp-cc-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+.kp-cc-img-ph{ font-size:11px; color:var(--ed-muted); text-align:center; padding:6px; }
+.kp-cc-img-err{ font-size:10px; color:var(--ed-terra-dark,#b04a2f); text-align:center; padding:6px; }
+.kp-cc-dl{ position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,.55); color:#fff; width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:13px; }
+.kp-cc-block{ margin-bottom:10px; }
+.kp-cc-lbl{ display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ed-muted); margin-bottom:5px; }
+.kp-cc-copy{ font-size:10px; font-weight:700; border:1px solid var(--ed-hair); background:var(--ed-paper-warm); color:var(--ed-sage-dark,#236648); border-radius:6px; padding:2px 8px; cursor:pointer; }
+.kp-cc-copy:hover{ background:var(--ed-sage-dark,#236648); color:#fff; }
+.kp-cc-text{ font-size:13.5px; line-height:1.55; color:var(--ed-ink); white-space:pre-wrap; }
+.kp-cc-tags{ display:flex; flex-wrap:wrap; gap:5px; }
+.kp-cc-tag{ font-size:11.5px; color:var(--ed-sage-dark,#236648); background:rgba(35,102,72,.09); padding:2px 8px; border-radius:6px; }
+.kp-cc-reply{ font-size:12.5px; line-height:1.5; color:var(--ed-ink); background:var(--ed-paper-warm); border-left:3px solid var(--ed-sage-dark,#236648); padding:6px 10px; border-radius:0 6px 6px 0; margin-bottom:6px; }
+
 .kp-admin-form-row{
   display:flex; gap:8px; flex-wrap:wrap;
   margin-bottom:10px;
@@ -18295,6 +18317,7 @@ authGuest = function(){
         '<button class="kp-admin-btn outline" data-testid="admin-toggle-activity" onclick="kpAdminToggle(\'activity\')" style="position:relative">📡 Activité <span class="kp-admin-newbadge" id="kpAdminNewBadge" style="display:none">0</span></button>' +
         '<button class="kp-admin-btn outline" data-testid="admin-toggle-referrals" onclick="kpAdminToggle(\'referrals\')">🎁 Parrainage</button>' +
         '<button class="kp-admin-btn outline" data-testid="admin-toggle-lpev" onclick="kpAdminToggle(\'lpev\')">💊 Suppléments LPEV</button>' +
+        '<button class="kp-admin-btn outline" data-testid="admin-toggle-content" onclick="kpAdminToggle(\'content\')">✍️ Générateur de contenu</button>' +
       '</div>' +
       '<div class="kp-admin-panel" id="kpAdminEmails" data-testid="admin-panel-emails">' +
         '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ed-terra-dark);margin-bottom:10px">Ajouter un utilisateur Premium</div>' +
@@ -18374,6 +18397,16 @@ authGuest = function(){
         '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ed-terra-dark);margin:18px 0 8px">📋 Suppléments enregistrés</div>' +
         '<div class="kp-admin-list" id="kpAdminLpevList" data-testid="admin-lpev-list"><div class="kp-admin-empty">Chargement…</div></div>' +
       '</div>' +
+      '<div class="kp-admin-panel" id="kpAdminContent" data-testid="admin-panel-content">' +
+        '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ed-terra-dark);margin-bottom:6px">Générateur de contenu Facebook · Keto-Essenciel</div>' +
+        '<div style="font-size:13px;color:var(--ed-muted);line-height:1.6;margin-bottom:14px">Un clic génère les <strong>7 publications</strong> de la semaine (Lundi→Dimanche), leurs <strong>stories</strong>, <strong>hashtags</strong>, <strong>réponses types</strong> et les <strong>visuels IA</strong> (carré + story), dans le style de votre marque.</div>' +
+        '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">' +
+          '<button class="kp-admin-btn" data-testid="content-generate-btn" onclick="kpContentGenerate()" id="kpContentGenBtn">✨ Générer la semaine</button>' +
+          '<label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ed-muted)"><input type="checkbox" id="kpContentWithImages" checked> Générer aussi les visuels</label>' +
+        '</div>' +
+        '<div class="kp-admin-msg" id="kpContentMsg"></div>' +
+        '<div id="kpContentResults" data-testid="content-results"></div>' +
+      '</div>' +
     '</div>';
   }
 
@@ -18393,6 +18426,7 @@ authGuest = function(){
     var activity = document.getElementById('kpAdminActivity');
     var referrals = document.getElementById('kpAdminReferrals');
     var lpev = document.getElementById('kpAdminLpev');
+    var content = document.getElementById('kpAdminContent');
     if(!emails || !codes) return;
     if(which === 'emails'){
       emails.classList.toggle('open');
@@ -18409,7 +18443,113 @@ authGuest = function(){
     } else if(which === 'lpev' && lpev){
       lpev.classList.toggle('open');
       if(lpev.classList.contains('open')) kpAdminLoadLpev();
+    } else if(which === 'content' && content){
+      content.classList.toggle('open');
+      if(content.classList.contains('open') && typeof kpContentLoadExisting === 'function') kpContentLoadExisting();
     }
+  };
+
+  // ═══════════ GÉNÉRATEUR DE CONTENU (admin) ═══════════
+  function kpCcEscape(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function kpIsoWeekId(d){ d=d||new Date(); var date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); var day=date.getUTCDay()||7; date.setUTCDate(date.getUTCDate()+4-day); var ys=new Date(Date.UTC(date.getUTCFullYear(),0,1)); var wk=Math.ceil((((date-ys)/86400000)+1)/7); return date.getUTCFullYear()+'-W'+String(wk).padStart(2,'0'); }
+  window._kpCC = {};
+  window.kpContentCopy = function(key, btn){
+    var txt = window._kpCC[key]; if(txt==null) return;
+    try{ navigator.clipboard.writeText(txt).then(function(){ if(btn){ var o=btn.textContent; btn.textContent='✓ Copié'; setTimeout(function(){ btn.textContent=o; },1400); } }); }catch(e){}
+  };
+  function kpCcUser(){ var u=(typeof currentUser!=='undefined'&&currentUser)?currentUser:(window.currentUser||null); return u; }
+
+  window.kpContentRenderDays = function(content){
+    window._kpLastContent = content;
+    var box = document.getElementById('kpContentResults');
+    if(!box) return;
+    var days = (content && content.days) || [];
+    var html = '<div style="font-size:12px;color:var(--ed-muted);margin:12px 0 6px">📅 Semaine <strong>'+kpCcEscape(content.weekId||'')+'</strong> · '+days.length+' publications</div>';
+    days.forEach(function(d, i){
+      window._kpCC['post-'+i] = d.post||'';
+      window._kpCC['story-'+i] = d.story||'';
+      window._kpCC['tags-'+i] = (d.hashtags||[]).join(' ');
+      window._kpCC['replies-'+i] = (d.replies||[]).join('\n\n');
+      var sq = d.square_url ? '<img src="'+kpCcEscape(d.square_url)+'" alt=""><a class="kp-cc-dl" href="'+kpCcEscape(d.square_url)+'" target="_blank" rel="noopener">⬇︎</a>' : '<div class="kp-cc-img-ph">Carré 1:1</div>';
+      var st = d.story_url ? '<img src="'+kpCcEscape(d.story_url)+'" alt=""><a class="kp-cc-dl" href="'+kpCcEscape(d.story_url)+'" target="_blank" rel="noopener">⬇︎</a>' : '<div class="kp-cc-img-ph">Story 9:16</div>';
+      html += '<div class="kp-cc-card" data-testid="content-day-'+i+'">'+
+        '<div class="kp-cc-head"><span class="kp-cc-day">'+kpCcEscape(d.day)+'</span><span class="kp-cc-theme">'+kpCcEscape(d.theme)+'</span></div>'+
+        '<div class="kp-cc-imgs"><div class="kp-cc-img" id="kpContentImg-'+i+'-square">'+sq+'</div><div class="kp-cc-img kp-cc-img-story" id="kpContentImg-'+i+'-story">'+st+'</div></div>'+
+        '<div class="kp-cc-block"><div class="kp-cc-lbl">📝 Publication <button class="kp-cc-copy" onclick="kpContentCopy(\'post-'+i+'\',this)">Copier</button></div><div class="kp-cc-text">'+kpCcEscape(d.post)+'</div></div>'+
+        '<div class="kp-cc-block"><div class="kp-cc-lbl">📱 Story <button class="kp-cc-copy" onclick="kpContentCopy(\'story-'+i+'\',this)">Copier</button></div><div class="kp-cc-text">'+kpCcEscape(d.story)+'</div></div>'+
+        '<div class="kp-cc-block"><div class="kp-cc-lbl"># Hashtags <button class="kp-cc-copy" onclick="kpContentCopy(\'tags-'+i+'\',this)">Copier</button></div><div class="kp-cc-tags">'+(d.hashtags||[]).map(function(h){return '<span class="kp-cc-tag">'+kpCcEscape(h)+'</span>';}).join('')+'</div></div>'+
+        '<div class="kp-cc-block"><div class="kp-cc-lbl">💬 Réponses types <button class="kp-cc-copy" onclick="kpContentCopy(\'replies-'+i+'\',this)">Copier</button></div>'+(d.replies||[]).map(function(rp){return '<div class="kp-cc-reply">'+kpCcEscape(rp)+'</div>';}).join('')+'</div>'+
+      '</div>';
+    });
+    box.innerHTML = html;
+  };
+
+  window.kpContentGenImage = async function(token, weekId, dayIdx, kind, prompt){
+    var imgEl = document.getElementById('kpContentImg-'+dayIdx+'-'+kind);
+    if(imgEl) imgEl.innerHTML = '<div class="kp-cc-img-ph">🎨 Génération…</div>';
+    try{
+      if(!prompt){ if(imgEl) imgEl.innerHTML='<div class="kp-cc-img-ph">—</div>'; return; }
+      var r = await fetch(KP_FUNCTIONS_BASE + '/genContentImage', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({weekId:weekId,dayIdx:dayIdx,kind:kind,prompt:prompt})});
+      var j = await r.json();
+      if(!r.ok || !j.ok) throw new Error((j&&j.error)||('HTTP '+r.status));
+      if(imgEl) imgEl.innerHTML = '<img src="'+j.url+'" alt=""><a class="kp-cc-dl" href="'+j.url+'" target="_blank" rel="noopener">⬇︎</a>';
+    }catch(e){
+      if(imgEl) imgEl.innerHTML = '<div class="kp-cc-img-err">⚠️ '+kpCcEscape(e.message||'échec')+'<br><button class="kp-cc-copy" onclick="kpContentRetry('+dayIdx+',\''+kind+'\')">Réessayer</button></div>';
+    }
+  };
+  window.kpContentRetry = async function(dayIdx, kind){
+    var c = window._kpLastContent; if(!c) return;
+    var u = kpCcUser(); if(!u) return; var token = await u.getIdToken();
+    var prompt = kind==='story' ? c.days[dayIdx].story_prompt : c.days[dayIdx].image_prompt;
+    await window.kpContentGenImage(token, c.weekId, dayIdx, kind, prompt);
+  };
+
+  window.kpContentGenerate = async function(){
+    var btn = document.getElementById('kpContentGenBtn');
+    var msg = document.getElementById('kpContentMsg');
+    var results = document.getElementById('kpContentResults');
+    var withImages = document.getElementById('kpContentWithImages');
+    var doImages = withImages ? withImages.checked : true;
+    var user = kpCcUser();
+    if(!user || typeof user.getIdToken!=='function'){ if(msg){ msg.textContent='⚠️ Reconnectez-vous pour utiliser cet outil.'; msg.style.color='var(--ed-terra-dark)'; } return; }
+    if(btn){ btn.disabled=true; btn.textContent='✍️ Rédaction en cours…'; }
+    if(msg){ msg.textContent='Génération des 7 publications… (≈20-40s)'; msg.style.color='var(--ed-muted)'; }
+    if(results) results.innerHTML='';
+    try{
+      var token = await user.getIdToken();
+      var r = await fetch(KP_FUNCTIONS_BASE + '/genContentText', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:'{}'});
+      var j = await r.json();
+      if(!r.ok || !j.ok){ throw new Error((j&&(j.message||j.error))||('HTTP '+r.status)); }
+      var content = j.content;
+      window.kpContentRenderDays(content);
+      if(msg){ msg.textContent='✓ Textes générés (semaine '+content.weekId+').'; msg.style.color='var(--ed-sage-dark)'; }
+      if(doImages){
+        if(msg){ msg.textContent='✓ Textes prêts. Génération des visuels IA… (≈15s/image, patientez)'; msg.style.color='var(--ed-muted)'; }
+        for(var i=0;i<content.days.length;i++){
+          await window.kpContentGenImage(token, content.weekId, i, 'square', content.days[i].image_prompt);
+          await window.kpContentGenImage(token, content.weekId, i, 'story', content.days[i].story_prompt);
+        }
+        if(msg){ msg.textContent='🎉 Semaine complète (textes + visuels) générée !'; msg.style.color='var(--ed-sage-dark)'; }
+      }
+    }catch(e){
+      var em = (e && e.message) ? e.message : String(e);
+      if(em==='no_openai_key') em='Clé OpenAI absente — ajoutez OPENAI_API_KEY dans functions/.env puis redéployez.';
+      if(em==='forbidden') em='Accès réservé à l\'administrateur.';
+      if(msg){ msg.textContent='❌ Erreur : '+em; msg.style.color='var(--ed-terra-dark)'; }
+    }finally{
+      if(btn){ btn.disabled=false; btn.textContent='✨ Générer la semaine'; }
+    }
+  };
+
+  window.kpContentLoadExisting = function(){
+    var results = document.getElementById('kpContentResults');
+    if(!results) return;
+    var fs = (typeof getFirestoreDb==='function') ? getFirestoreDb() : null;
+    if(!fs) return;
+    var weekId = kpIsoWeekId(new Date());
+    fs.collection('generated_content').doc(weekId).get().then(function(snap){
+      if(snap.exists){ window.kpContentRenderDays(snap.data()); }
+    }).catch(function(){});
   };
 
   function kpAdminFs(){

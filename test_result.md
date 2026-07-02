@@ -212,3 +212,25 @@ agent_communication:
 - Desktop: sidebar + layout 2 colonnes intacts ; rail = [quizPromoBanner, recipeOfDayCard] ; planPremiumStatusHost=block ; planStatusMobile & lpevPlanCard = none ✓. Aucune régression.
 - BLOCKER for live login flow: demo account (demo.keto.1782045313@gmail.com) rejected by Firebase ("Email ou mot de passe incorrect") — unrelated to these changes; verification done via guest/forced render.
 - needs_retesting: false (verified via screenshots)
+
+#====================================================================================================
+## Feature — Générateur de contenu Facebook (admin) + 464/464 photos recettes (July 2026)
+#====================================================================================================
+### Photos recettes : 464/464 générées (100%) dans GCS bucket testprojet-721cb-recipes/recipe-photos/ via Nano Banana. TERMINÉ.
+
+### Générateur de contenu (réservé infos@essencielonaturel.fr)
+Architecture choisie par l'utilisateur : Netlify (statique) + Firebase Cloud Functions (Node) + CLÉ OpenAI DE L'UTILISATEUR (pas la clé Emergent).
+- Backend: /app/firebase-functions/functions/index.js → 2 nouvelles fonctions:
+  * genContentText  (POST, admin-only) → gpt-5.5, response_format json, renvoie 7 jours {post, story, hashtags, replies, image_prompt, story_prompt}; sauvegarde Firestore generated_content/{weekId}.
+  * genContentImage (POST, admin-only) → gpt-image-1.5 (1024x1024 carré / 1024x1536 story), upload GCS content-photos/{weekId}/{dayIdx}-{kind}.png, maj Firestore.
+  * Calendrier fixe: Lundi=Mythe Keto, Mardi=Choix impossible, Mercredi=Astuce Naturo, Jeudi=Question, Vendredi=Conseil, Samedi=Défi photo, Dimanche=Motivation. Variation hebdo via weekId ISO.
+  * Auth: verifyIdToken + email === ADMIN_EMAIL (infos@essencielonaturel.fr). Clé lue depuis process.env.OPENAI_API_KEY (functions/.env).
+- Frontend keto.html: Admin panel → bouton "✍️ Générateur de contenu" (kpAdminToggle('content')) → panneau kpAdminContent avec bouton "✨ Générer la semaine" + case "Générer aussi les visuels". JS: kpContentGenerate/kpContentGenImage/kpContentRenderDays/kpContentRetry/kpContentLoadExisting. Cartes par jour avec Copier (post/story/hashtags/réponses) + visuels carré+story avec lien de téléchargement.
+- Livraison: zip /api/download-functions régénéré (index.js à jour + GUIDE-FIREBASE.md section Générateur + .env.example, SANS .env secrets). App: /api/download (keto_app.html synchronisé).
+
+### Vérifications main agent
+- UI panneau: rendu OK sur desktop (screenshot), 0 erreur console. Cartes/copier/visuels affichés.
+- Node syntax index.js: OK (node -c).
+- Clé OpenAI utilisateur: VALIDE (auth OK), modèles gpt-5.5 ET gpt-image-1.5 DISPONIBLES sur le compte. MAIS quota=insufficient_quota → l'utilisateur doit activer la facturation/crédit OpenAI pour que ça marche.
+- BLOCKER déploiement: l'utilisateur doit (1) activer billing OpenAI, (2) ajouter OPENAI_API_KEY à functions/.env, (3) firebase deploy --only functions. Guidage fourni.
+- NON testé en live (nécessite déploiement Firebase par l'utilisateur + login admin + quota OpenAI) — HORS de mon environnement.

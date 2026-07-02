@@ -378,3 +378,204 @@ exports.referralReward = onRequest({ region: "europe-west1", cors: true }, async
     return res.status(500).json({ error: "server_error", message: e.message });
   }
 });
+
+
+// ════════════════════ GÉNÉRATEUR DE CONTENU (admin) ════════════════════
+// Réservé à ADMIN_EMAIL. Utilise la clé OpenAI de l'utilisateur (functions/.env : OPENAI_API_KEY)
+// - genContentText  : génère les 7 publications de la semaine (texte + story + hashtags + réponses + prompts image) via gpt-5.5
+// - genContentImage : génère 1 visuel (carré ou story) via gpt-image-1.5, l'upload dans GCS et le renvoie
+const CONTENT_BUCKET = "testprojet-721cb-recipes";
+const CONTENT_PREFIX = "content-photos";
+const OPENAI_TEXT_MODEL = "gpt-5.5";
+const OPENAI_IMAGE_MODEL = "gpt-image-1.5";
+
+// Calendrier fixe : jour -> thème
+const CONTENT_THEMES = [
+  { day: "Lundi",    theme: "Mythe Keto" },
+  { day: "Mardi",    theme: "Choix impossible" },
+  { day: "Mercredi", theme: "Astuce Naturo" },
+  { day: "Jeudi",    theme: "Question" },
+  { day: "Vendredi", theme: "Conseil" },
+  { day: "Samedi",   theme: "Défi photo" },
+  { day: "Dimanche", theme: "Motivation" },
+];
+
+// Charte de marque Keto — Essenciel O Naturel (voix + style visuel)
+const BRAND_VOICE =
+  "Tu es le rédacteur de la page Facebook \"Essenciel O Naturel\", tenue par une naturopathe spécialisée en alimentation cétogène (keto) à Lunéville. " +
+  "Ton : chaleureux, bienveillant, expert mais accessible, tutoiement doux (\"tu\"), positif, jamais culpabilisant. Public : surtout des femmes 35-60 ans qui veulent perdre du poids et retrouver de l'énergie sans frustration. " +
+  "Marque : couleurs vert forêt profond et or, symbole avocat, valeurs nature/santé/simplicité. Produits : une application \"Keto Premium\" (menus, recettes, suivi), des ebooks keto, et des consultations de naturopathie. " +
+  "Chaque publication doit être authentique, apporter de la valeur, et inviter subtilement à interagir (commenter/partager) ou découvrir l'app/les consultations sans être trop commerciale.";
+
+const BRAND_IMAGE_STYLE =
+  "Style photographique Keto — Essenciel O Naturel : palette vert forêt profond et touches dorées, ambiance naturopathe chaleureuse et lumineuse, aliments keto sains et appétissants (avocat, légumes verts, bons gras), végétaux frais, lin naturel et bois clair, lumière du jour douce, faible profondeur de champ, élégant et haut de gamme, style magazine. Aucun texte, aucun logo, aucune personne.";
+
+function requireAdmin(req, res) {
+  return (async () => {
+    const authH = req.headers.authorization || "";
+    const m = authH.match(/^Bearer (.+)$/);
+    if (!m) { res.status(401).json({ error: "no_token" }); return null; }
+    let decoded;
+    try { decoded = await admin.auth().verifyIdToken(m[1]); }
+    catch (e) { res.status(401).json({ error: "invalid_token" }); return null; }
+    const email = (decoded.email || "").trim().toLowerCase();
+    if (email !== ADMIN_EMAIL) { res.status(403).json({ error: "forbidden" }); return null; }
+    return email;
+  })();
+}
+
+// Identifiant de semaine ISO (ex: 2026-W26) — sert de graine de variation hebdomadaire
+function isoWeekId(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  return date.getUTCFullYear() + "-W" + String(weekNo).padStart(2, "0");
+}
+
+async function openaiChatJSON(apiKey, systemMsg, userMsg) {
+  const r = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
+    body: JSON.stringify({
+      model: OPENAI_TEXT_MODEL,
+      messages: [
+        { role: "system", content: systemMsg },
+        { role: "user", content: userMsg },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 1,
+    }),
+  });
+  const j = await r.json();
+  if (!r.ok) throw new Error("openai_text: " + (j.error ? j.error.message : r.status));
+  const content = j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+  return JSON.parse(content);
+}
+
+// ── Génération des 7 publications (texte) ──
+exports.genContentText = onRequest(
+  { region: "europe-west1", cors: true, timeoutSeconds: 300, memory: "512MiB" },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
+      const adminEmail = await requireAdmin(req, res);
+      if (!adminEmail) return;
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) return res.status(500).json({ error: "no_openai_key" });
+
+      const now = new Date();
+      const weekId = isoWeekId(now);
+      const calendar = CONTENT_THEMES.map(function (t) { return t.day + " = " + t.theme; }).join(" ; ");
+
+      const userMsg =
+        "Nous sommes la semaine " + weekId + ". Génère un plan de publications Facebook COMPLET et ORIGINAL pour les 7 jours de cette semaine (contenu inédit, différent des semaines précédentes). " +
+        "Calendrier éditorial fixe : " + calendar + ". " +
+        "Pour CHAQUE jour, respecte scrupuleusement son thème :\n" +
+        "- Mythe Keto : démonte une idée reçue sur le keto.\n" +
+        "- Choix impossible : un jeu \"tu préfères A ou B ?\" avec 2 options keto pour engager les commentaires.\n" +
+        "- Astuce Naturo : un conseil naturopathique concret.\n" +
+        "- Question : une question ouverte à la communauté.\n" +
+        "- Conseil : un conseil keto pratique et actionnable.\n" +
+        "- Défi photo : invite à poster une photo (assiette keto, etc.).\n" +
+        "- Motivation : un message inspirant et bienveillant.\n" +
+        "Réponds STRICTEMENT en JSON avec ce schéma exact :\n" +
+        "{ \"days\": [ { \"day\": string, \"theme\": string, \"post\": string (publication Facebook prête à publier, 3-6 phrases, avec émojis pertinents et un appel à l'action), \"story\": string (version courte percutante pour une story, 1-2 phrases), \"hashtags\": string[] (6 à 10 hashtags français pertinents, avec le #), \"replies\": string[] (3 réponses types bienveillantes à de futurs commentaires), \"image_prompt\": string (description EN FRANÇAIS d'un visuel carré illustrant le post, SANS texte), \"story_prompt\": string (description d'un visuel vertical pour la story, SANS texte) } ] } " +
+        "Le tableau days doit contenir exactement 7 éléments, dans l'ordre Lundi->Dimanche.";
+
+      const data = await openaiChatJSON(apiKey, BRAND_VOICE, userMsg);
+      let days = (data && Array.isArray(data.days)) ? data.days : [];
+      // Normalise à 7 jours en s'alignant sur le calendrier
+      days = CONTENT_THEMES.map(function (t, i) {
+        const d = days[i] || {};
+        return {
+          day: t.day,
+          theme: t.theme,
+          post: d.post || "",
+          story: d.story || "",
+          hashtags: Array.isArray(d.hashtags) ? d.hashtags : [],
+          replies: Array.isArray(d.replies) ? d.replies : [],
+          image_prompt: d.image_prompt || "",
+          story_prompt: d.story_prompt || "",
+          square_url: null,
+          story_url: null,
+        };
+      });
+
+      const payload = {
+        weekId: weekId,
+        generatedAt: now.toISOString(),
+        generatedBy: adminEmail,
+        days: days,
+      };
+      await db.collection("generated_content").doc(weekId).set(payload, { merge: true });
+      return res.json({ ok: true, weekId: weekId, content: payload });
+    } catch (e) {
+      logger.error("genContentText:", e.message);
+      return res.status(500).json({ error: "server_error", message: e.message });
+    }
+  }
+);
+
+// ── Génération d'un visuel (carré ou story) ──
+exports.genContentImage = onRequest(
+  { region: "europe-west1", cors: true, timeoutSeconds: 300, memory: "512MiB" },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
+      const adminEmail = await requireAdmin(req, res);
+      if (!adminEmail) return;
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) return res.status(500).json({ error: "no_openai_key" });
+
+      const body = req.body || {};
+      const weekId = String(body.weekId || "").trim();
+      const dayIdx = parseInt(body.dayIdx, 10);
+      const kind = body.kind === "story" ? "story" : "square";
+      const prompt = String(body.prompt || "").trim();
+      if (!weekId || isNaN(dayIdx) || dayIdx < 0 || dayIdx > 6 || !prompt) {
+        return res.status(400).json({ error: "bad_request" });
+      }
+
+      const size = kind === "story" ? "1024x1536" : "1024x1024";
+      const fullPrompt = prompt + ". " + BRAND_IMAGE_STYLE;
+
+      const r = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
+        body: JSON.stringify({ model: OPENAI_IMAGE_MODEL, prompt: fullPrompt, size: size, n: 1 }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error("openai_image: " + (j.error ? j.error.message : r.status));
+      const b64 = j.data && j.data[0] && j.data[0].b64_json;
+      if (!b64) throw new Error("no_image_returned");
+      const buf = Buffer.from(b64, "base64");
+
+      const filename = CONTENT_PREFIX + "/" + weekId + "/" + dayIdx + "-" + kind + ".png";
+      const bucket = admin.storage().bucket(CONTENT_BUCKET);
+      const file = bucket.file(filename);
+      await file.save(buf, { contentType: "image/png", resumable: false, metadata: { cacheControl: "public, max-age=86400" } });
+      try { await file.makePublic(); } catch (e) { /* bucket déjà public */ }
+      const url = "https://storage.googleapis.com/" + CONTENT_BUCKET + "/" + filename + "?v=" + Date.now();
+
+      // Met à jour le document Firestore de la semaine
+      try {
+        const ref = db.collection("generated_content").doc(weekId);
+        const snap = await ref.get();
+        if (snap.exists) {
+          const data = snap.data();
+          if (data.days && data.days[dayIdx]) {
+            data.days[dayIdx][kind === "story" ? "story_url" : "square_url"] = url;
+            await ref.set({ days: data.days }, { merge: true });
+          }
+        }
+      } catch (e) { logger.error("genContentImage firestore:", e.message); }
+
+      return res.json({ ok: true, url: url, kind: kind, dayIdx: dayIdx });
+    } catch (e) {
+      logger.error("genContentImage:", e.message);
+      return res.status(500).json({ error: "server_error", message: e.message });
+    }
+  }
+);

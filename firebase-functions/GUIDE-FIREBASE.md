@@ -114,3 +114,43 @@ Dans l'app, reconnectez-vous : vous passez en Premium automatiquement. 🎉
 
 Besoin d'aide ? Redonnez-moi l'URL de la fonction après déploiement et je vérifie
 la configuration avec vous.
+
+
+---
+
+## ✍️ Générateur de contenu Facebook (nouveau)
+
+Deux nouvelles fonctions ont été ajoutées : `genContentText` et `genContentImage`.
+Elles alimentent le bouton **« ✨ Générer la semaine »** dans le menu **Admin →
+Générateur de contenu** de l'app (réservé à `infos@essencielonaturel.fr`).
+Elles utilisent **votre compte OpenAI** (modèles `gpt-5.5` pour les textes et
+`gpt-image-1.5` pour les visuels).
+
+### 1) Activer la facturation OpenAI (indispensable)
+👉 https://platform.openai.com/settings/organization/billing
+- Ajoutez un **moyen de paiement** et un **crédit** (ex. 10 €).
+- Sans crédit, l'IA renvoie l'erreur « insufficient_quota » et rien ne se génère.
+
+### 2) Ajouter la clé OpenAI
+Ouvrez `functions/.env` (créez-le à partir de `.env.example` si besoin) et ajoutez :
+```
+OPENAI_API_KEY=sk-proj-...(votre clé)
+```
+Votre clé reste **uniquement côté serveur** (jamais visible sur Netlify).
+
+### 3) Redéployer
+```
+cd functions
+npm install
+cd ..
+firebase deploy --only functions
+```
+
+### 4) Utiliser
+Dans l'app (version **Emergent** ou toute version connectée à Firebase), connectez-vous
+en tant qu'**admin**, allez dans **Admin → ✍️ Générateur de contenu**, puis cliquez
+**« Générer la semaine »**. Vous obtenez : 7 publications, 7 stories, hashtags,
+réponses types, et 7 visuels carrés + 7 stories (si la case « visuels » est cochée).
+
+> 💡 Coût indicatif OpenAI : ~0,01 € les textes + ~0,04-0,12 € par image
+> (≈ 1-2 € pour une semaine complète avec 14 visuels).
