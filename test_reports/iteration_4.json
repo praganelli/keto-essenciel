@@ -1,0 +1,22 @@
+{
+  "summary": "Frontend-only regression test for the reported blank-screen bug when switching between 'Se connecter' (login) and 'S'inscrire' (register) tabs on mobile auth screen. Tested on both 390x844 and 375x667 mobile viewports at /api/app. Bug is RESOLVED: after tapping register then back to login (and vice-versa), the target form is immediately fully visible (display=block, opacity=1, h>100px, all direct children opacity=1 with animation:none). Ran 3 rapid switch cycles on each viewport (6 cycles total) — every cycle passed, no blank screen observed. Regression checks also passed: 'Découvrir les offres' plans link opens the plans modal (data-testid='auth-plans-modal') and closes cleanly via auth-plans-modal-close; the auth-coordinates footer stays visible (w=362 h=110); no editorial image is rendered inside #authScreen (0 <img> elements). The CSS override forcing animation:none / opacity:1 on #authScreen auth-card children works as intended.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Fix verified in /app/keto.html: CSS override right after @keyframes kpAuthFieldIn (around line 4101) correctly disables the staggered entrance animations on #authScreen auth-card children on subsequent form toggles, keeping opacity=1 and animation=none across tab switches."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only run)", "frontend": "100% (bug fix verified + 3 regression checks passed on 2 viewports)"},
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "App is vanilla HTML/JS served by FastAPI at /api/app (NOT Expo). Landing (#kpWelcomeScreen) shows first; click [data-testid='welcome-cta-login'] to reach the auth card. Register tab: [data-testid='auth-tab-register']; Login tab: #tabLogin (no testid). Do not use wait_for_load_state('networkidle') — the page has ongoing streams; use 'domcontentloaded' + wait_for_selector instead. Firebase demo credentials do NOT exist in this fork so real login will fail with 'Email ou mot de passe incorrect' — this is expected behavior, not a bug. When probing authRegisterForm, note it has 4 direct children (reg-stepper + reg-step-1/2/3); reg-step-2 and reg-step-3 have height=0 because they are inactive multi-step panels — this is by design, not a bug.",
+  "rca_of_issue": "Root cause (already fixed by main agent): staggered CSS entrance keyframes (kpAuthFieldIn / kpAuthFormFieldIn) set form children to opacity:0 and RESTARTED every time a form transitioned from display:none to display:block (browser recomputes animation on display change), so switching tabs left the newly-shown form invisible for up to ~1s (perceived as blank). Fix (verified): CSS override placed right after the @keyframes definition targeting #authScreen auth-card auth-logo, auth-tabs, #authLoginForm > *, #authRegisterForm > *, auth-guest-btn, auth-footer, auth-msg — sets animation:none; opacity:1; transform:none. Reproduction steps used: open /api/app in 390x844 viewport → click [data-testid='welcome-cta-login'] → click [data-testid='auth-tab-register'] → click #tabLogin. Verified form visible within 150ms (opacity=1, h=282). Repeated 3 cycles rapidly with same result. Also verified on 375x667."
+}

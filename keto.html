@@ -4099,6 +4099,24 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
 @keyframes kpAuthFieldIn{
   to { opacity:1; transform:translateY(0); }
 }
+/* ── FIX écran vide au changement d'onglet ──
+   Basculer un formulaire display:none→block relance les animations d'entrée
+   (opacity:0 pendant le délai), ce qui laissait l'écran vide ~1s après un
+   changement d'onglet. On force le contenu à rester visible. */
+#authScreen .auth-card .auth-logo,
+#authScreen .auth-card .auth-tabs,
+#authScreen .auth-card #authLoginForm,
+#authScreen .auth-card #authLoginForm > *,
+#authScreen .auth-card #authRegisterForm,
+#authScreen .auth-card #authRegisterForm > *,
+#authScreen .auth-card .auth-guest-btn,
+#authScreen .auth-card .auth-foot,
+#authScreen .auth-card .auth-footer,
+#authScreen .auth-card .auth-msg{
+  animation:none !important;
+  opacity:1 !important;
+  transform:none !important;
+}
 .auth-card::before{
   content:'';position:absolute;inset:0;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.16  0 0 0 0 0.11  0 0 0 0 0.06  0 0 0 0.10 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
