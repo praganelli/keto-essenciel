@@ -332,12 +332,14 @@ BRAND_LOGO_DESC = (
 
 
 def build_infographic_prompt(day: dict, kind: str) -> str:
-    """Construit un prompt détaillé pour un VISUEL DE POST complet (texte inclus), dans la charte Keto-Essenciel."""
+    """Construit un prompt détaillé pour un VISUEL DE POST complet (texte inclus), dans la charte Keto-Essenciel.
+    La COMPOSITION varie selon le thème du jour pour obtenir des visuels différents d'un post à l'autre."""
     day = day or {}
     is_story = (kind == 'story')
     fmt = ("Format vertical 9:16 (story Instagram/Facebook), composition en hauteur"
            if is_story else "Format carré 1:1 (publication Facebook/Instagram)")
-    title = str(day.get('title') or day.get('theme') or '').strip()
+    theme = str(day.get('theme') or '').strip()
+    title = str(day.get('title') or theme or '').strip()
     message = str(day.get('visual_text') or day.get('story') or day.get('post') or '').strip()
     if len(message) > 220:
         message = message[:217] + '…'
@@ -351,24 +353,66 @@ def build_infographic_prompt(day: dict, kind: str) -> str:
                 or day.get('image_prompt') or day.get('story_prompt') or '').strip()
     benefits_txt = " ; ".join(benefits)
     tags_txt = " ".join(hashtags)
+
+    # ── Mise en page distincte selon le thème (chaque post est visuellement différent) ──
+    archetypes = {
+        "Mythe Keto": (
+            f"COMPOSITION « MYTHE vs RÉALITÉ » : divise la zone centrale en DEUX colonnes. À gauche, un panneau "
+            f"« MYTHE » avec une grande croix rouge et le mythe barré ; à droite, un panneau « RÉALITÉ » avec une "
+            f"coche verte et la vérité. Intègre une photo culinaire keto illustrant : {scene}. "
+            f"Titre en haut : « {title} ». Texte de fond : « {message} »."
+        ),
+        "Choix impossible": (
+            f"COMPOSITION « FACE À FACE / OU » : deux panneaux côte à côte séparés par un grand cercle « OU » doré. "
+            f"Chaque panneau montre une belle photo d'aliment keto (options du choix), en lien avec : {scene}. "
+            f"Titre-question en haut : « {title} ». Sous-texte : « {message} ». Ambiance ludique, appel à commenter."
+        ),
+        "Astuce Naturo": (
+            f"COMPOSITION « FICHE ASTUCE » esprit herboristerie : une carte crème avec une liste de 2-3 astuces "
+            f"numérotées (petits ronds verts), et une photo de plantes/herbes/aliment keto illustrant : {scene}. "
+            f"Bandeau titre : « {title} ». Astuce mise en avant : « {message} ». Icônes botaniques dessinées main."
+        ),
+        "Question": (
+            f"COMPOSITION « SONDAGE / QUESTION » : un grand point d'interrogation stylisé et deux bulles de réponse "
+            f"(style sondage) invitant à commenter, avec une photo culinaire keto : {scene}. "
+            f"Grande question en haut : « {title} ». Précision : « {message} ». Ambiance conversationnelle, chaleureuse."
+        ),
+        "Conseil": (
+            f"COMPOSITION « CONSEIL DU JOUR » : un ruban/étiquette « CONSEIL » en haut, un conseil clair mis en avant "
+            f"dans une carte, et une photo culinaire keto épurée : {scene}. "
+            f"Titre : « {title} ». Conseil : « {message} ». Icône ampoule/feuille, mise en page aérée et premium."
+        ),
+        "Défi photo": (
+            f"COMPOSITION « DÉFI PHOTO » : une carte défi avec une grande icône appareil photo et un cadre polaroid, "
+            f"invitant à partager sa photo ; une belle assiette keto à reproduire : {scene}. "
+            f"Titre : « {title} ». Consigne du défi : « {message} ». Ton motivant « à vous de jouer »."
+        ),
+        "Motivation": (
+            f"COMPOSITION « CITATION INSPIRANTE » : une grande citation en typographie serif italique élégante, "
+            f"centrée, sur un visuel serein (photo lifestyle/culinaire keto douce) : {scene}. "
+            f"Accroche : « {title} ». Citation/message : « {message} ». Ambiance apaisante, lumineuse, motivante."
+        ),
+    }
+    layout = archetypes.get(theme, (
+        f"COMPOSITION : bandeau titre peint au pinceau vert forêt (texte MAJUSCULES blanc cassé) : « {title} ». "
+        f"Carte blanche arrondie avec le message : « {message} ». Photo culinaire keto appétissante : {scene}."
+    ))
+
     return (
         f"Crée une infographie de réseau social professionnelle et haut de gamme, {fmt}, pour la marque de "
         "naturopathie cétogène \"Keto-Essenciel\". Style : infographie française chaleureuse, qualité magazine, "
-        "fond crème/beige clair. TOUT LE TEXTE DOIT ÊTRE EN FRANÇAIS, parfaitement orthographié et bien lisible.\n"
-        f"TITRE PRINCIPAL, placé en haut dans un bandeau peint au pinceau vert forêt foncé, texte en MAJUSCULES "
-        f"blanc cassé, quelques mots surlignés en vert citron ou orange : « {title} ».\n"
-        f"MESSAGE CLÉ, affiché dans une carte blanche arrondie avec ombre douce, texte gris anthracite, accompagné "
-        f"de petites icônes vertes dessinées à la main : « {message} ».\n"
-        f"VISUEL : intègre une belle photographie culinaire appétissante et lumineuse illustrant : {scene}. "
-        "Lumière naturelle douce, aliments keto sains (avocat, œufs, légumes verts, bons gras, viandes, baies), "
-        "style photo food premium, faible profondeur de champ.\n"
-        "IDENTITÉ VISUELLE : palette vert forêt profond et touches dorées ; petites icônes vertes dessinées à la "
-        "main (soleil, ampoule, appareil photo, feuille, cœurs, bulles de dialogue, flèches). "
+        "fond crème/beige clair, palette vert forêt profond et touches dorées. "
+        "TOUT LE TEXTE DOIT ÊTRE EN FRANÇAIS, parfaitement orthographié et bien lisible.\n"
+        f"{layout}\n"
+        "PHOTO : lumière naturelle douce, aliments keto sains (avocat, œufs, légumes verts, bons gras, viandes, "
+        "baies), style photo food premium, faible profondeur de champ. Petites icônes vertes dessinées à la main "
+        "(soleil, ampoule, appareil photo, feuille, cœurs, bulles de dialogue, flèches).\n"
         f"{BRAND_LOGO_DESC}\n"
         f"BANDEAU DU BAS : un large bandeau vert forêt sur toute la largeur contenant 4 petites icônes rondes à "
         f"contour blanc, avec sous chacune un court label en majuscules : {benefits_txt}. "
         + (f"À droite du bandeau, affiche les hashtags en texte crème : {tags_txt}.\n" if tags_txt else "\n") +
-        "Aucune personne, aucun visage. Composition équilibrée, aérée, élégante, moderne et engageante."
+        "Aucune personne, aucun visage. Composition équilibrée, aérée, élégante, moderne et engageante, "
+        "clairement différente d'un thème à l'autre."
     )
 
 
