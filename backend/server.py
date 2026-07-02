@@ -15,7 +15,10 @@ from datetime import datetime, timezone
 import stripe
 import resend
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, auth as firebase_auth
+import httpx
+import base64
+import math
 
 
 ROOT_DIR = Path(__file__).parent
@@ -283,6 +286,227 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None, 
         logger.error(f"[stripe webhook] handler error: {e}")
         # Still return 200 so Stripe does not retry indefinitely on our internal errors
     return {"received": True}
+
+
+# ═══════════════ GÉNÉRATEUR DE CONTENU FACEBOOK (admin) ═══════════════
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+CONTENT_GCS_BUCKET = os.environ.get('CONTENT_GCS_BUCKET', 'testprojet-721cb-recipes')
+GCP_PROJECT_ID = os.environ.get('GCP_PROJECT_ID', 'testprojet-721cb')
+OPENAI_TEXT_MODEL = 'gpt-5.5'
+OPENAI_IMAGE_MODEL = 'gpt-image-1.5'
+CONTENT_PREFIX = 'content-photos'
+
+CONTENT_THEMES = [
+    {"day": "Lundi", "theme": "Mythe Keto"},
+    {"day": "Mardi", "theme": "Choix impossible"},
+    {"day": "Mercredi", "theme": "Astuce Naturo"},
+    {"day": "Jeudi", "theme": "Question"},
+    {"day": "Vendredi", "theme": "Conseil"},
+    {"day": "Samedi", "theme": "Défi photo"},
+    {"day": "Dimanche", "theme": "Motivation"},
+]
+
+BRAND_VOICE = (
+    "Tu es le rédacteur de la page Facebook \"Essenciel O Naturel\", tenue par une naturopathe "
+    "spécialisée en alimentation cétogène (keto) à Lunéville. Ton : chaleureux, bienveillant, expert "
+    "mais accessible, tutoiement doux (\"tu\"), positif, jamais culpabilisant. Public : surtout des femmes "
+    "35-60 ans qui veulent perdre du poids et retrouver de l'énergie sans frustration. Marque : couleurs "
+    "vert forêt profond et or, symbole avocat, valeurs nature/santé/simplicité. Produits : une application "
+    "\"Keto Premium\" (menus, recettes, suivi), des ebooks keto, et des consultations de naturopathie. "
+    "Chaque publication doit être authentique, apporter de la valeur et inviter subtilement à interagir "
+    "ou découvrir l'app/les consultations sans être trop commerciale."
+)
+
+BRAND_IMAGE_STYLE = (
+    "Style photographique Keto — Essenciel O Naturel : palette vert forêt profond et touches dorées, "
+    "ambiance naturopathe chaleureuse et lumineuse, aliments keto sains et appétissants (avocat, légumes "
+    "verts, bons gras), végétaux frais, lin naturel et bois clair, lumière du jour douce, faible profondeur "
+    "de champ, élégant et haut de gamme, style magazine. Aucun texte, aucun logo, aucune personne."
+)
+
+
+def _iso_week_id(d: datetime) -> str:
+    iso = d.isocalendar()
+    return f"{iso[0]}-W{iso[1]:02d}"
+
+
+def _verify_admin(authorization: Optional[str]) -> str:
+    """Vérifie le token Firebase et que l'email == admin. Renvoie l'email ou lève HTTPException."""
+    if not authorization or not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="no_token")
+    token = authorization.split(' ', 1)[1]
+    try:
+        get_firestore()  # ensure firebase app is initialised
+        decoded = firebase_auth.verify_id_token(token)
+    except Exception as e:
+        logging.getLogger(__name__).error(f"verify token: {e}")
+        raise HTTPException(status_code=401, detail="invalid_token")
+    email = (decoded.get('email') or '').strip().lower()
+    if not email or email != (PREMIUM_ADMIN_EMAIL or '').strip().lower():
+        raise HTTPException(status_code=403, detail="forbidden")
+    return email
+
+
+def _gcs_bucket():
+    from google.cloud import storage
+    cred_path = ROOT_DIR / FIREBASE_CREDENTIALS_PATH
+    gcs = storage.Client.from_service_account_json(str(cred_path), project=GCP_PROJECT_ID)
+    return gcs.bucket(CONTENT_GCS_BUCKET)
+
+
+@api_router.post("/content/generate-text")
+async def content_generate_text(request: Request, authorization: Optional[str] = Header(None)):
+    _verify_admin(authorization)
+    if not OPENAI_API_KEY:
+        raise HTTPException(status_code=500, detail="no_openai_key")
+    now = datetime.now(timezone.utc)
+    week_id = _iso_week_id(now)
+    calendar = " ; ".join([f"{t['day']} = {t['theme']}" for t in CONTENT_THEMES])
+    user_msg = (
+        f"Nous sommes la semaine {week_id}. Génère un plan de publications Facebook COMPLET et ORIGINAL "
+        "pour les 7 jours de cette semaine (contenu inédit). Calendrier éditorial fixe : " + calendar + ". "
+        "Pour CHAQUE jour, respecte son thème :\n"
+        "- Mythe Keto : démonte une idée reçue sur le keto.\n"
+        "- Choix impossible : un jeu \"tu préfères A ou B ?\" avec 2 options keto pour engager les commentaires.\n"
+        "- Astuce Naturo : un conseil naturopathique concret.\n"
+        "- Question : une question ouverte à la communauté.\n"
+        "- Conseil : un conseil keto pratique et actionnable.\n"
+        "- Défi photo : invite à poster une photo (assiette keto, etc.).\n"
+        "- Motivation : un message inspirant et bienveillant.\n"
+        "Réponds STRICTEMENT en JSON avec ce schéma : { \"days\": [ { \"day\": string, \"theme\": string, "
+        "\"post\": string (publication Facebook prête, 3-6 phrases avec émojis et appel à l'action), "
+        "\"story\": string (version courte percutante, 1-2 phrases), \"hashtags\": string[] (6 à 10 hashtags "
+        "français avec le #), \"replies\": string[] (3 réponses types bienveillantes), \"image_prompt\": string "
+        "(description en français d'un visuel carré illustrant le post, SANS texte), \"story_prompt\": string "
+        "(description d'un visuel vertical pour la story, SANS texte) } ] }. "
+        "Le tableau days doit contenir exactement 7 éléments, dans l'ordre Lundi->Dimanche."
+    )
+    payload = {
+        "model": OPENAI_TEXT_MODEL,
+        "messages": [
+            {"role": "system", "content": BRAND_VOICE},
+            {"role": "user", "content": user_msg},
+        ],
+        "response_format": {"type": "json_object"},
+    }
+    try:
+        async with httpx.AsyncClient(timeout=180) as http:
+            r = await http.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"},
+                json=payload,
+            )
+        data = r.json()
+        if r.status_code != 200:
+            err = (data.get('error') or {}).get('message', f'HTTP {r.status_code}')
+            code = (data.get('error') or {}).get('code', '')
+            raise HTTPException(status_code=502, detail=f"openai: {code or err}")
+        content = json.loads(data["choices"][0]["message"]["content"])
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"content_generate_text: {e}")
+        raise HTTPException(status_code=500, detail=f"server_error: {e}")
+
+    raw_days = content.get("days") if isinstance(content, dict) else None
+    raw_days = raw_days if isinstance(raw_days, list) else []
+    days = []
+    for i, t in enumerate(CONTENT_THEMES):
+        d = raw_days[i] if i < len(raw_days) and isinstance(raw_days[i], dict) else {}
+        days.append({
+            "day": t["day"],
+            "theme": t["theme"],
+            "post": d.get("post", ""),
+            "story": d.get("story", ""),
+            "hashtags": d.get("hashtags", []) if isinstance(d.get("hashtags"), list) else [],
+            "replies": d.get("replies", []) if isinstance(d.get("replies"), list) else [],
+            "image_prompt": d.get("image_prompt", ""),
+            "story_prompt": d.get("story_prompt", ""),
+            "square_url": None,
+            "story_url": None,
+        })
+    result = {"weekId": week_id, "generatedAt": iso_now(), "days": days}
+    # Sauvegarde dans Firestore (facultatif — n'échoue pas la requête si indispo)
+    try:
+        fs = get_firestore()
+        if fs:
+            fs.collection("generated_content").document(week_id).set(result, merge=True)
+    except Exception as e:
+        logger.error(f"content firestore save: {e}")
+    return {"ok": True, "weekId": week_id, "content": result}
+
+
+@api_router.post("/content/generate-image")
+async def content_generate_image(payload: dict, authorization: Optional[str] = Header(None)):
+    _verify_admin(authorization)
+    if not OPENAI_API_KEY:
+        raise HTTPException(status_code=500, detail="no_openai_key")
+    week_id = str(payload.get("weekId", "")).strip()
+    try:
+        day_idx = int(payload.get("dayIdx"))
+    except Exception:
+        day_idx = -1
+    kind = "story" if payload.get("kind") == "story" else "square"
+    prompt = str(payload.get("prompt", "")).strip()
+    if not week_id or day_idx < 0 or day_idx > 6 or not prompt:
+        raise HTTPException(status_code=400, detail="bad_request")
+
+    size = "1024x1536" if kind == "story" else "1024x1024"
+    full_prompt = prompt + ". " + BRAND_IMAGE_STYLE
+    try:
+        async with httpx.AsyncClient(timeout=180) as http:
+            r = await http.post(
+                "https://api.openai.com/v1/images/generations",
+                headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"},
+                json={"model": OPENAI_IMAGE_MODEL, "prompt": full_prompt, "size": size, "n": 1},
+            )
+        data = r.json()
+        if r.status_code != 200:
+            err = (data.get('error') or {}).get('message', f'HTTP {r.status_code}')
+            code = (data.get('error') or {}).get('code', '')
+            raise HTTPException(status_code=502, detail=f"openai: {code or err}")
+        b64 = data["data"][0]["b64_json"]
+        img_bytes = base64.b64decode(b64)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"content_generate_image openai: {e}")
+        raise HTTPException(status_code=500, detail=f"server_error: {e}")
+
+    filename = f"{CONTENT_PREFIX}/{week_id}/{day_idx}-{kind}.png"
+    try:
+        bucket = _gcs_bucket()
+        blob = bucket.blob(filename)
+        blob.cache_control = "public, max-age=86400"
+        blob.upload_from_string(img_bytes, content_type="image/png")
+        try:
+            blob.make_public()
+        except Exception:
+            pass
+        url = f"https://storage.googleapis.com/{CONTENT_GCS_BUCKET}/{filename}?v={int(now_ms())}"
+    except Exception as e:
+        logger.error(f"content_generate_image gcs: {e}")
+        raise HTTPException(status_code=500, detail=f"storage_error: {e}")
+
+    # Met à jour Firestore
+    try:
+        fs = get_firestore()
+        if fs:
+            ref = fs.collection("generated_content").document(week_id)
+            snap = ref.get()
+            if snap.exists:
+                doc = snap.to_dict() or {}
+                arr = doc.get("days") or []
+                if 0 <= day_idx < len(arr):
+                    arr[day_idx]["story_url" if kind == "story" else "square_url"] = url
+                    ref.set({"days": arr}, merge=True)
+    except Exception as e:
+        logger.error(f"content image firestore: {e}")
+    return {"ok": True, "url": url, "kind": kind, "dayIdx": day_idx}
+
+
+def now_ms():
+    return datetime.now(timezone.utc).timestamp() * 1000
 
 
 # Include the router in the main app

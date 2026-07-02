@@ -234,3 +234,22 @@ Architecture choisie par l'utilisateur : Netlify (statique) + Firebase Cloud Fun
 - Clé OpenAI utilisateur: VALIDE (auth OK), modèles gpt-5.5 ET gpt-image-1.5 DISPONIBLES sur le compte. MAIS quota=insufficient_quota → l'utilisateur doit activer la facturation/crédit OpenAI pour que ça marche.
 - BLOCKER déploiement: l'utilisateur doit (1) activer billing OpenAI, (2) ajouter OPENAI_API_KEY à functions/.env, (3) firebase deploy --only functions. Guidage fourni.
 - NON testé en live (nécessite déploiement Firebase par l'utilisateur + login admin + quota OpenAI) — HORS de mon environnement.
+
+#====================================================================================================
+## PIVOT — Générateur de contenu hébergé sur le backend Emergent (FastAPI) — July 2026
+#====================================================================================================
+### Raison : utilisateur non-technique, ne peut pas déployer Firebase Functions. Passage sur le backend Emergent (déjà en ligne) → zéro manip côté utilisateur.
+- Backend /app/backend/server.py : 2 endpoints ajoutés (prefix /api) :
+  * POST /api/content/generate-text  (admin-only via verify_id_token + PREMIUM_ADMIN_EMAIL) → gpt-5.5, renvoie {ok, weekId, content{days[7]}}, sauvegarde Firestore generated_content/{weekId}.
+  * POST /api/content/generate-image (admin-only) → gpt-image-1.5 (1024x1024 / 1024x1536), upload GCS testprojet-721cb-recipes/content-photos/{weekId}/{i}-{kind}.png (public), maj Firestore.
+  * Clé: OPENAI_API_KEY dans backend/.env (clé de l'utilisateur). httpx async. Auth Firebase admin token.
+- Frontend keto.html : les 2 appels repointés de KP_FUNCTIONS_BASE (Firebase) vers URL relative /api/content/generate-text et /api/content/generate-image (fonctionne depuis la version servie par Emergent /api/app).
+- Domaine emails : PREMIUM_FROM_EMAIL passé à "Essenciel O Naturel <infos@essencielonaturel.fr>" dans backend/.env (émails backend Emergent). (Le domaine doit être vérifié dans Resend côté utilisateur.)
+
+### Vérifications main agent (LIVE, réel)
+- OpenAI billing ACTIVE : gpt-5.5 → 200 SUCCESS.
+- Pipeline image COMPLET testé : gpt-image-1.5 (200, ~2MB) + upload GCS + URL publique HTTP 200. Probe supprimée.
+- Endpoints sécurisés : 401 sans token (generate-text & generate-image).
+- Frontend : panneau admin rendu OK, 0 erreur console/page. App /api/app charge sans erreur.
+- keto_app.html (servi /api/app & /api/download) synchronisé avec les endpoints Emergent.
+- SEUL non-testable par moi : le flux admin authentifié complet (nécessite le mot de passe Firebase admin). Toutes les briques sous-jacentes validées.

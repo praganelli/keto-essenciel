@@ -18489,7 +18489,7 @@ authGuest = function(){
     if(imgEl) imgEl.innerHTML = '<div class="kp-cc-img-ph">🎨 Génération…</div>';
     try{
       if(!prompt){ if(imgEl) imgEl.innerHTML='<div class="kp-cc-img-ph">—</div>'; return; }
-      var r = await fetch(KP_FUNCTIONS_BASE + '/genContentImage', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({weekId:weekId,dayIdx:dayIdx,kind:kind,prompt:prompt})});
+      var r = await fetch('/api/content/generate-image', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({weekId:weekId,dayIdx:dayIdx,kind:kind,prompt:prompt})});
       var j = await r.json();
       if(!r.ok || !j.ok) throw new Error((j&&j.error)||('HTTP '+r.status));
       if(imgEl) imgEl.innerHTML = '<img src="'+j.url+'" alt=""><a class="kp-cc-dl" href="'+j.url+'" target="_blank" rel="noopener">⬇︎</a>';
@@ -18517,7 +18517,7 @@ authGuest = function(){
     if(results) results.innerHTML='';
     try{
       var token = await user.getIdToken();
-      var r = await fetch(KP_FUNCTIONS_BASE + '/genContentText', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:'{}'});
+      var r = await fetch('/api/content/generate-text', {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:'{}'});
       var j = await r.json();
       if(!r.ok || !j.ok){ throw new Error((j&&(j.message||j.error))||('HTTP '+r.status)); }
       var content = j.content;
