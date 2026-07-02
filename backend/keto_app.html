@@ -295,10 +295,10 @@ h1 em{color:var(--gold2)}
   max-width:560px;margin:0 auto;
   position:relative;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,.28) 50%, rgba(255,255,255,.42) 100%);
-  backdrop-filter:blur(36px) saturate(180%);
-  -webkit-backdrop-filter:blur(36px) saturate(180%);
-  border:1px solid rgba(255,255,255,.55);
+    linear-gradient(180deg, rgba(250,252,248,.40) 0%, rgba(244,250,243,.16) 48%, rgba(250,252,248,.32) 100%);
+  backdrop-filter:blur(30px) saturate(200%);
+  -webkit-backdrop-filter:blur(30px) saturate(200%);
+  border:1px solid rgba(255,255,255,.45);
   border-radius:999px;
   padding:7px 8px;
   display:flex;gap:2px;
@@ -2489,8 +2489,8 @@ input[type=text],input[type=password],textarea{cursor:text}
 .skeleton-card{height:160px;border-radius:var(--radius);margin-bottom:14px;width:100%}
 
 /* Tab slide transitions */
-.tab-slide{animation:tab-slide-in .32s cubic-bezier(.16,1,.3,1) both}
-@keyframes tab-slide-in{from{opacity:0}to{opacity:1}}
+.tab-slide{animation:tab-slide-in .44s cubic-bezier(.22,1,.28,1) both}
+@keyframes tab-slide-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 /* ─── Arrivée douce des cartes (fondu + glissement vertical, décalé) ─── */
 .kp-card-in{animation:kpCardIn .5s cubic-bezier(.16,1,.3,1) both}
 @keyframes kpCardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -5909,6 +5909,16 @@ body{
   /* Onglet Compléments : icône gélule + visible uniquement en desktop */
   #nt-lpev{ display:flex !important; }
   #nt-lpev .bnav-icon::after{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7Z'/%3E%3Cpath d='m8.5 8.5 7 7'/%3E%3C/svg%3E") !important; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7Z'/%3E%3Cpath d='m8.5 8.5 7 7'/%3E%3C/svg%3E") !important; }
+  /* Onglet Admin : icône bouclier, visible dans la sidebar desktop pour l'administrateur */
+  #nt-admin .bnav-icon{ font-size:0 !important; position:relative !important; }
+  #nt-admin .bnav-icon::after{
+    content:'' !important; position:absolute !important; inset:0 !important; background:currentColor !important;
+    -webkit-mask-repeat:no-repeat !important; mask-repeat:no-repeat !important;
+    -webkit-mask-position:center !important; mask-position:center !important;
+    -webkit-mask-size:22px 22px !important; mask-size:22px 22px !important;
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E") !important;
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E") !important;
+  }
   /* LPEV déplacé dans son propre menu : masqué dans Plan & Profil en desktop */
   #lpevSectionPlan, #lpevSectionProfile{ display:none !important; }
   /* Hover : léger glissement + icône qui grandit */
@@ -9320,6 +9330,7 @@ function switchTab(tab){
       var html = (typeof window.kpAdminPanelHTML === 'function') ? window.kpAdminPanelHTML() : '';
       adminTab.innerHTML = '<div class="container" style="padding:24px 16px;max-width:980px;margin:0 auto">' + html + '</div>';
       if(typeof window.kpBindAdminPanel === 'function') window.kpBindAdminPanel();
+      adminTab.classList.remove('tab-slide'); void adminTab.offsetWidth; adminTab.classList.add('tab-slide');
       adminTab.scrollIntoView({behavior:'instant', block:'start'});
       window.scrollTo({top:0, behavior:'instant'});
     }
