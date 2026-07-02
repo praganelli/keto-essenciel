@@ -1,0 +1,79 @@
+{
+  "summary": "Frontend-only mobile auth-screen redesign verification for /api/app (vanilla HTML keto.html). Tested at BOTH requested viewports (390x844 primary, 375x667 secondary). PRIMARY viewport 390x844 passes all requested checks: editorial image .kp-auth-editorial is display:none, login tab fits with authScrollDelta=0, coords footer fully in viewport (mail row bottom=709.3 vs winH=844) with 'infos@essencielonaturel.fr' + 'Lunéville, France' visible and not truncated, .auth-plans-info is display:none on register tab, register step 1 fits (delta=0) with footer visible, register step 2 fits (delta=0) with password/Suivant/Retour + footer all visible in viewport, and content is vertically centered (card uses min-height:100% + justify-content:center). One caveat at 390x844: register STEP 3 (post-passwords screen with 'Continuer avec Google' + Retour) is 942px tall vs 844 → footer initially clipped by ~98px but IS reachable via native scroll of #authScreen (overflow-y:auto), so 'reachable, not clipped' per spec. SECONDARY viewport 375x667 (iPhone SE): editorial hidden, login tab footer fully visible (coords bottom=662.6 < winH=667, delta=22px negligible), but on register tab all 3 steps the auth-coordinates footer bottom exceeds the viewport (step1 by ~2.5px, step2 by ~49px, step3 by ~228px). Footer is reachable via #authScreen internal scroll but does not FIT on one screen at 375x667 for the register tab — worth reporting since spec says 'fits on ONE screen' should also apply to the register tab. No JS errors, no red screen, no image regression. Firestore 'unavailable/permissions' console noise persists (pre-existing from iteration_2, unrelated).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "#authScreen (register tab, step 1) @ 375x667",
+        "issue": "auth-coordinates footer bottom = 669.6 vs winH=667 → clipped by ~2.5px. Needs 29px internal scroll of #authScreen to fully reveal the 'Vos données restent privées et sécurisées' line. Login tab at same size is fine.",
+        "testID": "auth-coordinates",
+        "priority": "LOW"
+      },
+      {
+        "component": "#authScreen (register tab, step 2) @ 375x667",
+        "issue": "auth-coordinates footer clipped by ~49px (bottom=716.6 vs winH=667). Reachable via internal scroll but does not 'fit on one screen' as spec requires for both tabs.",
+        "testID": "auth-coordinates",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "#authScreen (register tab, step 3) @ 375x667 and @ 390x844",
+        "issue": "Step 3 content (title 'Sécurité' hero + Continuer avec Google + Retour) makes total layout height 942px @ 390x844 and >900px @ 375x667. Footer clipped by ~98px (390x844) / ~228px (375x667). Reachable via #authScreen overflow-y:auto scroll (verified: scrollTop 98 → footer fully in viewport at 390x844), but does not fit on one screen. Spec allows 'reachable, not clipped' for steps 2 & 3, so this is likely acceptable — reporting for awareness.",
+        "testID": "auth-coordinates",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Welcome → auth entry @ 375x667",
+        "issue": "Right after page.goto at 375x667, [data-testid=welcome-cta-login] briefly reports a 0×0 bounding rect (present in DOM but not laid out yet) for the first ~1.5s. A subsequent click via element.click() works. Not a regression from this iteration, but at very small screens the initial welcome CTA layout timing is fragile.",
+        "affected_testIDs": ["welcome-cta-login"]
+      },
+      {
+        "flow": "Firestore connectivity (pre-existing)",
+        "issue": "Console still shows 'Could not reach Cloud Firestore backend [code=unavailable]' + 'Missing or insufficient permissions'. App falls back to localStorage. Same as iteration_1/2, unrelated to auth-screen redesign.",
+        "affected_testIDs": []
+      }
+    ],
+    "design_issues": [
+      {
+        "screen": "#authScreen login tab @ 390x844",
+        "issues": [
+          "Content is centered but leaves ~93px of unused space below the footer (coords bottom=751 vs winH=844). Layout could be tightened OR spec-compliant as centered — currently fine per requirement."
+        ]
+      }
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/tmp/auth_login_390x844.png",
+    "/tmp/auth_login_375x667.png",
+    "/tmp/auth_reg1_390x844.png",
+    "/tmp/auth_reg1_375x667.png",
+    "/tmp/auth_reg2_390x844.png",
+    "/tmp/auth_reg3_390_scrolled.png",
+    "/tmp/reg_step2_debug.png",
+    "/tmp/welcome_375.png"
+  ],
+  "action_items": [
+    "OPTIONAL / NICE-TO-HAVE: Tighten mobile CSS (@media max-width:980px and specifically <= 700px height like iPhone SE 667px) so the REGISTER tab also fits on one screen at 375x667. Currently the auth-coord-brand + auth-coord-tag + auth-coord-mail row + auth-coord-loc row + auth-coord-mini (110px total) exceed the space left after the register form + tabs + logo. Suggestion: reduce .auth-coord-mini font/margin on tight heights, or collapse the coord-tag line on <=680px height, similar to the existing @media (max-width:980px) and (max-height:720px) rule near keto.html:3976.",
+    "OPTIONAL: Register step 3 at 390x844 still needs ~98px internal scroll of #authScreen. If strict 'fits on one screen' is desired for step 3 too, further tighten step-3 hero margins or move the Retour button next to Google button.",
+    "NO ACTION on the 0×0 initial-layout timing of welcome-cta-login at 375x667 unless it starts breaking real users; a click via testID still works once layout settles."
+  ],
+  "critical_code_review_comments": [
+    "keto.html:3919-3985 — the @media (max-width:980px) block correctly implements the requested redesign: .kp-auth-editorial{display:none}, #authScreen{display:flex; flex-direction:column; height:100dvh; overflow-y:auto}, .auth-card{min-height:100%; justify-content:center}, .auth-plans-info{display:none}. All confirmed at runtime.",
+    "keto.html:6372-6380 — auth-coordinates footer contains: brand line + tag line + <a testid=auth-coord-mail> + <span class=auth-coord-loc> + auth-coord-mini disclaimer. The mail and location share a single wrapping <div> so their heights collapse (mailRect and locRect share top=694 at 390x844) which is good for compactness.",
+    "The requirement 'centered' is satisfied via #authScreen .auth-card{justify-content:center; min-height:100%}; the card fills the flex container and inner content sits centered vertically. Verified: on 390x844 login, logo top≈14, footer bottom≈751, winH=844 → roughly balanced.",
+    "Container-based overflow (#authScreen overflow-y:auto) is a good pattern here — even when content overflows on step 3 or on 375x667 register, the footer is never CLIPPED-and-lost; it is reachable by scrolling within the auth surface. So the 'not truncated' requirement is met if interpreted as 'not hidden by clip / not cut off in the DOM', but is NOT met if interpreted as 'entirely inside the initial viewport'.",
+    "No JS errors on tab switching (authSwitchTab) or step navigation (regNextStep 2/3). All data-testid selectors present and functional."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "n/a (frontend only per request)",
+    "frontend": "390x844 primary: 6/6 spec items pass with step 3 caveat; 375x667: login passes fully, register tab has footer overflow on all 3 steps (reachable via scroll). Overall requested checks ~90% pass."
+  },
+  "seed_data_creation": "None. No auth performed. Used Prénom=Jean, Nom=Test, Email=jean.test@example.com, Password=SuperSecret1! only in DOM to advance the register wizard for layout inspection; nothing was submitted.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "App is at /api/app (vanilla HTML, NOT the Expo app). Reach auth by clicking [data-testid=welcome-cta-login] on the #kpWelcomeScreen. Then [data-testid=auth-tab-register] for the register tab; advance with [data-testid=reg-step1-next] and [data-testid=reg-step2-next]. The mobile CSS lives in @media (max-width:980px) around keto.html:3919-3985 with a tight-height variant at :3976. #authScreen is a flex column with overflow-y:auto and height:100dvh; the card uses min-height:100% + justify-content:center. Auth-coordinates footer is [data-testid=auth-coordinates] with children [data-testid=auth-coord-mail] and .auth-coord-loc. To measure 'fits on one screen': use auth.scrollHeight - auth.clientHeight (delta=0 means fits). To measure 'not clipped': coords.getBoundingClientRect().bottom <= window.innerHeight. Firebase login will fail with 'Email ou mot de passe incorrect' — that is expected and not a bug in this forked project.",
+  "rca_of_issue": "Primary redesign works as specified at the primary mobile viewport (390x844). The residual footer overflow on the register tab at 375x667 (and step 3 at 390x844) is caused by the register step-hero (eyebrow + title + subtitle ≈ 99px) + the fixed 110px-tall auth-coordinates footer + tabs + logo exceeding the available viewport height once the form fields are added. Two mitigations available: (a) add a max-height:720px CSS variant that trims the coord-mini and coord-tag lines, or (b) reduce step-hero padding on tight heights. The current design intentionally allows internal scroll (overflow-y:auto on #authScreen) so no content is ever fully hidden."
+}
