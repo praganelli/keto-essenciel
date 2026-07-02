@@ -2379,6 +2379,7 @@ body.dark .mcard-ai{border-top-color:rgba(255,255,255,.05)}
 .lib-card[data-cat="dessert"]   .lib-card-emoji-bg{background:linear-gradient(135deg,#9d174d,#ec4899,#f9a8d4)}
 .lib-card[data-cat="sauces"]    .lib-card-emoji-bg{background:linear-gradient(135deg,#1a5fa0,#2563a8,#7c3aed)}
 .lib-card[data-cat="snacks"]    .lib-card-emoji-bg{background:linear-gradient(135deg,#7c3aed,#9333ea,#c026d3)}
+.lib-card[data-cat="pains"]     .lib-card-emoji-bg{background:linear-gradient(135deg,#92400e,#b45309,#d97706)}
 .lib-card-emoji-icon{position:relative;z-index:1;font-size:48px;display:flex;align-items:center;justify-content:center;height:100px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.2))}
 
 .lib-card-overlay{
@@ -7330,6 +7331,7 @@ body{
       <div class="lib-tab" id="lt-dessert" onclick="setLibTab('dessert')">🍮 Desserts</div>
       <div class="lib-tab" id="lt-sauces" onclick="setLibTab('sauces')">🫙 Sauces keto</div>
       <div class="lib-tab" id="lt-snacks" onclick="setLibTab('snacks')">🥜 Collations</div>
+      <div class="lib-tab" id="lt-pains" onclick="setLibTab('pains')">🍞 Pains cétogènes</div>
     </div>
     <div class="lib-grid" id="libGrid"></div>
   </div>
@@ -8813,6 +8815,58 @@ var DESSERT_RECIPES = [
 ];
 
 /* ═══════════════════════ MAIN RECIPE DATA ═══════════════════════ */
+var PAIN_RECIPES = [
+  {id:1300,name:"Pain nuage (Oopsie)",emoji:"☁️",cat:"pains",time:"30 min",diff:"Facile",kcal:90,fat:7,prot:6,carb:1,desc:"Léger, aérien et sans farine — le pain keto le plus rapide à réussir.",
+   ingredients:[{qty:"3",name:"Œufs",emoji:"🥚",type:"prot"},{qty:"60g",name:"Fromage frais",emoji:"🧀",type:"fat"},{qty:"1 pincée",name:"Crème de tartre",emoji:"🥄",type:"veg"}],
+   spices:["Sel","Une pincée de bicarbonate"],
+   steps:["Séparez les blancs des jaunes. Montez les blancs en neige ferme avec la crème de tartre.","Mélangez les jaunes avec le fromage frais et le sel, puis incorporez délicatement les blancs.","Formez 6 dômes sur une plaque et enfournez <em>25 min à 150°C</em> jusqu'à doré."],
+   tip:"Incorporez les blancs en 3 fois pour garder un maximum d'air : c'est le secret de la texture nuage.",shopping:["Œufs","Fromage frais","Crème de tartre"]},
+  {id:1301,name:"Pain keto à la farine d'amande",emoji:"🍞",cat:"pains",time:"55 min",diff:"Facile",kcal:210,fat:18,prot:9,carb:3,desc:"Un vrai pain moelleux, parfait pour les tartines du matin.",
+   ingredients:[{qty:"200g",name:"Farine d'amande",emoji:"🌰",type:"fat"},{qty:"4",name:"Œufs",emoji:"🥚",type:"prot"},{qty:"50g",name:"Beurre fondu",emoji:"🧈",type:"fat"}],
+   spices:["1 cc levure chimique","Sel","1 cc vinaigre de cidre"],
+   steps:["Mélangez la farine d'amande, la levure et le sel dans un saladier.","Ajoutez les œufs, le beurre fondu et le vinaigre. Fouettez jusqu'à une pâte homogène.","Versez dans un moule à cake et enfournez <em>40 min à 175°C</em>. Vérifiez avec la lame d'un couteau."],
+   tip:"Laissez refroidir complètement avant de trancher : le pain keto se tient bien mieux une fois froid.",shopping:["Farine d'amande","Œufs","Beurre"]},
+  {id:1302,name:"Pain aux graines de lin",emoji:"🌾",cat:"pains",time:"50 min",diff:"Facile",kcal:180,fat:14,prot:8,carb:2,desc:"Riche en fibres et oméga-3, une mie dense et rustique.",
+   ingredients:[{qty:"150g",name:"Graines de lin moulues",emoji:"🌾",type:"fat"},{qty:"5",name:"Œufs",emoji:"🥚",type:"prot"},{qty:"60ml",name:"Huile d'olive",emoji:"🫒",type:"fat"}],
+   spices:["1 cc levure chimique","Sel","1 cc bicarbonate"],
+   steps:["Mélangez le lin moulu, la levure, le bicarbonate et le sel.","Ajoutez les œufs battus et l'huile, mélangez jusqu'à épaississement (2 min).","Versez dans un moule et enfournez <em>35 min à 175°C</em>."],
+   tip:"Le lin absorbe beaucoup : laissez reposer la pâte 5 min avant cuisson pour une mie plus régulière.",shopping:["Graines de lin","Œufs","Huile d'olive"]},
+  {id:1303,name:"Petits pains au psyllium",emoji:"🥖",cat:"pains",time:"1 h",diff:"Moyen",kcal:160,fat:12,prot:7,carb:3,desc:"Croûte croustillante, mie souple — bluffant de réalisme.",
+   ingredients:[{qty:"120g",name:"Farine d'amande",emoji:"🌰",type:"fat"},{qty:"15g",name:"Psyllium (téguments)",emoji:"🥄",type:"veg"},{qty:"3",name:"Blancs d'œufs",emoji:"🥚",type:"prot"}],
+   spices:["1 cc levure chimique","Sel","250ml eau chaude","1 cc vinaigre"],
+   steps:["Mélangez les ingrédients secs. Ajoutez les blancs, le vinaigre puis l'eau chaude.","Pétrissez 1 min : la pâte gonfle. Formez 4 petits pains.","Enfournez <em>50 min à 180°C</em> jusqu'à croûte bien dorée et sonore."],
+   tip:"Utilisez un psyllium de bonne qualité et non coloré pour éviter une mie violette.",shopping:["Farine d'amande","Psyllium","Œufs"]},
+  {id:1304,name:"Pain de mie keto",emoji:"🍞",cat:"pains",time:"1 h",diff:"Moyen",kcal:200,fat:16,prot:9,carb:3,desc:"Moelleux et carré, idéal pour croque-monsieur et sandwichs keto.",
+   ingredients:[{qty:"180g",name:"Farine d'amande",emoji:"🌰",type:"fat"},{qty:"6",name:"Œufs",emoji:"🥚",type:"prot"},{qty:"60g",name:"Beurre mou",emoji:"🧈",type:"fat"}],
+   spices:["2 cc levure chimique","10g psyllium","Sel"],
+   steps:["Fouettez les œufs jusqu'à mousseux. Ajoutez le beurre mou.","Incorporez la farine d'amande, le psyllium, la levure et le sel.","Versez dans un moule à cake chemisé, enfournez <em>45 min à 170°C</em>."],
+   tip:"Couvrez de papier alu à mi-cuisson si le dessus colore trop vite.",shopping:["Farine d'amande","Œufs","Beurre"]},
+  {id:1305,name:"Focaccia keto au romarin",emoji:"🌿",cat:"pains",time:"45 min",diff:"Facile",kcal:190,fat:16,prot:8,carb:3,desc:"Généreusement huilée, parfumée au romarin et à la fleur de sel.",
+   ingredients:[{qty:"150g",name:"Farine d'amande",emoji:"🌰",type:"fat"},{qty:"4",name:"Œufs",emoji:"🥚",type:"prot"},{qty:"60ml",name:"Huile d'olive",emoji:"🫒",type:"fat"}],
+   spices:["Romarin frais","Fleur de sel","1 cc levure chimique","Ail"],
+   steps:["Mélangez farine d'amande, levure et sel. Ajoutez œufs et moitié de l'huile.","Étalez la pâte sur une plaque (2 cm). Faites des creux au doigt, arrosez du reste d'huile.","Parsemez de romarin et fleur de sel. Enfournez <em>25 min à 180°C</em>."],
+   tip:"Servez tiède avec un filet d'huile d'olive supplémentaire : c'est là que la focaccia est la meilleure.",shopping:["Farine d'amande","Œufs","Huile d'olive"]},
+  {id:1306,name:"Bagels keto (pâte fat head)",emoji:"🥯",cat:"pains",time:"35 min",diff:"Moyen",kcal:250,fat:20,prot:14,carb:4,desc:"Dorés et moelleux grâce à la mozzarella fondue — un classique keto.",
+   ingredients:[{qty:"170g",name:"Mozzarella râpée",emoji:"🧀",type:"fat"},{qty:"90g",name:"Farine d'amande",emoji:"🌰",type:"fat"},{qty:"1",name:"Œuf",emoji:"🥚",type:"prot"}],
+   spices:["1 cc levure chimique","Sel","Graines de sésame"],
+   steps:["Faites fondre la mozzarella 1 min au micro-ondes. Ajoutez farine, levure et œuf.","Pétrissez rapidement, formez 4 boudins et fermez en anneaux.","Dorez à l'œuf, parsemez de sésame, enfournez <em>15 min à 200°C</em>."],
+   tip:"Travaillez la pâte tant qu'elle est chaude : si elle durcit, repassez-la 10 s au micro-ondes.",shopping:["Mozzarella","Farine d'amande","Œufs"]},
+  {id:1307,name:"Pain à l'ail et fromage",emoji:"🧄",cat:"pains",time:"30 min",diff:"Facile",kcal:270,fat:22,prot:15,carb:3,desc:"Fondant à cœur, gratiné dessus — irrésistible à l'apéro.",
+   ingredients:[{qty:"170g",name:"Mozzarella râpée",emoji:"🧀",type:"fat"},{qty:"90g",name:"Farine d'amande",emoji:"🌰",type:"fat"},{qty:"30g",name:"Beurre à l'ail",emoji:"🧈",type:"fat"}],
+   spices:["Ail (2 gousses)","Persil","Sel","Parmesan"],
+   steps:["Préparez une pâte fat head (mozzarella fondue + farine + œuf). Étalez en galette.","Badigeonnez de beurre à l'ail, parsemez de parmesan et persil.","Enfournez <em>18 min à 200°C</em> jusqu'à gratiné. Détaillez en parts."],
+   tip:"Ajoutez un peu de mozzarella sur le dessus pour l'effet filant à la découpe.",shopping:["Mozzarella","Farine d'amande","Beurre","Ail"]},
+  {id:1308,name:"Pain aux noix",emoji:"🌰",cat:"pains",time:"55 min",diff:"Facile",kcal:230,fat:20,prot:9,carb:3,desc:"Croquant de noix et mie tendre, parfait avec du fromage.",
+   ingredients:[{qty:"180g",name:"Farine d'amande",emoji:"🌰",type:"fat"},{qty:"4",name:"Œufs",emoji:"🥚",type:"prot"},{qty:"60g",name:"Cerneaux de noix",emoji:"🌰",type:"fat"}],
+   spices:["1 cc levure chimique","Sel","1 cc vinaigre de cidre"],
+   steps:["Mélangez farine d'amande, levure et sel. Ajoutez œufs et vinaigre.","Concassez les noix et incorporez-les à la pâte.","Versez dans un moule et enfournez <em>40 min à 175°C</em>."],
+   tip:"Torréfiez les noix 5 min à sec avant de les ajouter : le goût est nettement plus intense.",shopping:["Farine d'amande","Œufs","Noix"]},
+  {id:1309,name:"Pain brioché keto",emoji:"🥐",cat:"pains",time:"1 h",diff:"Moyen",kcal:220,fat:18,prot:9,carb:4,desc:"Légèrement sucré et filant, pour un petit-déjeuner gourmand sans culpabiliser.",
+   ingredients:[{qty:"180g",name:"Farine d'amande",emoji:"🌰",type:"fat"},{qty:"5",name:"Œufs",emoji:"🥚",type:"prot"},{qty:"70g",name:"Beurre fondu",emoji:"🧈",type:"fat"}],
+   spices:["2 cs érythritol","2 cc levure chimique","1 cc vanille","Sel"],
+   steps:["Fouettez œufs, érythritol et vanille jusqu'à mousseux. Ajoutez le beurre fondu.","Incorporez farine d'amande, levure et sel.","Versez dans un moule et enfournez <em>45 min à 170°C</em>. Dorez à l'œuf pour la brillance."],
+   tip:"L'érythritol garde le pain moelleux sans faire monter la glycémie — dosez selon votre goût.",shopping:["Farine d'amande","Œufs","Beurre","Érythritol"]}
+];
 var MAIN_RECIPES = [
   {id:300,name:"Saumon citron-aneth",emoji:"🐟",cat:"main",time:"12 min",diff:"Facile",kcal:520,fat:38,prot:42,carb:2,desc:"Poêlé parfait, peau croustillante, chair rosée.",
    ingredients:[{qty:"180g",name:"Filet de saumon",emoji:"🐟",type:"prot"},{qty:"20g",name:"Beurre",emoji:"🧈",type:"fat"},{qty:"150g",name:"Épinards frais",emoji:"🥬",type:"veg"}],
@@ -9646,13 +9700,13 @@ function applyProfileMacros(){
 /* ═══════════════════════ LIBRARY ═══════════════════════ */
 function setLibTab(tab){
   libTab=tab;
-  ['breakfast','main','starter','dessert','sauces','snacks'].forEach(function(t){
+  ['breakfast','main','starter','dessert','sauces','snacks','pains'].forEach(function(t){
     var el=$('lt-'+t); if(el) el.classList.toggle('active',t===tab);
   });
   renderLibrary();
 }
 function renderLibrary(){
-  var recipes={breakfast:BFAST_RECIPES,main:MAIN_RECIPES,starter:STARTER_RECIPES,dessert:DESSERT_RECIPES,sauces:SAUCE_RECIPES,snacks:SNACK_RECIPES}[libTab]||[];
+  var recipes={breakfast:BFAST_RECIPES,main:MAIN_RECIPES,starter:STARTER_RECIPES,dessert:DESSERT_RECIPES,sauces:SAUCE_RECIPES,snacks:SNACK_RECIPES,pains:PAIN_RECIPES}[libTab]||[];
   $('libGrid').innerHTML=recipes.map(function(r){
     var veganBadge = (r.modeTag==='vegan') ? '<div class="lib-card-vegan-badge" title="100% végétal">🌱 Vegan</div>' : '';
     var veganBadgeOverlay = (r.modeTag==='vegan') ? '<div class="lib-card-overlay-vegan">🌱 100% végétal</div>' : '';
@@ -9687,7 +9741,7 @@ function renderLibrary(){
   }).join('');
 }
 function findRecipe(id){
-  return [...BFAST_RECIPES,...MAIN_RECIPES,...STARTER_RECIPES,...DESSERT_RECIPES,...SAUCE_RECIPES,...SNACK_RECIPES].find(function(r){return r.id===id});
+  return [...BFAST_RECIPES,...MAIN_RECIPES,...STARTER_RECIPES,...DESSERT_RECIPES,...SAUCE_RECIPES,...SNACK_RECIPES,...PAIN_RECIPES].find(function(r){return r.id===id});
 }
 function openRecipe(id){
   var r=findRecipe(id);if(!r)return;
