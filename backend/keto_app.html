@@ -18607,11 +18607,16 @@ authGuest = function(){
     if(results) results.innerHTML='';
     try{
       var token = await user.getIdToken();
-      var r = await fetch(kpContentApi('/content/generate-text'), {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:'{}'});
-      var j = await kpSafeJson(r);
-      if(!r.ok || !j.ok){ throw new Error((j&&(j.message||j.error))||('HTTP '+r.status)); }
-      var content = j.content;
-      window.kpContentRenderDays(content);
+      var content = { weekId: '', days: [] };
+      for(var di=0; di<7; di++){
+        if(msg){ msg.textContent = '✍️ Rédaction en cours… jour '+(di+1)+'/7'; msg.style.color='var(--ed-muted)'; }
+        var r = await fetch(kpContentApi('/content/generate-day'), {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({dayIdx:di})});
+        var j = await kpSafeJson(r);
+        if(!r.ok || !j.ok){ throw new Error((j&&(j.detail||j.message||j.error))||('HTTP '+r.status)); }
+        content.weekId = j.weekId;
+        content.days[di] = j.day;
+        window.kpContentRenderDays(content);
+      }
       if(msg){ msg.textContent='✓ Textes générés (semaine '+content.weekId+').'; msg.style.color='var(--ed-sage-dark)'; }
       if(doImages){
         if(msg){ msg.textContent='✓ Textes prêts. Génération des visuels IA… (≈15s/image, patientez)'; msg.style.color='var(--ed-muted)'; }

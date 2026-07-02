@@ -436,6 +436,90 @@ async def content_generate_text(request: Request, authorization: Optional[str] =
     return {"ok": True, "weekId": week_id, "content": result}
 
 
+@api_router.post("/content/generate-day")
+async def content_generate_day(payload: dict, authorization: Optional[str] = Header(None)):
+    """Génère UNE seule publication (jour) — rapide, évite le timeout du proxy."""
+    _verify_admin(authorization)
+    if not OPENAI_API_KEY:
+        raise HTTPException(status_code=500, detail="no_openai_key")
+    try:
+        day_idx = int(payload.get("dayIdx"))
+    except Exception:
+        day_idx = -1
+    if day_idx < 0 or day_idx > 6:
+        raise HTTPException(status_code=400, detail="bad_day")
+    now = datetime.now(timezone.utc)
+    week_id = _iso_week_id(now)
+    t = CONTENT_THEMES[day_idx]
+    theme_hint = {
+        "Mythe Keto": "démonte une idée reçue sur le keto",
+        "Choix impossible": "un jeu \"tu préfères A ou B ?\" avec 2 options keto pour engager",
+        "Astuce Naturo": "un conseil naturopathique concret",
+        "Question": "une question ouverte à la communauté",
+        "Conseil": "un conseil keto pratique et actionnable",
+        "Défi photo": "invite à poster une photo (assiette keto, etc.)",
+        "Motivation": "un message inspirant et bienveillant",
+    }.get(t["theme"], "")
+    user_msg = (
+        f"Semaine {week_id}. Rédige la publication Facebook du {t['day']}, thème \"{t['theme']}\" ({theme_hint}). "
+        "Contenu original et inédit. Réponds STRICTEMENT en JSON : { \"post\": string (3-6 phrases avec émojis "
+        "et appel à l'action), \"story\": string (1-2 phrases percutantes), \"hashtags\": string[] (6 à 10, avec #), "
+        "\"replies\": string[] (3 réponses types bienveillantes), \"image_prompt\": string (visuel carré en français, "
+        "SANS texte), \"story_prompt\": string (visuel vertical, SANS texte) }."
+    )
+    payload_oa = {
+        "model": OPENAI_TEXT_MODEL,
+        "messages": [{"role": "system", "content": BRAND_VOICE}, {"role": "user", "content": user_msg}],
+        "response_format": {"type": "json_object"},
+    }
+    try:
+        async with httpx.AsyncClient(timeout=120) as http:
+            r = await http.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"},
+                json=payload_oa,
+            )
+        data = r.json()
+        if r.status_code != 200:
+            err = (data.get('error') or {}).get('message', f'HTTP {r.status_code}')
+            code = (data.get('error') or {}).get('code', '')
+            raise HTTPException(status_code=502, detail=f"openai: {code or err}")
+        d = json.loads(data["choices"][0]["message"]["content"])
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"content_generate_day: {e}")
+        raise HTTPException(status_code=500, detail=f"server_error: {e}")
+
+    day = {
+        "day": t["day"], "theme": t["theme"],
+        "post": d.get("post", ""), "story": d.get("story", ""),
+        "hashtags": d.get("hashtags", []) if isinstance(d.get("hashtags"), list) else [],
+        "replies": d.get("replies", []) if isinstance(d.get("replies"), list) else [],
+        "image_prompt": d.get("image_prompt", ""), "story_prompt": d.get("story_prompt", ""),
+        "square_url": None, "story_url": None,
+    }
+    # Sauvegarde incrémentale dans Firestore
+    try:
+        fs = get_firestore()
+        if fs:
+            ref = fs.collection("generated_content").document(week_id)
+            snap = ref.get()
+            if snap.exists and (snap.to_dict() or {}).get("days"):
+                arr = snap.to_dict()["days"]
+                while len(arr) < 7:
+                    arr.append({})
+                arr[day_idx] = day
+                ref.set({"weekId": week_id, "days": arr, "generatedAt": iso_now()}, merge=True)
+            else:
+                arr = [{} for _ in range(7)]
+                arr[day_idx] = day
+                ref.set({"weekId": week_id, "generatedAt": iso_now(), "days": arr}, merge=True)
+    except Exception as e:
+        logger.error(f"content day firestore: {e}")
+    return {"ok": True, "weekId": week_id, "dayIdx": day_idx, "day": day}
+
+
 @api_router.post("/content/generate-image")
 async def content_generate_image(payload: dict, authorization: Optional[str] = Header(None)):
     _verify_admin(authorization)
