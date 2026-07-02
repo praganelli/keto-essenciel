@@ -7499,6 +7499,7 @@ body{
   <!-- ═══ LIBRARY TAB ═══ -->
   <div id="tab-library" style="display:none">
     <div class="lib-nav">
+      <div class="lib-tab" id="lt-all" onclick="setLibTab('all')">🔍 Toutes</div>
       <div class="lib-tab active" id="lt-breakfast" onclick="setLibTab('breakfast')">☀️ Petits-déjeuners</div>
       <div class="lib-tab" id="lt-main" onclick="setLibTab('main')">🍽 Plats</div>
       <div class="lib-tab" id="lt-starter" onclick="setLibTab('starter')">🥗 Entrées</div>
@@ -9875,17 +9876,18 @@ function applyProfileMacros(){
 /* ═══════════════════════ LIBRARY ═══════════════════════ */
 function setLibTab(tab){
   libTab=tab;
-  ['breakfast','main','starter','dessert','sauces','snacks','pains'].forEach(function(t){
+  ['all','breakfast','main','starter','dessert','sauces','snacks','pains'].forEach(function(t){
     var el=$('lt-'+t); if(el) el.classList.toggle('active',t===tab);
   });
   renderLibrary();
 }
 function renderLibrary(){
-  var recipes={breakfast:BFAST_RECIPES,main:MAIN_RECIPES,starter:STARTER_RECIPES,dessert:DESSERT_RECIPES,sauces:SAUCE_RECIPES,snacks:SNACK_RECIPES,pains:PAIN_RECIPES}[libTab]||[];
+  var ALL_FLAT=[].concat(BFAST_RECIPES,MAIN_RECIPES,STARTER_RECIPES,DESSERT_RECIPES,SAUCE_RECIPES,SNACK_RECIPES,PAIN_RECIPES);
+  var recipes = (libTab==='all') ? ALL_FLAT : ({breakfast:BFAST_RECIPES,main:MAIN_RECIPES,starter:STARTER_RECIPES,dessert:DESSERT_RECIPES,sauces:SAUCE_RECIPES,snacks:SNACK_RECIPES,pains:PAIN_RECIPES}[libTab]||[]);
   $('libGrid').innerHTML=recipes.map(function(r){
     var veganBadge = (r.modeTag==='vegan') ? '<div class="lib-card-vegan-badge" title="100% végétal">🌱 Vegan</div>' : '';
     var veganBadgeOverlay = (r.modeTag==='vegan') ? '<div class="lib-card-overlay-vegan">🌱 100% végétal</div>' : '';
-    return `<div class="lib-card ${r.modeTag==='vegan'?'is-vegan':''}" data-cat="${r.cat}" onclick="openRecipe(${r.id})">
+    return `<div class="lib-card ${r.modeTag==='vegan'?'is-vegan':''}" data-cat="${r.cat}" data-carb="${r.carb}" data-time="${parseInt(r.time,10)||999}" data-diff="${(r.diff||'').toLowerCase()}" data-vegan="${r.modeTag==='vegan'?'1':'0'}" onclick="openRecipe(${r.id})">
       <div class="lib-card-emoji">
         <div class="lib-card-emoji-bg"></div>
         ${KP_RECIPE_PHOTOS.has(r.cat+'-'+r.id) ? '<img class="lib-card-emoji-photo" src="'+KP_RECIPE_PHOTO_BASE+'/'+r.cat+'-'+r.id+'.jpg" alt="" loading="lazy" onload="this.classList.add(\'loaded\'); this.parentElement.classList.add(\'has-photo\');" onerror="this.remove();">' : ''}
@@ -14255,6 +14257,30 @@ authGuest = function(){
     body.dark.kp-v13 .kp-search-wrap{background:rgba(255,255,255,.05)}
     body.kp-v13 #kpRecipeSearch{width:100%;border:0;background:transparent;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none}
     body.kp-v13 .kp-recipe-count{font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap;padding:0 4px}
+    body.kp-v13 .kp-recipe-filters{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+    body.kp-v13 .kp-filter-chip{
+      border:1px solid var(--border2);background:rgba(255,255,255,.6);color:var(--muted);
+      border-radius:99px;padding:7px 13px;font-family:var(--font-body);font-size:12.5px;font-weight:700;
+      cursor:pointer;transition:all .16s;-webkit-tap-highlight-color:transparent;line-height:1
+    }
+    body.dark.kp-v13 .kp-filter-chip{background:rgba(255,255,255,.05)}
+    body.kp-v13 .kp-filter-chip:hover{border-color:var(--em);color:var(--text)}
+    body.kp-v13 .kp-filter-chip.active{
+      background:linear-gradient(135deg,#1a5c38,#2d7a52);color:#fff;border-color:transparent;
+      box-shadow:0 6px 16px -6px rgba(45,122,82,.6)
+    }
+    /* Essai Premium gratuit — CTA */
+    .kp-trial-cta{margin:0 0 22px;padding:16px;border-radius:16px;text-align:center;
+      background:linear-gradient(135deg,rgba(245,216,138,.22),rgba(255,253,247,.7));
+      border:1px solid rgba(176,122,34,.3)}
+    .kp-trial-btn{width:100%;border:none;cursor:pointer;border-radius:12px;padding:14px 18px;
+      font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:#fff;
+      background:linear-gradient(135deg,#1a5c38,#236648);
+      box-shadow:0 10px 24px -8px rgba(35,102,72,.55);transition:transform .15s,box-shadow .15s}
+    .kp-trial-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -8px rgba(35,102,72,.65)}
+    .kp-trial-btn:active{transform:scale(.99)}
+    .kp-trial-note{font-family:'Plus Jakarta Sans',sans-serif;font-size:11.5px;color:#7a8275;margin-top:9px;letter-spacing:.01em}
+    .kp-trial-msg{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;margin-top:9px;min-height:0;font-weight:600}
     body.kp-v13 .kp-empty-recipes{grid-column:1/-1;text-align:center;padding:34px 16px;color:var(--muted);font-size:14px;border:1px dashed var(--border);border-radius:16px;background:rgba(255,255,255,.28)}
     body.kp-v13 .kp-quick-dock{
       position:fixed;right:14px;bottom:92px;z-index:95;display:flex;flex-direction:column;gap:8px;
@@ -14351,19 +14377,50 @@ authGuest = function(){
     var tools = document.createElement('div');
     tools.id = 'kpRecipeTools';
     tools.className = 'kp-recipe-tools';
-    tools.innerHTML = '<label class="kp-search-wrap" for="kpRecipeSearch"><span aria-hidden="true">🔎</span><input id="kpRecipeSearch" type="search" autocomplete="off" placeholder="Rechercher une recette, un ingrédient, une difficulté..."></label><div class="kp-recipe-count" id="kpRecipeCount"></div>';
+    tools.innerHTML = '<label class="kp-search-wrap" for="kpRecipeSearch"><span aria-hidden="true">🔎</span><input id="kpRecipeSearch" type="search" autocomplete="off" placeholder="Rechercher une recette, un ingrédient, une difficulté..."></label>'
+      + '<div class="kp-recipe-count" id="kpRecipeCount"></div>'
+      + '<div class="kp-recipe-filters" id="kpRecipeFilters">'
+      +   '<button class="kp-filter-chip" data-testid="filter-carb5" onclick="toggleLibFilter(\'carb\',5,this)">≤5g glucides</button>'
+      +   '<button class="kp-filter-chip" data-testid="filter-carb10" onclick="toggleLibFilter(\'carb\',10,this)">≤10g glucides</button>'
+      +   '<button class="kp-filter-chip" data-testid="filter-time15" onclick="toggleLibFilter(\'time\',15,this)">⏱ ≤15 min</button>'
+      +   '<button class="kp-filter-chip" data-testid="filter-facile" onclick="toggleLibFilter(\'diff\',\'facile\',this)">Facile</button>'
+      +   '<button class="kp-filter-chip" data-testid="filter-vegan" onclick="toggleLibFilter(\'vegan\',true,this)">🌱 Végétal</button>'
+      + '</div>';
     grid.parentNode.insertBefore(tools, grid);
     $('kpRecipeSearch').addEventListener('input', filterRecipes);
   }
+  window.kpLibFilters = window.kpLibFilters || {carb:0, time:0, diff:'', vegan:false};
+  window.toggleLibFilter = function(type, value, el){
+    var f = window.kpLibFilters;
+    if(type==='vegan') f.vegan = !f.vegan;
+    else if(type==='diff') f.diff = f.diff ? '' : 'facile';
+    else f[type] = (f[type]===value) ? 0 : value;   // carb / time (une seule valeur active)
+    var wrap = document.getElementById('kpRecipeFilters');
+    if(wrap){
+      Array.prototype.forEach.call(wrap.querySelectorAll('.kp-filter-chip'), function(c){ c.classList.remove('active'); });
+      var setC = function(id){ var c=wrap.querySelector('[data-testid="'+id+'"]'); if(c) c.classList.add('active'); };
+      if(f.carb===5) setC('filter-carb5');
+      if(f.carb===10) setC('filter-carb10');
+      if(f.time===15) setC('filter-time15');
+      if(f.diff) setC('filter-facile');
+      if(f.vegan) setC('filter-vegan');
+    }
+    filterRecipes();
+  };
   function filterRecipes(){
     var grid = $('libGrid'), input = $('kpRecipeSearch'), count = $('kpRecipeCount');
-    if(!grid || !input) return;
-    var q = input.value.trim().toLowerCase();
+    if(!grid) return;
+    var q = input ? input.value.trim().toLowerCase() : '';
+    var f = window.kpLibFilters || {};
     var cards = Array.prototype.slice.call(grid.querySelectorAll('.lib-card'));
     var shown = 0;
     cards.forEach(function(card){
       var text = card.textContent.toLowerCase();
       var ok = !q || text.indexOf(q) !== -1;
+      if(ok && f.carb) ok = (parseFloat(card.getAttribute('data-carb'))||0) <= f.carb;
+      if(ok && f.time) ok = (parseInt(card.getAttribute('data-time'),10)||999) <= f.time;
+      if(ok && f.diff) ok = (card.getAttribute('data-diff')||'').indexOf('facile') !== -1;
+      if(ok && f.vegan) ok = card.getAttribute('data-vegan') === '1';
       card.style.display = ok ? '' : 'none';
       if(ok) shown++;
     });
@@ -17889,6 +17946,11 @@ authGuest = function(){
       <div class="kp-modal-title">Allez plus loin avec <em>Premium</em></div>
       <div class="kp-modal-sub">Accédez à tous les modes alimentaires, à la bibliothèque complète et au suivi détaillé de votre transformation.</div>
     </div>
+    <div class="kp-trial-cta" id="kpTrialCta" style="display:none">
+      <button class="kp-trial-btn" data-testid="premium-trial-btn" onclick="kpStartTrial()">✨ Essayer Premium gratuitement · 7 jours</button>
+      <div class="kp-trial-note">Sans carte bancaire · Sans engagement · Une seule fois par compte</div>
+      <div class="kp-trial-msg" id="kpTrialMsg"></div>
+    </div>
     <div class="kp-plans">
       <div class="kp-plan">
         <div class="kp-plan-name">Mensuel</div>
@@ -18273,13 +18335,95 @@ authGuest = function(){
   window.openPremiumModal = function(reason){
     var modal = document.getElementById('kpModal');
     if(modal) modal.classList.add('open');
-    if(reason && typeof toast === 'function') {
-      // Pas de toast pour ne pas distraire
-    }
+    try{ kpUpdateTrialCta(); }catch(e){}
   };
   window.closePremiumModal = function(){
     var modal = document.getElementById('kpModal');
     if(modal) modal.classList.remove('open');
+  };
+
+  // ═══ Essai Premium gratuit 7 jours ═══
+  function kpCurrentUser(){
+    try{ if(typeof currentUser !== 'undefined' && currentUser) return currentUser; }catch(e){}
+    if(typeof window !== 'undefined' && window.currentUser) return window.currentUser;
+    return null;
+  }
+  // Affiche/masque le CTA d'essai selon l'éligibilité (pas premium, pas déjà essayé)
+  function kpUpdateTrialCta(){
+    var cta = document.getElementById('kpTrialCta');
+    var msg = document.getElementById('kpTrialMsg');
+    if(!cta) return;
+    if(msg) msg.textContent = '';
+    // Déjà premium → on masque
+    if(isPremium()){ cta.style.display = 'none'; return; }
+    var user = kpCurrentUser();
+    var fs = (typeof getFirestoreDb === 'function') ? getFirestoreDb() : null;
+    // Invité ou pas de Firestore → on montre le CTA (le clic invitera à se connecter)
+    if(!user || !user.email || !fs){ cta.style.display = 'block'; return; }
+    // Vérifie si l'essai a déjà été utilisé
+    fs.collection(PREMIUM_COLLECTION).doc(user.email.trim().toLowerCase()).get()
+      .then(function(doc){
+        var used = false;
+        if(doc && doc.exists){
+          var d = doc.data() || {};
+          if(d.trialUsed === true || String(d.source||'').indexOf('trial') === 0) used = true;
+        }
+        cta.style.display = used ? 'none' : 'block';
+      })
+      .catch(function(){ cta.style.display = 'block'; });
+  }
+  window.kpUpdateTrialCta = kpUpdateTrialCta;
+
+  window.kpStartTrial = function(){
+    var msg = document.getElementById('kpTrialMsg');
+    var setMsg = function(t, ok){ if(msg){ msg.textContent = t; msg.style.color = ok ? 'var(--ed-sage-dark)' : 'var(--ed-terra-dark)'; } };
+    var user = kpCurrentUser();
+    if(!user || !user.email){
+      setMsg('Connectez-vous ou créez un compte gratuit pour activer votre essai.', false);
+      return;
+    }
+    var fs = (typeof getFirestoreDb === 'function') ? getFirestoreDb() : null;
+    if(!fs){ setMsg('Connexion indisponible. Réessayez.', false); return; }
+    var emailKey = user.email.trim().toLowerCase();
+    var ref = fs.collection(PREMIUM_COLLECTION).doc(emailKey);
+    setMsg('Activation en cours…', true);
+    ref.get().then(function(doc){
+      if(doc && doc.exists){
+        var d = doc.data() || {};
+        if(d.trialUsed === true || String(d.source||'').indexOf('trial') === 0){
+          setMsg('⚠️ Vous avez déjà profité de votre essai gratuit.', false);
+          return;
+        }
+        if(d.active !== false && d.expires && new Date(d.expires) > new Date()){
+          setMsg('✨ Vous êtes déjà Premium !', true);
+          return;
+        }
+      }
+      var since = new Date();
+      var expires = new Date(since.getTime() + 7*86400000);
+      ref.set({
+        active: true,
+        since: since.toISOString(),
+        expires: expires.toISOString(),
+        source: 'trial',
+        plan: 'trial',
+        trialUsed: true,
+        owner_uid: (user.uid || null)
+      }, {merge:true}).then(function(){
+        setMsg('🎉 Essai activé — Premium pendant 7 jours !', true);
+        if(typeof toast === 'function') toast('🎉 Essai Premium activé pour 7 jours !');
+        setTimeout(function(){
+          kpCheckPremium().then(function(){
+            try{ kpRefreshUI(); }catch(e){}
+            closePremiumModal();
+          });
+        }, 900);
+      }).catch(function(err){
+        var m = 'Erreur — ' + (err && err.message ? err.message : 'réessayez');
+        if(err && err.code === 'permission-denied') m = '❌ Permission Firestore refusée. Vérifiez les règles de sécurité.';
+        setMsg(m, false);
+      });
+    }).catch(function(){ setMsg('Erreur de connexion. Réessayez.', false); });
   };
   window.kpOpenCheckout = function(plan){
     var url = STRIPE_LINKS[plan];
