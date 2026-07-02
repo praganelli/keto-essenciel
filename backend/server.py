@@ -324,6 +324,53 @@ BRAND_IMAGE_STYLE = (
     "de champ, élégant et haut de gamme, style magazine. Aucun texte, aucun logo, aucune personne."
 )
 
+BRAND_LOGO_DESC = (
+    "En haut à droite, recrée le logo circulaire de la marque : un fin cercle vert forêt contenant deux "
+    "feuilles vertes stylisées, avec à côté le mot \"KETO-ESSENCIEL\" en majuscules vert forêt gras, et "
+    "en dessous, en petit, le slogan \"Bien dans mon corps, bien dans ma vie.\""
+)
+
+
+def build_infographic_prompt(day: dict, kind: str) -> str:
+    """Construit un prompt détaillé pour un VISUEL DE POST complet (texte inclus), dans la charte Keto-Essenciel."""
+    day = day or {}
+    is_story = (kind == 'story')
+    fmt = ("Format vertical 9:16 (story Instagram/Facebook), composition en hauteur"
+           if is_story else "Format carré 1:1 (publication Facebook/Instagram)")
+    title = str(day.get('title') or day.get('theme') or '').strip()
+    message = str(day.get('visual_text') or day.get('story') or day.get('post') or '').strip()
+    if len(message) > 220:
+        message = message[:217] + '…'
+    benefits = day.get('benefits') if isinstance(day.get('benefits'), list) else []
+    benefits = [str(b).strip() for b in benefits if str(b).strip()][:4]
+    if not benefits:
+        benefits = ["ÉNERGIE", "SATIÉTÉ DURABLE", "FAIBLE EN GLUCIDES", "BIEN-ÊTRE"]
+    hashtags = day.get('hashtags') if isinstance(day.get('hashtags'), list) else []
+    hashtags = [str(h).strip() for h in hashtags if str(h).strip()][:5]
+    scene = str((day.get('story_prompt') if is_story else day.get('image_prompt'))
+                or day.get('image_prompt') or day.get('story_prompt') or '').strip()
+    benefits_txt = " ; ".join(benefits)
+    tags_txt = " ".join(hashtags)
+    return (
+        f"Crée une infographie de réseau social professionnelle et haut de gamme, {fmt}, pour la marque de "
+        "naturopathie cétogène \"Keto-Essenciel\". Style : infographie française chaleureuse, qualité magazine, "
+        "fond crème/beige clair. TOUT LE TEXTE DOIT ÊTRE EN FRANÇAIS, parfaitement orthographié et bien lisible.\n"
+        f"TITRE PRINCIPAL, placé en haut dans un bandeau peint au pinceau vert forêt foncé, texte en MAJUSCULES "
+        f"blanc cassé, quelques mots surlignés en vert citron ou orange : « {title} ».\n"
+        f"MESSAGE CLÉ, affiché dans une carte blanche arrondie avec ombre douce, texte gris anthracite, accompagné "
+        f"de petites icônes vertes dessinées à la main : « {message} ».\n"
+        f"VISUEL : intègre une belle photographie culinaire appétissante et lumineuse illustrant : {scene}. "
+        "Lumière naturelle douce, aliments keto sains (avocat, œufs, légumes verts, bons gras, viandes, baies), "
+        "style photo food premium, faible profondeur de champ.\n"
+        "IDENTITÉ VISUELLE : palette vert forêt profond et touches dorées ; petites icônes vertes dessinées à la "
+        "main (soleil, ampoule, appareil photo, feuille, cœurs, bulles de dialogue, flèches). "
+        f"{BRAND_LOGO_DESC}\n"
+        f"BANDEAU DU BAS : un large bandeau vert forêt sur toute la largeur contenant 4 petites icônes rondes à "
+        f"contour blanc, avec sous chacune un court label en majuscules : {benefits_txt}. "
+        + (f"À droite du bandeau, affiche les hashtags en texte crème : {tags_txt}.\n" if tags_txt else "\n") +
+        "Aucune personne, aucun visage. Composition équilibrée, aérée, élégante, moderne et engageante."
+    )
+
 
 def _iso_week_id(d: datetime) -> str:
     iso = d.isocalendar()
@@ -462,10 +509,20 @@ async def content_generate_day(payload: dict, authorization: Optional[str] = Hea
     }.get(t["theme"], "")
     user_msg = (
         f"Semaine {week_id}. Rédige la publication Facebook du {t['day']}, thème \"{t['theme']}\" ({theme_hint}). "
-        "Contenu original et inédit. Réponds STRICTEMENT en JSON : { \"post\": string (3-6 phrases avec émojis "
-        "et appel à l'action), \"story\": string (1-2 phrases percutantes), \"hashtags\": string[] (6 à 10, avec #), "
-        "\"replies\": string[] (3 réponses types bienveillantes), \"image_prompt\": string (visuel carré en français, "
-        "SANS texte), \"story_prompt\": string (visuel vertical, SANS texte) }."
+        "Contenu original et inédit. Réponds STRICTEMENT en JSON : { "
+        "\"post\": string (3-6 phrases avec émojis et appel à l'action), "
+        "\"story\": string (1-2 phrases percutantes), "
+        "\"title\": string (titre TRÈS court et accrocheur en MAJUSCULES pour le bandeau du visuel, 2 à 5 mots, "
+        "cohérent avec le thème, ex: \"LE MYTHE DU LUNDI\", \"LE DÉFI DU SAMEDI\", \"TU CHOISIS LEQUEL ?\"), "
+        "\"visual_text\": string (le message clé à AFFICHER directement sur l'image, très court et percutant, "
+        "1 phrase ou 1 question, max 120 caractères, différent du post complet), "
+        "\"benefits\": string[] (exactement 4 bénéfices keto très courts en 2-3 mots MAJUSCULES, "
+        "ex: \"ÉNERGIE DÈS LE MATIN\", \"SATIÉTÉ DURABLE\", \"FAIBLE EN GLUCIDES\", \"BIEN-ÊTRE\"), "
+        "\"hashtags\": string[] (6 à 10, avec #), "
+        "\"replies\": string[] (3 réponses types bienveillantes), "
+        "\"image_prompt\": string (description en français de la SCÈNE culinaire keto appétissante à illustrer "
+        "sur le visuel carré, uniquement les aliments/le décor, sans mention de texte), "
+        "\"story_prompt\": string (description de la scène culinaire pour la story verticale) }."
     )
     payload_oa = {
         "model": OPENAI_TEXT_MODEL,
@@ -494,6 +551,8 @@ async def content_generate_day(payload: dict, authorization: Optional[str] = Hea
     day = {
         "day": t["day"], "theme": t["theme"],
         "post": d.get("post", ""), "story": d.get("story", ""),
+        "title": d.get("title", ""), "visual_text": d.get("visual_text", ""),
+        "benefits": d.get("benefits", []) if isinstance(d.get("benefits"), list) else [],
         "hashtags": d.get("hashtags", []) if isinstance(d.get("hashtags"), list) else [],
         "replies": d.get("replies", []) if isinstance(d.get("replies"), list) else [],
         "image_prompt": d.get("image_prompt", ""), "story_prompt": d.get("story_prompt", ""),
@@ -532,11 +591,30 @@ async def content_generate_image(payload: dict, authorization: Optional[str] = H
         day_idx = -1
     kind = "story" if payload.get("kind") == "story" else "square"
     prompt = str(payload.get("prompt", "")).strip()
-    if not week_id or day_idx < 0 or day_idx > 6 or not prompt:
+    if not week_id or day_idx < 0 or day_idx > 6:
         raise HTTPException(status_code=400, detail="bad_request")
 
+    # Récupère les données du jour (titre, message, bénéfices, hashtags, scène) pour composer le visuel complet.
+    day_data = payload.get("day") if isinstance(payload.get("day"), dict) else None
+    if not day_data:
+        try:
+            fs = get_firestore()
+            if fs:
+                snap = fs.collection("generated_content").document(week_id).get()
+                if snap.exists:
+                    arr = (snap.to_dict() or {}).get("days") or []
+                    if 0 <= day_idx < len(arr) and isinstance(arr[day_idx], dict):
+                        day_data = arr[day_idx]
+        except Exception as e:
+            logger.error(f"content image load day: {e}")
+    if not day_data:
+        day_data = {}
+    # Si on a un prompt de scène fourni mais pas dans day_data, on le complète
+    if prompt and not (day_data.get("image_prompt") or day_data.get("story_prompt")):
+        day_data = {**day_data, ("story_prompt" if kind == "story" else "image_prompt"): prompt}
+
     size = "1024x1536" if kind == "story" else "1024x1024"
-    full_prompt = prompt + ". " + BRAND_IMAGE_STYLE
+    full_prompt = build_infographic_prompt(day_data, kind)
     try:
         async with httpx.AsyncClient(timeout=180) as http:
             r = await http.post(

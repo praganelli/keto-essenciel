@@ -28,3 +28,10 @@ Bugs signalés :
 - NEW Premium backend (server.py): Stripe webhook /api/stripe/webhook (signature-verified via STRIPE_WEBHOOK_SECRET) -> writes premium_emails/{email} in Firestore (project testprojet-721cb) {active,source:'stripe',since,expires:null} + Resend confirmation email. /api/premium-status?email= for checks. Firebase Admin via backend/firebase_service_account.json. Keys in backend/.env (STRIPE_SECRET_KEY live, RESEND_API_KEY, STRIPE_WEBHOOK_SECRET).
 - Frontend reads premium directly from Firestore (kpCheckPremium, collection premium_emails) -> auto-upgrades within ~5 min or on login.
 - PENDING user actions: publish project for stable webhook URL (then update Stripe endpoint URL, keep same whsec_); verify essencielonaturel.fr domain in Resend then switch PREMIUM_FROM_EMAIL to infos@essencielonaturel.fr (currently onboarding@resend.dev -> only sends to account owner).
+
+## Update (July 2026) — Générateur de contenu : visuels de post complets
+- Le générateur Facebook produit désormais des VISUELS DE POST COMPLETS (et non plus de simples photos) : bandeau titre pinceau vert, carte message, logo KETO-ESSENCIEL + slogan recréés par l'IA, photo culinaire, bandeau bas avec 4 icônes bénéfices + hashtags — dans le style de la marque, généré à partir du texte du jour.
+- Backend (server.py): generate-day renvoie en plus `title`, `visual_text`, `benefits[4]`. Nouvelle fonction `build_infographic_prompt(day, kind)`. generate-image reçoit l'objet `day` (fallback Firestore) et compose l'infographie (carré 1024x1024 + story 1024x1536) via gpt-image-1.5.
+- Frontend (keto.html): kpContentGenImage/retry passent l'objet `day` complet.
+- Limite connue: le texte est peint par l'IA → petites fautes possibles sur mots longs (ex: SATIÉTÉ→SATITÉ). Trade-off d'une génération 100% auto.
+- 502 fix confirmé (génération jour par jour, ~27s/jour) via logs réels (multiples generate-day 200 OK).
