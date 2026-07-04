@@ -21877,9 +21877,8 @@ var TRIAL_DAYS = 7;
 var TRIAL_DISMISS_KEY = 'kp_trial_dismissed_v1';
 
 function startPremiumTrial(){
-  try{ localStorage.setItem(TRIAL_KEY, String(Date.now())); }catch(e){}
-  refreshTrialBanner();
-  if(typeof toast === 'function') toast('🎁 Essai Premium 7 jours activé !');
+  // Redirige vers le VRAI essai (fenêtre Premium → activation Firestore 7 jours)
+  if(typeof openPremiumModal === 'function') openPremiumModal('trial');
 }
 function refreshTrialBanner(){
   var banner = document.getElementById('premiumTrialBanner');
