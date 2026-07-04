@@ -484,6 +484,42 @@ h1 em{color:var(--gold2)}
 /* Press feedback — iOS-style compression */
 .bnav-tab:active{ transform:scale(.92); }
 
+/* Icônes SVG plates : masquées par défaut (desktop garde les emojis) */
+.bnav-svg{ display:none; }
+
+/* ═══ MENU MOBILE — barre blanche plate (style iOS 26 fourni) ═══ */
+@media (max-width:1023px){
+  .bottom-nav{ padding:0 !important; }
+  .bottom-nav-inner{
+    max-width:none !important; margin:0 !important;
+    background:var(--s1,#ffffff) !important;
+    -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+    border:none !important; border-top:1px solid rgba(0,0,0,.07) !important;
+    border-radius:0 !important;
+    padding:9px 6px max(9px, env(safe-area-inset-bottom)) !important;
+    box-shadow:0 -8px 22px -14px rgba(20,32,22,.22) !important;
+    gap:0 !important; overflow:visible !important;
+  }
+  .bottom-nav-inner::before, .bottom-nav-inner::after{ display:none !important; }
+  .bottom-nav-pill{ display:none !important; }
+  /* icônes plates monochromes */
+  .bnav-emoji{ display:none !important; }
+  .bnav-svg{ display:inline-block !important; width:26px !important; height:26px !important; }
+  .bnav-tab{ border-radius:12px !important; padding:5px 2px !important; gap:3px !important; }
+  .bnav-icon{ color:#9aa29b !important; filter:none !important; transform:none !important; font-size:0 !important; }
+  .bnav-label{ color:#9aa29b !important; opacity:1 !important; font-size:11px !important; font-weight:600 !important; letter-spacing:.005em !important; }
+  /* onglet actif = vert (icône + libellé), sans effet de zoom */
+  .bnav-tab.active .bnav-icon{ color:var(--em,#2d7a52) !important; transform:none !important; filter:none !important; }
+  .bnav-tab.active .bnav-label{ color:var(--em,#2d7a52) !important; font-weight:700 !important; opacity:1 !important; }
+  .bnav-tab:hover:not(.active) .bnav-icon{ transform:none !important; }
+  .bnav-tab:active{ transform:scale(.94) !important; }
+}
+body.dark .bottom-nav-inner{ }
+@media (max-width:1023px){
+  body.dark .bottom-nav-inner{ background:#161a17 !important; border-top-color:rgba(255,255,255,.08) !important; }
+  body.dark .bnav-icon, body.dark .bnav-label{ color:#7d857e !important; }
+}
+
 /* Settings + Logout: keep flex compact */
 .bnav-settings{ flex:0 0 auto;padding:8px 12px 7px; }
 
@@ -8006,19 +8042,19 @@ body{
     </div>
     <div class="bnav-section" aria-hidden="true">Menu</div>
     <button class="bnav-tab active" id="nt-plan" onclick="switchTab('plan')">
-      <span class="bnav-icon">📅</span>
+      <span class="bnav-icon"><span class="bnav-emoji">📅</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg></span>
       <span class="bnav-label">Plan</span>
     </button>
     <button class="bnav-tab" id="nt-library" onclick="switchTab('library')">
-      <span class="bnav-icon">📚</span>
+      <span class="bnav-icon"><span class="bnav-emoji">📚</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg></span>
       <span class="bnav-label">Recettes</span>
     </button>
     <button class="bnav-tab" id="nt-suivi" onclick="switchTab('suivi')">
-      <span class="bnav-icon">📊</span>
+      <span class="bnav-icon"><span class="bnav-emoji">📊</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 9.2h3V19H5zM10.6 5h3v14h-3zm5.6 8H19v6h-3z"/></svg></span>
       <span class="bnav-label">Suivi</span>
     </button>
     <button class="bnav-tab" id="nt-profile" onclick="switchTab('profile')">
-      <span class="bnav-icon">👤</span>
+      <span class="bnav-icon"><span class="bnav-emoji">👤</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
       <span class="bnav-label">Profil</span>
     </button>
     <button class="bnav-tab bnav-lpev-tab" id="nt-lpev" onclick="switchTab('lpev')" data-testid="bnav-lpev">
@@ -8026,7 +8062,7 @@ body{
       <span class="bnav-label">Compléments</span>
     </button>
     <button class="bnav-tab bnav-admin" id="nt-admin" onclick="switchTab('admin')" data-testid="bnav-admin" style="display:none">
-      <span class="bnav-icon">🛡️</span>
+      <span class="bnav-icon"><span class="bnav-emoji">🛡️</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></span>
       <span class="bnav-label">Admin</span>
     </button>
     <button class="bnav-premium-cta" type="button" aria-hidden="true" onclick="openPremiumModal&&openPremiumModal('sidebar')">
@@ -8042,7 +8078,7 @@ body{
       </span>
     </div>
     <button class="bnav-tab bnav-settings" onclick="openPrefs()">
-      <span class="bnav-icon">⚙️</span>
+      <span class="bnav-icon"><span class="bnav-emoji">⚙️</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94 0 .32.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></span>
       <span class="bnav-label">Réglages</span>
     </button>
     <button class="bnav-tab bnav-logout" id="nt-logout" onclick="authLogout()" data-testid="bnav-logout" style="display:none">
