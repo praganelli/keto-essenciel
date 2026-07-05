@@ -2584,7 +2584,7 @@ input[type=text],input[type=password],textarea{cursor:text}
 .skeleton-card{height:160px;border-radius:var(--radius);margin-bottom:14px;width:100%}
 
 /* Tab slide transitions */
-.tab-slide{animation:tab-slide-in .44s cubic-bezier(.22,1,.28,1) both}
+.tab-slide{animation:tab-slide-in .22s cubic-bezier(.22,1,.28,1) both}
 @keyframes tab-slide-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 /* ═══════════ Filet de sécurité responsive global ═══════════ */
@@ -2604,7 +2604,7 @@ input,textarea,select{ max-width:100%; box-sizing:border-box; }
   .rm-lab{ font-size:9px; letter-spacing:.04em; }
 }
 /* ─── Arrivée douce des cartes (fondu + glissement vertical, décalé) ─── */
-.kp-card-in{animation:kpCardIn .5s cubic-bezier(.16,1,.3,1) both}
+.kp-card-in{animation:kpCardIn .34s cubic-bezier(.16,1,.3,1) both}
 @keyframes kpCardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media (prefers-reduced-motion: reduce){.kp-card-in{animation:none!important}}
 
@@ -10289,6 +10289,16 @@ function renderWeekGrid(){
       + '</button>';
   }
   pillsHtml += '</div>';
+
+  // Sous-titre de la carte génération : calories réelles + mode
+  try{
+    var subEl = document.getElementById('planGenSub');
+    if(subEl){
+      var modeName = ((document.getElementById('profileModeName')||{}).textContent || 'Keto Standard').trim();
+      var kcalTxt = (focus && focus.kcal) ? (focus.kcal.toLocaleString('fr-FR') + ' kcal/jour') : 'Menu personnalisé';
+      subEl.textContent = '🥑 ' + kcalTxt + ' · ' + modeName;
+    }
+  }catch(e){}
 
   $('weekGrid').innerHTML = pillsHtml + progressHtml + heroHtml + stackHtml;
 }
