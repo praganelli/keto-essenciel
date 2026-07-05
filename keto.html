@@ -15034,6 +15034,7 @@ authGuest = function(){
     epilepsie:   {label:'Épilepsie (4:1)',   emoji:'🧠', fat:.85, prot:.10, carb:.05, kcalAdj:0,    warn:'Régime thérapeutique strict. À ne suivre que sous supervision médicale (neurologue + diététicien).'},
     carnivore:   {label:'Carnivore Keto',    emoji:'🥩', fat:.75, prot:.25, carb:.00, kcalAdj:0,    warn:'Régime restrictif. Pensez à supplémenter en vitamine C et fibres si suivi long terme.'},
     vegetarien:  {label:'Keto Végétarien',   emoji:'🌿', fat:.72, prot:.18, carb:.10, kcalAdj:0,    warn:'Surveillez B12, fer et oméga-3. Pensez à varier protéines végétales (œufs, fromages, tofu, tempeh).'},
+    sans_lactose:{label:'Sans lactose',       emoji:'🥛', fat:.75, prot:.20, carb:.05, kcalAdj:0,    warn:'Sans produits laitiers riches en lactose (lait, crème, fromages frais, yaourts, mascarpone…). Le beurre et les fromages affinés (comté, parmesan, gruyère…), naturellement très pauvres en lactose, restent autorisés. Les laits & crèmes végétaux (coco, amande…) sont conservés.'},
     vegan:       {label:'Keto Végétalien',   emoji:'🌱', fat:.72, prot:.18, carb:.10, kcalAdj:0,    warn:'100% végétal — surveillez B12, fer, oméga-3 et iode. Variez tofu, tempeh, seitan, graines de chanvre, levure maltée.'}
   };
   window.DIET_MODES = DIET_MODES; // Exposé pour le sélecteur dans l'onglet Profil
@@ -15051,6 +15052,17 @@ authGuest = function(){
   }
   function hasAny(text, keys){for(var i=0;i<keys.length;i++){if(text.indexOf(keys[i])!==-1)return true;}return false;}
 
+  // Détecte le lactose (produits laitiers frais) en préservant les laits/crèmes végétaux et les fromages affinés
+  function containsLactose(text){
+    var cleaned = ' '+text+' ';
+    var plant = ['lait de coco','lait d\'amande','lait damande','lait de soja','lait de noisette','lait de cajou','lait de riz','lait d\'avoine','lait davoine','lait végétal','lait vegetal',
+      'crème de coco','creme de coco','crème d\'amande','creme damande','crème de soja','creme de soja','crème végétale','creme vegetale','crème d\'avoine','creme davoine','crème de cajou','creme de cajou','crème de noisette','creme de noisette'];
+    plant.forEach(function(p){ cleaned = cleaned.split(p).join(' '); });
+    var lact = ['lait','crème','creme','fromage frais','fromage blanc','fromage à la crème','fromage a la creme','ricotta','mascarpone','yaourt','yogourt','kéfir','kefir','faisselle','skyr','cottage','petit-suisse','petit suisse','burrata','mozzarella','feta','boursin','philadelphia','st moret','st-moret','whey','caséine','caseine','lactose','lactosé'];
+    for(var i=0;i<lact.length;i++){ if(cleaned.indexOf(lact[i])!==-1) return true; }
+    return false;
+  }
+
   function filterRecipesForMode(arr, modeId){
     if(!modeId || modeId==='standard') return arr;
     return arr.filter(function(r){
@@ -15063,6 +15075,9 @@ authGuest = function(){
       }
       if(modeId==='vegetarien'){
         return !hasAny(t, MEAT_KEYS);
+      }
+      if(modeId==='sans_lactose'){
+        return !containsLactose(t);
       }
       if(modeId==='vegan'){
         // Exclude ALL animal products (meat, fish, eggs, dairy, honey, etc.)
@@ -20192,6 +20207,7 @@ authGuest = function(){
   var MODE_LABELS = {
     standard:   {emoji:'🥑', name:'Keto Standard',     desc:'Cétose équilibrée — tous les types d\'aliments autorisés.'},
     vegetarien: {emoji:'🌿', name:'Keto Végétarien',   desc:'Sans viande ni poisson — œufs, fromages, légumes autorisés.'},
+    sans_lactose:{emoji:'🥛', name:'Sans lactose',     desc:'Sans laitages à lactose — beurre & fromages affinés conservés.'},
     carnivore:  {emoji:'🥩', name:'Keto Carnivore',    desc:'Aliments d\'origine animale uniquement.'},
     diabete:    {emoji:'🩸', name:'Diabète',           desc:'Recettes ≤ 8g de glucides — indice glycémique très bas.'},
     epilepsie:  {emoji:'🧠', name:'Épilepsie / Thérapeutique', desc:'Ratio 4:1 — plus de 70% des calories en lipides.'}
