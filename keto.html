@@ -14856,6 +14856,7 @@ authGuest = function(){
       save();
       toast('🥬 Menus générés : chaque repas contient légume + protéine + lipides');
       renderPlan();
+      try{ if(typeof generateShopping === 'function') generateShopping(); }catch(e){}
     };
   }
   if(typeof swapMeal === 'function'){
@@ -14883,36 +14884,103 @@ authGuest = function(){
       return _buildMainMealV14.apply(this, arguments).replace(/<div class="mcard-section">\s*<div class="mcard-sec-title">🥑 Ingrédients<\/div>/, balanceHtml(di, slot) + '<div class="mcard-section"><div class="mcard-sec-title">🥑 Ingrédients</div>');
     };
   }
+  // Analyse une quantité texte ("3", "40g", "2 cs", "½", "1 entier") → {num, unit}
+  function parseShopQty(qtyStr){
+    if(qtyStr==null || qtyStr==='') return {num:1, unit:''};
+    var s = String(qtyStr).trim().toLowerCase();
+    var fr = {'½':'0.5','¼':'0.25','¾':'0.75','⅓':'0.333','⅔':'0.667','⅛':'0.125'};
+    Object.keys(fr).forEach(function(f){ s = s.split(f).join(' '+fr[f]+' '); });
+    var m = s.match(/\d+(?:[.,]\d+)?/);
+    var num = m ? parseFloat(m[0].replace(',','.')) : 1;
+    var unit = s.replace(/\d+(?:[.,]\d+)?/g,'').replace(/\s+/g,' ').trim();
+    // Normalisation des unités courantes
+    var map = {
+      'g':'g','gr':'g','gramme':'g','grammes':'g',
+      'kg':'kg','ml':'ml','cl':'cl','l':'l',
+      'cs':'cs','c.s.':'cs','c à s':'cs','cuillère à soupe':'cs','cuilleres a soupe':'cs','cuillères à soupe':'cs',
+      'cc':'cc','c.c.':'cc','c à c':'cc','cuillère à café':'cc','cuillères à café':'cc',
+      'pincée':'pincée','pincee':'pincée','tranche':'tranche','tranches':'tranche',
+      'entier':'','entière':'','entiere':'','grosse':'','gros':'','petit':'','petite':'','mûr':'','mur':'','mûre':'','moyen':'','moyenne':''
+    };
+    if(map.hasOwnProperty(unit)) unit = map[unit];
+    return {num:num, unit:unit};
+  }
+  function fmtShopNum(n){
+    var r = Math.round(n*10)/10;
+    if(Math.abs(r-Math.round(r))<0.05) return String(Math.round(r));
+    return String(r).replace('.',',');
+  }
+  function fmtShopQty(units){
+    return Object.keys(units).map(function(u){
+      return fmtShopNum(units[u]) + (u ? (' '+u) : '');
+    }).join(' + ');
+  }
+  window.kpFmtShopQty = fmtShopQty;
+  // Construit l'agrégat { nom: {emoji, type, units:{unité:total}} } pour la semaine
+  window.kpShoppingAgg = function(){
+    var agg = {};
+    if(!menu || !menu.length) return agg;
+    var meals = (typeof profile!=='undefined' && profile && profile.meals) ? profile.meals : {breakfast:true,lunch:true,dinner:true};
+    function addIng(ing){
+      if(!ing || !ing.name) return;
+      var name = String(ing.name).trim();
+      if(!name) return;
+      var q = parseShopQty(ing.qty);
+      if(!agg[name]) agg[name] = {emoji: ing.emoji||'•', type: ing.type||'', units:{}};
+      if(ing.emoji && (agg[name].emoji==='•')) agg[name].emoji = ing.emoji;
+      if(ing.type && !agg[name].type) agg[name].type = ing.type;
+      agg[name].units[q.unit] = (agg[name].units[q.unit]||0) + q.num;
+    }
+    menu.forEach(function(d, i){
+      if(meals.breakfast && d.bfast!=null && BFAST_RECIPES[d.bfast] && BFAST_RECIPES[d.bfast].ingredients){
+        BFAST_RECIPES[d.bfast].ingredients.forEach(addIng);
+      }
+      function addMeal(slot){
+        var r = recipeAtSlot(d, slot);
+        if(r && r.ingredients) r.ingredients.forEach(addIng);
+      }
+      if(meals.lunch){ addMeal('lunchStarter'); addMeal('lunch'); addMeal('lunchDessert'); }
+      if(meals.dinner){ addMeal('dinnerStarter'); addMeal('dinner'); addMeal('dinnerDessert'); }
+      ['breakfast','lunch','dinner'].forEach(function(slot){
+        if(!meals[slot]) return;
+        var b = ensureMealBalance(i, slot);
+        if(!b) return;
+        var items = (slot==='breakfast') ? [b.prot, b.fat] : [b.veg, b.prot, b.fat];
+        items.forEach(addIng);
+      });
+    });
+    return agg;
+  };
   if(typeof generateShopping === 'function'){
     generateShopping = function(){
       if(!menu.length){toast('⚠️ Générez d abord un menu !');return}
       shopChecked=0;
-      var counts={};
-      menu.forEach(function(d){
-        if(d.bfast!=null && BFAST_RECIPES[d.bfast]){
-          BFAST_RECIPES[d.bfast].shopping.forEach(function(k){counts[k]=(counts[k]||0)+1});
-        }
-        function addShop(slot){
-          var r = recipeAtSlot(d, slot);
-          if(r && r.shopping) r.shopping.forEach(function(k){counts[k]=(counts[k]||0)+1});
-        }
-        addShop('lunchStarter'); addShop('lunch'); addShop('lunchDessert');
-        addShop('dinnerStarter'); addShop('dinner'); addShop('dinnerDessert');
-      });
-      addBalanceToShopping(counts);
-      shopTotal=Object.keys(counts).length;
-      var _seenShop={};
-      var catHTML=Object.keys(CAT_SHOP).map(function(cat){
-        var items=CAT_SHOP[cat].filter(function(k){return counts[k] && !_seenShop[k]});
-        if(!items.length)return'';
-        items.forEach(function(k){_seenShop[k]=1;});
-        return`<div><div class="shop-cat-label">${cat}</div><div class="shop-items">${items.map(function(k,i){var id='si-'+i+k.replace(/[^a-z0-9]/gi,'');return`<div class="shop-item" id="${id}" onclick="toggleShop('${id}')"><div class="shop-cb"></div><span class="shop-name">${EMOJI[k]||'•'} ${k}</span><span class="shop-qty">${counts[k]}×</span></div>`;}).join('')}</div></div>`;
+      var agg = window.kpShoppingAgg();
+      var names = Object.keys(agg);
+      shopTotal = names.length;
+      if(!shopTotal){ $('shopping-wrap').innerHTML=''; return; }
+      var CATS = [
+        {key:'prot', label:'🥩 Protéines'},
+        {key:'veg',  label:'🥦 Légumes'},
+        {key:'fat',  label:'🧈 Corps gras & laitages'},
+        {key:'',     label:'🛒 Autres'}
+      ];
+      var idc = 0;
+      var catHTML = CATS.map(function(cat){
+        var list = names.filter(function(n){
+          var t = agg[n].type;
+          if(cat.key==='') return (t!=='prot' && t!=='veg' && t!=='fat');
+          return t===cat.key;
+        });
+        if(!list.length) return '';
+        return '<div><div class="shop-cat-label">'+cat.label+'</div><div class="shop-items">'+
+          list.map(function(n){
+            var id = 'si-'+(idc++);
+            var a = agg[n];
+            return '<div class="shop-item" id="'+id+'" onclick="toggleShop(\''+id+'\')"><div class="shop-cb"></div><span class="shop-name">'+(a.emoji||'•')+' '+n+'</span><span class="shop-qty">'+fmtShopQty(a.units)+'</span></div>';
+          }).join('')+
+          '</div></div>';
       }).join('');
-      var allCatItems=[].concat.apply([],Object.values(CAT_SHOP));
-      var extraItems=Object.keys(counts).filter(function(k){return allCatItems.indexOf(k)===-1});
-      if(extraItems.length){
-        catHTML+=`<div><div class="shop-cat-label">🥬 Compléments assiette</div><div class="shop-items">${extraItems.map(function(k,i){var id='si-extra-'+i+k.replace(/[^a-z0-9]/gi,'');return`<div class="shop-item" id="${id}" onclick="toggleShop('${id}')"><div class="shop-cb"></div><span class="shop-name">${EMOJI[k]||'•'} ${k}</span><span class="shop-qty">${counts[k]}×</span></div>`;}).join('')}</div></div>`;
-      }
       $('shopping-wrap').innerHTML=`<div class="sec-label">Liste de courses</div>
         <div class="shop-card">
           <div class="shop-banner"><span style="font-size:22px">🛒</span><h3>Courses de la semaine</h3></div>
@@ -14930,7 +14998,7 @@ authGuest = function(){
   }
   setTimeout(function(){
     augmentAllBalances();
-    if(menu && menu.length) renderPlan();
+    if(menu && menu.length){ renderPlan(); try{ if(typeof generateShopping === 'function') generateShopping(); }catch(e){} }
   }, 800);
 })();
   </script>
@@ -15229,52 +15297,38 @@ authGuest = function(){
       var jsPDF = window.jspdf && window.jspdf.jsPDF;
       if(!jsPDF){alert('PDF indisponible');return;}
 
-      // Agréger les ingrédients
-      var meals=profile&&profile.meals?profile.meals:{breakfast:true,lunch:true,dinner:true};
-      var counts = {};
-      menu.forEach(function(d){
-        if(meals.breakfast && d.bfast!=null && BFAST_RECIPES[d.bfast] && BFAST_RECIPES[d.bfast].shopping){
-          BFAST_RECIPES[d.bfast].shopping.forEach(function(k){counts[k]=(counts[k]||0)+1;});
-        }
-        if(meals.lunch && d.lunch!=null && MAIN_RECIPES[d.lunch] && MAIN_RECIPES[d.lunch].shopping){
-          MAIN_RECIPES[d.lunch].shopping.forEach(function(k){counts[k]=(counts[k]||0)+1;});
-        }
-        if(meals.dinner && d.dinner!=null && MAIN_RECIPES[d.dinner] && MAIN_RECIPES[d.dinner].shopping){
-          MAIN_RECIPES[d.dinner].shopping.forEach(function(k){counts[k]=(counts[k]||0)+1;});
-        }
-      });
+      // Agréger les ingrédients (quantités réelles) — logique partagée avec l'écran
+      var agg = (typeof window.kpShoppingAgg === 'function') ? window.kpShoppingAgg() : {};
+      var fmtQ = (typeof window.kpFmtShopQty === 'function') ? window.kpFmtShopQty : function(u){return Object.keys(u).map(function(k){return u[k]+(k?' '+k:'');}).join(' + ');};
+      var names = Object.keys(agg);
 
       var doc = new jsPDF({orientation:'portrait', unit:'pt', format:'a4'});
       var dateStr = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
 
       doc.setFillColor(176,122,34); doc.rect(0,0,595,60,'F');
       doc.setTextColor(255,255,255); doc.setFontSize(18); doc.setFont('helvetica','bold');
-      doc.text('🛒 Liste de courses — semaine keto', 30, 28);
+      doc.text('Liste de courses — semaine keto', 30, 28);
       doc.setFontSize(10); doc.setFont('helvetica','normal');
-      doc.text(dateStr+'  •  '+Object.keys(counts).length+' ingrédients', 30, 46);
+      doc.text(dateStr+'  •  '+names.length+' ingrédients', 30, 46);
 
-      // Catégoriser si CAT_SHOP dispo
+      // Catégoriser par type d'ingrédient (comme à l'écran)
+      var CATS = [
+        {key:'prot', label:'Proteines'},
+        {key:'veg',  label:'Legumes'},
+        {key:'fat',  label:'Corps gras & laitages'},
+        {key:'',     label:'Autres'}
+      ];
       var rows = [];
-      try{
-        if(typeof CAT_SHOP === 'object'){
-          Object.keys(CAT_SHOP).forEach(function(cat){
-            var items = CAT_SHOP[cat].filter(function(k){return counts[k];});
-            if(!items.length) return;
-            rows.push([{content:cat, colSpan:3, styles:{fillColor:[230,220,200], fontStyle:'bold', textColor:[60,40,20]}}]);
-            items.forEach(function(k){rows.push(['☐', k, counts[k]+'×']);});
-          });
-          var allCat = [].concat.apply([], Object.values(CAT_SHOP));
-          var extra = Object.keys(counts).filter(function(k){return allCat.indexOf(k)===-1;});
-          if(extra.length){
-            rows.push([{content:'Autres', colSpan:3, styles:{fillColor:[230,220,200], fontStyle:'bold', textColor:[60,40,20]}}]);
-            extra.forEach(function(k){rows.push(['☐', k, counts[k]+'×']);});
-          }
-        } else {
-          Object.keys(counts).sort().forEach(function(k){rows.push(['☐', k, counts[k]+'×']);});
-        }
-      } catch(e){
-        Object.keys(counts).sort().forEach(function(k){rows.push(['☐', k, counts[k]+'×']);});
-      }
+      CATS.forEach(function(cat){
+        var list = names.filter(function(n){
+          var t = agg[n].type;
+          if(cat.key==='') return (t!=='prot' && t!=='veg' && t!=='fat');
+          return t===cat.key;
+        });
+        if(!list.length) return;
+        rows.push([{content:cat.label, colSpan:3, styles:{fillColor:[230,220,200], fontStyle:'bold', textColor:[60,40,20]}}]);
+        list.forEach(function(n){ rows.push(['[ ]', n, fmtQ(agg[n].units)]); });
+      });
 
       doc.autoTable({
         startY: 80,
