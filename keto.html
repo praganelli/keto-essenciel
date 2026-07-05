@@ -10853,9 +10853,11 @@ function generateShopping(){
     }
   });
   shopTotal=Object.keys(counts).length;
+  var _seenShop={};
   var catHTML=Object.keys(CAT_SHOP).map(function(cat){
-    var items=CAT_SHOP[cat].filter(function(k){return counts[k]});
+    var items=CAT_SHOP[cat].filter(function(k){return counts[k] && !_seenShop[k]});
     if(!items.length)return'';
+    items.forEach(function(k){_seenShop[k]=1;});
     return`<div><div class="shop-cat-label">${cat}</div><div class="shop-items">${items.map(function(k,i){var id='si-'+i+k.replace(/[^a-z0-9]/gi,'');return`<div class="shop-item" id="${id}" onclick="toggleShop('${id}')"><div class="shop-cb"></div><span class="shop-name">${EMOJI[k]||'•'} ${k}</span><span class="shop-qty">${counts[k]}×</span></div>`;}).join('')}</div></div>`;
   }).join('');
   // Also add uncategorised items from recipes
@@ -14899,9 +14901,11 @@ authGuest = function(){
       });
       addBalanceToShopping(counts);
       shopTotal=Object.keys(counts).length;
+      var _seenShop={};
       var catHTML=Object.keys(CAT_SHOP).map(function(cat){
-        var items=CAT_SHOP[cat].filter(function(k){return counts[k]});
+        var items=CAT_SHOP[cat].filter(function(k){return counts[k] && !_seenShop[k]});
         if(!items.length)return'';
+        items.forEach(function(k){_seenShop[k]=1;});
         return`<div><div class="shop-cat-label">${cat}</div><div class="shop-items">${items.map(function(k,i){var id='si-'+i+k.replace(/[^a-z0-9]/gi,'');return`<div class="shop-item" id="${id}" onclick="toggleShop('${id}')"><div class="shop-cb"></div><span class="shop-name">${EMOJI[k]||'•'} ${k}</span><span class="shop-qty">${counts[k]}×</span></div>`;}).join('')}</div></div>`;
       }).join('');
       var allCatItems=[].concat.apply([],Object.values(CAT_SHOP));
