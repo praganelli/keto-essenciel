@@ -520,6 +520,65 @@ body.dark .bottom-nav-inner{ }
   body.dark .bnav-icon, body.dark .bnav-label{ color:#7d857e !important; }
 }
 
+/* ═══ A1 — Carte génération (mobile) + B1 — Jours en pastilles défilantes ═══ */
+.plan-gen-hero{ display:none; }
+.wfl-daypills{ display:none; }
+@media (max-width:1023px){
+  .plan-topbar.plan-topbar-full{ display:none !important; }
+  .plan-gen-hero{
+    display:block;
+    background:linear-gradient(135deg,#ffffff 0%,#f3f0e6 100%);
+    border:1px solid rgba(176,122,34,.18);
+    border-radius:20px; padding:18px 16px 14px; margin-bottom:18px;
+    box-shadow:0 12px 30px -18px rgba(20,32,22,.35);
+  }
+  .plan-gen-head{ margin-bottom:14px; }
+  .plan-gen-title{ font-family:'Fraunces','Georgia',serif; font-size:19px; font-weight:600; color:var(--ed-ink,#1f2a1f); line-height:1.15; }
+  .plan-gen-sub{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; color:#7a8275; margin-top:3px; }
+  .plan-gen-main{
+    width:100%; border:none; cursor:pointer; border-radius:14px; padding:16px;
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:800; color:#fff;
+    background:linear-gradient(135deg,#1a5c38,#2d7a52);
+    box-shadow:0 12px 26px -8px rgba(45,122,82,.55); transition:transform .15s;
+  }
+  .plan-gen-main:active{ transform:scale(.98); }
+  .plan-gen-actions{ display:flex; gap:8px; margin-top:10px; }
+  .plan-gen-act{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+    border:1px solid var(--border2,rgba(0,0,0,.08)); background:rgba(255,255,255,.7);
+    border-radius:12px; padding:9px 4px; cursor:pointer;
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:var(--muted,#6a726a);
+    -webkit-tap-highlight-color:transparent; transition:transform .15s;
+  }
+  .plan-gen-act .pga-ico{ font-size:17px; }
+  .plan-gen-act:active{ transform:scale(.96); }
+  body.dark .plan-gen-hero{ background:linear-gradient(135deg,#161a17,#12160f); border-color:rgba(255,255,255,.08); }
+  body.dark .plan-gen-act{ background:rgba(255,255,255,.05); }
+
+  /* B1 — jours en pastilles défilantes horizontalement (sélecteur du jour affiché) */
+  .wfl-daypills{
+    display:flex; gap:8px; overflow-x:auto; padding:2px 2px 12px; margin-bottom:4px;
+    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .wfl-daypills::-webkit-scrollbar{ display:none; }
+  .wfl-pill{
+    flex:0 0 auto; scroll-snap-align:start; width:56px;
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding:9px 4px; border-radius:14px; cursor:pointer;
+    border:1px solid var(--border2,rgba(0,0,0,.08)); background:rgba(255,255,255,.7);
+    font-family:'Plus Jakarta Sans',sans-serif; -webkit-tap-highlight-color:transparent; transition:all .15s;
+  }
+  .wfl-pill:active{ transform:scale(.95); }
+  .wfl-pill-day{ font-size:11px; font-weight:700; color:var(--muted,#6a726a); text-transform:uppercase; letter-spacing:.03em; }
+  .wfl-pill-num{ width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; color:var(--muted,#6a726a); background:rgba(0,0,0,.05); }
+  .wfl-pill.done .wfl-pill-num{ background:rgba(45,122,82,.15); color:var(--em,#2d7a52); }
+  .wfl-pill.active{ background:linear-gradient(135deg,#1a5c38,#2d7a52); border-color:transparent; box-shadow:0 8px 18px -8px rgba(45,122,82,.6); }
+  .wfl-pill.active .wfl-pill-day{ color:#fff; }
+  .wfl-pill.active .wfl-pill-num{ background:rgba(255,255,255,.25); color:#fff; }
+  body.dark .wfl-pill{ background:rgba(255,255,255,.05); }
+}
+
 /* Settings + Logout: keep flex compact */
 .bnav-settings{ flex:0 0 auto;padding:8px 12px 7px; }
 
@@ -7492,11 +7551,24 @@ body{
   <div id="tab-plan">
     <!-- 💎 Votre formule actuelle (Plan) -->
     <div id="planPremiumStatusHost" data-testid="plan-premium-status-host" style="margin-bottom:18px"></div>
-    <div class="plan-topbar">
+    <div class="plan-topbar plan-topbar-full">
       <button class="btn btn-primary" style="flex:1" onclick="generateMenu()">📅 Générer la semaine</button>
       <button class="btn btn-gold" style="flex:1" onclick="generateShopping()">🛒 Courses</button>
       <button class="btn btn-ghost" onclick="exportPDF()" title="Exporter en PDF">📄 PDF</button>
       <button class="btn btn-ghost" onclick="window.print()">🖨</button>
+    </div>
+    <!-- A1 : carte de génération (mobile uniquement) -->
+    <div class="plan-gen-hero" data-testid="plan-gen-hero">
+      <div class="plan-gen-head">
+        <div class="plan-gen-title">Votre menu de la semaine</div>
+        <div class="plan-gen-sub" id="planGenSub">🥑 Personnalisé selon votre profil keto</div>
+      </div>
+      <button class="plan-gen-main" onclick="generateMenu()" data-testid="plan-gen-main">✨ Générer ma semaine</button>
+      <div class="plan-gen-actions">
+        <button class="plan-gen-act" onclick="generateShopping()"><span class="pga-ico">🛒</span><span>Courses</span></button>
+        <button class="plan-gen-act" onclick="exportPDF()"><span class="pga-ico">📄</span><span>PDF</span></button>
+        <button class="plan-gen-act" onclick="window.print()"><span class="pga-ico">🖨</span><span>Imprimer</span></button>
+      </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
       <div class="view-toggle">
@@ -10206,8 +10278,24 @@ function renderWeekGrid(){
   }
   stackHtml += '</div>';
 
-  $('weekGrid').innerHTML = progressHtml + heroHtml + stackHtml;
+  // ───── DAY PILLS (sélecteur horizontal — mobile) ─────
+  var pillsHtml = '<div class="wfl-daypills" data-testid="wfl-daypills">';
+  for(var p=0; p<menu.length; p++){
+    var pdone = !!doneDays[p];
+    var pshort = (DAYS[p]||'').slice(0,3);
+    pillsHtml += '<button class="wfl-pill '+(p===focusIdx?'active':'')+(pdone?' done':'')+'" onclick="focusDay('+p+')" data-testid="wfl-pill-'+p+'">'
+      + '<span class="wfl-pill-day">'+pshort+'</span>'
+      + '<span class="wfl-pill-num">'+(pdone?'✓':(p+1))+'</span>'
+      + '</button>';
+  }
+  pillsHtml += '</div>';
+
+  $('weekGrid').innerHTML = pillsHtml + progressHtml + heroHtml + stackHtml;
 }
+
+/* B1 — change le jour affiché (carte focus) sans quitter la vue Semaine */
+function focusDay(i){ activeDay=i; renderWeekGrid(); }
+window.focusDay = focusDay;
 
 function emptyState(){
   var greeting=profile&&profile.firstname?'Bonjour '+profile.firstname+' ! 👋':'Prêt à démarrer ? 🥑';
