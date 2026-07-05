@@ -14490,17 +14490,8 @@ authGuest = function(){
     var box = document.createElement('div');
     box.id = 'kpWeekPulse';
     box.className = 'kp-week-pulse';
-    box.innerHTML = '<div class="kp-week-top"><div class="kp-week-title">Progression de la semaine</div><div class="kp-week-score">0%</div></div><div class="kp-week-track"><div class="kp-week-fill"></div></div><div class="kp-week-next"></div><div class="kp-week-actions"><button class="kp-mini-btn" type="button" id="kpTodayBtn">Aujourd hui</button><button class="kp-mini-btn" type="button" id="kpGenerateBtn">Générer menu</button><button class="kp-mini-btn" type="button" id="kpExportBtn">Exporter PDF</button></div>';
+    box.innerHTML = '<div class="kp-week-top"><div class="kp-week-title">Progression de la semaine</div><div class="kp-week-score">0%</div></div><div class="kp-week-track"><div class="kp-week-fill"></div></div><div class="kp-week-next"></div>';
     host.insertBefore(box, host.firstChild);
-    $('kpTodayBtn').addEventListener('click', function(){
-      if(typeof selectDay === 'function'){ selectDay(todayIndex()); switchTab('plan'); }
-    });
-    $('kpGenerateBtn').addEventListener('click', function(){
-      if(typeof generateMenu === 'function') generateMenu();
-    });
-    $('kpExportBtn').addEventListener('click', function(){
-      if(typeof exportPDF === 'function') exportPDF();
-    });
     updateWeekPulse();
     // Repositionne la bannière Quiz juste au-dessus de cette carte (mobile)
     try{ if(typeof window.kpSyncPlanRail === 'function') window.kpSyncPlanRail(); }catch(e){}
