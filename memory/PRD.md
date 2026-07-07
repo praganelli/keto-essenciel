@@ -47,6 +47,13 @@ Bugs signalés :
 - Testé (testing_agent iteration_6): filtres 6/6 PASS
 
 ## Renommage marque + version + menu du jour (fork, juin 2026)
+- Marque "Keto Premium" → "Keto - Essenciel" partout ; badge version "v1.1" en haut ; onglet Plan par défaut = jour actuel.
+
+## Slide-over + Profil + macros (fork, juin 2026)
+- Panneau "Menu du jour" (mobile) : animation slide améliorée (ressort cubic-bezier .16,1,.3,1, fond flouté 4px, panneau arrondi, bouton fermeture animé, contenu en fade-in).
+- Écran Profil (mobile) : entrée "Réglages" déplacée SOUS la carte "Informations personnelles".
+- Carte "Vos macros" : fix débordement texte (result-macros grid minmax(0,1fr), rm-val/rm-lab nowrap+ellipsis, letter-spacing réduit).
+- BUG corrigé : `calcMacros` faisait `tdee + p.goal` (concat texte si goal en string → 24680 kcal). Corrigé en `Number(p.goal||0)` + `Number(p.activity||1)`. Vérifié (target 1711 kcal correct).
 - Marque "Keto Premium" → "Keto - Essenciel" partout (titre, auth, splash, onboarding, aide, manifeste PWA, notifications, parrainage, footers PDF, statut abonnement, toasts).
 - Badge version "Keto - Essenciel · v1.1" ajouté en haut de l'écran (header, sous le titre) via `.app-version-badge`.
 - Onglet Plan : le jour affiché par défaut est désormais le JOUR ACTUEL (`TODAY_IDX=(getDay()+6)%7`, `activeDay=TODAY_IDX`). Le hero affiche le badge "📍 Aujourd'hui". Vérifié via screenshot (Mardi + tag Aujourd'hui + badge v1.1). (≤5g→366, ≤10g→474, ≤15min→393, vegan→40, facile→437, recherche combinée OK, état vide OK); CTA essai visible + message invité OK. Écriture Firestore de l'essai (utilisateur connecté) non testable en fork (compte Firebase absent).
