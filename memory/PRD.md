@@ -49,6 +49,9 @@ Bugs signalés :
 ## Renommage marque + version + menu du jour (fork, juin 2026)
 - Marque "Keto Premium" → "Keto - Essenciel" partout ; badge version "v1.1" en haut ; onglet Plan par défaut = jour actuel.
 
+## Refonte contenu « Menu du jour » (fork, juin 2026)
+- Contenu de la fiche (bottom sheet) refait en Option A + résumé d'ingrédients : cartes repas compactes `.dmc` (pastille emoji, badge, titre Fraunces italique, description 2 lignes, pastilles macros kcal/lip/prot/gluc, temps, chips « Ingrédients » = noms uniquement, boutons « Voir la recette » → openRecipe + « Changer » → swapMeal). Détails complets (étapes/assaisonnements/notes) uniquement dans la fiche recette. Nouvelles fonctions dmcBfast/dmcMain/dmcCourse + _dmcMealCard ; renderDayPanel appelle ces builders (les anciens build* restent inutilisés). En-tête + anneaux macros conservés. Vérifié via screenshot (3 cartes, titres + chips ingrédients OK, pas d'erreur JS).
+
 ## Optimisation fluidité + corrections (fork, juin 2026)
 - Test frontend complet (testing_agent iteration_8) : AUCUNE erreur JS. Tous les changements récents validés (bottom sheet + 3 modes de fermeture, renommage, badge v1.1, Réglages sous Info perso, macros correctes, jour actuel par défaut).
 - Fluidité globale (CSS reset) : `-webkit-tap-highlight-color:transparent` (plus de flash gris au tap), `text-size-adjust:100%`, `-webkit-font-smoothing:antialiased`, momentum scroll, support `prefers-reduced-motion`.

@@ -10878,7 +10878,7 @@ function renderDayPanel(){
     <div class="mag-section-label">Petit-<em>déjeuner</em></div>
     <div class="mag-section-meta">${BFAST_RECIPES[d.bfast]?BFAST_RECIPES[d.bfast].time:''}</div>
   </div>
-  <div style="margin-bottom:28px">${buildBfast(activeDay)}</div>`:''}
+  <div style="margin-bottom:22px">${dmcBfast(activeDay)}</div>`:''}
 
   ${meals.lunch?`
   <div class="mag-section-title">
@@ -10886,10 +10886,10 @@ function renderDayPanel(){
     <div class="mag-section-label"><em>Déjeuner</em></div>
     <div class="mag-section-meta">${MAIN_RECIPES[d.lunch]?MAIN_RECIPES[d.lunch].time:''}</div>
   </div>
-  <div style="margin-bottom:28px">
-    ${(getCourses().starter && d.lunchStarter!=null)?buildCourseMeal(activeDay,'lunchStarter','Entrée','🥗','starter'):''}
-    ${(getCourses().main && d.lunch!=null)?buildMainMeal(activeDay,'lunch'):''}
-    ${(getCourses().dessert && d.lunchDessert!=null)?buildCourseMeal(activeDay,'lunchDessert','Dessert','🍮','dessert'):''}
+  <div style="margin-bottom:22px">
+    ${(getCourses().starter && d.lunchStarter!=null)?dmcCourse(activeDay,'lunchStarter','Entrée','🥗','starter'):''}
+    ${(getCourses().main && d.lunch!=null)?dmcMain(activeDay,'lunch'):''}
+    ${(getCourses().dessert && d.lunchDessert!=null)?dmcCourse(activeDay,'lunchDessert','Dessert','🍮','dessert'):''}
   </div>`:''}
 
   ${meals.dinner?`
@@ -10898,10 +10898,10 @@ function renderDayPanel(){
     <div class="mag-section-label">Dîner <em>du soir</em></div>
     <div class="mag-section-meta">${MAIN_RECIPES[d.dinner]?MAIN_RECIPES[d.dinner].time:''}</div>
   </div>
-  <div style="margin-bottom:28px">
-    ${(getCourses().starter && d.dinnerStarter!=null)?buildCourseMeal(activeDay,'dinnerStarter','Entrée','🥗','starter'):''}
-    ${(getCourses().main && d.dinner!=null)?buildMainMeal(activeDay,'dinner'):''}
-    ${(getCourses().dessert && d.dinnerDessert!=null)?buildCourseMeal(activeDay,'dinnerDessert','Dessert','🍮','dessert'):''}
+  <div style="margin-bottom:22px">
+    ${(getCourses().starter && d.dinnerStarter!=null)?dmcCourse(activeDay,'dinnerStarter','Entrée','🥗','starter'):''}
+    ${(getCourses().main && d.dinner!=null)?dmcMain(activeDay,'dinner'):''}
+    ${(getCourses().dessert && d.dinnerDessert!=null)?dmcCourse(activeDay,'dinnerDessert','Dessert','🍮','dessert'):''}
   </div>`:''}
 
   </div>`;
@@ -10940,6 +10940,52 @@ function animateCounter(id, target, duration){
 
 function mlRow(dc,name,val,unit,pct,fc){
   return `<div class="ml-row"><div class="ml-dot" style="background:${dc}"></div><div style="flex:1"><div class="ml-name">${name}</div><div><span class="ml-val">${val}</span><span class="ml-unit"> ${unit} · ${pct}%</span></div><div class="mbar-wrap"><div class="mbar-fill" style="width:${pct}%;background:${fc}"></div></div></div></div>`;
+}
+
+/* ══ Fiche « Menu du jour » : cartes repas compactes & élégantes (Option A + résumé d'ingrédients) ══ */
+function _dmcMealCard(r, badge, slotCls, di, slot){
+  if(!r) return '';
+  var kcal = r.kcal || Math.round((r.fat||0)*9+(r.prot||0)*4+(r.carb||0)*4);
+  var ings = (r.ingredients||[]).map(function(ing){
+    return '<span class="dmc-ing">'+(ing.emoji?ing.emoji+' ':'')+(ing.name||'')+'</span>';
+  }).join('');
+  return '<div class="dmc '+slotCls+'">'
+    + '<div class="dmc-top">'
+    +   '<div class="dmc-emoji">'+(r.emoji||'🍽')+'</div>'
+    +   '<div class="dmc-head">'
+    +     '<div class="dmc-badge">'+badge+'</div>'
+    +     '<div class="dmc-title">'+(r.name||'')+'</div>'
+    +     (r.desc?'<div class="dmc-desc">'+r.desc+'</div>':'')
+    +   '</div>'
+    + '</div>'
+    + '<div class="dmc-meta">'
+    +   '<span class="dmc-kcal">🔥 '+kcal+' kcal</span>'
+    +   '<span class="dmc-pill fat">'+(r.fat||0)+'g lip.</span>'
+    +   '<span class="dmc-pill prot">'+(r.prot||0)+'g prot.</span>'
+    +   '<span class="dmc-pill carb">'+(r.carb||0)+'g gluc.</span>'
+    +   (r.time?'<span class="dmc-time">⏱ '+r.time+'</span>':'')
+    + '</div>'
+    + (ings?'<div class="dmc-ings"><span class="dmc-ings-label">Ingrédients</span><div class="dmc-ings-chips">'+ings+'</div></div>':'')
+    + '<div class="dmc-actions">'
+    +   '<button class="dmc-btn primary" onclick="openRecipe('+r.id+')">📖 Voir la recette</button>'
+    +   '<button class="dmc-btn" onclick="swapMeal('+di+',\''+slot+'\')">🔄 Changer</button>'
+    + '</div>'
+    + '</div>';
+}
+function dmcBfast(di){
+  var bf = BFAST_RECIPES[menu[di].bfast];
+  return _dmcMealCard(bf, '☀️ Petit-déjeuner', 'bfast', di, 'breakfast');
+}
+function dmcMain(di, slot){
+  var r = MAIN_RECIPES[menu[di][slot]];
+  if(!r) return '';
+  var badge = slot==='lunch' ? '🌞 Déjeuner' : '🌙 Dîner';
+  return _dmcMealCard(r, badge, (slot==='lunch'?'lunch':'dinner'), di, slot);
+}
+function dmcCourse(di, slot, label, icon, slotCls){
+  var pool = recipePoolForSlot(slot);
+  var r = pool && menu[di][slot]!=null ? pool[menu[di][slot]] : null;
+  return _dmcMealCard(r, icon+' '+label, slotCls, di, slot);
 }
 
 function buildBfast(di){
@@ -23502,6 +23548,42 @@ setTimeout(maybeShowContextualPremium, 4000);
 #tab-profile .pf-goal-grid{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
 #tab-profile .pf-act-seg{ min-width:0 !important; padding-left:2px !important; padding-right:2px !important; }
 #tab-profile .pf-act-lbl{ font-size:8.5px !important; letter-spacing:-.01em !important; overflow:hidden !important; text-overflow:ellipsis !important; }
+
+/* ══ Fiche « Menu du jour » — cartes repas compactes & élégantes ══ */
+.dmc{ position:relative; background:var(--s1,#fff); border:1px solid var(--border2,rgba(20,15,8,.07)); border-radius:20px; padding:16px 16px 14px 20px; margin-bottom:14px; box-shadow:0 8px 24px rgba(20,15,8,.06); animation:daySheetContentIn .45s cubic-bezier(.16,1,.3,1) both; }
+.dmc::before{ content:""; position:absolute; left:0; top:16px; bottom:16px; width:4px; border-radius:0 4px 4px 0; background:var(--em,#2d7a52); }
+.dmc.bfast::before{ background:#e0a84a; }
+.dmc.lunch::before{ background:#2d7a52; }
+.dmc.dinner::before{ background:#5a86b0; }
+.dmc.starter::before{ background:#7bae5a; }
+.dmc.dessert::before{ background:#c98fb0; }
+.dmc-top{ display:flex; gap:13px; align-items:flex-start; }
+.dmc-emoji{ flex:0 0 auto; width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:27px; background:var(--s2,rgba(20,15,8,.05)); }
+.dmc-head{ flex:1; min-width:0; }
+.dmc-badge{ font-family:var(--font-body),sans-serif; font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#a9802a; }
+.dmc-title{ font-family:var(--font-display),Georgia,serif; font-style:italic; font-weight:600; font-size:18px; line-height:1.22; color:var(--text,#241b0f); margin:3px 0 4px; }
+.dmc-desc{ font-size:12.5px; line-height:1.5; color:var(--muted,#7a7264); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.dmc-meta{ display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; align-items:center; }
+.dmc-kcal{ font-family:var(--font-display),Georgia,serif; font-weight:700; font-size:13px; color:var(--text,#241b0f); margin-right:2px; }
+.dmc-pill{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:100px; }
+.dmc-pill.fat{ color:#7a5b12; background:rgba(201,162,74,.16); }
+.dmc-pill.prot{ color:#1f6d43; background:rgba(45,122,82,.14); }
+.dmc-pill.carb{ color:#9a5a2a; background:rgba(200,120,60,.14); }
+.dmc-time{ margin-left:auto; font-size:11.5px; color:var(--muted,#7a7264); font-weight:600; white-space:nowrap; }
+.dmc-ings{ margin-top:12px; padding-top:12px; border-top:1px solid rgba(201,162,74,.24); }
+.dmc-ings-label{ display:block; font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#8a7659; margin-bottom:7px; }
+.dmc-ings-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+.dmc-ing{ font-size:12px; color:var(--text2,#4a4234); background:var(--s2,rgba(20,15,8,.045)); border:1px solid rgba(20,15,8,.05); border-radius:100px; padding:4px 10px; white-space:nowrap; }
+.dmc-actions{ display:flex; gap:8px; margin-top:14px; }
+.dmc-btn{ flex:1; border:1px solid rgba(20,15,8,.12); background:transparent; color:var(--text,#241b0f); font-family:var(--font-body),sans-serif; font-weight:700; font-size:13px; padding:11px 12px; border-radius:12px; cursor:pointer; transition:transform .12s ease, background .2s ease; -webkit-tap-highlight-color:transparent; }
+.dmc-btn:active{ transform:scale(.97); }
+.dmc-btn.primary{ background:var(--em,#2d7a52); border-color:var(--em,#2d7a52); color:#fff; }
+body.dark .dmc{ background:#161b13; border-color:rgba(255,255,255,.07); }
+body.dark .dmc-emoji, body.dark .dmc-ing{ background:rgba(255,255,255,.06); }
+body.dark .dmc-title{ color:#eef0ea; }
+body.dark .dmc-kcal{ color:#eef0ea; }
+body.dark .dmc-btn{ color:#e8eae4; border-color:rgba(255,255,255,.14); }
+body.dark .dmc-ing{ color:#cdd2c6; border-color:rgba(255,255,255,.08); }
 
 
 /* Carte identité (avatar + champs) */
