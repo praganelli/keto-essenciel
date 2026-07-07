@@ -520,6 +520,35 @@ body.dark .bottom-nav-inner{ }
   body.dark .bnav-icon, body.dark .bnav-label{ color:#7d857e !important; }
 }
 
+/* ═══ Panneau « menu du jour » en slide-over depuis la droite (mobile) ═══ */
+.day-sheet-backdrop{ display:none; }
+.day-sheet-close{ display:none; }
+@keyframes daySheetIn{ from{ transform:translateX(100%); } to{ transform:none; } }
+@media (max-width:1023px){
+  .day-sheet-backdrop{
+    display:block; position:fixed; inset:0; background:rgba(20,15,8,.42);
+    opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s; z-index:900;
+  }
+  body.day-sheet-open .day-sheet-backdrop{ opacity:1; visibility:visible; }
+  body.day-sheet-open #day-panel{
+    position:fixed; top:0; right:0; bottom:0; width:100%; max-width:460px;
+    margin:0 !important; z-index:901; background:var(--bg,#f7f3ea);
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+    box-shadow:-14px 0 44px rgba(20,15,8,.28);
+    padding:calc(env(safe-area-inset-top) + 58px) 16px calc(env(safe-area-inset-bottom) + 28px);
+    animation:daySheetIn .36s cubic-bezier(.22,1,.28,1);
+  }
+  body.day-sheet-open .day-sheet-close{
+    display:flex; align-items:center; justify-content:center;
+    position:fixed; top:calc(env(safe-area-inset-top) + 12px); left:14px; z-index:902;
+    width:42px; height:42px; border-radius:50%; border:none; cursor:pointer;
+    background:#fff; color:#1a1208; font-size:26px; font-weight:700; line-height:1; padding-bottom:3px;
+    box-shadow:0 4px 16px rgba(20,15,8,.20);
+  }
+  body.dark.day-sheet-open #day-panel{ background:#12160f; }
+  body.dark.day-sheet-open .day-sheet-close{ background:#22281f; color:#e8eae4; }
+}
+
 /* Bouton central « Générer » — désactivé (ancien style 2b) */
 .bnav-fab{ display:none !important; }
 /* Animation « ressort » de la pastille active (menu mobile) */
@@ -7677,6 +7706,8 @@ body{
       </div>
       <div class="quiz-promo-arrow">→</div>
     </div>
+    <div id="daySheetBackdrop" class="day-sheet-backdrop" onclick="closeDaySheet()"></div>
+    <button id="daySheetClose" class="day-sheet-close" type="button" onclick="closeDaySheet()" aria-label="Fermer le menu du jour">‹</button>
     <div id="day-panel"></div>
     <div id="shopping-wrap" style="margin-top:28px"></div>
     <!-- 💊 Carte d'accès Compléments (mobile uniquement) -->
@@ -7697,6 +7728,10 @@ body{
 
   <!-- ═══ LIBRARY TAB ═══ -->
   <div id="tab-library" style="display:none">
+    <div id="recipeFavSection" class="recipe-fav-section" style="margin-bottom:14px">
+      <div class="sec-label">⭐ Mes favoris</div>
+      <div id="favList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
     <div class="lib-nav">
       <div class="lib-tab" id="lt-all" onclick="setLibTab('all')">🔍 Toutes</div>
       <div class="lib-tab active" id="lt-breakfast" onclick="setLibTab('breakfast')">☀️ Petits-déjeuners</div>
@@ -9720,6 +9755,7 @@ function toast(msg, type){
 
 /* ═══════════════════════ TAB ROUTING ═══════════════════════ */
 function switchTab(tab){
+  document.body.classList.remove('day-sheet-open');
   // Admin tab → render dedicated admin dashboard in its own tab
   if(tab === 'admin'){
     currentTab='admin';
@@ -10303,7 +10339,12 @@ function setDayView(v){
   $('vt-week').classList.toggle('active',v==='week');
   $('vt-day').classList.toggle('active',v==='day');
   renderPlan();
+  var isMobile = (window.innerWidth||1024) < 1024;
+  document.body.classList.toggle('day-sheet-open', v==='day' && isMobile);
+  if(v==='day' && isMobile){ var dp=$('day-panel'); if(dp) dp.scrollTop=0; }
 }
+function closeDaySheet(){ setDayView('week'); }
+window.closeDaySheet = closeDaySheet;
 function selectDay(i){activeDay=i;setDayView('day')}
 
 /* ═══════════════════════ RENDER PLAN ═══════════════════════ */
@@ -15629,10 +15670,7 @@ authGuest = function(){
 
   /* ───────── 7. UI — Section modes + favoris dans Paramètres ───────── */
   function buildModesSection(){
-    var html = '<div class="prefs-label" style="margin-top:18px">⭐ Favoris</div>'
-      + '<div id="favList" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;padding:6px;background:var(--s2);border-radius:10px;border:1px solid var(--border2)"></div>'
-
-      + '<div class="prefs-label" style="margin-top:18px">📄 Exports PDF</div>'
+    var html = '<div class="prefs-label" style="margin-top:18px">📄 Exports PDF</div>'
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
         + '<button onclick="exportMenuPDF()" style="padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#1a5c38,#3a9966);color:#fff;font-family:var(--font-body),sans-serif;font-size:13px;font-weight:600;cursor:pointer">📅 Menu hebdo</button>'
         + '<button onclick="exportShoppingPDF()" style="padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#b07a22,#e8b84b);color:#fff;font-family:var(--font-body),sans-serif;font-size:13px;font-weight:600;cursor:pointer">🛒 Liste de courses</button>'

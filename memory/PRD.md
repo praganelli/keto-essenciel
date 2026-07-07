@@ -39,4 +39,9 @@ Bugs signalés :
 ## Update (Juillet 2026) — Recherche/filtres recettes + Essai Premium 7 jours
 - Bibliothèque: nouvel onglet « 🔍 Toutes » (recherche transversale ~474 recettes) + puces de filtres combinables (≤5g / ≤10g glucides, ≤15 min, Facile, 🌱 Végétal) + compteur de résultats live + état vide. Cartes enrichies de data-carb/data-time/data-diff/data-vegan (renderLibrary). Logique: ensureRecipeTools/toggleLibFilter/filterRecipes (~L14348).
 - Essai Premium GRATUIT 7 jours (sans carte, 1x/compte, connexion requise): CTA dans la fenêtre Premium (#kpTrialCta, data-testid premium-trial-btn) au-dessus des offres. Activation réelle via Firestore premium_emails {active,since,expires+7j,source:'trial',plan:'trial',trialUsed:true} → kpStartTrial (~L18360). L'ancienne bannière "Essai Premium" (Phase 4) qui ne faisait qu'un faux compte à rebours localStorage a été re-branchée: startPremiumTrial() ouvre désormais la vraie fenêtre d'essai (~L21879).
+## Update (June 2026, fork) — Menu du jour en slide-over + Favoris dans Recettes
+- "Ouvrir le menu du jour" (Plan mobile) s'ouvre désormais en panneau glissant depuis la droite (CSS `body.day-sheet-open #day-panel`, backdrop `#daySheetBackdrop`, bouton fermer `#daySheetClose`; JS `setDayView`/`closeDaySheet`). Vérifié via screenshot (day-sheet-open=true).
+- Section "⭐ Mes favoris" déplacée hors des Réglages vers le haut de l'onglet Recettes (#tab-library, #recipeFavSection + #favList, `renderFavoritesList()`). Doublon d'ID `favList` retiré de `buildModesSection()` (Réglages). Vérifié via screenshot (favoris rendus dans Recettes).
+
+## Filtres recettes
 - Testé (testing_agent iteration_6): filtres 6/6 PASS (≤5g→366, ≤10g→474, ≤15min→393, vegan→40, facile→437, recherche combinée OK, état vide OK); CTA essai visible + message invité OK. Écriture Firestore de l'essai (utilisateur connecté) non testable en fork (compte Firebase absent).
