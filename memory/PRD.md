@@ -49,6 +49,12 @@ Bugs signalés :
 ## Renommage marque + version + menu du jour (fork, juin 2026)
 - Marque "Keto Premium" → "Keto - Essenciel" partout ; badge version "v1.1" en haut ; onglet Plan par défaut = jour actuel.
 
+## Impression menu/liste en popup interne (fork, juin 2026)
+- Les 3 fonctions d'impression (exportPDF menu, printShopping liste, exportWeightPDF poids) utilisaient `window.open('','_blank')` → sur mobile/PWA ça ouvrait un onglet et le retour rechargeait l'app (→ écran connexion / perte session invité).
+- Nouveau: popup INTERNE `#kpPrintOverlay` (overlay `.recipe-overlay`, z-index 1300, portalé body) affichant l'aperçu formaté dans une `<iframe srcdoc>`, avec boutons « Fermer » (kpClosePrint) et « Imprimer » (kpDoPrint → iframe.print()). Aucun nouvel onglet, l'utilisateur reste dans l'app. Fallback window.open conservé si l'iframe indisponible.
+- Nettoyage marque restante dans les templates d'impression: "Keto Premium V9" → "Keto - Essenciel".
+- Vérifié: liste + menu ouvrent la popup, « Fermer » revient au Plan sans déconnexion (authVisible=none).
+
 ## Régénération auto au changement de mode (fork, juin 2026)
 - `applyDietMode(modeId)` : après recalcul des cibles, régénère IMMÉDIATEMENT la semaine via `generateMenu()` (wrappé par withFilteredRecipes → filtre selon le mode), puis `switchTab('plan')` + `setDayView('week')` pour montrer le résultat. Flag `window._suppressMenuToast` pour éviter le double toast (garde uniquement « Mode X — nouveau menu généré ✅»). Gating Premium existant conservé (non-premium → modal Premium). Vérifié en Premium : standard(viande) → vegetarien → menu régénéré (tofu/tempeh), tab=plan, dietMode=vegetarien.
 

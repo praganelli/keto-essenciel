@@ -7675,6 +7675,21 @@ body{
   </div>
 </div>
 
+<!-- Aperçu impression (popup interne — reste dans l'app, pas de nouvel onglet) -->
+<div class="recipe-overlay" id="kpPrintOverlay" onclick="if(event.target===this){kpClosePrint();}">
+  <div class="recipe-modal" id="kpPrintModal" style="max-width:700px;display:flex;flex-direction:column;height:92vh;padding:0;overflow:hidden">
+    <div class="recipe-modal-head">
+      <div class="recipe-modal-title" id="kpPrintTitle">Aperçu</div>
+      <button class="close-btn" onclick="kpClosePrint()" aria-label="Fermer">✕</button>
+    </div>
+    <iframe id="kpPrintFrame" title="Aperçu impression" style="flex:1;width:100%;border:none;background:#fff;min-height:0"></iframe>
+    <div style="display:flex;gap:10px;padding:12px 16px;border-top:1px solid var(--border2);background:var(--s1)">
+      <button class="btn btn-ghost" style="flex:1" onclick="kpClosePrint()">← Fermer</button>
+      <button class="btn btn-ghost" style="flex:1;background:linear-gradient(135deg,#1a5c38,#3a9966);color:#fff;border:none" onclick="kpDoPrint()">🖨 Imprimer</button>
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <header>
     <div class="eyebrow"><span class="pulse"></span> Le keto par un naturopathe</div>
@@ -12712,7 +12727,7 @@ function exportPDF(){
   var html=`<!DOCTYPE html>
 <html lang="fr"><head>
 <meta charset="UTF-8">
-<title>Keto Premium V9 — Plan Semaine${fname?' de '+fname:''}</title>
+<title>Keto - Essenciel — Menu de la semaine${fname?' de '+fname:''}</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -12742,7 +12757,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0ead8;vertical-align:middle}
 </head><body>
 <div class="header">
   <div>
-    <div class="brand">Keto <em>Premium V9</em></div>
+    <div class="brand">Keto - <em>Essenciel</em></div>
     <div style="font-size:12px;color:#6a5a48;margin-top:4px">Votre plan cétogène personnalisé</div>
   </div>
   <div class="meta">
@@ -12778,6 +12793,8 @@ td{padding:9px 12px;border-bottom:1px solid #f0ead8;vertical-align:middle}
 </div>
 </body></html>`;
 
+  // Popup interne (menu) — reste dans l'app
+  if(window.kpOpenPrint && window.kpOpenPrint('📅 Menu de la semaine', html)) return;
   var win=window.open('','_blank');
   win.document.write(html);
   win.document.close();
@@ -12818,7 +12835,7 @@ td{padding:8px 12px;border-bottom:1px solid #f0ead8}
 .footer{margin-top:20px;font-size:10px;color:#9a8870;text-align:center;padding-top:10px;border-top:1px solid #e0d8c4}
 </style></head><body>
 <div class="header">
-  <div class="title">📊 Suivi du poids — Keto <em>Premium V9</em>${fname?' — '+fname:''}</div>
+  <div class="title">📊 Suivi du poids — Keto <em>Essenciel</em>${fname?' — '+fname:''}</div>
   <div style="font-size:11px;color:#6a5a48">Essenciel O Naturel · Lunéville</div>
 </div>
 <div class="stats">
@@ -12833,6 +12850,8 @@ td{padding:8px 12px;border-bottom:1px solid #f0ead8}
 </table>
 <div class="footer">Keto - Essenciel · Patrice Raganelli, Naturopathe · Essenciel O Naturel · Lunéville · ${new Date().getFullYear()}</div>
 </body></html>`;
+  // Popup interne (courbe de poids) — reste dans l'app
+  if(window.kpOpenPrint && window.kpOpenPrint('📊 Suivi du poids'+(fname?' de '+fname:''), html)) return;
   var win=window.open('','_blank');
   win.document.write(html); win.document.close();
   setTimeout(function(){win.print();},400);
@@ -15443,6 +15462,36 @@ authGuest = function(){
     }catch(e){}
     window.open('https://wa.me/?text='+encodeURIComponent(txt), '_blank');
   };
+  // ── Popup interne d'aperçu/impression (reste dans l'app, aucun nouvel onglet) ──
+  window.kpOpenPrint = function(title, html){
+    var ov = document.getElementById('kpPrintOverlay');
+    var frame = document.getElementById('kpPrintFrame');
+    if(!ov || !frame){ return false; }
+    var t = document.getElementById('kpPrintTitle'); if(t) t.textContent = title || 'Aperçu';
+    // Réinitialiser l'iframe puis injecter le HTML formaté
+    frame.removeAttribute('src');
+    frame.srcdoc = html;
+    if(ov.parentNode !== document.body){ document.body.appendChild(ov); }
+    ov.classList.add('open');
+    return true;
+  };
+  window.kpClosePrint = function(){
+    var ov = document.getElementById('kpPrintOverlay');
+    if(ov) ov.classList.remove('open');
+    var frame = document.getElementById('kpPrintFrame');
+    if(frame){ try{ frame.srcdoc = ''; }catch(e){} }
+  };
+  window.kpDoPrint = function(){
+    var frame = document.getElementById('kpPrintFrame');
+    if(!frame){ return; }
+    try{
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+    }catch(e){
+      try{ window.print(); }catch(e2){}
+    }
+  };
+
   window.printShopping = function(){
     if(!menu || !menu.length){ if(typeof toast==='function') toast('⚠️ Générez d abord un menu !'); return; }
     var agg = (typeof window.kpShoppingAgg==='function') ? window.kpShoppingAgg() : {};
@@ -15477,6 +15526,8 @@ authGuest = function(){
       + sections
       + '<div class="footer">Keto - Essenciel · Essenciel O Naturel · '+new Date().getFullYear()+'</div>'
       + '</body></html>';
+    // Popup interne (reste dans l'app) au lieu d'un nouvel onglet
+    if(window.kpOpenPrint && window.kpOpenPrint('🛒 Liste de courses'+(fname?' de '+fname:''), html)) return;
     var win = window.open('','_blank');
     if(!win){ if(typeof toast==='function') toast('⚠️ Autorisez les pop-ups pour imprimer'); return; }
     win.document.write(html); win.document.close();
@@ -15795,7 +15846,7 @@ authGuest = function(){
       // Pied de page
       var py = doc.lastAutoTable.finalY + 24;
       doc.setFontSize(9); doc.setTextColor(120,100,80);
-      doc.text('Généré par Keto Premium V9  •  '+dateStr, 30, py);
+      doc.text('Généré par Keto - Essenciel  •  '+dateStr, 30, py);
       if(mode.warn){
         doc.setFontSize(8); doc.setTextColor(176,56,40);
         doc.text('⚠ '+mode.warn, 30, py+14, {maxWidth:780});
