@@ -11,7 +11,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Keto Premium V9</title>
+<title>Keto - Essenciel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <!-- Resource hints — parallélise les connexions critiques (gain LCP ~200-400ms) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -193,6 +193,15 @@ header{
 h1{font-size:clamp(2rem,6.5vw,3.6rem);line-height:1.05;color:var(--text)}
 h1 em{color:var(--gold2)}
 .tagline{margin-top:10px;color:var(--muted);font-size:13px;font-weight:300;letter-spacing:.01em}
+.app-version-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  margin:8px auto 0;padding:3px 12px;
+  border-radius:100px;
+  font-size:11px;font-weight:700;letter-spacing:.04em;
+  color:var(--gold);background:var(--gold-pale);
+  border:1px solid rgba(176,122,34,.28);
+}
+.app-version-badge b{color:var(--em);font-weight:800}
 
 /* Cloud indicator */
 #cloudIndicator{
@@ -6517,7 +6526,7 @@ body{
           <rect x="86" y="36" width="8" height="18" rx="4" fill="#6b4420"/>
         </svg>
       </div>
-      <div class="auth-brand">Keto <em>Premium</em></div>
+      <div class="auth-brand">Keto - <em>Essenciel</em></div>
       <div class="auth-sub">Essenciel O Naturel</div>
       <div class="auth-tagline" data-testid="auth-tagline">
         Le keto sans effort, <span class="auth-tag-italic">par un naturopathe</span>
@@ -6960,7 +6969,7 @@ body{
       </svg>
     </div>
 
-    <div class="splash-name">Keto <em>Premium</em></div>
+    <div class="splash-name">Keto - <em>Essenciel</em></div>
     <div class="splash-tag">Votre coach keto intelligent</div>
     <div class="splash-version">v1.1 · 300+ Recettes · Suivi · PDF</div>
   </div>
@@ -7048,7 +7057,7 @@ body{
           </svg>
         </div>
 
-        <div class="ob-welcome-title">Keto <em>Premium</em></div>
+        <div class="ob-welcome-title">Keto - <em>Essenciel</em></div>
         <div class="ob-typewriter-wrap">
           <span class="ob-typewriter" style="font-size:13px;color:var(--muted);font-weight:400">Votre coach keto personnel ✨</span>
         </div>
@@ -7128,7 +7137,7 @@ body{
       <div class="ob-hero">
         <div class="ob-icon" style="background:linear-gradient(135deg,#d4eddf,#a8d8bc)">👋</div>
         <div class="ob-step-label">Étape 1 sur 7</div>
-        <div class="ob-title">Bienvenue dans<br><em>Keto Premium</em></div>
+        <div class="ob-title">Bienvenue dans<br><em>Keto - Essenciel</em></div>
         <div class="ob-subtitle">Commençons par faire connaissance. Comment vous appelez-vous ?</div>
       </div>
       <div class="ob-body">
@@ -7577,7 +7586,7 @@ body{
       <div class="prefs-acc-body">
         <div id="kpPwaBlock" style="margin-bottom:14px"></div>
         <div style="background:var(--ed-paper-warm);border:1px solid var(--ed-hair);border-radius:6px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:var(--ed-ink-soft);line-height:1.6">
-          <div style="font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:16px;color:var(--ed-ink);margin-bottom:6px">Keto Premium <span style="color:var(--ed-muted);font-size:12px">v1.1</span></div>
+          <div style="font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:16px;color:var(--ed-ink);margin-bottom:6px">Keto - Essenciel <span style="color:var(--ed-muted);font-size:12px">v1.1</span></div>
           Édité par <strong style="color:var(--ed-sage-dark);font-family:'Plus Jakarta Sans',sans-serif">Essenciel O Naturel</strong> · Lunéville<br>
           <span style="color:var(--ed-muted);font-size:11px">Vos données restent privées et sécurisées sur Firebase.</span>
         </div>
@@ -7593,7 +7602,7 @@ body{
       </button>
       <div class="prefs-acc-body">
         <div class="naturo-card" data-testid="naturo-offer">
-          <div class="naturo-eyebrow">⭐ Offre membres Keto Premium</div>
+          <div class="naturo-eyebrow">⭐ Offre membres Keto - Essenciel</div>
           <div class="naturo-title">1 heure d'accompagnement <em>personnalisé</em></div>
           <div class="naturo-sub">Bilan complet de votre démarche keto avec un naturopathe certifié. Conseils sur l'alimentation, le sommeil, le stress et les compléments alimentaires adaptés à votre profil.</div>
           <div class="naturo-modes">
@@ -7644,7 +7653,8 @@ body{
 <div class="app">
   <header>
     <div class="eyebrow"><span class="pulse"></span> Le keto par un naturopathe</div>
-    <h1 id="appTitle">Votre coach<br><em>keto premium</em></h1>
+    <h1 id="appTitle">Keto - <em>Essenciel</em></h1>
+    <div class="app-version-badge" data-testid="app-version-badge">Keto - Essenciel · <b>v1.1</b></div>
     <div id="planStatusMobile" class="plan-status-mobile" data-testid="plan-status-mobile"><span class="plan-status-dot"></span><span id="planStatusMobileTxt">Version Gratuite</span></div>
     <p class="tagline" id="appTagline">Plan · Bibliothèque · Suivi · Profil · Collations</p>
     <div class="kp-hero-date" id="kpHeroDate"></div>
@@ -8110,7 +8120,7 @@ body{
   <!-- ═══ HELP TAB (Aide) ═══ -->
   <div id="tab-help" style="display:none">
     <div class="help-hero" data-testid="help-hero">
-      <div class="help-hero-eyebrow">Centre d'aide · Keto Premium</div>
+      <div class="help-hero-eyebrow">Centre d'aide · Keto - Essenciel</div>
       <h1 class="help-hero-title">Comment puis-je vous <em>aider</em> ?</h1>
       <p class="help-hero-sub">Trouvez en quelques secondes la réponse à vos questions, ou contactez-nous directement.</p>
       <div class="help-search-wrap">
@@ -8129,7 +8139,7 @@ body{
       <div class="help-section" data-section="start" data-testid="help-section-start">
         <div class="help-section-head" onclick="toggleHelp(this)">
           <span class="help-section-icon">🚀</span>
-          <span class="help-section-title">Démarrer avec Keto Premium</span>
+          <span class="help-section-title">Démarrer avec Keto - Essenciel</span>
           <span class="help-section-chev">›</span>
         </div>
         <div class="help-section-body">
@@ -8208,7 +8218,7 @@ body{
           <details class="help-q"><summary>Quels sont les tarifs ?</summary><div class="help-a"><strong>Mensuel</strong> · 4,99 €/mois — sans engagement<br><strong>Annuel</strong> · 39,99 €/an (≈ 3,33 €/mois) — économisez 33%</div></details>
           <details class="help-q"><summary>Comment utiliser un code promo ?</summary><div class="help-a">Dans <strong>Profil → Bloc Premium</strong>, cliquez sur <strong>J'ai un code promo</strong>. Saisissez votre code en majuscules (ex. LANCEMENT2026). Si le code est valide, votre accès Premium s'active immédiatement pour la durée indiquée.</div></details>
           <details class="help-q"><summary>Comment résilier mon abonnement ?</summary><div class="help-a">Votre abonnement est géré par Stripe. Pour résilier, contactez-nous à <a href="mailto:infos@essencielonaturel.fr">infos@essencielonaturel.fr</a> en précisant votre email d'inscription. La résiliation est effective à la fin de la période payée.</div></details>
-          <details class="help-q"><summary>Mon paiement n'apparaît pas comme Premium ?</summary><div class="help-a">Vérifiez que votre email Stripe est identique à celui de votre compte Keto Premium. Si oui, déconnectez-vous puis reconnectez-vous. Si le problème persiste, contactez-nous avec votre justificatif de paiement.</div></details>
+          <details class="help-q"><summary>Mon paiement n'apparaît pas comme Premium ?</summary><div class="help-a">Vérifiez que votre email Stripe est identique à celui de votre compte Keto - Essenciel. Si oui, déconnectez-vous puis reconnectez-vous. Si le problème persiste, contactez-nous avec votre justificatif de paiement.</div></details>
         </div>
       </div>
       <!-- Naturopathie -->
@@ -8266,7 +8276,7 @@ body{
     <div class="bnav-brand" aria-hidden="true">
       <div class="bnav-brand-head">
         <span class="bnav-brand-logo">🥑</span>
-        <div class="bnav-brand-title">Keto <em>Premium</em></div>
+        <div class="bnav-brand-title">Keto - <em>Essenciel</em></div>
       </div>
       <div class="bnav-brand-sub">ESSENCIEL O NATUREL</div>
       <div class="bnav-brand-tag">Le keto sans effort, <em>par un naturopathe</em></div>
@@ -9719,7 +9729,8 @@ function recipeAtSlot(d, slot){
   return pool[d[slot]] || null;
 }
 
-var menu=[],activeDay=0,currentDayView='week',currentTab='plan',libTab='breakfast';
+var TODAY_IDX=(new Date().getDay()+6)%7;
+var menu=[],activeDay=TODAY_IDX,currentDayView='week',currentTab='plan',libTab='breakfast';
 var doneDays={},mealNotes={},excluded=[],targets={fat:150,prot:130,carb:20},aiCache={};
 var profile={gender:'homme',age:30,weight:75,height:175,activity:1.55,goal:0};
 var weightLog=[]; // [{date:'2024-01-15',weight:75.2,note:''}]
@@ -10399,13 +10410,15 @@ function renderWeekGrid(){
 
   // ───── HERO CARD (focus day) ─────
   var heroDone = !!doneDays[focusIdx];
+  var isToday = (focusIdx === TODAY_IDX);
+  var heroTag = heroDone ? '✓ Journée réalisée' : (isToday ? '📍 Aujourd’hui' : 'Menu du jour');
   var heroHtml = ''
     + '<div class="wfl-hero '+(heroDone?'done':'')+'" data-testid="wfl-hero" onclick="selectDay('+focusIdx+')">'
     +   '<div class="wfl-hero-overlay" aria-hidden="true"></div>'
     +   '<div class="wfl-hero-content">'
     +     '<div class="wfl-hero-eyebrow">'
     +       '<span class="wfl-hero-emoji">'+focus.hero+'</span>'
-    +       '<span class="wfl-hero-tag">'+(heroDone?'✓ Journée réalisée':'Mise au jour')+'</span>'
+    +       '<span class="wfl-hero-tag">'+heroTag+'</span>'
     +     '</div>'
     +     '<div class="wfl-hero-title"><em>'+DAYS[focusIdx]+'</em></div>'
     +     '<div class="wfl-hero-sub">Jour '+(focusIdx+1)+' / 7 · '+focus.kcal+' kcal · '+focus.fat+'g L · '+focus.prot+'g P · '+focus.carb+'g G</div>'
@@ -12647,7 +12660,7 @@ td{padding:8px 12px;border-bottom:1px solid #f0ead8}
 <thead><tr><th>Date</th><th>Poids</th><th>Variation</th><th>Note</th></tr></thead>
 <tbody>${rows}</tbody>
 </table>
-<div class="footer">Keto Premium V9 · Patrice Raganelli, Naturopathe · Essenciel O Naturel · Lunéville · ${new Date().getFullYear()}</div>
+<div class="footer">Keto - Essenciel · Patrice Raganelli, Naturopathe · Essenciel O Naturel · Lunéville · ${new Date().getFullYear()}</div>
 </body></html>`;
   var win=window.open('','_blank');
   win.document.write(html); win.document.close();
@@ -13426,7 +13439,7 @@ function kpInjectProfileStatusCards(footer){
     }
     var thanksHref = '';
     if(usedRef.parrain_email){
-      var subj = encodeURIComponent('Merci pour ton parrainage Keto Premium 🌿');
+      var subj = encodeURIComponent('Merci pour ton parrainage Keto - Essenciel 🌿');
       var body = encodeURIComponent("Bonjour,\n\nJe voulais te remercier pour ton code "+usedRef.code+" — j'ai reçu 3 mois Premium grâce à toi.\n\nÀ très vite,");
       thanksHref = 'mailto:'+usedRef.parrain_email+'?subject='+subj+'&body='+body;
     }
@@ -15246,7 +15259,7 @@ authGuest = function(){
       txt += '\n'+cat.label+'\n';
       list.forEach(function(n){ txt += '• '+n+' — '+fmtQ(agg[n].units)+'\n'; });
     });
-    txt += '\n— Essenciel O Naturel · Keto Premium';
+    txt += '\n— Essenciel O Naturel · Keto - Essenciel';
     if(navigator.share){
       navigator.share({ title:'Liste de courses', text:txt }).catch(function(){});
       return;
@@ -15291,7 +15304,7 @@ authGuest = function(){
       + '<div class="header"><div><div class="brand">Liste de <em>courses</em></div><div style="font-size:12px;color:#6a5a48;margin-top:4px">Semaine keto — '+names.length+' ingrédients</div></div>'
       + '<div class="meta">'+(fname?'<strong>'+fname+'</strong><br>':'')+'Généré le '+dateStr+'<br><strong>Essenciel O Naturel</strong> · Lunéville</div></div>'
       + sections
-      + '<div class="footer">Keto Premium · Essenciel O Naturel · '+new Date().getFullYear()+'</div>'
+      + '<div class="footer">Keto - Essenciel · Essenciel O Naturel · '+new Date().getFullYear()+'</div>'
       + '</body></html>';
     var win = window.open('','_blank');
     if(!win){ if(typeof toast==='function') toast('⚠️ Autorisez les pop-ups pour imprimer'); return; }
@@ -15563,7 +15576,7 @@ authGuest = function(){
       // En-tête
       doc.setFillColor(7,24,16); doc.rect(0,0,842,70,'F');
       doc.setTextColor(232,184,75); doc.setFontSize(20); doc.setFont('helvetica','bold');
-      doc.text('Keto Premium — Menu de la semaine', 30, 32);
+      doc.text('Keto - Essenciel — Menu de la semaine', 30, 32);
       doc.setTextColor(245,216,138); doc.setFontSize(11); doc.setFont('helvetica','normal');
       doc.text((fname?'Pour '+fname+'  •  ':'')+'Mode : '+mode.emoji+' '+mode.label+'  •  '+dateStr, 30, 52);
 
@@ -18447,7 +18460,7 @@ authGuest = function(){
   <div class="kp-modal">
     <button class="kp-modal-close" onclick="closePremiumModal()" data-testid="premium-modal-close" aria-label="Fermer">✕</button>
     <div class="kp-modal-header">
-      <div class="kp-modal-eyebrow">L'ABONNEMENT KETO PREMIUM</div>
+      <div class="kp-modal-eyebrow">L'ABONNEMENT KETO - ESSENCIEL</div>
       <div class="kp-modal-title">Allez plus loin avec <em>Premium</em></div>
       <div class="kp-modal-sub">Accédez à tous les modes alimentaires, à la bibliothèque complète et au suivi détaillé de votre transformation.</div>
     </div>
@@ -19086,7 +19099,7 @@ authGuest = function(){
           if(prem){
             sessionStorage.removeItem('kp_awaiting_activation');
             kpDismissActivationBanner();
-            if(typeof toast==='function') toast('✨ Bienvenue dans Keto Premium !');
+            if(typeof toast==='function') toast('✨ Bienvenue dans Keto - Essenciel !');
             kpRefreshUI();
           }
         });
@@ -19112,7 +19125,7 @@ authGuest = function(){
     if(typeof toast==='function') toast('⏳ Vérification en cours…');
     kpCheckPremium().then(function(isPrem){
       if(isPrem){
-        if(typeof toast==='function') toast('✨ Bienvenue dans Keto Premium !');
+        if(typeof toast==='function') toast('✨ Bienvenue dans Keto - Essenciel !');
         closePremiumModal();
         kpRefreshUI();
       } else {
@@ -19163,7 +19176,7 @@ authGuest = function(){
           '<div class="kp-status-icon">⭐</div>' +
           '<div>' +
             '<div class="kp-status-label">Votre abonnement</div>' +
-            '<div class="kp-status-name">Keto Premium</div>' +
+            '<div class="kp-status-name">Keto - Essenciel</div>' +
           '</div>' +
         '</div>';
     } else {
@@ -20492,7 +20505,7 @@ authGuest = function(){
               kpCheckPremium().then(function(prem){
                 var wasPremium = window.kpState.premium;
                 if(prem && !wasPremium){
-                  if(typeof toast==='function') toast('✨ Bienvenue dans Keto Premium !');
+                  if(typeof toast==='function') toast('✨ Bienvenue dans Keto - Essenciel !');
                   kpRefreshUI();
                 } else if(!prem && wasPremium){
                   kpRefreshUI();
@@ -20827,7 +20840,7 @@ authGuest = function(){
     Notification.requestPermission().then(function(p){
       kpRenderNotifications();
       if(p === 'granted'){
-        try{ new Notification('🥑 Keto Premium', {body:'Notifications activées ! Vous recevrez vos rappels de repas.'}); }catch(e){}
+        try{ new Notification('🥑 Keto - Essenciel', {body:'Notifications activées ! Vous recevrez vos rappels de repas.'}); }catch(e){}
       }
     });
   };
@@ -20959,8 +20972,8 @@ authGuest = function(){
     // Build manifest as data URL
     try{
       var manifest = {
-        name: 'Keto Premium — Essenciel O Naturel',
-        short_name: 'Keto Premium',
+        name: 'Keto - Essenciel — Essenciel O Naturel',
+        short_name: 'Keto - Essenciel',
         description: 'Votre coach keto personnel',
         start_url: location.pathname,
         display: 'standalone',
@@ -22464,7 +22477,7 @@ function _referralShareUrl(code){
 function copyReferralCode(){
   var code = getReferralCode();
   var url = _referralShareUrl(code);
-  var msg = 'Rejoins-moi sur Keto Premium 🌿 — utilise mon code ' + code + ' à l\'inscription et reçois 3 mois Premium offerts !'
+  var msg = 'Rejoins-moi sur Keto - Essenciel 🌿 — utilise mon code ' + code + ' à l\'inscription et reçois 3 mois Premium offerts !'
           + (url ? '\n👉 ' + url : '');
   try{
     navigator.clipboard.writeText(msg);
@@ -22476,9 +22489,9 @@ function copyReferralCode(){
 function shareReferralCode(){
   var code = getReferralCode();
   var url = _referralShareUrl(code);
-  var text = 'Rejoins-moi sur Keto Premium avec mon code ' + code + ' — 3 mois Premium offerts à l\'inscription 🌿';
+  var text = 'Rejoins-moi sur Keto - Essenciel avec mon code ' + code + ' — 3 mois Premium offerts à l\'inscription 🌿';
   if(navigator.share){
-    navigator.share({ title: 'Keto Premium', text: text, url: url }).catch(function(){});
+    navigator.share({ title: 'Keto - Essenciel', text: text, url: url }).catch(function(){});
   } else {
     copyReferralCode();
   }
@@ -24234,3 +24247,4 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 
 </body>
 </html>
+ml>
