@@ -12,7 +12,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Keto Premium V9</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <!-- Resource hints — parallélise les connexions critiques (gain LCP ~200-400ms) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5883,7 +5883,8 @@ body{
    ════════════════════════════════════════════════════════════════ */
 @media (max-width:768px){
   /* Container global */
-  .app{ padding:14px 12px 100px !important; }
+  html, body{ min-height:100dvh !important; }
+  .app{ padding:14px 12px calc(104px + env(safe-area-inset-bottom)) !important; }
   body{ font-size:14px; }
 
   /* AUTH SCREEN */
@@ -12518,7 +12519,8 @@ td{padding:9px 12px;border-bottom:1px solid #f0ead8;vertical-align:middle}
   var win=window.open('','_blank');
   win.document.write(html);
   win.document.close();
-  setTimeout(function(){win.print();},400);
+  win.onafterprint = function(){ try{ win.close(); }catch(e){} };
+  setTimeout(function(){ try{ win.focus(); win.print(); }catch(e){} },400);
 }
 
 /* ═══ EXPORT PDF — COURBE DE POIDS ═══ */
@@ -15190,6 +15192,7 @@ authGuest = function(){
     var win = window.open('','_blank');
     if(!win){ if(typeof toast==='function') toast('⚠️ Autorisez les pop-ups pour imprimer'); return; }
     win.document.write(html); win.document.close();
+    win.onafterprint = function(){ try{ win.close(); }catch(e){} };
     setTimeout(function(){ try{ win.focus(); win.print(); }catch(e){} }, 500);
   };
   if(typeof renderPlan === 'function'){
