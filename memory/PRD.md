@@ -49,7 +49,12 @@ Bugs signalés :
 ## Renommage marque + version + menu du jour (fork, juin 2026)
 - Marque "Keto Premium" → "Keto - Essenciel" partout ; badge version "v1.1" en haut ; onglet Plan par défaut = jour actuel.
 
-## Slide-over + Profil + macros (fork, juin 2026)
+## Optimisation fluidité + corrections (fork, juin 2026)
+- Test frontend complet (testing_agent iteration_8) : AUCUNE erreur JS. Tous les changements récents validés (bottom sheet + 3 modes de fermeture, renommage, badge v1.1, Réglages sous Info perso, macros correctes, jour actuel par défaut).
+- Fluidité globale (CSS reset) : `-webkit-tap-highlight-color:transparent` (plus de flash gris au tap), `text-size-adjust:100%`, `-webkit-font-smoothing:antialiased`, momentum scroll, support `prefers-reduced-motion`.
+- Perf : negative-cache 60s sur la lecture Firestore LPEV → supprime les appels réseau répétés + le spam de warnings « Missing or insufficient permissions » en mode invité (warnings attendus, non bloquants).
+- Layout : anti-débordement horizontal sur les cartes accordéon Profil (Activité/Repas/Composition) — `overflow-x:hidden` + `minmax(0,1fr)` sur les grilles + labels d'activité réduits. Page sans scroll horizontal (docSW=viewport).
+- Non modifié (comportements intentionnels signalés par le testeur) : auto-ouverture du Bilan Keto en invité, bannière collante « Essai Premium » — à ajuster sur demande.
 - Panneau "Menu du jour" (mobile) : animation slide améliorée (ressort cubic-bezier .16,1,.3,1, fond flouté 4px, panneau arrondi, bouton fermeture animé, contenu en fade-in).
 - Écran Profil (mobile) : entrée "Réglages" déplacée SOUS la carte "Informations personnelles".
 - Carte "Vos macros" : fix débordement texte (result-macros grid minmax(0,1fr), rm-val/rm-lab nowrap+ellipsis, letter-spacing réduit).

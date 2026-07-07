@@ -121,6 +121,12 @@ body.dark{
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
+html,body{ -webkit-tap-highlight-color:transparent; }
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+/* Accessibilité + fluidité : respecte la préférence système « animations réduites » */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+}
 
 body{
   font-family:var(--font-body);
@@ -20102,8 +20108,8 @@ authGuest = function(){
   function _kpLpevFetchUser(cb){
     var fs = (typeof getFirestoreDb === 'function') ? getFirestoreDb() : null;
     if(!fs){ cb([]); return; }
-    // Cache 60s
-    if(kpLpevUserCache.length && (Date.now() - kpLpevUserCacheAt) < 60000){
+    // Cache 60s (positif ou négatif) pour éviter des lectures Firestore répétées
+    if(kpLpevUserCacheAt && (Date.now() - kpLpevUserCacheAt) < 60000){
       cb(kpLpevUserCache);
       return;
     }
@@ -23484,6 +23490,18 @@ setTimeout(maybeShowContextualPremium, 4000);
 }
 #tab-profile .ri-box{ min-width:0 !important; overflow:hidden !important; }
 #tab-profile .ri-box strong{ overflow-wrap:anywhere !important; }
+
+/* ── Anti-débordement horizontal sur les cartes accordéon (Activité/Repas/Composition) ── */
+#tab-profile .pf-full-acc,
+#tab-profile .pf-acc,
+#tab-profile .pf-acc-body{ max-width:100% !important; overflow-x:hidden !important; }
+#tab-profile .pf-act-bar,
+#tab-profile .pf-goal-grid,
+#tab-profile #prefsMealsToggles,
+#tab-profile #prefsCoursesToggles{ min-width:0 !important; max-width:100% !important; }
+#tab-profile .pf-goal-grid{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+#tab-profile .pf-act-seg{ min-width:0 !important; padding-left:2px !important; padding-right:2px !important; }
+#tab-profile .pf-act-lbl{ font-size:8.5px !important; letter-spacing:-.01em !important; overflow:hidden !important; text-overflow:ellipsis !important; }
 
 
 /* Carte identité (avatar + champs) */
