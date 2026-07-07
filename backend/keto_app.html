@@ -520,28 +520,39 @@ body.dark .bottom-nav-inner{ }
   body.dark .bnav-icon, body.dark .bnav-label{ color:#7d857e !important; }
 }
 
-/* Bouton central « Générer » — masqué par défaut (sidebar desktop), visible en mobile */
-.bnav-fab{ display:none; }
+/* Bouton central « Générer » — désactivé (ancien style 2b) */
+.bnav-fab{ display:none !important; }
 @media (max-width:1023px){
-  /* ═══ Style 2b : bouton central doré + libellé seulement sur l'onglet actif ═══ */
+  /* ═══ Option A — Material 3 : barre du bas, pastille verte extensible ═══ */
   #nt-lpev{ display:flex !important; }              /* « Compléments » gardé dans la barre */
   .bnav-settings{ display:none !important; }         /* « Réglages » déplacé dans l'écran Profil */
-  .bnav-tab:not(.active) .bnav-label{ display:none !important; }
-  .bnav-tab.active{ background:#eef4ee !important; padding:6px 12px !important; }
-  body.dark .bnav-tab.active{ background:rgba(45,122,82,.20) !important; }
+  .bnav-fab{ display:none !important; }
 
-  .bnav-fab{
-    display:flex !important; flex-direction:column; align-items:center; justify-content:center;
-    flex:0 0 auto; width:58px; height:58px; margin:-16px 3px 0; padding:0;
-    border:none; cursor:pointer; border-radius:50%;
-    background:linear-gradient(145deg,#c98f2b,#a9721c);
-    color:#fff; -webkit-tap-highlight-color:transparent;
-    box-shadow:0 10px 22px -4px rgba(169,114,28,.55), inset 0 1px 2px rgba(255,255,255,.4);
-    transition:transform .15s ease;
+  .bottom-nav-inner{ justify-content:space-around !important; align-items:center !important; gap:0 !important; padding:10px 8px max(10px, env(safe-area-inset-bottom)) !important; }
+
+  /* Onglets : pastille qui hugge le contenu, disposition horizontale icône + libellé */
+  .bnav-tab{
+    flex:0 1 auto !important;
+    flex-direction:row !important; align-items:center !important; justify-content:center !important;
+    gap:7px !important; padding:9px 11px !important; border-radius:22px !important;
+    background:transparent !important;
+    transition:background .3s cubic-bezier(.4,0,.2,1), padding .3s cubic-bezier(.4,0,.2,1) !important;
   }
-  .bnav-fab:active{ transform:scale(.92); }
-  .bnav-fab .bnav-fab-ico{ width:24px; height:24px; stroke:#fff; fill:none; stroke-width:2.4; stroke-linecap:round; }
-  .bnav-fab .bnav-fab-lbl{ font-size:8.5px; font-weight:800; letter-spacing:.02em; margin-top:1px; line-height:1; }
+  .bnav-tab:not(.active) .bnav-label{ display:none !important; }
+  .bnav-icon{ color:#8f978c !important; filter:none !important; transform:none !important; font-size:0 !important; }
+  .bnav-svg{ display:inline-block !important; width:24px !important; height:24px !important; }
+
+  /* Onglet actif = pastille verte pleine, icône + libellé blancs */
+  .bnav-tab.active{ background:#1a5c38 !important; padding:9px 16px !important; }
+  .bnav-tab.active .bnav-icon{ color:#fff !important; transform:none !important; filter:none !important; }
+  .bnav-tab.active .bnav-label{
+    display:inline !important; color:#fff !important; font-weight:700 !important;
+    opacity:1 !important; font-size:12px !important; letter-spacing:.01em !important;
+  }
+  .bnav-tab:active{ transform:scale(.95) !important; }
+
+  body.dark .bnav-tab.active{ background:#2d7a52 !important; }
+  body.dark .bnav-icon{ color:#7d857e !important; }
 }
 
 /* Entrée « Réglages » déplacée dans l'écran Profil (mobile) */
@@ -8205,7 +8216,7 @@ body{
       <span class="bnav-icon"><span class="bnav-emoji">📚</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg></span>
       <span class="bnav-label">Recettes</span>
     </button>
-    <button class="bnav-fab" id="bnavFab" type="button" onclick="generateMenu()" aria-label="Générer la semaine">
+    <button class="bnav-fab" id="bnavFab" type="button" onclick="generateMenu()" aria-label="Générer la semaine" style="display:none !important">
       <svg class="bnav-fab-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
       <span class="bnav-fab-lbl">Générer</span>
     </button>
