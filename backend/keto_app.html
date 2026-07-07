@@ -529,40 +529,52 @@ body.dark .bottom-nav-inner{ }
   body.dark .bnav-icon, body.dark .bnav-label{ color:#7d857e !important; }
 }
 
-/* ═══ Panneau « menu du jour » en slide-over depuis la droite (mobile) ═══ */
+/* ═══ Panneau « menu du jour » — bottom sheet iOS 26 (mobile) ═══ */
+.day-sheet{ display:contents; }
 .day-sheet-backdrop{ display:none; }
-.day-sheet-close{ display:none; }
-@keyframes daySheetIn{ from{ transform:translateX(100%); opacity:.4; } to{ transform:none; opacity:1; } }
-@keyframes daySheetContentIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
-@keyframes daySheetCloseIn{ from{ opacity:0; transform:scale(.6); } to{ opacity:1; transform:scale(1); } }
+.day-sheet-close{ display:none !important; }
+.day-sheet-handle-wrap{ display:none; }
+@keyframes daySheetUp{ from{ transform:translateY(100%); } to{ transform:translateY(0); } }
+@keyframes daySheetContentIn{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
 @media (max-width:1023px){
   .day-sheet-backdrop{
-    display:block; position:fixed; inset:0; background:rgba(20,15,8,.42);
+    display:block; position:fixed; inset:0; background:rgba(18,13,6,.46);
     -webkit-backdrop-filter:blur(0px); backdrop-filter:blur(0px);
-    opacity:0; visibility:hidden; transition:opacity .35s ease, visibility .35s, backdrop-filter .35s ease; z-index:900;
+    opacity:0; visibility:hidden; transition:opacity .4s ease, visibility .4s, backdrop-filter .4s ease; z-index:900;
   }
-  body.day-sheet-open .day-sheet-backdrop{ opacity:1; visibility:visible; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
-  body.day-sheet-open #day-panel{
-    position:fixed; top:0; right:0; bottom:0; width:100%; max-width:460px;
-    margin:0 !important; z-index:901; background:var(--bg,#f7f3ea);
-    overflow-y:auto; -webkit-overflow-scrolling:touch;
-    box-shadow:-20px 0 60px rgba(20,15,8,.34);
-    border-top-left-radius:22px; border-bottom-left-radius:22px;
-    padding:calc(env(safe-area-inset-top) + 58px) 16px calc(env(safe-area-inset-bottom) + 28px);
-    animation:daySheetIn .48s cubic-bezier(.16,1,.3,1);
+  body.day-sheet-open .day-sheet-backdrop{ opacity:1; visibility:visible; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+
+  body.day-sheet-open .day-sheet{
+    display:flex; flex-direction:column;
+    position:fixed; left:0; right:0; bottom:0; top:auto; z-index:901;
+    max-height:92vh; width:100%;
+    background:var(--bg,#f7f3ea);
+    border-radius:28px 28px 0 0;
+    box-shadow:0 -22px 60px rgba(18,13,6,.30);
+    overflow:hidden;
+    animation:daySheetUp .52s cubic-bezier(.22,1.2,.36,1);
+    will-change:transform;
   }
-  body.day-sheet-open #day-panel > *{ animation:daySheetContentIn .5s cubic-bezier(.16,1,.3,1) both; animation-delay:.12s; }
-  body.day-sheet-open .day-sheet-close{
+  body.day-sheet-open .day-sheet-handle-wrap{
     display:flex; align-items:center; justify-content:center;
-    position:fixed; top:calc(env(safe-area-inset-top) + 12px); left:14px; z-index:902;
-    width:42px; height:42px; border-radius:50%; border:none; cursor:pointer;
-    background:#fff; color:#1a1208; font-size:26px; font-weight:700; line-height:1; padding-bottom:3px;
-    box-shadow:0 4px 16px rgba(20,15,8,.20);
-    animation:daySheetCloseIn .5s cubic-bezier(.34,1.56,.64,1) both; animation-delay:.22s;
+    flex:0 0 auto; padding:11px 0 7px; cursor:grab;
+    touch-action:none; -webkit-tap-highlight-color:transparent;
   }
-  body.day-sheet-open .day-sheet-close:active{ transform:scale(.9); }
-  body.dark.day-sheet-open #day-panel{ background:#12160f; }
-  body.dark.day-sheet-open .day-sheet-close{ background:#22281f; color:#e8eae4; }
+  body.day-sheet-open .day-sheet-handle{
+    width:44px; height:5px; border-radius:100px; background:rgba(18,13,6,.20);
+    transition:background .2s ease, width .2s ease;
+  }
+  body.day-sheet-open .day-sheet-handle-wrap:active .day-sheet-handle{ background:rgba(18,13,6,.34); width:54px; }
+  body.day-sheet-open #day-panel{
+    flex:1 1 auto; min-height:0;
+    overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+    margin:0 !important;
+    padding:2px 16px calc(env(safe-area-inset-bottom) + 26px);
+  }
+  body.day-sheet-open #day-panel > *{ animation:daySheetContentIn .5s cubic-bezier(.16,1,.3,1) both; animation-delay:.1s; }
+
+  body.dark.day-sheet-open .day-sheet{ background:#12160f; box-shadow:0 -22px 60px rgba(0,0,0,.5); }
+  body.dark.day-sheet-open .day-sheet-handle{ background:rgba(255,255,255,.24); }
 }
 
 /* Bouton central « Générer » — désactivé (ancien style 2b) */
@@ -7724,8 +7736,10 @@ body{
       <div class="quiz-promo-arrow">→</div>
     </div>
     <div id="daySheetBackdrop" class="day-sheet-backdrop" onclick="closeDaySheet()"></div>
-    <button id="daySheetClose" class="day-sheet-close" type="button" onclick="closeDaySheet()" aria-label="Fermer le menu du jour">‹</button>
-    <div id="day-panel"></div>
+    <div id="daySheet" class="day-sheet">
+      <div class="day-sheet-handle-wrap" id="daySheetHandle" onclick="closeDaySheet()" role="button" aria-label="Fermer le menu du jour"><span class="day-sheet-handle"></span></div>
+      <div id="day-panel"></div>
+    </div>
     <div id="shopping-wrap" style="margin-top:28px"></div>
     <!-- 💊 Carte d'accès Compléments (mobile uniquement) -->
     <div id="lpevPlanCard" class="lpev-plan-card" data-testid="lpev-plan-card" onclick="switchTab('lpev')">
@@ -10354,62 +10368,110 @@ function toggleDone(i){
   if(currentTab==='suivi') renderMacroCompliance();
 }
 function saveNote(k,v){mealNotes[k]=v;save()}
+var _daySheetHome=null;
+function portalDaySheet(){
+  var s=document.getElementById('daySheet');
+  var b=document.getElementById('daySheetBackdrop');
+  if(!s) return;
+  if(s.parentNode===document.body) return; // déjà porté
+  _daySheetHome={ parent:s.parentNode, next:s.nextSibling, bnext:(b?b.nextSibling:null) };
+  if(b) document.body.appendChild(b);
+  document.body.appendChild(s);
+}
+function unportalDaySheet(){
+  var s=document.getElementById('daySheet');
+  var b=document.getElementById('daySheetBackdrop');
+  if(!s || !_daySheetHome || s.parentNode!==document.body) return;
+  if(b && _daySheetHome.parent) _daySheetHome.parent.insertBefore(b, _daySheetHome.bnext);
+  _daySheetHome.parent.insertBefore(s, _daySheetHome.next);
+  _daySheetHome=null;
+}
 function setDayView(v){
   currentDayView=v;
   $('vt-week').classList.toggle('active',v==='week');
   $('vt-day').classList.toggle('active',v==='day');
   renderPlan();
   var isMobile = (window.innerWidth||1024) < 1024;
-  document.body.classList.toggle('day-sheet-open', v==='day' && isMobile);
-  if(v==='day' && isMobile){ var dp=$('day-panel'); if(dp) dp.scrollTop=0; try{ initDaySheetSwipe(); }catch(e){} }
+  if(v==='day' && isMobile){
+    portalDaySheet();
+    document.body.classList.add('day-sheet-open');
+    var dp=$('day-panel'); if(dp) dp.scrollTop=0;
+    try{ initDaySheetSwipe(); }catch(e){}
+  } else {
+    document.body.classList.remove('day-sheet-open');
+    unportalDaySheet();
+  }
 }
-function closeDaySheet(){ setDayView('week'); }
+function closeDaySheet(){
+  var isMobile = (window.innerWidth||1024) < 1024;
+  var s=document.getElementById('daySheet');
+  var b=document.getElementById('daySheetBackdrop');
+  if(isMobile && s && document.body.classList.contains('day-sheet-open')){
+    s.style.transition='transform .34s cubic-bezier(.4,0,.2,1)';
+    s.style.transform='translateY(100%)';
+    if(b){ b.style.transition='opacity .34s ease'; b.style.opacity='0'; }
+    setTimeout(function(){
+      s.style.transition=''; s.style.transform='';
+      if(b){ b.style.transition=''; b.style.opacity=''; }
+      setDayView('week');
+    }, 320);
+  } else {
+    setDayView('week');
+  }
+}
 window.closeDaySheet = closeDaySheet;
 function selectDay(i){activeDay=i;setDayView('day')}
 
-/* Geste « glisser vers la droite » pour fermer le panneau du menu du jour (mobile) */
+/* Geste « glisser vers le bas » pour fermer le bottom sheet du menu du jour (mobile) */
 function initDaySheetSwipe(){
+  var sheet=document.getElementById('daySheet');
   var dp=document.getElementById('day-panel');
-  if(!dp || dp._swipeInit) return;
-  dp._swipeInit=true;
-  var startX=0, startY=0, dx=0, dragging=false, decided=false, horiz=false;
+  if(!sheet || !dp || sheet._swipeInit) return;
+  sheet._swipeInit=true;
+  var startY=0, dy=0, dragging=false, decided=false, dismiss=false, onHandle=false;
   function bd(){ return document.getElementById('daySheetBackdrop'); }
-  dp.addEventListener('touchstart', function(e){
+  function h(){ return sheet.offsetHeight||500; }
+  sheet.addEventListener('touchstart', function(e){
     if(!document.body.classList.contains('day-sheet-open')) return;
-    var t=e.touches[0]; startX=t.clientX; startY=t.clientY; dx=0;
-    dragging=true; decided=false; horiz=false;
-    dp.style.transition='none';
+    var t=e.touches[0]; startY=t.clientY; dy=0;
+    dragging=true; decided=false; dismiss=false;
+    onHandle = !!(e.target.closest && e.target.closest('.day-sheet-handle-wrap'));
+    sheet.style.transition='none';
   }, {passive:true});
-  dp.addEventListener('touchmove', function(e){
+  sheet.addEventListener('touchmove', function(e){
     if(!dragging) return;
-    var t=e.touches[0]; dx=t.clientX-startX; var dy=t.clientY-startY;
-    if(!decided && (Math.abs(dx)>8 || Math.abs(dy)>8)){
-      decided=true; horiz=(Math.abs(dx)>Math.abs(dy) && dx>0);
+    var t=e.touches[0]; dy=t.clientY-startY;
+    if(!decided && Math.abs(dy)>6){
+      decided=true;
+      // On ne tire le sheet vers le bas que si on part de la poignée
+      // ou si le contenu est déjà en haut.
+      dismiss = (dy>0) && (onHandle || dp.scrollTop<=0);
     }
-    if(horiz){
-      if(dx<0) dx=0;
-      dp.style.transform='translateX('+dx+'px)';
-      var b=bd(); if(b){ b.style.opacity=String(Math.max(0, 1-(dx/(dp.offsetWidth||360)))); }
+    if(dismiss){
+      if(dy<0) dy=0;
+      var d = dy<0?0:(dy>120?120+(dy-120)*0.4:dy); // légère résistance
+      sheet.style.transform='translateY('+d+'px)';
+      var b=bd(); if(b){ b.style.opacity=String(Math.max(0, 1-(d/h()))); }
     }
   }, {passive:true});
   function end(){
     if(!dragging) return; dragging=false;
     var b=bd();
-    dp.style.transition='transform .3s cubic-bezier(.22,1,.28,1)';
-    if(horiz && dx > Math.min(120, (dp.offsetWidth||360)*0.32)){
-      dp.style.transform='translateX(100%)';
+    sheet.style.transition='transform .34s cubic-bezier(.22,1,.28,1)';
+    if(dismiss && dy > Math.min(150, h()*0.28)){
+      sheet.style.transform='translateY(100%)';
       setTimeout(function(){
         closeDaySheet();
-        dp.style.transition=''; dp.style.transform=''; if(b) b.style.opacity='';
-      }, 250);
+        sheet.style.transition=''; sheet.style.transform=''; if(b) b.style.opacity='';
+      }, 300);
     } else {
-      dp.style.transform='translateX(0)';
+      sheet.style.transform='translateY(0)';
       if(b) b.style.opacity='';
-      setTimeout(function(){ dp.style.transition=''; dp.style.transform=''; }, 300);
+      setTimeout(function(){ sheet.style.transition=''; sheet.style.transform=''; }, 340);
     }
   }
-  dp.addEventListener('touchend', end, {passive:true});
-  dp.addEventListener('touchcancel', end, {passive:true});
+  sheet.addEventListener('touchend', end, {passive:true});
+  sheet.addEventListener('touchcancel', end, {passive:true});
 }
 try{ initDaySheetSwipe(); }catch(e){}
 
