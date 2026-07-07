@@ -2963,7 +2963,7 @@ body.dark .wcard-cta{color:var(--em-light)}
 .lib-card-meta{display:flex;gap:6px;flex-wrap:wrap}
 
 /* Recipe modal */
-.recipe-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.45);backdrop-filter:blur(6px)}
+.recipe-overlay{display:none;position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.45);backdrop-filter:blur(6px)}
 .recipe-overlay.open{display:flex;align-items:flex-end;justify-content:center}
 @media(min-width:640px){.recipe-overlay.open{align-items:center}}
 .recipe-modal{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;animation:slideUp .35s ease}
@@ -10282,6 +10282,8 @@ function openRecipe(id){
     <div class="sec-block"><div class="sec-block-title">💡 Astuce du chef</div><div class="tip-box">${r.tip}</div></div>
     <div style="padding:16px 18px"></div>`;
   $('recipeOverlay').classList.add('open');
+  // S'assurer que le modal recette passe AU-DESSUS du bottom sheet « menu du jour »
+  try{ if($('recipeOverlay').parentNode !== document.body){ document.body.appendChild($('recipeOverlay')); } }catch(e){}
 }
 function closeRecipe(){$('recipeOverlay').classList.remove('open')}
 function closeRecipeOnBg(e){if(e.target===$('recipeOverlay'))closeRecipe()}

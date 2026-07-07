@@ -50,6 +50,7 @@ Bugs signalés :
 - Marque "Keto Premium" → "Keto - Essenciel" partout ; badge version "v1.1" en haut ; onglet Plan par défaut = jour actuel.
 
 ## Refonte contenu « Menu du jour » (fork, juin 2026)
+- BUGFIX: le modal recette (openRecipe) s'ouvrait SOUS le bottom sheet (z-index 200 < 901). Corrigé: `.recipe-overlay` z-index→1300 + portage sur document.body à l'ouverture (openRecipe). Vérifié (rectTop:0/bottom:844 plein écran au-dessus du sheet).
 - Contenu de la fiche (bottom sheet) refait en Option A + résumé d'ingrédients : cartes repas compactes `.dmc` (pastille emoji, badge, titre Fraunces italique, description 2 lignes, pastilles macros kcal/lip/prot/gluc, temps, chips « Ingrédients » = noms uniquement, boutons « Voir la recette » → openRecipe + « Changer » → swapMeal). Détails complets (étapes/assaisonnements/notes) uniquement dans la fiche recette. Nouvelles fonctions dmcBfast/dmcMain/dmcCourse + _dmcMealCard ; renderDayPanel appelle ces builders (les anciens build* restent inutilisés). En-tête + anneaux macros conservés. Vérifié via screenshot (3 cartes, titres + chips ingrédients OK, pas d'erreur JS).
 
 ## Optimisation fluidité + corrections (fork, juin 2026)
