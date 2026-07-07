@@ -7550,7 +7550,8 @@ body{
       <button class="close-btn" onclick="kpCloseShopModal()">✕</button>
     </div>
     <div style="display:flex;gap:10px;padding:0 18px 14px">
-      <button class="btn btn-ghost" style="flex:1" onclick="printShopping()">🖨 Imprimer la liste</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="shareShopping()">📤 Partager</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="printShopping()">🖨 Imprimer</button>
     </div>
     <div id="kpShopModalBody" style="padding:0 18px 24px"></div>
   </div>
@@ -15050,7 +15051,34 @@ authGuest = function(){
       setTimeout(function(){ var s=document.getElementById('shopping-wrap'); if(s) s.scrollIntoView({behavior:'smooth',block:'start'}); }, 80);
     }
   };
-  // ─── Impression de la liste de courses (fenêtre imprimable) ───
+  // ─── Partage de la liste de courses (WhatsApp / partage natif / copier) ───
+  window.shareShopping = function(){
+    if(!menu || !menu.length){ if(typeof toast==='function') toast('⚠️ Générez d abord un menu !'); return; }
+    var agg = (typeof window.kpShoppingAgg==='function') ? window.kpShoppingAgg() : {};
+    var fmtQ = (typeof window.kpFmtShopQty==='function') ? window.kpFmtShopQty : function(u){return Object.keys(u).map(function(k){return u[k]+(k?' '+k:'');}).join(' + ');};
+    var names = Object.keys(agg);
+    if(!names.length){ if(typeof toast==='function') toast('⚠️ Liste vide'); return; }
+    var CATS = [{key:'prot',label:'🥩 PROTÉINES'},{key:'veg',label:'🥦 LÉGUMES'},{key:'fat',label:'🧈 CORPS GRAS & LAITAGES'},{key:'',label:'🛒 AUTRES'}];
+    var txt = '🛒 Liste de courses — Semaine keto\n';
+    CATS.forEach(function(cat){
+      var list = names.filter(function(n){ var t=agg[n].type; if(cat.key==='') return (t!=='prot'&&t!=='veg'&&t!=='fat'); return t===cat.key; });
+      if(!list.length) return;
+      txt += '\n'+cat.label+'\n';
+      list.forEach(function(n){ txt += '• '+n+' — '+fmtQ(agg[n].units)+'\n'; });
+    });
+    txt += '\n— Essenciel O Naturel · Keto Premium';
+    if(navigator.share){
+      navigator.share({ title:'Liste de courses', text:txt }).catch(function(){});
+      return;
+    }
+    // Fallback : copie dans le presse-papier + ouverture WhatsApp
+    var done = function(){ if(typeof toast==='function') toast('📋 Liste copiée !'); };
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done).catch(function(){}); }
+      else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); }
+    }catch(e){}
+    window.open('https://wa.me/?text='+encodeURIComponent(txt), '_blank');
+  };
   window.printShopping = function(){
     if(!menu || !menu.length){ if(typeof toast==='function') toast('⚠️ Générez d abord un menu !'); return; }
     var agg = (typeof window.kpShoppingAgg==='function') ? window.kpShoppingAgg() : {};
