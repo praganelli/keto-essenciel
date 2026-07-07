@@ -587,6 +587,19 @@ body.dark .bottom-nav-inner{ }
   body.dark .profile-settings-entry{ background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); }
 }
 
+/* Réglages en accordéon inline (mobile) : neutralise le style "popup" quand déplié dans le Profil */
+.prefs-inline-host{ display:none; }
+@media (max-width:1023px){
+  .prefs-inline-host.open{ display:block; margin:0 0 18px; animation:prefsInlineDrop .3s ease both; }
+  .prefs-inline-host .prefs-modal{
+    max-width:none !important; width:100% !important; max-height:none !important;
+    padding:2px 0 0 !important; background:transparent !important; border:none !important;
+    box-shadow:none !important; border-radius:0 !important; animation:none !important; overflow:visible !important;
+  }
+  .prefs-inline-host .prefs-title{ display:none !important; }
+}
+@keyframes prefsInlineDrop{ from{ opacity:0; transform:translateY(-6px); } to{ opacity:1; transform:none; } }
+
 /* ═══ A1 — Carte génération (mobile) + B1 — Jours en pastilles défilantes ═══ */
 .plan-gen-hero{ display:none; }
 .wfl-daypills{ display:none; }
@@ -6920,7 +6933,7 @@ body{
 
     <div class="splash-name">Keto <em>Premium</em></div>
     <div class="splash-tag">Votre coach keto intelligent</div>
-    <div class="splash-version">V9 · 200 Recettes · Suivi · PDF</div>
+    <div class="splash-version">v1.1 · 300+ Recettes · Suivi · PDF</div>
   </div>
 
   <!-- Progress bar at bottom -->
@@ -7561,7 +7574,7 @@ body{
       <div class="prefs-acc-body">
         <div id="kpPwaBlock" style="margin-bottom:14px"></div>
         <div style="background:var(--ed-paper-warm);border:1px solid var(--ed-hair);border-radius:6px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:var(--ed-ink-soft);line-height:1.6">
-          <div style="font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:16px;color:var(--ed-ink);margin-bottom:6px">Keto Premium <span style="color:var(--ed-muted);font-size:12px">v9.14</span></div>
+          <div style="font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:16px;color:var(--ed-ink);margin-bottom:6px">Keto Premium <span style="color:var(--ed-muted);font-size:12px">v1.1</span></div>
           Édité par <strong style="color:var(--ed-sage-dark);font-family:'Plus Jakarta Sans',sans-serif">Essenciel O Naturel</strong> · Lunéville<br>
           <span style="color:var(--ed-muted);font-size:11px">Vos données restent privées et sécurisées sur Firebase.</span>
         </div>
@@ -7888,11 +7901,12 @@ body{
       <div id="authUserEmail"></div>
     </div>
     <div class="sec-label">Mon profil</div>
-    <button class="profile-settings-entry" onclick="openPrefs()" data-testid="profile-open-prefs">
+    <button class="profile-settings-entry" onclick="kpToggleInlinePrefs()" data-testid="profile-open-prefs">
       <span class="pse-ico">⚙️</span>
       <span class="pse-txt"><b>Réglages</b><small>Préférences, thème, données &amp; abonnement</small></span>
-      <span class="pse-arrow">›</span>
+      <span class="pse-arrow" id="prefsInlineArrow">›</span>
     </button>
+    <div id="prefsInlineHost" class="prefs-inline-host"></div>
     <div class="profile-grid">
       <div class="pf-acc-grid" id="pfAccordionGrid" data-testid="profile-accordion-grid">
       <div class="profile-card pf-info" data-testid="pf-info-card">
@@ -9825,6 +9839,28 @@ function openPrefs(){
   $('carbSlider').value=targets.carb;$('carbVal').textContent=targets.carb+'g';
   $('prefsOverlay').classList.add('open');
 }
+// Réglages en accordéon inline dans l'écran Profil (mobile) — déplace le contenu du popup sous le bouton
+function kpToggleInlinePrefs(){
+  var host = document.getElementById('prefsInlineHost');
+  var arrow = document.getElementById('prefsInlineArrow');
+  var modal = document.querySelector('.prefs-modal');
+  if(!host || !modal) return;
+  if(host.classList.contains('open')){
+    host.classList.remove('open');
+    if(arrow) arrow.textContent = '›';
+    return;
+  }
+  if(modal.parentNode !== host){ host.appendChild(modal); }
+  try{
+    buildExcludeGrid();
+    $('fatSlider').value=targets.fat; $('fatVal').textContent=targets.fat+'g';
+    $('protSlider').value=targets.prot; $('protVal').textContent=targets.prot+'g';
+    $('carbSlider').value=targets.carb; $('carbVal').textContent=targets.carb+'g';
+  }catch(e){}
+  host.classList.add('open');
+  if(arrow) arrow.textContent = '⌄';
+  setTimeout(function(){ try{ host.scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){} }, 90);
+}
 function closePrefs(){$('prefsOverlay').classList.remove('open')}
 function closePrefsOnBg(e){if(e.target===$('prefsOverlay'))closePrefs()}
 
@@ -10222,13 +10258,14 @@ function swapMeal(di,slot){
   var d=menu[di];
   var pool=recipePoolForSlot(slot);
   if(!pool || !pool.length) return;
+  var key = (slot==='breakfast') ? 'bfast' : slot;   // le petit-déjeuner est stocké dans d.bfast
   var poolLen=pool.length;
-  var o=d[slot], att=0;
+  var o=d[key], att=0;
   do{
-    d[slot]=Math.floor(Math.random()*poolLen);
+    d[key]=Math.floor(Math.random()*poolLen);
     att++;
     if(att>50) break;
-  }while(d[slot]===o);
+  }while(d[key]===o);
   delete aiCache[di+'-'+slot];
   save();renderDayPanel();renderWeekGrid();
 }

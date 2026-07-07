@@ -1,0 +1,57 @@
+{
+  "summary": "Frontend-only regression testing on the HTML monolithic app served at /api/app (mobile viewport 390x844). Verified the main bug fix (breakfast '🔄 Changer' button now updates menu[0].bfast) and two non-regression items (inline prefs accordion + v1.1 version). All three flows PASS — no issues found.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "swapMeal (keto.html:10257) uses the correct key mapping: slot==='breakfast' ? 'bfast' : slot. The wrapper at line 15029 (v1.4 overlay) preserves this behaviour by delegating to the base swapMeal. Fix is applied consistently.",
+    "kpToggleInlinePrefs (keto.html:9843) reparents .prefs-modal into #prefsInlineHost and toggles the 'open' class + arrow character (›/⌄). #prefsOverlay is never opened by this function — inline accordion behaviour confirmed.",
+    "Console warnings 'FirebaseError: Missing or insufficient permissions' repeat on load (unrelated to this bug; likely LPEV Firestore rules for the anonymous guest). Consider tightening or silencing in guest mode for cleaner logs, but not a blocker for this iteration."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (not tested)", "frontend": "100%"},
+  "seed_data_creation": "None — used authGuest() and generateMenu() to create in-memory menu.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "App is a monolithic HTML file (/app/keto.html) served by FastAPI at {EXPO_PUBLIC_BACKEND_URL}/api/app. Use viewport 390x844. To bypass welcome/onboarding, run in console: authGuest(); document.getElementById('obOverlay').style.display='none'; document.getElementById('kpWelcomeScreen').style.display='none'; then switchTab('plan'); generateMenu(); selectDay(0); swapMeal(0,'breakfast'|'lunch'|'dinner'). For profile prefs: switchTab('profile'); kpToggleInlinePrefs(); (or click [data-testid=profile-open-prefs]).",
+  "rca_of_issue": "Original bug: swapMeal wrote to d['breakfast'] but the breakfast index is stored in d.bfast (see BFAST_RECIPES access at lines 10281,10326,10337). Fix at keto.html:10261 introduces `var key = (slot==='breakfast') ? 'bfast' : slot;` and then reads/writes d[key]. Verified: 5/5 consecutive breakfast swaps produced distinct recipe indices (60→73→52→21→33→41) and the direct UI click on the '🔄 Changer' button (onclick=swapMeal(0,'breakfast')) also advances the recipe (41→60). Lunch (3/3) and dinner (3/3) still swap correctly.",
+  "verification_details": {
+    "bug_fix_breakfast_swap": {
+      "programmatic_swaps": [
+        {"before": 60, "after": 73, "name": "Œufs cocotte champignons", "changed": true},
+        {"before": 73, "after": 52, "name": "Pancakes amandes-vanille", "changed": true},
+        {"before": 52, "after": 21, "name": "Frittata poivrons & fromage", "changed": true},
+        {"before": 21, "after": 33, "name": "Œufs Bénédicte keto", "changed": true},
+        {"before": 33, "after": 41, "name": "Chia pudding mangue-coco", "changed": true}
+      ],
+      "ui_click_swap": {"before": 41, "after": 60, "changed": true, "onclick": "swapMeal(0,'breakfast')", "text": "🔄 Changer"},
+      "verdict": "PASS"
+    },
+    "non_regression_lunch_dinner": {
+      "lunch_swaps": [{"before":108,"after":71,"changed":true},{"before":71,"after":177,"changed":true},{"before":177,"after":132,"changed":true}],
+      "dinner_swaps": [{"before":132,"after":128,"changed":true},{"before":128,"after":238,"changed":true},{"before":238,"after":102,"changed":true}],
+      "verdict": "PASS"
+    },
+    "non_regression_inline_prefs_accordion": {
+      "initial": {"hostOpen": false, "arrow": "›"},
+      "after_1st_toggle": {"hostOpen": true, "arrow": "⌄", "modalInHost": true, "overlayOpen": false},
+      "sections_detected_inline": ["Repas du jour","Composition","Rappels","Macros","Ingrédients à éviter","Sauvegarde","Application","Consultation"],
+      "sections_count": 8,
+      "after_2nd_toggle": {"hostOpen": false, "arrow": "›"},
+      "ui_button_click": {"data-testid": "profile-open-prefs", "opens_accordion": true, "opens_popup_overlay": false},
+      "verdict": "PASS — accordion opens/closes inline, prefsOverlay never opens, all 8 sections present."
+    },
+    "non_regression_version_v1_1": {
+      "splash_html_source_line_6936": "<div class='splash-version'>v1.1 · 300+ Recettes · Suivi · PDF</div>",
+      "profile_settings_line_7577": "Keto Premium ... v1.1",
+      "runtime_check_in_application_section": true,
+      "verdict": "PASS"
+    }
+  }
+}
