@@ -10361,11 +10361,57 @@ function setDayView(v){
   renderPlan();
   var isMobile = (window.innerWidth||1024) < 1024;
   document.body.classList.toggle('day-sheet-open', v==='day' && isMobile);
-  if(v==='day' && isMobile){ var dp=$('day-panel'); if(dp) dp.scrollTop=0; }
+  if(v==='day' && isMobile){ var dp=$('day-panel'); if(dp) dp.scrollTop=0; try{ initDaySheetSwipe(); }catch(e){} }
 }
 function closeDaySheet(){ setDayView('week'); }
 window.closeDaySheet = closeDaySheet;
 function selectDay(i){activeDay=i;setDayView('day')}
+
+/* Geste « glisser vers la droite » pour fermer le panneau du menu du jour (mobile) */
+function initDaySheetSwipe(){
+  var dp=document.getElementById('day-panel');
+  if(!dp || dp._swipeInit) return;
+  dp._swipeInit=true;
+  var startX=0, startY=0, dx=0, dragging=false, decided=false, horiz=false;
+  function bd(){ return document.getElementById('daySheetBackdrop'); }
+  dp.addEventListener('touchstart', function(e){
+    if(!document.body.classList.contains('day-sheet-open')) return;
+    var t=e.touches[0]; startX=t.clientX; startY=t.clientY; dx=0;
+    dragging=true; decided=false; horiz=false;
+    dp.style.transition='none';
+  }, {passive:true});
+  dp.addEventListener('touchmove', function(e){
+    if(!dragging) return;
+    var t=e.touches[0]; dx=t.clientX-startX; var dy=t.clientY-startY;
+    if(!decided && (Math.abs(dx)>8 || Math.abs(dy)>8)){
+      decided=true; horiz=(Math.abs(dx)>Math.abs(dy) && dx>0);
+    }
+    if(horiz){
+      if(dx<0) dx=0;
+      dp.style.transform='translateX('+dx+'px)';
+      var b=bd(); if(b){ b.style.opacity=String(Math.max(0, 1-(dx/(dp.offsetWidth||360)))); }
+    }
+  }, {passive:true});
+  function end(){
+    if(!dragging) return; dragging=false;
+    var b=bd();
+    dp.style.transition='transform .3s cubic-bezier(.22,1,.28,1)';
+    if(horiz && dx > Math.min(120, (dp.offsetWidth||360)*0.32)){
+      dp.style.transform='translateX(100%)';
+      setTimeout(function(){
+        closeDaySheet();
+        dp.style.transition=''; dp.style.transform=''; if(b) b.style.opacity='';
+      }, 250);
+    } else {
+      dp.style.transform='translateX(0)';
+      if(b) b.style.opacity='';
+      setTimeout(function(){ dp.style.transition=''; dp.style.transform=''; }, 300);
+    }
+  }
+  dp.addEventListener('touchend', end, {passive:true});
+  dp.addEventListener('touchcancel', end, {passive:true});
+}
+try{ initDaySheetSwipe(); }catch(e){}
 
 /* ═══════════════════════ RENDER PLAN ═══════════════════════ */
 function renderPlan(){renderWeekGrid();renderDayPanel();if(typeof window.kpRenderPremiumStatusCardInPlan === 'function') window.kpRenderPremiumStatusCardInPlan();if(typeof window.kpRenderLpevSupplements === 'function') window.kpRenderLpevSupplements('lpevSectionPlan');}

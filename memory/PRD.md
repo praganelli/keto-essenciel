@@ -54,6 +54,7 @@ Bugs signalés :
 - Écran Profil (mobile) : entrée "Réglages" déplacée SOUS la carte "Informations personnelles".
 - Carte "Vos macros" : fix débordement texte (result-macros grid minmax(0,1fr), rm-val/rm-lab nowrap+ellipsis, letter-spacing réduit).
 - BUG corrigé : `calcMacros` faisait `tdee + p.goal` (concat texte si goal en string → 24680 kcal). Corrigé en `Number(p.goal||0)` + `Number(p.activity||1)`. Vérifié (target 1711 kcal correct).
+- Geste swipe : glisser le panneau « Menu du jour » vers la droite le ferme (drag temps réel + fondu du backdrop, seuil ~32% largeur). `initDaySheetSwipe()` sur #day-panel. Vérifié via events tactiles simulés (open=false après swipe).
 - Marque "Keto Premium" → "Keto - Essenciel" partout (titre, auth, splash, onboarding, aide, manifeste PWA, notifications, parrainage, footers PDF, statut abonnement, toasts).
 - Badge version "Keto - Essenciel · v1.1" ajouté en haut de l'écran (header, sous le titre) via `.app-version-badge`.
 - Onglet Plan : le jour affiché par défaut est désormais le JOUR ACTUEL (`TODAY_IDX=(getDay()+6)%7`, `activeDay=TODAY_IDX`). Le hero affiche le badge "📍 Aujourd'hui". Vérifié via screenshot (Mardi + tag Aujourd'hui + badge v1.1). (≤5g→366, ≤10g→474, ≤15min→393, vegan→40, facile→437, recherche combinée OK, état vide OK); CTA essai visible + message invité OK. Écriture Firestore de l'essai (utilisateur connecté) non testable en fork (compte Firebase absent).
