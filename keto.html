@@ -7542,6 +7542,20 @@ body{
   </div>
 </div>
 
+<!-- Shopping list modal (mobile) -->
+<div class="recipe-overlay" id="kpShopOverlay" onclick="if(event.target===this){kpCloseShopModal();}">
+  <div class="recipe-modal" id="kpShopModal">
+    <div class="recipe-modal-head">
+      <div class="recipe-modal-title">🛒 Liste de courses</div>
+      <button class="close-btn" onclick="kpCloseShopModal()">✕</button>
+    </div>
+    <div style="display:flex;gap:10px;padding:0 18px 14px">
+      <button class="btn btn-ghost" style="flex:1" onclick="printShopping()">🖨 Imprimer la liste</button>
+    </div>
+    <div id="kpShopModalBody" style="padding:0 18px 24px"></div>
+  </div>
+</div>
+
 <div class="app">
   <header>
     <div class="eyebrow"><span class="pulse"></span> Le keto par un naturopathe</div>
@@ -7574,9 +7588,9 @@ body{
     <div id="planPremiumStatusHost" data-testid="plan-premium-status-host" style="margin-bottom:18px"></div>
     <div class="plan-topbar plan-topbar-full">
       <button class="btn btn-primary" style="flex:1" onclick="generateMenu()">📅 Générer la semaine</button>
-      <button class="btn btn-gold" style="flex:1" onclick="generateShopping()">🛒 Courses</button>
-      <button class="btn btn-ghost" onclick="exportPDF()" title="Exporter en PDF">📄 PDF</button>
-      <button class="btn btn-ghost" onclick="window.print()">🖨</button>
+      <button class="btn btn-gold" style="flex:1" onclick="kpOpenShoppingCourses()">🛒 Courses</button>
+      <button class="btn btn-ghost" onclick="exportPDF()" title="Imprimer le menu">🖨 Menu</button>
+      <button class="btn btn-ghost" onclick="printShopping()" title="Imprimer la liste de courses">🖨 Courses</button>
     </div>
     <!-- A1 : carte de génération (mobile uniquement) -->
     <div class="plan-gen-hero" data-testid="plan-gen-hero">
@@ -7586,9 +7600,9 @@ body{
       </div>
       <button class="plan-gen-main" onclick="generateMenu()" data-testid="plan-gen-main">✨ Générer ma semaine</button>
       <div class="plan-gen-actions">
-        <button class="plan-gen-act" onclick="generateShopping()"><span class="pga-ico">🛒</span><span>Courses</span></button>
-        <button class="plan-gen-act" onclick="exportPDF()"><span class="pga-ico">📄</span><span>PDF</span></button>
-        <button class="plan-gen-act" onclick="window.print()"><span class="pga-ico">🖨</span><span>Imprimer</span></button>
+        <button class="plan-gen-act" onclick="kpOpenShoppingCourses()"><span class="pga-ico">🛒</span><span>Courses</span></button>
+        <button class="plan-gen-act" onclick="exportPDF()"><span class="pga-ico">🖨</span><span>Menu</span></button>
+        <button class="plan-gen-act" onclick="printShopping()"><span class="pga-ico">🖨</span><span>Liste</span></button>
       </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
@@ -10311,13 +10325,15 @@ function renderWeekGrid(){
   }
   pillsHtml += '</div>';
 
-  // Sous-titre de la carte génération : calories réelles + mode
+  // Sous-titre de la carte génération : calories réelles + mode + objectif
   try{
     var subEl = document.getElementById('planGenSub');
     if(subEl){
       var modeName = ((document.getElementById('profileModeName')||{}).textContent || 'Keto Standard').trim();
       var kcalTxt = (focus && focus.kcal) ? (focus.kcal.toLocaleString('fr-FR') + ' kcal/jour') : 'Menu personnalisé';
-      subEl.textContent = '🥑 ' + kcalTxt + ' · ' + modeName;
+      var goalLbls = {"-500":"🔥 Perte de poids","-250":"⚖️ Perte douce","0":"✅ Maintien","200":"💪 Prise de muscle"};
+      var goalLbl = goalLbls[String((profile&&profile.goal!=null)?profile.goal:0)] || "✅ Maintien";
+      subEl.textContent = '🥑 ' + kcalTxt + ' · ' + modeName + ' · ' + goalLbl;
     }
   }catch(e){}
 
@@ -14584,7 +14600,7 @@ authGuest = function(){
     document.body.appendChild(dock);
     dock.children[0].addEventListener('click', function(){ window.scrollTo({top:0,behavior:'smooth'}); });
     dock.children[1].addEventListener('click', function(){ if(typeof selectDay === 'function'){ switchTab('plan'); selectDay(todayIndex()); } });
-    dock.children[2].addEventListener('click', function(){ if(typeof generateShopping === 'function'){ switchTab('plan'); generateShopping(); setTimeout(function(){ var s=$('shopping-wrap'); if(s) s.scrollIntoView({behavior:'smooth',block:'start'}); }, 80); } });
+    dock.children[2].addEventListener('click', function(){ if(typeof window.kpOpenShoppingCourses === 'function'){ window.kpOpenShoppingCourses(); } else if(typeof generateShopping === 'function'){ switchTab('plan'); generateShopping(); setTimeout(function(){ var s=$('shopping-wrap'); if(s) s.scrollIntoView({behavior:'smooth',block:'start'}); }, 80); } });
     window.addEventListener('scroll', function(){
       dock.classList.toggle('is-hidden', window.scrollY < 260);
     }, {passive:true});
@@ -14994,14 +15010,86 @@ authGuest = function(){
           }).join('')+
           '</div></div>';
       }).join('');
-      $('shopping-wrap').innerHTML=`<div class="sec-label">Liste de courses</div>
-        <div class="shop-card">
-          <div class="shop-banner"><span style="font-size:22px">🛒</span><h3>Courses de la semaine</h3></div>
-          <div class="shop-progress"><div class="shop-prog-bar"><div class="shop-prog-fill" id="shopProg" style="width:0%"></div></div><div class="shop-prog-label" id="shopProgLabel">0 / ${shopTotal}</div></div>
-          <div class="shop-categories">${catHTML}</div>
-        </div>`;
+      var cardHtml = '<div class="shop-card">'
+        + '<div class="shop-banner"><span style="font-size:22px">🛒</span><h3>Courses de la semaine</h3></div>'
+        + '<div class="shop-progress"><div class="shop-prog-bar"><div class="shop-prog-fill" id="shopProg" style="width:0%"></div></div><div class="shop-prog-label" id="shopProgLabel">0 / '+shopTotal+'</div></div>'
+        + '<div class="shop-categories">'+catHTML+'</div>'
+        + '</div>';
+      var isMobile = (window.innerWidth||1024) < 1024;
+      var modalBody = document.getElementById('kpShopModalBody');
+      var wrap = document.getElementById('shopping-wrap');
+      if(isMobile && modalBody){
+        // Sur mobile : la liste vit dans le popup (cases à cocher fonctionnelles)
+        modalBody.innerHTML = cardHtml;
+        if(wrap) wrap.innerHTML = '';   // évite les doublons d'id (shopProg…)
+      } else {
+        if(wrap) wrap.innerHTML = '<div class="sec-label">Liste de courses</div>' + cardHtml;
+        if(modalBody) modalBody.innerHTML = '';
+      }
     };
   }
+  // ─── Popup Liste de courses (mobile) ───
+  window.kpOpenShopModal = function(){
+    var ov = document.getElementById('kpShopOverlay');
+    if(!ov) return;
+    ov.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.kpCloseShopModal = function(){
+    var ov = document.getElementById('kpShopOverlay');
+    if(ov) ov.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  window.kpOpenShoppingCourses = function(){
+    if(!menu || !menu.length){ if(typeof toast==='function') toast('⚠️ Générez d abord un menu !'); return; }
+    generateShopping();
+    if((window.innerWidth||1024) < 1024){
+      window.kpOpenShopModal();
+    } else {
+      if(typeof switchTab==='function') switchTab('plan');
+      setTimeout(function(){ var s=document.getElementById('shopping-wrap'); if(s) s.scrollIntoView({behavior:'smooth',block:'start'}); }, 80);
+    }
+  };
+  // ─── Impression de la liste de courses (fenêtre imprimable) ───
+  window.printShopping = function(){
+    if(!menu || !menu.length){ if(typeof toast==='function') toast('⚠️ Générez d abord un menu !'); return; }
+    var agg = (typeof window.kpShoppingAgg==='function') ? window.kpShoppingAgg() : {};
+    var fmtQ = (typeof window.kpFmtShopQty==='function') ? window.kpFmtShopQty : function(u){return Object.keys(u).map(function(k){return u[k]+(k?' '+k:'');}).join(' + ');};
+    var names = Object.keys(agg);
+    if(!names.length){ if(typeof toast==='function') toast('⚠️ Liste vide'); return; }
+    var fname = (typeof profile!=='undefined' && profile && profile.firstname) ? profile.firstname : '';
+    var dateStr = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+    var CATS = [{key:'prot',label:'Protéines'},{key:'veg',label:'Légumes'},{key:'fat',label:'Corps gras & laitages'},{key:'',label:'Autres'}];
+    var sections = CATS.map(function(cat){
+      var list = names.filter(function(n){ var t=agg[n].type; if(cat.key==='') return (t!=='prot'&&t!=='veg'&&t!=='fat'); return t===cat.key; });
+      if(!list.length) return '';
+      return '<h2>'+cat.label+'</h2><table>'+list.map(function(n){
+        return '<tr><td class="cb">&#9744;</td><td class="nm">'+n+'</td><td class="qt">'+fmtQ(agg[n].units)+'</td></tr>';
+      }).join('')+'</table>';
+    }).join('');
+    var html = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Liste de courses'+(fname?' de '+fname:'')+'</title><style>'
+      + '@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap");'
+      + '*{box-sizing:border-box;margin:0;padding:0}body{font-family:\'Plus Jakarta Sans\',sans-serif;color:#1a1208;padding:32px;font-size:14px}'
+      + '.header{display:flex;justify-content:space-between;border-bottom:3px solid #b07a22;padding-bottom:16px;margin-bottom:22px}'
+      + '.brand{font-family:\'Fraunces\',serif;font-size:26px;color:#071810}.brand em{color:#b07a22;font-style:italic}'
+      + '.meta{text-align:right;font-size:12px;color:#6a5a48;line-height:1.7}.meta strong{color:#1a1208}'
+      + 'h2{font-family:\'Fraunces\',serif;font-size:16px;color:#1a5c38;margin:18px 0 8px;padding-bottom:5px;border-bottom:1px solid #e0d8c4}'
+      + 'table{width:100%;border-collapse:collapse;margin-bottom:8px}'
+      + 'td{padding:7px 8px;border-bottom:1px solid #f0ead8;vertical-align:middle}'
+      + '.cb{width:26px;font-size:17px;color:#b07a22}.nm{font-weight:600}.qt{text-align:right;color:#b07a22;font-weight:700;font-family:\'Fraunces\',serif;width:95px}'
+      + '.footer{margin-top:22px;padding-top:12px;border-top:1px solid #e0d8c4;font-size:10px;color:#9a8870;text-align:center}'
+      + '@media print{body{padding:20px}}'
+      + '</style></head><body>'
+      + '<div class="header"><div><div class="brand">Liste de <em>courses</em></div><div style="font-size:12px;color:#6a5a48;margin-top:4px">Semaine keto — '+names.length+' ingrédients</div></div>'
+      + '<div class="meta">'+(fname?'<strong>'+fname+'</strong><br>':'')+'Généré le '+dateStr+'<br><strong>Essenciel O Naturel</strong> · Lunéville</div></div>'
+      + sections
+      + '<div class="footer">Keto Premium · Essenciel O Naturel · '+new Date().getFullYear()+'</div>'
+      + '</body></html>';
+    var win = window.open('','_blank');
+    if(!win){ if(typeof toast==='function') toast('⚠️ Autorisez les pop-ups pour imprimer'); return; }
+    win.document.write(html); win.document.close();
+    setTimeout(function(){ try{ win.focus(); win.print(); }catch(e){} }, 500);
+  };
   if(typeof renderPlan === 'function'){
     var _renderPlanV14 = renderPlan;
     renderPlan = function(){
