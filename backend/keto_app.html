@@ -520,6 +520,49 @@ body.dark .bottom-nav-inner{ }
   body.dark .bnav-icon, body.dark .bnav-label{ color:#7d857e !important; }
 }
 
+/* Bouton central « Générer » — masqué par défaut (sidebar desktop), visible en mobile */
+.bnav-fab{ display:none; }
+@media (max-width:1023px){
+  /* ═══ Style 2b : bouton central doré + libellé seulement sur l'onglet actif ═══ */
+  #nt-lpev{ display:flex !important; }              /* « Compléments » gardé dans la barre */
+  .bnav-settings{ display:none !important; }         /* « Réglages » déplacé dans l'écran Profil */
+  .bnav-tab:not(.active) .bnav-label{ display:none !important; }
+  .bnav-tab.active{ background:#eef4ee !important; padding:6px 12px !important; }
+  body.dark .bnav-tab.active{ background:rgba(45,122,82,.20) !important; }
+
+  .bnav-fab{
+    display:flex !important; flex-direction:column; align-items:center; justify-content:center;
+    flex:0 0 auto; width:58px; height:58px; margin:-16px 3px 0; padding:0;
+    border:none; cursor:pointer; border-radius:50%;
+    background:linear-gradient(145deg,#c98f2b,#a9721c);
+    color:#fff; -webkit-tap-highlight-color:transparent;
+    box-shadow:0 10px 22px -4px rgba(169,114,28,.55), inset 0 1px 2px rgba(255,255,255,.4);
+    transition:transform .15s ease;
+  }
+  .bnav-fab:active{ transform:scale(.92); }
+  .bnav-fab .bnav-fab-ico{ width:24px; height:24px; stroke:#fff; fill:none; stroke-width:2.4; stroke-linecap:round; }
+  .bnav-fab .bnav-fab-lbl{ font-size:8.5px; font-weight:800; letter-spacing:.02em; margin-top:1px; line-height:1; }
+}
+
+/* Entrée « Réglages » déplacée dans l'écran Profil (mobile) */
+.profile-settings-entry{ display:none; }
+@media (max-width:1023px){
+  .profile-settings-entry{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--s1,#fff); border:1px solid rgba(0,0,0,.07);
+    border-radius:16px; padding:14px 16px; margin:0 0 16px; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; transition:transform .15s;
+    font-family:'Plus Jakarta Sans',sans-serif;
+  }
+  .profile-settings-entry:active{ transform:scale(.985); }
+  .profile-settings-entry .pse-ico{ font-size:20px; }
+  .profile-settings-entry .pse-txt{ flex:1; display:flex; flex-direction:column; text-align:left; }
+  .profile-settings-entry .pse-txt b{ font-size:14px; color:var(--text,#1f2a1f); font-weight:700; }
+  .profile-settings-entry .pse-txt small{ font-size:11.5px; color:var(--muted,#7a8275); }
+  .profile-settings-entry .pse-arrow{ color:var(--muted,#9aa29b); font-size:18px; }
+  body.dark .profile-settings-entry{ background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); }
+}
+
 /* ═══ A1 — Carte génération (mobile) + B1 — Jours en pastilles défilantes ═══ */
 .plan-gen-hero{ display:none; }
 .wfl-daypills{ display:none; }
@@ -7820,6 +7863,11 @@ body{
       <div id="authUserEmail"></div>
     </div>
     <div class="sec-label">Mon profil</div>
+    <button class="profile-settings-entry" onclick="openPrefs()" data-testid="profile-open-prefs">
+      <span class="pse-ico">⚙️</span>
+      <span class="pse-txt"><b>Réglages</b><small>Préférences, thème, données &amp; abonnement</small></span>
+      <span class="pse-arrow">›</span>
+    </button>
     <div class="profile-grid">
       <div class="pf-acc-grid" id="pfAccordionGrid" data-testid="profile-accordion-grid">
       <div class="profile-card pf-info" data-testid="pf-info-card">
@@ -8157,6 +8205,10 @@ body{
       <span class="bnav-icon"><span class="bnav-emoji">📚</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg></span>
       <span class="bnav-label">Recettes</span>
     </button>
+    <button class="bnav-fab" id="bnavFab" type="button" onclick="generateMenu()" aria-label="Générer la semaine">
+      <svg class="bnav-fab-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="bnav-fab-lbl">Générer</span>
+    </button>
     <button class="bnav-tab" id="nt-suivi" onclick="switchTab('suivi')">
       <span class="bnav-icon"><span class="bnav-emoji">📊</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 9.2h3V19H5zM10.6 5h3v14h-3zm5.6 8H19v6h-3z"/></svg></span>
       <span class="bnav-label">Suivi</span>
@@ -8166,7 +8218,7 @@ body{
       <span class="bnav-label">Profil</span>
     </button>
     <button class="bnav-tab bnav-lpev-tab" id="nt-lpev" onclick="switchTab('lpev')" data-testid="bnav-lpev">
-      <span class="bnav-icon">💊</span>
+      <span class="bnav-icon"><span class="bnav-emoji">💊</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.6 15.4a4.8 4.8 0 0 0 6.8 6.8l4.6-4.6-6.8-6.8-4.6 4.6zm14.8-6.8a4.8 4.8 0 0 0-6.8-6.8L8 6.4l6.8 6.8 4.6-4.6z"/></svg></span>
       <span class="bnav-label">Compléments</span>
     </button>
     <button class="bnav-tab bnav-admin" id="nt-admin" onclick="switchTab('admin')" data-testid="bnav-admin" style="display:none">
