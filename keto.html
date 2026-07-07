@@ -5208,6 +5208,27 @@ body{
   border-color:var(--ed-gold) !important;
 }
 
+/* ─── Carte "menu du jour" redessinée (sans illustration ni note recette) ─── */
+.day-hero{ min-height:auto !important; }
+.day-hero-content{ padding:20px 26px 28px !important; }
+.day-hero-bar{ margin-bottom:18px !important; }
+/* Titre centré et aéré pour une présentation équilibrée */
+.day-hero-eyebrow{
+  display:flex !important;
+  justify-content:center !important;
+  width:100% !important;
+  margin:2px 0 8px !important;
+}
+.day-hero-date{
+  display:block !important;
+  text-align:center !important;
+  margin-bottom:0 !important;
+}
+@media(max-width:1023px){
+  .day-hero-content{ padding:16px 18px 22px !important; }
+  .day-hero-bar{ margin-bottom:14px !important; }
+}
+
 /* ─── Macro tiles ─── */
 .day-macro-strip{ gap:14px !important; margin:18px 0 24px !important; }
 .day-macro-tile{
@@ -10486,13 +10507,6 @@ function renderDayPanel(){
     <div class="day-hero-grain"></div>
     <div class="day-hero-overlay"></div>
 
-    <!-- SVG Illustration -->
-    <div class="day-hero-art">
-      <div class="meal-illustration">
-        ${getMealIllustration(heroSlot, heroRecipeName)}
-      </div>
-    </div>
-
     <div class="day-hero-content">
       <!-- Nav row -->
       <div class="day-hero-bar" style="margin-bottom:16px">
@@ -10514,7 +10528,6 @@ function renderDayPanel(){
       <!-- Big date title -->
       <div class="day-hero-date">
         <em>${d.day}</em>
-        ${heroRecipeName?`<br><span style="font-size:.42em;font-style:normal;opacity:.7;letter-spacing:-.01em">${heroRecipeName}</span>`:''}
       </div>
     </div>
   </div>
