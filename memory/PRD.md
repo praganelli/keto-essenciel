@@ -49,6 +49,9 @@ Bugs signalés :
 ## Renommage marque + version + menu du jour (fork, juin 2026)
 - Marque "Keto Premium" → "Keto - Essenciel" partout ; badge version "v1.1" en haut ; onglet Plan par défaut = jour actuel.
 
+## Régénération auto au changement de mode (fork, juin 2026)
+- `applyDietMode(modeId)` : après recalcul des cibles, régénère IMMÉDIATEMENT la semaine via `generateMenu()` (wrappé par withFilteredRecipes → filtre selon le mode), puis `switchTab('plan')` + `setDayView('week')` pour montrer le résultat. Flag `window._suppressMenuToast` pour éviter le double toast (garde uniquement « Mode X — nouveau menu généré ✅»). Gating Premium existant conservé (non-premium → modal Premium). Vérifié en Premium : standard(viande) → vegetarien → menu régénéré (tofu/tempeh), tab=plan, dietMode=vegetarien.
+
 ## Refonte contenu « Menu du jour » (fork, juin 2026)
 - BUGFIX: le modal recette (openRecipe) s'ouvrait SOUS le bottom sheet (z-index 200 < 901). Corrigé: `.recipe-overlay` z-index→1300 + portage sur document.body à l'ouverture (openRecipe). Vérifié (rectTop:0/bottom:844 plein écran au-dessus du sheet).
 - Contenu de la fiche (bottom sheet) refait en Option A + résumé d'ingrédients : cartes repas compactes `.dmc` (pastille emoji, badge, titre Fraunces italique, description 2 lignes, pastilles macros kcal/lip/prot/gluc, temps, chips « Ingrédients » = noms uniquement, boutons « Voir la recette » → openRecipe + « Changer » → swapMeal). Détails complets (étapes/assaisonnements/notes) uniquement dans la fiche recette. Nouvelles fonctions dmcBfast/dmcMain/dmcCourse + _dmcMealCard ; renderDayPanel appelle ces builders (les anciens build* restent inutilisés). En-tête + anneaux macros conservés. Vérifié via screenshot (3 cartes, titres + chips ingrédients OK, pas d'erreur JS).

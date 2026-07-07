@@ -10331,7 +10331,7 @@ function generateMenu(){
 
     return{day, bfast:bi, lunch:li, dinner:di};
   });
-  doneDays={};aiCache={};save();toast('📅 Menu généré — légume à chaque repas !');renderPlan();
+  doneDays={};aiCache={};save();if(!window._suppressMenuToast){toast('📅 Menu généré — légume à chaque repas !');}renderPlan();
 }
 
 function swapMeal(di,slot){
@@ -15616,9 +15616,20 @@ authGuest = function(){
       targets.carb = Math.round(kcal*m.carb/4);
       if(typeof save==='function') save();
     }catch(e){console.warn('applyDietMode',e);}
-    if(typeof renderPlan==='function') try{renderPlan();}catch(e){}
+    // ── Régénérer IMMÉDIATEMENT une semaine de menus filtrée selon le nouveau mode ──
+    if(typeof menu!=='undefined' && menu && menu.length && typeof generateMenu==='function'){
+      try{
+        window._suppressMenuToast = true;
+        generateMenu();
+      }catch(e){ try{ if(typeof renderPlan==='function') renderPlan(); }catch(e2){} }
+      finally{ window._suppressMenuToast = false; }
+    } else if(typeof renderPlan==='function'){
+      try{renderPlan();}catch(e){}
+    }
     updateModeUI();
-    if(typeof toast==='function') toast(m.emoji+' Mode « '+m.label+' » activé');
+    if(typeof switchTab==='function'){ try{ switchTab('plan'); }catch(e){} }
+    if(typeof setDayView==='function'){ try{ setDayView('week'); }catch(e){} }
+    if(typeof toast==='function') toast(m.emoji+' Mode « '+m.label+' » — nouveau menu généré ✅');
     if(m.warn){
       setTimeout(function(){alert('⚠️ '+m.label+'\n\n'+m.warn);},250);
     }
