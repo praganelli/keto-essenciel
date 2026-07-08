@@ -25142,11 +25142,23 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var color=p.color||'#2d7a52';
     var cautions=(p.cautions||[]).map(function(c){return '<div class="mx-warn"><span>⚠️</span><span>'+esc(c)+'</span></div>';}).join('');
     var sport=(p.sport||[]).map(function(s){return '<div class="mrx-sport"><span>🏃</span><span>'+esc(s)+'</span></div>';}).join('');
-    var exos=(p.exos||[]).map(function(e,i){ return muscuRecoExoCard(e,i,color); }).join('');
+    var exosArr=p.exos||[];
+    var exosSlider;
+    if(exosArr.length){
+      exosSlider='<div class="mx-counter" id="mxCounter" style="margin-top:2px">Exercice 1 / '+exosArr.length+'</div>'
+        +'<div class="mx-carousel-wrap">'
+        +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
+        +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
+        +'<div class="mx-carousel" id="mxCarousel" data-label="Exercice">'
+        +exosArr.map(function(e,i){ return '<div class="mx-slide">'+muscuRecoExoCard(e,i,color)+'</div>'; }).join('')
+        +'</div>'
+        +'<div class="mx-dots" id="mxDots">'+exosArr.map(function(_e,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Exercice '+(i+1)+'"></button>';}).join('')+'</div>'
+        +'</div>';
+    } else { exosSlider='<div class="mx-intro">—</div>'; }
     return '<div class="mrx-card">'
-      +'<div class="mrx-top" style="background:linear-gradient(135deg,'+color+',#1f4f34)"><div class="mrx-badge">🎯 Sur-mesure</div><div class="mrx-level">Niveau '+esc(p.level)+'</div><div class="mrx-sub">'+(p.exos||[]).length+' exercices de gainage sélectionnés pour vous</div></div>'
+      +'<div class="mrx-top" style="background:linear-gradient(135deg,'+color+',#1f4f34)"><div class="mrx-badge">🎯 Sur-mesure</div><div class="mrx-level">Niveau '+esc(p.level)+'</div><div class="mrx-sub">'+exosArr.length+' exercices de gainage sélectionnés pour vous</div></div>'
       +(cautions?('<div class="mrx-block"><div class="mrx-block-lab">⚠️ Vos points de vigilance</div>'+cautions+'</div>'):'')
-      +'<div class="mrx-block"><div class="mrx-block-lab" style="color:'+color+'">🧘 Vos exercices — le mouvement détaillé</div>'+(exos||'<div class="mx-intro">—</div>')+'</div>'
+      +'<div class="mrx-block"><div class="mrx-block-lab" style="color:'+color+'">🧘 Vos exercices — glissez pour parcourir ›</div>'+exosSlider+'</div>'
       +(sport?('<div class="mrx-block"><div class="mrx-block-lab" style="color:#8a5f18">🏃 Activité sportive conseillée</div>'+sport+'</div>'):'')
       +'<button class="mrx-redo" onclick="kpOpenMuscuQuiz()">↻ Refaire le questionnaire</button>'
       +'</div>';
@@ -25210,7 +25222,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var rec=kpMuscuRecommend(arr);
     muStore({done:true, profile:rec, ans:arr});
     kpCloseMuscuQuiz();
-    window.kpMuscleView='gainage'; window.renderMuscle();
+    window.kpMuscleView='perso'; window.renderMuscle();
     setTimeout(function(){ var b=document.getElementById('mxBody'); if(b) b.scrollIntoView({block:'start'}); }, 120);
   };
 
@@ -25315,7 +25327,9 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       +'.mrx-sport{display:flex;gap:9px;font-size:13px;line-height:1.5;color:var(--text);margin-bottom:9px}'
       +'.mrx-sport:last-child{margin-bottom:0}'
       +'.mrx-redo{margin:6px 18px 18px;border:1px solid var(--border2);background:var(--s1);color:var(--muted);font-weight:700;font-size:13px;padding:11px 16px;border-radius:100px;cursor:pointer}'
-      +'.mrx-divider{height:1px;background:var(--border2);margin:26px 0}';
+      +'.mrx-divider{height:1px;background:var(--border2);margin:26px 0}'
+      +'.mx-slide .mrx-exo{margin-bottom:0}'
+      +'.mrx-block .mx-carousel-wrap{margin:0 -6px}';
     document.head.appendChild(st);
   }
   function progCard(p,accent,icon){
@@ -25434,13 +25448,21 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       kpBindCarousel();
       return;
     }
+    if(view==='perso'){
+      var stp=muLoad();
+      if(stp && stp.profile){
+        body.innerHTML=muscuRecoCard(stp.profile);
+        if((stp.profile.exos||[]).length) kpBindCarousel();
+      } else {
+        body.innerHTML='<div class="mx-sec-lab" style="color:#2d7a52">🎯 Mon programme personnalisé</div>'
+          +'<div class="mx-card" style="text-align:center;border:1.5px dashed var(--border2)"><div style="font-size:44px">📝</div><div class="mx-title" style="margin:8px 0 6px">Créons votre programme</div><div class="mx-intro" style="margin-bottom:16px">Répondez au questionnaire forme &amp; santé (13 questions) pour obtenir un programme de gainage sur-mesure, adapté à votre condition physique et à vos éventuelles pathologies (dos, genoux, cœur, diabète…).</div><button class="mx-calc-btn" style="width:auto;padding:13px 24px;background:linear-gradient(135deg,#1f6a41,#2d7a52)" onclick="kpOpenMuscuQuiz()">📝 Faire le questionnaire</button></div>';
+      }
+      return;
+    }
     if(view==='gainage'){
       var glvl=window.kpGainageLvl||'all';
       var exos=GAINAGE_EXOS.filter(function(e){ return glvl==='all' || e.level===glvl; });
       function gfbtn(k,label){ return '<button class="mx-filter-btn'+(glvl===k?' active':'')+'" onclick="kpGainageFilter(\''+k+'\')">'+label+'</button>'; }
-      var st=muLoad(), reco='';
-      if(st && st.profile){ reco=muscuRecoCard(st.profile); }
-      else { reco='<div class="mx-card" style="text-align:center;border:1.5px dashed var(--border2)"><div style="font-size:38px">📝</div><div class="mx-title" style="margin:6px 0">Programme personnalisé</div><div class="mx-intro" style="margin-bottom:14px">Réponds au questionnaire forme &amp; santé pour obtenir un programme de gainage adapté à ta condition et à tes éventuelles douleurs.</div><button class="mx-calc-btn" style="width:auto;padding:12px 22px;background:linear-gradient(135deg,#1f6a41,#2d7a52)" onclick="kpOpenMuscuQuiz()">📝 Faire le questionnaire</button></div>'; }
       var carousel;
       if(exos.length){
         carousel='<div class="mx-counter" id="mxCounter">Exercice 1 / '+exos.length+'</div>'
@@ -25454,11 +25476,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
           +'</div>';
       } else { carousel='<div class="mx-intro">Aucun exercice pour ce niveau.</div>'; }
       body.innerHTML=
-        '<div class="mx-sec-lab" style="color:#2d7a52">🎯 Mon programme personnalisé</div>'
-        +'<div class="mx-intro" style="margin-bottom:14px">Un programme de gainage construit à partir de votre condition physique et de vos éventuelles pathologies.</div>'
-        +reco
-        +'<div class="mrx-divider"></div>'
-        +'<div class="mx-sec-lab" style="color:#8a5f18">🔥 Programmes guidés</div>'
+        '<div class="mx-sec-lab" style="color:#8a5f18">🔥 Programmes guidés</div>'
         +'<div class="mx-intro" style="margin-bottom:14px">Des séances clé en main, à suivre du début à la fin, quel que soit votre niveau.</div>'
         +GAINAGE_PROGRAMS.map(gainageProgCard).join('')
         +'<div class="mrx-divider"></div>'
@@ -25492,7 +25510,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var view=window.kpMuscleView||'progs';
     if(view==='nutri') view=window.kpMuscleView='progs';
     host.innerHTML='<div class="mx-hero"><div class="mx-hero-tag">✦ Premium</div><div class="mx-hero-title">Renforcement musculaire</div><div class="mx-hero-sub">Entraînez-vous, testez vos capacités et suivez un programme de gainage adapté à vous.</div></div>'
-      +'<div class="mx-seg">'+segBtn('progs','🏋️','Progr.',view)+segBtn('gainage','🧘','Gainage',view)+segBtn('tests','📊','Tests',view)+'</div>'
+      +'<div class="mx-seg">'+segBtn('progs','🏋️','Progr.',view)+segBtn('perso','🎯','Perso',view)+segBtn('gainage','🧘','Gainage',view)+segBtn('tests','📊','Tests',view)+'</div>'
       +'<div id="mxBody"></div>';
     renderMuscleBody(view);
     muFbLoad(function(loaded){
