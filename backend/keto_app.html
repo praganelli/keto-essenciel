@@ -25023,7 +25023,18 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       +'.mx-calc-in{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:10px;background:var(--s1);color:var(--text);font-size:14px;box-sizing:border-box}'
       +'.mx-calc-btn{margin-top:10px;width:100%;padding:11px;border:none;border-radius:10px;color:#fff;font-weight:800;font-size:14px;cursor:pointer}'
       +'.mx-calc-res{margin-top:12px;text-align:center;font-size:13px}'
-      +'.mx-calc-res .big{font-family:var(--font-display),serif;font-style:italic;font-size:32px;display:block;line-height:1.1;margin-bottom:2px}';
+      +'.mx-calc-res .big{font-family:var(--font-display),serif;font-style:italic;font-size:32px;display:block;line-height:1.1;margin-bottom:2px}'
+      +'.mx-carousel-wrap{position:relative;margin:0 -2px}'
+      +'.mx-carousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;padding:2px 2px 4px;scrollbar-width:none;align-items:flex-start}'
+      +'.mx-carousel::-webkit-scrollbar{display:none}'
+      +'.mx-slide{flex:0 0 100%;scroll-snap-align:center;min-width:0}'
+      +'.mx-slide .mx-card{margin-bottom:0}'
+      +'.mx-counter{text-align:center;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:2px 0 10px}'
+      +'.mx-dots{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin-top:14px}'
+      +'.mx-dot{width:8px;height:8px;border-radius:50%;border:none;background:rgba(94,124,97,.28);cursor:pointer;padding:0;transition:width .25s,background .25s,border-radius .25s}'
+      +'.mx-dot.active{width:22px;border-radius:5px;background:#2d7a52}'
+      +'.mx-nav-arrow{position:absolute;top:38px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--s1);color:var(--text);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.1);z-index:2}'
+      +'.mx-nav-prev{left:-2px}.mx-nav-next{right:-2px}';
     document.head.appendChild(st);
   }
   function progCard(p,accent,icon){
@@ -25095,13 +25106,50 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       window._muscleDyn={progs:progs,tips:tips}; cb(window._muscleDyn);
     }).catch(function(e){ console.warn('[muscle]', e&&e.message); cb({progs:[],tips:[]}); });
   }
+  function kpCarouselIndex(c){
+    if(!c || c.children.length<2) return 0;
+    var step=(c.children[1].offsetLeft - c.children[0].offsetLeft) || c.clientWidth;
+    return Math.max(0, Math.min(c.children.length-1, Math.round(c.scrollLeft/step)));
+  }
+  function kpCarouselUpdate(){
+    var c=document.getElementById('mxCarousel'); if(!c) return;
+    var idx=kpCarouselIndex(c), n=c.children.length;
+    var dots=document.querySelectorAll('#mxDots .mx-dot');
+    dots.forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+    var cnt=document.getElementById('mxCounter'); if(cnt) cnt.textContent='Test '+(idx+1)+' / '+n;
+    var prev=document.getElementById('mxNavPrev'), next=document.getElementById('mxNavNext');
+    if(prev) prev.style.visibility = idx<=0 ? 'hidden' : 'visible';
+    if(next) next.style.visibility = idx>=n-1 ? 'hidden' : 'visible';
+  }
+  window.kpCarouselGo=function(i){
+    var c=document.getElementById('mxCarousel'); if(!c || !c.children[i]) return;
+    c.scrollTo({left:(c.children[i].offsetLeft - c.children[0].offsetLeft), behavior:'smooth'});
+  };
+  window.kpCarouselStep=function(dir){
+    var c=document.getElementById('mxCarousel'); if(!c) return;
+    kpCarouselGo(Math.max(0, Math.min(c.children.length-1, kpCarouselIndex(c)+dir)));
+  };
+  function kpBindCarousel(){
+    var c=document.getElementById('mxCarousel'); if(!c) return;
+    var t; c.addEventListener('scroll', function(){ clearTimeout(t); t=setTimeout(kpCarouselUpdate, 60); }, {passive:true});
+    kpCarouselUpdate();
+  }
   function renderMuscleBody(view){
     var body=document.getElementById('mxBody'); if(!body) return;
     if(view==='tests'){
       body.innerHTML='<div class="mx-sec-lab" style="color:#c0392b">📊 Testez vos capacités physiques</div>'
-        +'<div class="mx-intro" style="margin-bottom:14px">Situez-vous par rapport à la population, identifiez vos points forts et vos points faibles, puis mesurez vos progrès.</div>'
+        +'<div class="mx-intro" style="margin-bottom:14px">Situez-vous par rapport à la population, identifiez vos points forts et vos points faibles, puis mesurez vos progrès. Glissez pour parcourir les tests.</div>'
         +'<div class="mx-card"><div class="mx-head" style="margin-bottom:10px"><div class="mx-ic" style="background:'+hexA('#8a5f18',.12)+';color:#8a5f18">📔</div><div><div class="mx-lvl" style="color:#8a5f18">Suivi de progression</div><div class="mx-title">Mon journal des tests</div></div></div><div id="mxJournal">'+journalInnerHTML()+'</div></div>'
-        +PHYS_TESTS.map(testCard).join('');
+        +'<div class="mx-counter" id="mxCounter">Test 1 / '+PHYS_TESTS.length+'</div>'
+        +'<div class="mx-carousel-wrap">'
+          +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
+          +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
+          +'<div class="mx-carousel" id="mxCarousel">'
+            +PHYS_TESTS.map(function(t){ return '<div class="mx-slide">'+testCard(t)+'</div>'; }).join('')
+          +'</div>'
+          +'<div class="mx-dots" id="mxDots">'+PHYS_TESTS.map(function(_t,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Test '+(i+1)+'"></button>';}).join('')+'</div>'
+        +'</div>';
+      kpBindCarousel();
       return;
     }
     loadMuscleDyn(function(dyn){
