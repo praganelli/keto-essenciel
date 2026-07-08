@@ -24607,7 +24607,11 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
    MODULE : Recettes personnalisées (Admin) + Onglet Renforcement musculaire
    ═══════════════════════════════════════════════════════════ */
 (function(){
-  function kpFs(){ try{ return firebase.firestore(); }catch(e){ return null; } }
+  function kpFs(){
+    try{ if(typeof authFirebase!=='undefined' && authFirebase && authFirebase.firestore) return authFirebase.firestore(); }catch(e){}
+    try{ if(firebase.apps && firebase.apps.length) return firebase.apps[0].firestore(); }catch(e){}
+    try{ return firebase.firestore(); }catch(e){ return null; }
+  }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function toastMsg(m){ if(typeof toast==='function') toast(m); }
 
