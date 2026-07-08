@@ -132,3 +132,6 @@ Bugs signalés :
 
 ## Fix débordement badge unifié (fork, juin 2026)
 - .brand-badge débordait sur écrans étroits (325px sur vw 320). Corrigé : flex-wrap:wrap + justify-content:center + max-width:calc(100% - 28px) + row-gap, white-space nowrap déplacé sur les segments internes (.bb-name/.bb-ver/.bb-status). Vérifié 320px (wrap, pas de débordement) et 390px (1 ligne).
+
+## Bannière quiz masquée après complétion (fork, juin 2026)
+- Avant : la bannière #quizPromoBanner ne disparaissait que si score 100% (kp_quiz_perfect). Désormais : à la fin du quiz (renderQuizResult, quel que soit le score) on set kp_quiz_done='1' + display:none. Logique d'affichage au chargement masque si kp_quiz_done/kp_quiz_perfect/kp_quiz_score présent. Vérifié : bannière flex→none après 15 réponses, reste none au reload.

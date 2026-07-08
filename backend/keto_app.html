@@ -23236,14 +23236,12 @@ setTimeout(maybeShowContextualPremium, 4000);
       + '<button class="quiz-result-restart" onclick="window.kpQuizRestart()">↻ Recommencer le quiz</button>';
     // Persist score for further use
     try{ localStorage.setItem('kp_quiz_score', JSON.stringify({pct:pct,level:level,at:Date.now()})); }catch(e){}
-    // Score 100% keto → masque définitivement la bannière du quiz
-    if(pct >= 100){
-      try{
-        localStorage.setItem('kp_quiz_perfect','1');
-        var _qb = document.getElementById('quizPromoBanner');
-        if(_qb) _qb.style.display = 'none';
-      }catch(e){}
-    }
+    // Quiz TERMINÉ (quel que soit le score) → on masque définitivement la bannière
+    try{
+      localStorage.setItem('kp_quiz_done','1');
+      var _qb = document.getElementById('quizPromoBanner');
+      if(_qb) _qb.style.display = 'none';
+    }catch(e){}
   }
   window.kpQuizSelect = function(idx){ quizState.answers[quizState.step] = idx; renderQuiz(); };
   window.kpQuizNext = function(){ if(quizState.answers[quizState.step]==null) return; quizState.step++; renderQuiz(); };
@@ -23256,13 +23254,13 @@ setTimeout(maybeShowContextualPremium, 4000);
   document.addEventListener('DOMContentLoaded', function(){
     var ov = document.getElementById('quizOverlay');
     if(ov){ ov.addEventListener('click', function(e){ if(e.target === ov) closeKetoQuiz(); }); }
-    // Bannière du quiz : visible tant que le score 100% keto n'est pas atteint
+    // Bannière du quiz : masquée dès que le quiz a été complété une fois
     setTimeout(function(){
       var banner = document.getElementById('quizPromoBanner');
       if(banner){
-        var perfect = false;
-        try { perfect = localStorage.getItem('kp_quiz_perfect') === '1'; } catch(e){}
-        banner.style.display = perfect ? 'none' : 'flex';
+        var done = false;
+        try { done = localStorage.getItem('kp_quiz_done') === '1' || localStorage.getItem('kp_quiz_perfect') === '1' || !!localStorage.getItem('kp_quiz_score'); } catch(e){}
+        banner.style.display = done ? 'none' : 'flex';
       }
     }, 1500);
     // Auto-lancement du quiz à la toute première connexion (une seule fois)
