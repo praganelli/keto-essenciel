@@ -24640,17 +24640,28 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     }).catch(function(e){ console.warn('[recipes load]', e && e.message); if(cb)cb(); });
   };
 
-  /* ---- Photo dans le modal recette ---- */
+  /* ---- Photo + barre admin dans le modal recette ---- */
+  function kpIsAdmin(){ try{ return !!(window.isAdmin && window.isAdmin()); }catch(e){ return false; } }
   if(typeof window.openRecipe==='function'){
     var _origOpenRecipe=window.openRecipe;
     window.openRecipe=function(id){
       _origOpenRecipe(id);
+      window._kpCurrentRecipeId=id;
       try{
         var r=(typeof findRecipe==='function')?findRecipe(id):null;
         var content=document.getElementById('recipeModalContent');
         if(r && r.img && content){
           var first=content.firstElementChild;
           if(first){ first.innerHTML='<img src="'+r.img+'" alt="" style="width:100%;height:200px;object-fit:cover;display:block"/>'; first.style.padding='0'; first.style.fontSize='0'; }
+        }
+        // Barre d'actions ADMIN (modifier / supprimer) — toutes recettes, y compris "en dur"
+        if(r && content && kpIsAdmin()){
+          var bar=document.createElement('div');
+          bar.id='kpRecipeAdminBar';
+          bar.style.cssText='display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--border2);background:var(--s2)';
+          bar.innerHTML='<button onclick="kpAdminEditRecipe('+id+')" style="flex:1;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#1a5c38,#3a9966);color:#fff;font-weight:700;cursor:pointer">✏️ Modifier</button>'
+            +'<button onclick="kpAdminDeleteRecipeById('+id+')" style="flex:1;padding:12px;border:1px solid rgba(192,57,43,.3);border-radius:12px;background:rgba(192,57,43,.1);color:#c0392b;font-weight:700;cursor:pointer">🗑 Supprimer</button>';
+          content.appendChild(bar);
         }
       }catch(e){}
     };
@@ -24706,16 +24717,23 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       +'</div>';
   }
 
+  function deletionsAdminHTML(){
+    return '<div id="kpAdminDelCard" '+CARD+'>'
+      +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:20px;margin-bottom:4px">🗑 Recettes supprimées</div>'
+      +'<div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">Recettes que vous avez masquées (y compris celles intégrées). Restaurez-les à tout moment.</div>'
+      +'<div id="delList"><div style="color:var(--muted);font-size:13px">Chargement…</div></div>'
+      +'</div>';
+  }
   window.kpAdminExtras=function(container){
     if(!container) return;
     var wrap=container.querySelector('.container')||container;
     if(wrap.querySelector('#kpAdminRecipeCard')) return;
     var div=document.createElement('div');
-    div.innerHTML=recipeAdminHTML()+muscleAdminHTML();
+    div.innerHTML=recipeAdminHTML()+muscleAdminHTML()+deletionsAdminHTML();
     wrap.appendChild(div);
     var pf=document.getElementById('arPhoto');
     if(pf){ pf.addEventListener('change',function(){ var f=pf.files&&pf.files[0]; if(!f)return; kpCompressImage(f,700,function(data){ pf._data=data; var pv=document.getElementById('arPhotoPrev'); if(pv){pv.src=data; pv.style.display='block';} }); }); }
-    kpAdminLoadRecipeList(); kpAdminLoadMuscleList();
+    kpAdminLoadRecipeList(); kpAdminLoadMuscleList(); if(window.kpAdminLoadDeletions) window.kpAdminLoadDeletions();
   };
 
   function parseIng(txt){
@@ -24856,6 +24874,130 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     }
   };
 
+  /* ═══ ADMIN : ÉDITION / SUPPRESSION / RESTAURATION (toutes recettes) ═══ */
+  function val2(id,v){ var e=document.getElementById(id); if(e) e.value=(v==null?'':v); }
+  function ingToText(ings){ return (ings||[]).map(function(i){ return [i.qty||'', i.name||'', i.emoji||'', i.type||'veg'].join(' | '); }).join('\n'); }
+
+  function kpEnsureEditor(){
+    if(document.getElementById('kpRecipeEditOverlay')) return;
+    var ov=document.createElement('div');
+    ov.id='kpRecipeEditOverlay';
+    ov.className='recipe-overlay';
+    ov.onclick=function(e){ if(e.target===ov) kpCloseEditor(); };
+    ov.innerHTML='<div class="recipe-modal" style="max-width:560px">'
+      +'<div class="recipe-modal-head"><div class="recipe-modal-title" style="font-style:italic">✏️ Modifier la recette</div><button onclick="kpCloseEditor()" style="border:none;background:var(--s2);border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;color:var(--text)">✕</button></div>'
+      +'<div style="padding:16px 18px">'
+      +'<label '+LB+'>Photo du plat</label>'
+      +'<input type="file" accept="image/*" id="erPhoto" '+IN+'>'
+      +'<img id="erPhotoPrev" style="display:none;width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-bottom:8px"/>'
+      +'<div style="display:flex;gap:8px"><input id="erNom" '+IN+' placeholder="Nom de la recette"><input id="erEmoji" '+IN.replace('width:100%','width:70px')+' placeholder="🥗" maxlength="4"></div>'
+      +'<div style="display:flex;gap:8px"><select id="erCat" '+IN+'>'+catOptions()+'</select><select id="erDiff" '+IN+'>'+diffOptions()+'</select></div>'
+      +'<div style="display:flex;gap:8px"><input id="erTime" '+IN+' placeholder="Temps (ex: 15 min)"><input id="erKcal" type="number" '+IN+' placeholder="kcal"></div>'
+      +'<div style="display:flex;gap:8px"><input id="erFat" type="number" '+IN+' placeholder="Lipides g"><input id="erProt" type="number" '+IN+' placeholder="Protéines g"><input id="erCarb" type="number" '+IN+' placeholder="Glucides g"></div>'
+      +'<label '+LB+'>Description</label><textarea id="erDesc" '+IN+' rows="2"></textarea>'
+      +'<label '+LB+'>Ingrédients — quantité | nom | emoji | type(prot/fat/veg)</label><textarea id="erIng" '+IN+' rows="4"></textarea>'
+      +'<label '+LB+'>Épices / assaisonnements (une par ligne)</label><textarea id="erSpices" '+IN+' rows="2"></textarea>'
+      +'<label '+LB+'>Étapes de préparation (une par ligne)</label><textarea id="erSteps" '+IN+' rows="4"></textarea>'
+      +'<label '+LB+'>Astuce du chef</label><input id="erTip" '+IN+'>'
+      +'<button '+BTN+' onclick="kpAdminSaveRecipeEdit()">✓ Enregistrer les modifications</button>'
+      +'<div id="erMsg" style="font-size:13px;margin-top:8px"></div>'
+      +'</div></div>';
+    document.body.appendChild(ov);
+    var pf=document.getElementById('erPhoto');
+    if(pf){ pf.addEventListener('change',function(){ var file=pf.files&&pf.files[0]; if(!file)return; kpCompressImage(file,700,function(data){ pf._data=data; var pv=document.getElementById('erPhotoPrev'); if(pv){pv.src=data; pv.style.display='block';} }); }); }
+  }
+  window.kpCloseEditor=function(){ var o=document.getElementById('kpRecipeEditOverlay'); if(o) o.classList.remove('open'); };
+
+  window.kpAdminEditRecipe=function(id){
+    var f=findAnywhere(id); if(!f){ toastMsg('Recette introuvable'); return; }
+    var r=f.rec;
+    kpEnsureEditor();
+    window._kpEditId=id;
+    window._kpEditIsCustom=!!(r.custom && r._docId);
+    window._kpEditDocId=r._docId||'';
+    val2('erNom', r.name); val2('erEmoji', r.emoji);
+    var ec=document.getElementById('erCat'); if(ec) ec.value=r.cat||'main';
+    var ed=document.getElementById('erDiff'); if(ed) ed.value=r.diff||'Facile';
+    val2('erTime', r.time); val2('erKcal', r.kcal);
+    val2('erFat', r.fat); val2('erProt', r.prot); val2('erCarb', r.carb);
+    val2('erDesc', r.desc); val2('erIng', ingToText(r.ingredients));
+    val2('erSpices',(r.spices||[]).join('\n')); val2('erSteps',(r.steps||[]).join('\n'));
+    val2('erTip', r.tip);
+    var msg=document.getElementById('erMsg'); if(msg) msg.textContent='';
+    var pv=document.getElementById('erPhotoPrev');
+    if(r.img && pv){ pv.src=r.img; pv.style.display='block'; } else if(pv){ pv.style.display='none'; }
+    var pf=document.getElementById('erPhoto'); if(pf){ pf._data=''; pf.value=''; }
+    document.getElementById('kpRecipeEditOverlay').classList.add('open');
+  };
+
+  window.kpAdminSaveRecipeEdit=function(){
+    var id=window._kpEditId; var f=findAnywhere(id); if(!f) return;
+    var r=f.rec, pf=document.getElementById('erPhoto');
+    var upd={
+      name:val('erNom')||r.name, emoji:val('erEmoji')||r.emoji||'🍽', cat:val('erCat')||r.cat||'main',
+      diff:val('erDiff')||r.diff||'Facile', time:val('erTime')||r.time||'15 min',
+      kcal:parseInt(val('erKcal'))||0, fat:parseInt(val('erFat'))||0, prot:parseInt(val('erProt'))||0, carb:parseInt(val('erCarb'))||0,
+      desc:val('erDesc'), ingredients:parseIng(val('erIng')), spices:lines(val('erSpices')), steps:lines(val('erSteps')), tip:val('erTip')
+    };
+    if(pf && pf._data) upd.img=pf._data; else if(r.img) upd.img=r.img;
+    upd.shopping=upd.ingredients.map(function(i){return i.name;});
+    var fs=kpFs(); if(!fs){ toastMsg('Firebase indisponible'); return; }
+    var msg=document.getElementById('erMsg'); if(msg){msg.style.color='var(--muted)';msg.textContent='Enregistrement…';}
+    var done=function(){
+      Object.keys(upd).forEach(function(k){ r[k]=upd[k]; });
+      if(typeof renderLibrary==='function'){ try{renderLibrary();}catch(e){} }
+      kpCloseEditor(); try{ if(typeof closeRecipe==='function') closeRecipe(); }catch(e){}
+      toastMsg('✏️ Recette modifiée');
+    };
+    if(window._kpEditIsCustom){
+      fs.collection('custom_recipes').doc(window._kpEditDocId).set(upd,{merge:true}).then(done).catch(function(e){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ '+(e&&e.message||'Erreur (règles Firestore ?)');} });
+    } else {
+      var ov=Object.assign({id:id}, upd);
+      fs.collection('recipe_overrides').doc(String(id)).set(ov).then(done).catch(function(e){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ '+(e&&e.message||'Erreur (règles Firestore ?)');} });
+    }
+  };
+
+  window.kpAdminDeleteRecipeById=function(id){
+    var f=findAnywhere(id); if(!f) return; var r=f.rec;
+    if(!confirm('Supprimer « '+(r.name||'cette recette')+' » ?\nElle disparaîtra de la bibliothèque et des menus. Vous pourrez la restaurer depuis l\'onglet Admin.')) return;
+    var fs=kpFs(); if(!fs){ toastMsg('Firebase indisponible'); return; }
+    var after=function(){
+      applyDeletion(id);
+      if(typeof renderLibrary==='function'){ try{renderLibrary();}catch(e){} }
+      try{ if(typeof closeRecipe==='function') closeRecipe(); }catch(e){}
+      if(typeof window.kpAdminLoadDeletions==='function') window.kpAdminLoadDeletions();
+      if(typeof window.kpAdminLoadRecipeList==='function') window.kpAdminLoadRecipeList();
+      toastMsg('🗑 Recette supprimée');
+    };
+    if(r.custom && r._docId){
+      fs.collection('custom_recipes').doc(r._docId).delete().then(after).catch(function(e){ toastMsg('⚠️ '+(e&&e.message||'Erreur')); });
+    } else {
+      fs.collection('recipe_deletions').doc(String(id)).set({id:id,name:r.name||'',deletedAt:Date.now()}).then(after).catch(function(e){ toastMsg('⚠️ '+(e&&e.message||'Erreur (règles Firestore ?)')); });
+    }
+  };
+
+  window.kpAdminLoadDeletions=function(){
+    var list=document.getElementById('delList'); if(!list) return;
+    var fs=kpFs(); if(!fs){ list.innerHTML='<div style="color:var(--muted);font-size:13px">Firebase indisponible</div>'; return; }
+    fs.collection('recipe_deletions').get().then(function(snap){
+      if(snap.empty){ list.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune recette supprimée</div>'; return; }
+      var h=''; snap.forEach(function(doc){ var d=doc.data()||{};
+        h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--s2);border-radius:10px;margin-bottom:6px">'
+          +'<span style="font-size:20px">🗑</span>'
+          +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+esc(d.name||('#'+doc.id))+'</div></div>'
+          +'<button onclick="kpAdminRestoreRecipe(\''+doc.id+'\')" style="border:none;background:rgba(26,122,68,.12);color:#1a7a44;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer">↺ Restaurer</button></div>';
+      });
+      list.innerHTML=h;
+    }).catch(function(e){ list.innerHTML='<div style="color:#c0392b;font-size:13px">'+esc(e&&e.message||'Erreur')+'</div>'; });
+  };
+  window.kpAdminRestoreRecipe=function(docId){
+    var fs=kpFs(); if(!fs) return;
+    fs.collection('recipe_deletions').doc(docId).delete().then(function(){
+      toastMsg('↺ Recette restaurée — rechargement…');
+      setTimeout(function(){ try{ location.reload(); }catch(e){} }, 700);
+    }).catch(function(e){ toastMsg('⚠️ '+(e&&e.message||'Erreur')); });
+  };
+
   /* ---- Init : charger les recettes personnalisées quand Firebase est prêt ---- */
   (function waitFb(n){
     if(window.firebase && firebase.apps && firebase.apps.length){ try{ window.kpLoadCustomRecipes(); }catch(e){} }
@@ -24866,4 +25008,4 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 
 </body>
 </html>
-ml>
+

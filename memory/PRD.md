@@ -90,3 +90,13 @@ Bugs signalés :
 - Marque "Keto Premium" → "Keto - Essenciel" partout (titre, auth, splash, onboarding, aide, manifeste PWA, notifications, parrainage, footers PDF, statut abonnement, toasts).
 - Badge version "Keto - Essenciel · v1.1" ajouté en haut de l'écran (header, sous le titre) via `.app-version-badge`.
 - Onglet Plan : le jour affiché par défaut est désormais le JOUR ACTUEL (`TODAY_IDX=(getDay()+6)%7`, `activeDay=TODAY_IDX`). Le hero affiche le badge "📍 Aujourd'hui". Vérifié via screenshot (Mardi + tag Aujourd'hui + badge v1.1). (≤5g→366, ≤10g→474, ≤15min→393, vegan→40, facile→437, recherche combinée OK, état vide OK); CTA essai visible + message invité OK. Écriture Firestore de l'essai (utilisateur connecté) non testable en fork (compte Firebase absent).
+
+## Admin : édition/suppression/restauration de TOUTES les recettes (fork, juin 2026)
+- Barre d'actions ADMIN (✏️ Modifier / 🗑 Supprimer) injectée en bas du modal recette (openRecipe) — visible uniquement si window.isAdmin(). Fonctionne pour les recettes perso ET les recettes « en dur ».
+- Édition: overlay #kpRecipeEditOverlay (mêmes champs que l'ajout, pré-remplis). kpAdminEditRecipe(id) → kpAdminSaveRecipeEdit(). Recette perso → update custom_recipes/{docId}; recette en dur → set recipe_overrides/{id}. Application immédiate en mémoire + renderLibrary.
+- Suppression: kpAdminDeleteRecipeById(id) avec CONFIRMATION. Perso → delete custom_recipes/{docId}; en dur → set recipe_deletions/{id} (pierre tombale). Splice en mémoire.
+- Restauration: carte « 🗑 Recettes supprimées » dans l'onglet Admin (kpAdminLoadDeletions/kpAdminRestoreRecipe) → delete tombstone + location.reload().
+- Chargement au démarrage (déjà présent): kpLoadCustomRecipes applique recipe_overrides puis recipe_deletions.
+- firestore.rules: 2 nouvelles collections recipe_overrides + recipe_deletions (lecture publique, écriture admin infos@essencielonaturel.fr). → UTILISATEUR DOIT RECOLLER firestore.rules dans la console Firebase.
+- Corrigé: résidu « ml> » supprimé en fin de keto.html. Fichier synchronisé vers backend/keto_app.html.
+- Vérifié (screenshot/DOM): openRecipe OK, barre admin présente, éditeur ouvert pré-rempli (Saumon citron-aneth), 0 erreur JS. NON testable en sandbox: écritures Firestore réelles (nécessitent login admin + connexion Firestore) → à valider par l'utilisateur en prod.

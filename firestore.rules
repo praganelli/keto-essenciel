@@ -97,5 +97,21 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null
                             && request.auth.token.email == 'infos@essencielonaturel.fr';
     }
+    // ═══ Surcharges de recettes « en dur » (modifications par l'admin) ═══
+    match /recipe_overrides/{docId} {
+      // Lecture PUBLIQUE : appliquées au démarrage pour tous les utilisateurs
+      allow read: if true;
+      // Écriture : admin uniquement
+      allow create, update, delete: if request.auth != null
+                            && request.auth.token.email == 'infos@essencielonaturel.fr';
+    }
+    // ═══ Suppressions de recettes « en dur » (pierres tombales admin) ═══
+    match /recipe_deletions/{docId} {
+      // Lecture PUBLIQUE : appliquées au démarrage pour masquer les recettes
+      allow read: if true;
+      // Écriture : admin uniquement (créer = supprimer, effacer = restaurer)
+      allow create, update, delete: if request.auth != null
+                            && request.auth.token.email == 'infos@essencielonaturel.fr';
+    }
   }
 }
