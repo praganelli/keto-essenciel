@@ -151,3 +151,8 @@ Bugs signalés :
 
 ## Section Gainage dans Muscu (fork, juin 2026)
 - Nouvel onglet 'gainage' dans le segmented control Muscu (4 onglets : Progr./Nutrition/Gainage/Tests). GAINAGE_EXOS (10 exercices : Planche, Planche bras tendus, Gainage latéral, latéral genoux, lever de jambe, Bird Dog, Dead Bug, Planche dynamique, Mountain Climber lent, Hollow Hold) + GAINAGE_PROGRAMS (Débutant 5min, Interm. 10min). Chaque carte exo : icône, badge niveau (vert/orange/rouge via lvlColor), muscles 🎯 (mx-chip), position numérotée, conseil 💡, erreurs à éviter ⚠️ (mx-warn), durée/reps ⏱ (mx-dur). Filtre par niveau (kpGainageFilter, window.kpGainageLvl) Tous/Débutant/Interm/Avancé. gainageExoCard/gainageProgCard. Vérifié : 4 segs, 12 cartes, filtre Avancé→Hollow Hold seul, 0 erreur.
+
+## Fin de la déconnexion auto en arrière-plan / persistance session (fork, juin 2026)
+- Cause du "déconnecté à chaque changement d'app" sur iOS Safari : IIFE autoLogoutOnInactive (ligne ~14593) faisait authInstance.signOut() sur visibilitychange(hidden) + pagehide. SUPPRIMÉE.
+- Ajout : authInstance.setPersistence(firebase.auth.Auth.Persistence.LOCAL) après init auth (garantit la survie de session au background/reload d'onglet). 
+- Comme la déconnexion n'est plus automatique, le bouton manuel #profileLogoutZone est RÉAFFICHÉ : renderProfileIdentity met display='' (au lieu de 'none'), et retrait de .profile-logout-zone de la règle @media(max-width:1023px){display:none!important} (ligne 625). Les entrées nav #nt-logout/.bnav-logout/#headerLogoutBtn restent masquées sur mobile (déconnexion via Profil). Vérifié : bg simulé = pas de logout, bouton "Se déconnecter" visible dans Profil, 0 erreur.

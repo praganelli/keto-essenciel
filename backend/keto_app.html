@@ -621,8 +621,8 @@ body.dark .bottom-nav-inner{ }
   /* ═══ Option A — Material 3 : barre du bas, pastille verte extensible ═══ */
   #nt-lpev{ display:flex !important; }              /* « Compléments » gardé dans la barre */
   .bnav-settings{ display:none !important; }         /* « Réglages » déplacé dans l'écran Profil */
-  /* « Quitter » / déconnexion retirés du mobile → déconnexion automatique en arrière-plan */
-  #nt-logout, .bnav-logout, #headerLogoutBtn, .profile-logout-zone{ display:none !important; }
+  /* « Quitter » retiré de la barre du bas ; la déconnexion se fait via l'écran Profil */
+  #nt-logout, .bnav-logout, #headerLogoutBtn{ display:none !important; }
   .bnav-fab{ display:none !important; }
 
   .bottom-nav-inner{ justify-content:space-around !important; align-items:center !important; gap:0 !important; padding:10px 8px max(10px, env(safe-area-inset-bottom)) !important; }
@@ -10061,10 +10061,10 @@ function renderProfile(){
   }
   // Avatar render
   renderAvatar();
-  // ─── Zone de déconnexion masquée : la déconnexion est désormais automatique
-  //     lorsque l'application passe en arrière-plan (voir autoLogoutOnInactive).
+  // ─── Zone de déconnexion : réaffichée (la déconnexion auto en arrière-plan a été
+  //     désactivée pour ne plus déconnecter à chaque changement d'application).
   var lz = $('profileLogoutZone');
-  if(lz){ lz.style.display = 'none'; }
+  if(lz){ lz.style.display = ''; }
   // ─── Modes grid (sélection directe)
   if(typeof renderProfileModesGrid === 'function') renderProfileModesGrid();
   renderResult();
@@ -13016,6 +13016,13 @@ function authInitFirebase(){
       authFirebase = firebase.initializeApp(cfg);
     }
     authInstance = firebase.auth(authFirebase);
+    // Persistance LOCALE : la session survit au changement d'app / rechargement d'onglet
+    // (important sur iOS Safari). On ne bloque pas l'init si ça échoue.
+    try{
+      if(authInstance.setPersistence && firebase.auth && firebase.auth.Auth && firebase.auth.Auth.Persistence){
+        authInstance.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(e){ console.warn('setPersistence:', e && e.message); });
+      }
+    }catch(e){ console.warn('setPersistence:', e && e.message); }
     return true;
   } catch(e){
     console.warn('Firebase auth init error:', e);
@@ -14585,31 +14592,12 @@ function authLogout(){
   }
 }
 
-/* ── Déconnexion automatique quand l'application n'est plus active ──
-   Sécurité : dès que l'app passe en arrière-plan (onglet caché / app fermée),
-   on déconnecte le compte Firebase. Au retour au premier plan, on recharge
-   pour réafficher l'écran de connexion. Les invités (mode local) ne sont pas
-   déconnectés (aucune session à fermer). */
-(function autoLogoutOnInactive(){
-  var didAutoLogout = false;
-  function doAutoLogout(){
-    try{
-      if(authInstance && currentUser){
-        didAutoLogout = true;
-        authInstance.signOut();
-      }
-    }catch(e){}
-  }
-  document.addEventListener('visibilitychange', function(){
-    if(document.hidden){
-      doAutoLogout();
-    } else if(didAutoLogout){
-      // Retour au premier plan après déconnexion auto → afficher l'écran de connexion
-      location.reload();
-    }
-  });
-  window.addEventListener('pagehide', doAutoLogout);
-})();
+/* ── Persistance de session ──
+   Auparavant, l'app se déconnectait automatiquement dès qu'elle passait en
+   arrière-plan (changement d'application / onglet caché), ce qui obligeait à se
+   reconnecter à chaque fois sur iOS Safari. Ce comportement a été DÉSACTIVÉ :
+   la session Firebase reste active en arrière-plan (persistance locale par défaut).
+   La déconnexion se fait uniquement via le bouton « Déconnexion » du profil. */
 
 /* ── Boot auth screen ── */
 (function authBoot(){
