@@ -8154,6 +8154,11 @@ body{
   <!-- ═══ ADMIN TAB (visible uniquement pour infos@essencielonaturel.fr) ═══ -->
   <div id="tab-admin" style="display:none" data-testid="tab-admin"></div>
 
+  <!-- ═══ RENFORCEMENT MUSCULAIRE TAB (Premium uniquement) ═══ -->
+  <div id="tab-muscle" style="display:none" data-testid="tab-muscle">
+    <div id="muscleContent" class="container" style="padding:20px 16px;max-width:900px;margin:0 auto"></div>
+  </div>
+
   <!-- ═══ COMPLÉMENTS ALIMENTAIRES TAB (desktop) ═══ -->
   <div id="tab-lpev" style="display:none" data-testid="tab-lpev">
     <div class="lpev-back-mobile" data-testid="lpev-back-mobile" onclick="switchTab('plan')">← Retour au plan</div>
@@ -8350,6 +8355,10 @@ body{
     <button class="bnav-tab bnav-lpev-tab" id="nt-lpev" onclick="switchTab('lpev')" data-testid="bnav-lpev">
       <span class="bnav-icon"><span class="bnav-emoji">💊</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.6 15.4a4.8 4.8 0 0 0 6.8 6.8l4.6-4.6-6.8-6.8-4.6 4.6zm14.8-6.8a4.8 4.8 0 0 0-6.8-6.8L8 6.4l6.8 6.8 4.6-4.6z"/></svg></span>
       <span class="bnav-label">Compléments</span>
+    </button>
+    <button class="bnav-tab bnav-muscle-tab" id="nt-muscle" onclick="switchTab('muscle')" data-testid="bnav-muscle">
+      <span class="bnav-icon"><span class="bnav-emoji">💪</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.57 14.86 22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14L19.86 21.29l1.43-1.43-1.43-1.43L22 16.29z"/></svg></span>
+      <span class="bnav-label">Muscu</span>
     </button>
     <button class="bnav-tab bnav-admin" id="nt-admin" onclick="switchTab('admin')" data-testid="bnav-admin" style="display:none">
       <span class="bnav-icon"><span class="bnav-emoji">🛡️</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></span>
@@ -9823,6 +9832,7 @@ function switchTab(tab){
       var html = (typeof window.kpAdminPanelHTML === 'function') ? window.kpAdminPanelHTML() : '';
       adminTab.innerHTML = '<div class="container" style="padding:24px 16px;max-width:980px;margin:0 auto">' + html + '</div>';
       if(typeof window.kpBindAdminPanel === 'function') window.kpBindAdminPanel();
+      if(typeof window.kpAdminExtras === 'function'){ try{ window.kpAdminExtras(adminTab); }catch(e){} }
       adminTab.classList.remove('tab-slide'); void adminTab.offsetWidth; adminTab.classList.add('tab-slide');
       adminTab.scrollIntoView({behavior:'instant', block:'start'});
       window.scrollTo({top:0, behavior:'instant'});
@@ -9830,7 +9840,7 @@ function switchTab(tab){
     return;
   }
   currentTab=tab;
-  ['plan','library','suivi','profile','lpev','help','admin'].forEach(function(t){
+  ['plan','library','suivi','profile','lpev','muscle','help','admin'].forEach(function(t){
     var el=$('tab-'+t);
     if(!el) return;
     if(t===tab){
@@ -9849,6 +9859,7 @@ function switchTab(tab){
   if(tab==='profile') renderProfile();
   if(tab==='suivi'){ renderConseil(); renderSuivi(); }
   if(tab==='lpev' && typeof window.kpRenderLpevSupplements==='function') window.kpRenderLpevSupplements('lpevSectionTab');
+  if(tab==='muscle' && typeof window.renderMuscle==='function') window.renderMuscle();
   if(tab==='help' && typeof renderHelp==='function') renderHelp();
   requestAnimationFrame(function(){ try{ kpAnimateCards(tab); }catch(e){} });
   if(tab==='plan'){ try{ if(typeof kpSyncPlanRail==='function') kpSyncPlanRail(); }catch(e){} }
@@ -10968,7 +10979,7 @@ function _dmcMealCard(r, badge, slotCls, di, slot){
   }).join('');
   return '<div class="dmc '+slotCls+'">'
     + '<div class="dmc-top">'
-    +   '<div class="dmc-emoji">'+(r.emoji||'🍽')+'</div>'
+    +   '<div class="dmc-emoji">'+(r.img?'<img src="'+r.img+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:16px">':(r.emoji||'🍽'))+'</div>'
     +   '<div class="dmc-head">'
     +     '<div class="dmc-badge">'+badge+'</div>'
     +     '<div class="dmc-title">'+(r.name||'')+'</div>'
@@ -24561,6 +24572,282 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       if(ref){ ref.value = code; }
     }, 400);
   };
+})();
+</script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   MODULE : Recettes personnalisées (Admin) + Onglet Renforcement musculaire
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  function kpFs(){ try{ return firebase.firestore(); }catch(e){ return null; } }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function toastMsg(m){ if(typeof toast==='function') toast(m); }
+
+  /* ---- Compression photo (~700px, jpeg) ---- */
+  function kpCompressImage(file, maxW, cb){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var img=new Image();
+      img.onload=function(){
+        var scale=Math.min(1, maxW/(img.width||maxW));
+        var w=Math.round(img.width*scale), h=Math.round(img.height*scale);
+        var c=document.createElement('canvas'); c.width=w; c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        try{ cb(c.toDataURL('image/jpeg',0.72)); }catch(err){ cb(e.target.result); }
+      };
+      img.onerror=function(){ cb(e.target.result); };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ---- Recettes personnalisées : chargement + fusion dans les pools ---- */
+  var POOL_MAP={breakfast:'BFAST_RECIPES',main:'MAIN_RECIPES',starter:'STARTER_RECIPES',dessert:'DESSERT_RECIPES',sauces:'SAUCE_RECIPES',snacks:'SNACK_RECIPES',pains:'PAIN_RECIPES'};
+  function kpMergePool(r){
+    var arr=window[POOL_MAP[r.cat]||'MAIN_RECIPES']; if(!arr) return;
+    if(arr.some(function(x){return x.id===r.id;})) return;
+    arr.push(r);
+  }
+  function normalizeRecipe(d, docId){
+    d._docId=docId;
+    if(d.id==null){ d.id = 900000 + (Math.abs(hashStr(docId))%9000000); }
+    d.ingredients = d.ingredients||[]; d.spices=d.spices||[]; d.steps=d.steps||[];
+    d.shopping = d.shopping || d.ingredients.map(function(i){return i.name;});
+    d.custom=true;
+    return d;
+  }
+  function hashStr(s){ var h=0; s=String(s); for(var i=0;i<s.length;i++){ h=(h<<5)-h+s.charCodeAt(i); h|=0; } return h; }
+  window.kpLoadCustomRecipes=function(cb){
+    var fs=kpFs(); if(!fs){ if(cb)cb(); return; }
+    fs.collection('custom_recipes').get().then(function(snap){
+      snap.forEach(function(doc){ kpMergePool(normalizeRecipe(doc.data(), doc.id)); });
+      if(typeof renderLibrary==='function' && typeof currentTab!=='undefined' && currentTab==='library'){ try{renderLibrary();}catch(e){} }
+      if(cb)cb();
+    }).catch(function(e){ console.warn('[custom recipes]', e && e.message); if(cb)cb(); });
+  };
+
+  /* ---- Photo dans le modal recette ---- */
+  if(typeof window.openRecipe==='function'){
+    var _origOpenRecipe=window.openRecipe;
+    window.openRecipe=function(id){
+      _origOpenRecipe(id);
+      try{
+        var r=(typeof findRecipe==='function')?findRecipe(id):null;
+        var content=document.getElementById('recipeModalContent');
+        if(r && r.img && content){
+          var first=content.firstElementChild;
+          if(first){ first.innerHTML='<img src="'+r.img+'" alt="" style="width:100%;height:200px;object-fit:cover;display:block"/>'; first.style.padding='0'; first.style.fontSize='0'; }
+        }
+      }catch(e){}
+    };
+  }
+
+  /* ═══ ADMIN : formulaires Recettes + Renforcement ═══ */
+  var CATS=[['breakfast','Petit-déjeuner'],['main','Plat principal'],['starter','Entrée'],['dessert','Dessert'],['sauces','Sauce'],['snacks','Snack'],['pains','Pain cétogène']];
+  var DIFFS=['Facile','Moyen','Difficile'];
+
+  function catOptions(){ return CATS.map(function(c){return '<option value="'+c[0]+'">'+c[1]+'</option>';}).join(''); }
+  function diffOptions(){ return DIFFS.map(function(d){return '<option value="'+d+'">'+d+'</option>';}).join(''); }
+
+  var IN='style="width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:10px;background:var(--s2);color:var(--text);font-size:14px;margin-bottom:8px"';
+  var LB='style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px;display:block"';
+  var BTN='style="padding:12px 18px;border:none;border-radius:12px;background:linear-gradient(135deg,#1a5c38,#3a9966);color:#fff;font-weight:700;font-size:14px;cursor:pointer;width:100%"';
+  var CARD='style="background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:18px;margin-top:18px"';
+
+  function recipeAdminHTML(){
+    return '<div id="kpAdminRecipeCard" '+CARD+'>'
+      +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:20px;margin-bottom:4px">🍽 Ajouter une recette</div>'
+      +'<div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">Elle apparaîtra dans l\'onglet Recettes ET dans les menus générés.</div>'
+      +'<label '+LB+'>Photo du plat</label>'
+      +'<input type="file" accept="image/*" id="arPhoto" '+IN+'>'
+      +'<img id="arPhotoPrev" style="display:none;width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-bottom:8px"/>'
+      +'<div style="display:flex;gap:8px"><input id="arNom" '+IN+' placeholder="Nom de la recette"><input id="arEmoji" '+IN.replace('width:100%','width:70px')+' placeholder="🥗" maxlength="4"></div>'
+      +'<div style="display:flex;gap:8px"><select id="arCat" '+IN+'>'+catOptions()+'</select><select id="arDiff" '+IN+'>'+diffOptions()+'</select></div>'
+      +'<div style="display:flex;gap:8px"><input id="arTime" '+IN+' placeholder="Temps (ex: 15 min)"><input id="arKcal" type="number" '+IN+' placeholder="kcal"></div>'
+      +'<div style="display:flex;gap:8px"><input id="arFat" type="number" '+IN+' placeholder="Lipides g"><input id="arProt" type="number" '+IN+' placeholder="Protéines g"><input id="arCarb" type="number" '+IN+' placeholder="Glucides g"></div>'
+      +'<label '+LB+'>Description</label><textarea id="arDesc" '+IN+' rows="2" placeholder="Courte description appétissante"></textarea>'
+      +'<label '+LB+'>Ingrédients — une ligne par ingrédient : quantité | nom | emoji | type(prot/fat/veg)</label>'
+      +'<textarea id="arIng" '+IN+' rows="4" placeholder="180g | Filet de saumon | 🐟 | prot\n20g | Beurre | 🧈 | fat\n150g | Épinards | 🥬 | veg"></textarea>'
+      +'<label '+LB+'>Épices / assaisonnements (une par ligne)</label><textarea id="arSpices" '+IN+' rows="2" placeholder="Citron\nAneth\nSel"></textarea>'
+      +'<label '+LB+'>Étapes de préparation (une par ligne)</label><textarea id="arSteps" '+IN+' rows="4" placeholder="Séchez le saumon...\nPoêlez 4 min...\nServez."></textarea>'
+      +'<label '+LB+'>Astuce du chef</label><input id="arTip" '+IN+' placeholder="Le petit conseil en plus">'
+      +'<button '+BTN+' onclick="kpAdminSaveRecipe()">✓ Enregistrer la recette</button>'
+      +'<div id="arMsg" style="font-size:13px;margin-top:8px"></div>'
+      +'<div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px">Recettes ajoutées</div>'
+      +'<div id="arList"><div style="color:var(--muted);font-size:13px">Chargement…</div></div>'
+      +'</div>';
+  }
+  function muscleAdminHTML(){
+    return '<div id="kpAdminMuscleCard" '+CARD+'>'
+      +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:20px;margin-bottom:4px">💪 Renforcement musculaire</div>'
+      +'<div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">Ajoutez des programmes d\'entraînement ou des conseils nutrition (visibles par les abonnés Premium).</div>'
+      +'<div style="display:flex;gap:8px"><select id="mkKind" '+IN+'><option value="programme">🏋️ Programme d\'entraînement</option><option value="conseil">🥩 Conseil nutrition</option></select><input id="mkLevel" '+IN+' placeholder="Niveau (ex: Débutant)"></div>'
+      +'<input id="mkTitle" '+IN+' placeholder="Titre">'
+      +'<label '+LB+'>Contenu (une ligne par point — ex: « Squats — 4 x 12 » ou un conseil)</label>'
+      +'<textarea id="mkBody" '+IN+' rows="5" placeholder="Squats — 4 x 12\nFentes — 3 x 15\nGainage — 3 x 45s"></textarea>'
+      +'<button '+BTN+' onclick="kpAdminSaveMuscle()">✓ Enregistrer</button>'
+      +'<div id="mkMsg" style="font-size:13px;margin-top:8px"></div>'
+      +'<div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px">Contenus ajoutés</div>'
+      +'<div id="mkList"><div style="color:var(--muted);font-size:13px">Chargement…</div></div>'
+      +'</div>';
+  }
+
+  window.kpAdminExtras=function(container){
+    if(!container) return;
+    var wrap=container.querySelector('.container')||container;
+    if(wrap.querySelector('#kpAdminRecipeCard')) return;
+    var div=document.createElement('div');
+    div.innerHTML=recipeAdminHTML()+muscleAdminHTML();
+    wrap.appendChild(div);
+    var pf=document.getElementById('arPhoto');
+    if(pf){ pf.addEventListener('change',function(){ var f=pf.files&&pf.files[0]; if(!f)return; kpCompressImage(f,700,function(data){ pf._data=data; var pv=document.getElementById('arPhotoPrev'); if(pv){pv.src=data; pv.style.display='block';} }); }); }
+    kpAdminLoadRecipeList(); kpAdminLoadMuscleList();
+  };
+
+  function parseIng(txt){
+    return (txt||'').split('\n').map(function(l){return l.trim();}).filter(Boolean).map(function(l){
+      var p=l.split('|').map(function(x){return x.trim();});
+      return {qty:p[0]||'',name:p[1]||p[0]||'',emoji:p[2]||'🥄',type:(p[3]||'veg')};
+    });
+  }
+  function lines(txt){ return (txt||'').split('\n').map(function(l){return l.trim();}).filter(Boolean); }
+  function val(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
+
+  window.kpAdminSaveRecipe=function(){
+    var msg=document.getElementById('arMsg');
+    var nom=val('arNom'); if(!nom){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ Le nom est obligatoire';} return; }
+    var pf=document.getElementById('arPhoto');
+    var rec={
+      id: 900000 + Math.floor(Math.random()*8999999),
+      name:nom, cat:val('arCat')||'main', emoji:val('arEmoji')||'🍽',
+      time:val('arTime')||'15 min', diff:val('arDiff')||'Facile',
+      kcal:parseInt(val('arKcal'))||0, fat:parseInt(val('arFat'))||0, prot:parseInt(val('arProt'))||0, carb:parseInt(val('arCarb'))||0,
+      desc:val('arDesc'), ingredients:parseIng(val('arIng')), spices:lines(val('arSpices')), steps:lines(val('arSteps')),
+      tip:val('arTip'), img:(pf&&pf._data)||'', createdAt:Date.now()
+    };
+    rec.shopping=rec.ingredients.map(function(i){return i.name;});
+    var fs=kpFs();
+    if(!fs){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ Firebase indisponible';} return; }
+    if(msg){msg.style.color='var(--muted)';msg.textContent='Enregistrement…';}
+    fs.collection('custom_recipes').add(rec).then(function(ref){
+      rec._docId=ref.id; kpMergePool(rec);
+      if(msg){msg.style.color='#1a7a44';msg.textContent='✓ Recette ajoutée !';}
+      ['arNom','arEmoji','arTime','arKcal','arFat','arProt','arCarb','arDesc','arIng','arSpices','arSteps','arTip'].forEach(function(id){var e=document.getElementById(id); if(e)e.value='';});
+      var pv=document.getElementById('arPhotoPrev'); if(pv){pv.style.display='none';} if(pf){pf._data='';pf.value='';}
+      kpAdminLoadRecipeList();
+      if(typeof renderLibrary==='function'){ try{renderLibrary();}catch(e){} }
+      toastMsg('🍽 Recette « '+rec.name+' » ajoutée');
+    }).catch(function(e){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ '+(e&&e.message||'Erreur (règles Firestore ?)');} });
+  };
+  window.kpAdminLoadRecipeList=function(){
+    var list=document.getElementById('arList'); if(!list) return;
+    var fs=kpFs(); if(!fs){ list.innerHTML='<div style="color:var(--muted);font-size:13px">Firebase indisponible</div>'; return; }
+    fs.collection('custom_recipes').get().then(function(snap){
+      if(snap.empty){ list.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune recette ajoutée</div>'; return; }
+      var h=''; snap.forEach(function(doc){ var d=doc.data();
+        h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--s2);border-radius:10px;margin-bottom:6px">'
+          +(d.img?'<img src="'+d.img+'" style="width:38px;height:38px;border-radius:8px;object-fit:cover">':'<span style="font-size:24px">'+esc(d.emoji||'🍽')+'</span>')
+          +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+esc(d.name)+'</div><div style="font-size:11px;color:var(--muted)">'+esc(d.cat)+' · '+(d.kcal||0)+' kcal</div></div>'
+          +'<button onclick="kpAdminDeleteRecipe(\''+doc.id+'\')" style="border:none;background:rgba(192,57,43,.12);color:#c0392b;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer">✕</button></div>';
+      });
+      list.innerHTML=h;
+    }).catch(function(e){ list.innerHTML='<div style="color:#c0392b;font-size:13px">'+esc(e&&e.message||'Erreur')+'</div>'; });
+  };
+  window.kpAdminDeleteRecipe=function(docId){
+    var fs=kpFs(); if(!fs) return;
+    fs.collection('custom_recipes').doc(docId).delete().then(function(){
+      Object.keys(POOL_MAP).forEach(function(k){ var arr=window[POOL_MAP[k]]; if(arr){ for(var i=arr.length-1;i>=0;i--){ if(arr[i]._docId===docId) arr.splice(i,1); } } });
+      kpAdminLoadRecipeList(); if(typeof renderLibrary==='function'){try{renderLibrary();}catch(e){}}
+      toastMsg('Recette supprimée');
+    });
+  };
+
+  window.kpAdminSaveMuscle=function(){
+    var msg=document.getElementById('mkMsg');
+    var title=val('mkTitle'); if(!title){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ Titre obligatoire';} return; }
+    var obj={kind:val('mkKind')||'programme', title:title, level:val('mkLevel'), body:lines(val('mkBody')), createdAt:Date.now()};
+    var fs=kpFs(); if(!fs){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ Firebase indisponible';} return; }
+    if(msg){msg.style.color='var(--muted)';msg.textContent='Enregistrement…';}
+    fs.collection('muscle_content').add(obj).then(function(){
+      if(msg){msg.style.color='#1a7a44';msg.textContent='✓ Ajouté !';}
+      ['mkTitle','mkLevel','mkBody'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+      kpAdminLoadMuscleList(); toastMsg('💪 Contenu ajouté');
+    }).catch(function(e){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ '+(e&&e.message||'Erreur');} });
+  };
+  window.kpAdminLoadMuscleList=function(){
+    var list=document.getElementById('mkList'); if(!list) return;
+    var fs=kpFs(); if(!fs){ list.innerHTML='<div style="color:var(--muted);font-size:13px">Firebase indisponible</div>'; return; }
+    fs.collection('muscle_content').get().then(function(snap){
+      if(snap.empty){ list.innerHTML='<div style="color:var(--muted);font-size:13px">Aucun contenu ajouté</div>'; return; }
+      var h=''; snap.forEach(function(doc){ var d=doc.data();
+        h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--s2);border-radius:10px;margin-bottom:6px">'
+          +'<span style="font-size:20px">'+(d.kind==='conseil'?'🥩':'🏋️')+'</span>'
+          +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+esc(d.title)+'</div><div style="font-size:11px;color:var(--muted)">'+esc(d.level||'')+'</div></div>'
+          +'<button onclick="kpAdminDeleteMuscle(\''+doc.id+'\')" style="border:none;background:rgba(192,57,43,.12);color:#c0392b;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer">✕</button></div>';
+      });
+      list.innerHTML=h;
+    }).catch(function(e){ list.innerHTML='<div style="color:#c0392b;font-size:13px">'+esc(e&&e.message||'Erreur')+'</div>'; });
+  };
+  window.kpAdminDeleteMuscle=function(docId){
+    var fs=kpFs(); if(!fs) return;
+    fs.collection('muscle_content').doc(docId).delete().then(function(){ kpAdminLoadMuscleList(); toastMsg('Contenu supprimé'); });
+  };
+
+  /* ═══ ONGLET RENFORCEMENT MUSCULAIRE (Premium) ═══ */
+  var STARTER_PROGS=[
+    {title:'Full-body débutant (maison)', level:'Débutant · 3x/semaine', body:['Squats au poids du corps — 4 x 12','Pompes (genoux si besoin) — 4 x 10','Fentes alternées — 3 x 12 / jambe','Gainage planche — 3 x 30-45s','Superman (lombaires) — 3 x 15']},
+    {title:'Haut du corps — force', level:'Intermédiaire · 2x/semaine', body:['Pompes lestées — 5 x 8','Tractions (ou tirage élastique) — 4 x 6-8','Dips sur chaise — 4 x 10','Développé haltères épaules — 4 x 10','Curl biceps — 3 x 12']}
+  ];
+  var STARTER_TIPS=[
+    {title:'Protéines & prise de muscle en keto', level:'Nutrition', body:['Visez 1,6 à 2,2 g de protéines par kg de poids de corps / jour.','Répartissez sur 3-4 repas (~30-40 g par prise) pour maximiser la synthèse musculaire.','Œufs, viandes, poissons gras, fromages fermes : vos alliés keto riches en protéines.']},
+    {title:'Énergie & récupération', level:'Nutrition', body:['En keto, les lipides sont votre carburant : n\'ayez pas peur du bon gras (avocat, huile d\'olive, beurre).','Hydratation + électrolytes (sodium, magnésium, potassium) = moins de crampes et meilleure perf.','Dormez 7-8h : la récupération musculaire se joue surtout la nuit.']}
+  ];
+  function mProgCard(p, accent){
+    return '<div style="background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:16px 18px;margin-bottom:12px;border-left:4px solid '+accent+'">'
+      +'<div style="font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:'+accent+'">'+esc(p.level||'')+'</div>'
+      +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:18px;margin:3px 0 10px">'+esc(p.title)+'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:6px">'+ (p.body||[]).map(function(b){return '<div style="display:flex;gap:8px;font-size:13.5px;line-height:1.4"><span style="color:'+accent+'">•</span><span>'+esc(b)+'</span></div>';}).join('') +'</div></div>';
+  }
+  window.renderMuscle=function(){
+    var host=document.getElementById('muscleContent'); if(!host) return;
+    var prem=!!(window.isPremium && window.isPremium());
+    if(!prem){
+      host.innerHTML='<div style="text-align:center;padding:40px 20px">'
+        +'<div style="font-size:52px">💪</div>'
+        +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:24px;margin:10px 0 6px">Renforcement musculaire</div>'
+        +'<div style="color:var(--muted);font-size:14px;line-height:1.6;max-width:340px;margin:0 auto 20px">Programmes d\'entraînement et conseils nutrition keto pour développer votre masse musculaire. Réservé aux membres <b>Premium</b>.</div>'
+        +'<button onclick="openPremiumModal&&openPremiumModal(\'muscle\')" style="padding:14px 26px;border:none;border-radius:14px;background:linear-gradient(135deg,#b8912e,#e6c25a);color:#2a1e07;font-weight:800;font-size:15px;cursor:pointer">👑 Débloquer avec Premium</button>'
+        +'</div>';
+      return;
+    }
+    host.innerHTML='<div style="margin-bottom:6px"><div style="font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#c0392b">Premium</div>'
+      +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:26px">💪 Renforcement musculaire</div>'
+      +'<div style="color:var(--muted);font-size:13px;margin-bottom:16px">Entraînez-vous et nourrissez vos muscles, façon keto.</div></div>'
+      +'<div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--em);margin:6px 0 10px">🏋️ Programmes d\'entraînement</div>'
+      +'<div id="mProgs">'+STARTER_PROGS.map(function(p){return mProgCard(p,'#2d7a52');}).join('')+'</div>'
+      +'<div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#b8912e;margin:18px 0 10px">🥩 Nutrition keto & prise de muscle</div>'
+      +'<div id="mTips">'+STARTER_TIPS.map(function(p){return mProgCard(p,'#b8912e');}).join('')+'</div>';
+    // Contenu dynamique (Admin)
+    var fs=kpFs();
+    if(fs){
+      fs.collection('muscle_content').get().then(function(snap){
+        var progs='', tips='';
+        snap.forEach(function(doc){ var d=doc.data();
+          if(d.kind==='conseil') tips+=mProgCard(d,'#b8912e'); else progs+=mProgCard(d,'#2d7a52');
+        });
+        var pe=document.getElementById('mProgs'), te=document.getElementById('mTips');
+        if(pe && progs) pe.insertAdjacentHTML('afterbegin', progs);
+        if(te && tips) te.insertAdjacentHTML('afterbegin', tips);
+      }).catch(function(e){ console.warn('[muscle]', e && e.message); });
+    }
+  };
+
+  /* ---- Init : charger les recettes personnalisées quand Firebase est prêt ---- */
+  (function waitFb(n){
+    if(window.firebase && firebase.apps && firebase.apps.length){ try{ window.kpLoadCustomRecipes(); }catch(e){} }
+    else if(n<40){ setTimeout(function(){ waitFb(n+1); }, 500); }
+  })(0);
 })();
 </script>
 

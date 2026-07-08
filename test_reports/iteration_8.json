@@ -1,0 +1,30 @@
+{
+  "summary": "Frontend-only verification of the new '💪 Muscu' bottom-nav tab and admin extras in /app/keto.html (single-page app served at /api/app, not React Native). Verified: (1) app loads at /api/app with 0 pageerrors, (2) the newly-appended <script> module correctly exposes window.renderMuscle, window.kpLoadCustomRecipes, window.kpAdminExtras (all typeof 'function'), (3) bottom navigation renders 6 tabs including 'Muscu' at (x=338, w=32) inside a 390px bar with NO overflow (barScrollW == barClientW == 390), (4) as GUEST tapping the muscle tab renders the premium upsell (#muscleContent ~727 chars, contains '💪 Renforcement musculaire', 'Réservé aux membres Premium', and a '👑 Débloquer avec Premium' button), (5) as PREMIUM (window.kpState.premium=true; renderMuscle()) it renders section '🏋️ Programmes d'entraînement' with 2 program cards AND section '🥩 Nutrition keto & prise de muscle' with 2 tip cards, (6) regression: switchTab() works for all existing tabs (plan/library/suivi/profile/lpev/muscle) and all content is populated (plan=10978 chars, library=172431, suivi=11518, profile=20645, lpev=369, muscle=5554), (7) bottom-sheet trigger 'Ouvrir le menu du jour' present in DOM and 'Voir la recette' link present after opening. Only console noise observed = expected Firebase 'Missing or insufficient permissions' warnings in guest mode (per known_noise).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Bottom nav (390x844)", "issues": ["Icon-only buttons (library/suivi/profile/lpev/muscle) collapse to 32px width — visually cramped but functional; touch target is 32x54, below the 44x44 iOS HIG minimum for the horizontal axis. Consider slightly wider buttons or icon+label."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "No fixes required for the new Muscu feature — implementation matches spec.",
+    "Optional UX: Muscu/library/suivi/profile/lpev nav buttons are only 32px wide (h=54). Consider adopting 44x44 minimum touch target on mobile.",
+    "Admin recipe form and admin muscle-content form were NOT exercised (gated behind admin login infos@essencielonaturel.fr which is unavailable) — code review confirms they read/write Firestore collections 'custom_recipes' and 'muscle_content' and are only wired up when kpAdminExtras is invoked from the admin tab; no crash occurs for guests."
+  ],
+  "critical_code_review_comments": [
+    "keto.html is a monolithic ~24856-line file. Not a bug for this iteration, but long-term maintenance/split would help.",
+    "The new module (lines ~24600-24851) is well-isolated inside an IIFE with defensive typeof checks. renderMuscle correctly gates on window.isPremium() and provides a Firestore .catch() fallback so guest permission errors do not throw.",
+    "switchTab hook (line 9862) uses feature-detection ('typeof window.renderMuscle==='function') — safe against load-order issues."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "100% for Muscu tab acceptance criteria; regression suite green"},
+  "seed_data_creation": "None. Guest profile seeded via JS console fast-path (profile fields + save() + generateMenu()).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "App is /app/keto.html (mirrored to /app/backend/keto_app.html), served at GET /api/app. Not React Native/Expo. Use JS console fast-path to skip 7-step onboarding: profile.firstname='Sophie';profile.gender='femme';profile.activity=1.55;profile.goal='-500';profile.age=35;profile.weight=70;profile.height=170;profile.meals={breakfast:true,lunch:true,dinner:true};save();generateMenu();switchTab('plan'); Then hide overlays: ['kpWelcomeScreen','quizOverlay'].forEach(id=>{var e=document.getElementById(id);if(e)e.style.display='none';}); For premium testing: window.kpState={premium:true}; renderMuscle(). Correct tab IDs: plan, library, suivi, profile, lpev, muscle, admin, help (NOT 'recipes' or 'tracking'). Playwright's .click(force=True) may not reliably fire onclick handlers when the kpWelcomeScreen full-screen fixed overlay is present — prefer document.getElementById('nt-muscle').click() via page.evaluate() for reliable tap simulation.",
+  "rca_of_issue": "N/A — no bugs found. All 7 acceptance criteria in the review_request pass."
+}

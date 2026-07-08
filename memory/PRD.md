@@ -49,6 +49,15 @@ Bugs signalés :
 ## Renommage marque + version + menu du jour (fork, juin 2026)
 - Marque "Keto Premium" → "Keto - Essenciel" partout ; badge version "v1.1" en haut ; onglet Plan par défaut = jour actuel.
 
+## Admin recettes + Onglet Renforcement musculaire (fork, juin 2026)
+- Module isolé ajouté en fin de body (script dédié) pour ne pas déstabiliser le fichier monolithique.
+- ADMIN (infos@essencielonaturel.fr) : nouvelles cartes dans l'onglet Admin (via hook window.kpAdminExtras appelé après kpBindAdminPanel) :
+  - « 🍽 Ajouter une recette » : photo (upload compressé ~700px base64), nom, catégorie, emoji, temps, difficulté, kcal, macros, description, ingrédients (format « qty | nom | emoji | type » par ligne), épices, étapes, astuce. Sauvegarde Firestore `custom_recipes` + fusion dans le pool correspondant (BFAST/MAIN/STARTER/DESSERT/SAUCE/SNACK/PAIN) → visible dans Recettes ET menus générés. Liste + suppression.
+  - « 💪 Renforcement musculaire » : ajout programme/conseil (titre, niveau, contenu multi-lignes) → Firestore `muscle_content`. Liste + suppression.
+- Recettes perso chargées au démarrage (waitFb → kpLoadCustomRecipes) et fusionnées. Photo affichée dans le modal recette (openRecipe patché) + cartes du menu du jour (dmc).
+- ONGLET « 💪 Muscu » (bottom nav, visible par tous) : gate Premium — non-premium → upsell « Débloquer avec Premium » ; premium → programmes d'entraînement + conseils nutrition keto (contenu de départ fixe STARTER_PROGS/STARTER_TIPS + contenus Admin dynamiques). renderMuscle() branché dans switchTab.
+- DÉPENDANCE À VÉRIFIER : règles Firestore doivent autoriser lecture publique + écriture admin sur `custom_recipes` et `muscle_content` (sinon chargement/sauvegarde échouent silencieusement — erreurs catchées, pas de crash).
+
 ## Barre d'onglets mobile : pleine largeur + zéro latence (fork, juin 2026)
 - BUG: la barre d'onglets flottait (insets ~4px + gap ~6px au bas, coins arrondis) et le changement d'onglet paraissait lent (cascade de cartes ~1s).
 - Fix largeur/position: override mobile `.bottom-nav{padding:0;left/right/bottom:0}` + `.bottom-nav .bottom-nav-inner{width:100%;max-width:none;margin:0;border-radius:0;padding:9px 10px max(9px,safe-area)}`. Vérifié testing_agent: left 0/right 390/bottom 844/gap 0/radius 0.
