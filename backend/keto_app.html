@@ -25054,6 +25054,118 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
   }
   window.kpGainageFilter=function(l){ window.kpGainageLvl=l; window.kpMuscleView='gainage'; window.renderMuscle(); };
 
+  /* ═══ Questionnaire forme & santé (12 Q) → programme personnalisé ═══ */
+  var MUSCU_Q=[
+    {q:'Quel est votre âge ?', opts:['Moins de 30 ans','30 à 45 ans','45 à 60 ans','Plus de 60 ans']},
+    {q:'À quelle fréquence pratiquez-vous une activité physique ?', opts:['Jamais / rarement','1 à 2 fois par semaine','3 à 4 fois par semaine','5 fois ou plus']},
+    {q:'Comment évaluez-vous votre condition physique actuelle ?', opts:['Débutante','Moyenne','Bonne','Très bonne / sportive']},
+    {q:'Combien de temps pouvez-vous tenir une planche (gainage) ?', opts:['Jamais essayé','Quelques secondes','Environ 30 secondes','1 minute ou plus']},
+    {q:'Avez-vous des douleurs de DOS (lombaires, hernie discale) ?', opts:['Non','Occasionnelles','Chroniques / hernie']},
+    {q:'Avez-vous des problèmes aux GENOUX ?', opts:['Non','Sensibles','Blessure / arthrose']},
+    {q:'Avez-vous des problèmes aux ÉPAULES ou POIGNETS ?', opts:['Non','Sensibles','Blessure / limitation']},
+    {q:'Avez-vous des problèmes CARDIAQUES ou d\'HYPERTENSION ?', opts:['Non','Hypertension contrôlée','Oui / suivi médical']},
+    {q:'Êtes-vous enceinte ou en post-partum récent (< 3 mois) ?', opts:['Non concernée','Enceinte','Post-partum récent']},
+    {q:'Comment est votre ÉQUILIBRE ?', opts:['Bon','Parfois instable','Vertiges / troubles']},
+    {q:'Quel est votre objectif principal ?', opts:['Perdre du poids','Renforcer / tonifier','Soulager le dos / posture','Performance']},
+    {q:'Combien de temps par séance pouvez-vous consacrer ?', opts:['5 à 10 min','10 à 15 min','15 à 20 min','20 min ou plus']}
+  ];
+  function muKey(){ var u=(window.currentUser&&window.currentUser.uid)?('u-'+window.currentUser.uid):'guest'; return 'kp_muscu_'+u; }
+  function muLoad(){ try{ return JSON.parse(localStorage.getItem(muKey())||'null'); }catch(e){ return null; } }
+  function muSetLocal(o){ try{ localStorage.setItem(muKey(), JSON.stringify(o)); }catch(e){} }
+  function muStore(o){ muSetLocal(o);
+    try{ var fs=kpFs(); if(fs && window.currentUser){ fs.collection('users').doc(window.currentUser.uid).collection('ketoMuscu').doc('data').set({done:!!o.done, profile:o.profile||null, ans:o.ans||null, updatedAt:Date.now()},{merge:true}); } }catch(e){} }
+  var _muFbLoaded=false;
+  function muFbLoad(cb){
+    if(_muFbLoaded || muLoad()){ cb(false); return; }
+    var fs=kpFs(); if(!fs || !window.currentUser){ cb(false); return; }
+    _muFbLoaded=true;
+    fs.collection('users').doc(window.currentUser.uid).collection('ketoMuscu').doc('data').get().then(function(d){
+      var loaded=false;
+      if(d && d.exists){ var v=d.data()||{}; if(v.done||v.profile){ muSetLocal({done:!!v.done, profile:v.profile||null, ans:v.ans||null}); loaded=true; } }
+      cb(loaded);
+    }).catch(function(){ cb(false); });
+  }
+  function kpMuscuRecommend(a){
+    function v(i){ return typeof a[i]==='number'?a[i]:0; }
+    var fitness=v(1)+v(2)+v(3), age=v(0);
+    var lvlScore=fitness-(age>=2?1:0);
+    var level=lvlScore<=2?'Débutant':(lvlScore<=6?'Intermédiaire':'Avancé');
+    var backSevere=v(4)>=2, back=v(4)>=1, knee=v(5)>=1, shoulder=v(6)>=1, shoulderSevere=v(6)>=2;
+    var cardio=v(7)>=1, cardioSevere=v(7)>=2, preg=v(8)>=1, balance=v(9)>=1, balanceSevere=v(9)>=2;
+    if(backSevere||shoulderSevere||cardioSevere||balanceSevere){ if(level==='Avancé') level='Intermédiaire'; }
+    if(preg||backSevere) level='Débutant';
+    var cautions=[];
+    if(back) cautions.push('Dos sensible : garde le dos neutre, privilégie Bird Dog et Dead Bug, ne creuse jamais les lombaires.');
+    if(shoulder) cautions.push('Épaules/poignets sensibles : reste sur les avant-bras, évite les appuis bras tendus et la planche dynamique.');
+    if(knee) cautions.push('Genoux sensibles : pose un tapis, évite les mouvements rapides ; vélo et natation sont idéaux.');
+    if(cardio) cautions.push('Cœur / tension : respire en continu, ne bloque JAMAIS ton souffle, garde une intensité modérée.');
+    if(preg) cautions.push('Grossesse / post-partum : demande l\'avis de ton médecin ; évite le Hollow Hold et les exercices prolongés sur le dos.');
+    if(balance) cautions.push('Équilibre : place-toi près d\'un mur ; évite les appuis sur une seule jambe.');
+    var exclude={};
+    if(shoulder){ exclude['Planche bras tendus']=1; exclude['Planche dynamique']=1; exclude['Mountain Climber lent']=1; }
+    if(cardio||preg){ exclude['Hollow Hold']=1; }
+    if(preg){ exclude['Planche avec lever de jambe']=1; exclude['Mountain Climber lent']=1; exclude['Gainage ventral (Planche)']=1; }
+    if(backSevere||balance){ exclude['Planche avec lever de jambe']=1; }
+    var order=['Bird Dog (quadrupédie)','Dead Bug','Gainage ventral (Planche)','Gainage latéral jambes fléchies','Gainage latéral','Planche bras tendus','Planche avec lever de jambe','Planche dynamique','Mountain Climber lent','Hollow Hold'];
+    var exos=[]; order.forEach(function(nm){ var e=GAINAGE_EXOS.filter(function(x){return x.name===nm;})[0]; if(e && !exclude[nm]) exos.push(e); });
+    var maxN=v(11)<=0?4:(v(11)===1?6:(v(11)===2?8:10)); exos=exos.slice(0,maxN);
+    var sport=[]; var obj=v(10);
+    if(obj===0) sport.push('Perte de poids : 30 à 40 min de cardio doux 3-4x/semaine (marche rapide, vélo, natation).');
+    else if(obj===1) sport.push('Tonification : gainage 3x/semaine + renforcement au poids du corps (squats, pompes adaptées).');
+    else if(obj===2) sport.push('Dos / posture : natation, Pilates et marche quotidienne renforcent durablement la posture.');
+    else sport.push('Performance : circuits de gainage + fractionné cardio 3-4x/semaine.');
+    if(knee||age>=3) sport.push('Privilégie les activités à faible impact : natation, vélo, elliptique.');
+    if(cardio) sport.push('Reste à une intensité où tu peux encore parler ; progresse très graduellement.');
+    return {level:level, color:lvlColor(level), cautions:cautions, exos:exos, sport:sport};
+  }
+  function muscuRecoCard(p){
+    var exos=(p.exos||[]).map(function(e){ return '<div class="mx-ex"><div class="mx-ex-n" style="background:'+hexA(p.color,.16)+';color:'+p.color+'">✓</div><div class="mx-ex-name">'+esc(e.name)+'</div><div class="mx-ex-sets" style="color:'+p.color+';background:'+hexA(p.color,.12)+'">'+esc(e.dur)+'</div></div>'; }).join('');
+    var cautions=(p.cautions||[]).map(function(c){return '<div class="mx-warn"><span>⚠️</span><span>'+esc(c)+'</span></div>';}).join('');
+    var sport=(p.sport||[]).map(function(s){return '<div style="display:flex;gap:8px;font-size:12.5px;line-height:1.45;margin-bottom:6px;color:var(--text)"><span>🏃</span><span>'+esc(s)+'</span></div>';}).join('');
+    return '<div class="mx-card" style="border:1.5px solid '+hexA(p.color,.45)+'">'
+      +'<div class="mx-head"><div class="mx-ic" style="background:'+hexA(p.color,.14)+';color:'+p.color+'">🎯</div>'
+      +'<div style="flex:1"><div class="mx-lvl" style="color:'+p.color+'">Votre programme personnalisé</div><div class="mx-title">Niveau '+esc(p.level)+'</div></div></div>'
+      +(cautions?('<div style="margin:8px 0 4px">'+cautions+'</div>'):'')
+      +'<div class="mx-sec-lab" style="color:'+p.color+';margin:10px 0 8px">Exercices recommandés</div>'+exos
+      +(sport?('<div class="mx-sec-lab" style="color:#8a5f18;margin:14px 0 8px">Activité sportive conseillée</div>'+sport):'')
+      +'<button class="mx-filter-btn" style="margin-top:14px" onclick="kpOpenMuscuQuiz()">↻ Refaire le questionnaire</button>'
+      +'</div>';
+  }
+  window.kpOpenMuscuQuiz=function(){
+    window._muscuAns={};
+    var ov=document.getElementById('muscuQuizOverlay');
+    if(!ov){ ov=document.createElement('div'); ov.id='muscuQuizOverlay'; ov.className='recipe-overlay'; ov.onclick=function(e){ if(e.target===ov) kpCloseMuscuQuiz(); }; document.body.appendChild(ov); }
+    ov.innerHTML='<div class="recipe-modal" style="max-width:560px">'
+      +'<div class="recipe-modal-head"><div class="recipe-modal-title" style="font-style:italic">📝 Questionnaire forme & santé</div><button onclick="kpCloseMuscuQuiz()" style="border:none;background:var(--s2);border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;color:var(--text)">✕</button></div>'
+      +'<div style="padding:14px 18px">'
+      +'<div class="mx-intro" style="margin-bottom:16px">Réponds à ces 12 questions pour obtenir un programme de gainage et de sport adapté à ton niveau et à tes éventuelles pathologies.</div>'
+      +MUSCU_Q.map(function(q,qi){ return '<div style="margin-bottom:18px"><div style="font-weight:700;font-size:14px;margin-bottom:9px;color:var(--text)">'+(qi+1)+'. '+esc(q.q)+'</div><div style="display:flex;flex-wrap:wrap;gap:8px">'
+        +q.opts.map(function(o,oi){ return '<button type="button" class="mq-opt" data-q="'+qi+'" data-o="'+oi+'" onclick="kpMuscuAnswer('+qi+','+oi+')" style="border:1px solid var(--border2);background:var(--s1);color:var(--text);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer">'+esc(o)+'</button>'; }).join('')
+        +'</div></div>'; }).join('')
+      +'<div id="mqMsg" style="font-size:12.5px;color:#c0392b;margin:4px 0 10px;display:none"></div>'
+      +'<button class="mx-calc-btn" style="background:linear-gradient(135deg,#1f6a41,#2d7a52)" onclick="kpMuscuSubmit()">✓ Voir mon programme personnalisé</button>'
+      +'</div></div>';
+    ov.classList.add('open');
+  };
+  window.kpCloseMuscuQuiz=function(){ var o=document.getElementById('muscuQuizOverlay'); if(o) o.classList.remove('open'); };
+  window.kpMuscuAnswer=function(qi,oi){
+    window._muscuAns=window._muscuAns||{}; window._muscuAns[qi]=oi;
+    document.querySelectorAll('.mq-opt[data-q="'+qi+'"]').forEach(function(b){
+      var sel=parseInt(b.getAttribute('data-o'),10)===oi;
+      b.style.background=sel?'#2d7a52':'var(--s1)'; b.style.color=sel?'#fff':'var(--text)'; b.style.borderColor=sel?'#2d7a52':'var(--border2)';
+    });
+  };
+  window.kpMuscuSubmit=function(){
+    var ans=window._muscuAns||{};
+    if(Object.keys(ans).length<MUSCU_Q.length){ var m=document.getElementById('mqMsg'); if(m){m.style.display='block'; m.textContent='Merci de répondre à toutes les questions ('+Object.keys(ans).length+'/'+MUSCU_Q.length+').';} return; }
+    var arr=[]; for(var i=0;i<MUSCU_Q.length;i++) arr[i]=ans[i];
+    var rec=kpMuscuRecommend(arr);
+    muStore({done:true, profile:rec, ans:arr});
+    kpCloseMuscuQuiz();
+    window.kpMuscleView='gainage'; window.renderMuscle();
+    setTimeout(function(){ var b=document.getElementById('mxBody'); if(b) b.scrollIntoView({block:'start'}); }, 100);
+  };
+
   function hexA(hex,a){ hex=String(hex).replace('#',''); if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');} var n=parseInt(hex,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
   function kpEnsureMuscleStyles(){
     if(document.getElementById('mxStyles')) return;
@@ -25190,7 +25302,8 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var idx=kpCarouselIndex(c), n=c.children.length;
     var dots=document.querySelectorAll('#mxDots .mx-dot');
     dots.forEach(function(d,i){ d.classList.toggle('active', i===idx); });
-    var cnt=document.getElementById('mxCounter'); if(cnt) cnt.textContent='Test '+(idx+1)+' / '+n;
+    var lbl=(c.getAttribute('data-label'))||'Test';
+    var cnt=document.getElementById('mxCounter'); if(cnt) cnt.textContent=lbl+' '+(idx+1)+' / '+n;
     var prev=document.getElementById('mxNavPrev'), next=document.getElementById('mxNavNext');
     if(prev) prev.style.visibility = idx<=0 ? 'hidden' : 'visible';
     if(next) next.style.visibility = idx>=n-1 ? 'hidden' : 'visible';
@@ -25218,7 +25331,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
         +'<div class="mx-carousel-wrap">'
           +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
           +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
-          +'<div class="mx-carousel" id="mxCarousel">'
+          +'<div class="mx-carousel" id="mxCarousel" data-label="Test">'
             +PHYS_TESTS.map(function(t){ return '<div class="mx-slide">'+testCard(t)+'</div>'; }).join('')
           +'</div>'
           +'<div class="mx-dots" id="mxDots">'+PHYS_TESTS.map(function(_t,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Test '+(i+1)+'"></button>';}).join('')+'</div>'
@@ -25230,24 +25343,36 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       var glvl=window.kpGainageLvl||'all';
       var exos=GAINAGE_EXOS.filter(function(e){ return glvl==='all' || e.level===glvl; });
       function gfbtn(k,label){ return '<button class="mx-filter-btn'+(glvl===k?' active':'')+'" onclick="kpGainageFilter(\''+k+'\')">'+label+'</button>'; }
-      body.innerHTML='<div class="mx-sec-lab" style="color:#2d7a52">🧘 Gainage & renforcement du tronc</div>'
+      var st=muLoad(), reco='';
+      if(st && st.profile){ reco=muscuRecoCard(st.profile); }
+      else { reco='<div class="mx-card" style="text-align:center;border:1.5px dashed var(--border2)"><div style="font-size:38px">📝</div><div class="mx-title" style="margin:6px 0">Programme personnalisé</div><div class="mx-intro" style="margin-bottom:14px">Réponds au questionnaire forme &amp; santé pour obtenir un programme de gainage adapté à ta condition et à tes éventuelles douleurs.</div><button class="mx-calc-btn" style="width:auto;padding:12px 22px;background:linear-gradient(135deg,#1f6a41,#2d7a52)" onclick="kpOpenMuscuQuiz()">📝 Faire le questionnaire</button></div>'; }
+      var carousel;
+      if(exos.length){
+        carousel='<div class="mx-counter" id="mxCounter">Exercice 1 / '+exos.length+'</div>'
+          +'<div class="mx-carousel-wrap">'
+          +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
+          +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
+          +'<div class="mx-carousel" id="mxCarousel" data-label="Exercice">'
+          +exos.map(function(e){ return '<div class="mx-slide">'+gainageExoCard(e)+'</div>'; }).join('')
+          +'</div>'
+          +'<div class="mx-dots" id="mxDots">'+exos.map(function(_e,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Exercice '+(i+1)+'"></button>';}).join('')+'</div>'
+          +'</div>';
+      } else { carousel='<div class="mx-intro">Aucun exercice pour ce niveau.</div>'; }
+      body.innerHTML='<div class="mx-sec-lab" style="color:#2d7a52">🧘 Gainage &amp; renforcement du tronc</div>'
         +'<div class="mx-intro" style="margin-bottom:16px">Renforce ta sangle abdominale, tes lombaires et tes fessiers. Garde une respiration fluide et ne bloque jamais ton souffle.</div>'
-        +'<div class="mx-sec-lab" style="color:#8a5f18">🔥 Programmes guidés</div>'
+        +reco
+        +'<div class="mx-sec-lab" style="color:#8a5f18;margin-top:20px">🔥 Programmes guidés</div>'
         +GAINAGE_PROGRAMS.map(gainageProgCard).join('')
-        +'<div class="mx-sec-lab" style="color:#2d7a52;margin-top:20px">💪 Exercices</div>'
+        +'<div class="mx-sec-lab" style="color:#2d7a52;margin-top:20px">💪 Exercices — glissez pour parcourir ›</div>'
         +'<div class="mx-filter">'+gfbtn('all','Tous')+gfbtn('Débutant','🟢 Débutant')+gfbtn('Intermédiaire','🟠 Interm.')+gfbtn('Avancé','🔴 Avancé')+'</div>'
-        +(exos.length?exos.map(gainageExoCard).join(''):'<div class="mx-intro">Aucun exercice pour ce niveau.</div>');
+        +carousel;
+      if(exos.length) kpBindCarousel();
       return;
     }
     loadMuscleDyn(function(dyn){
       if((window.kpMuscleView||'progs')!==view) return;
-      if(view==='progs'){
-        var all=(dyn.progs||[]).concat(STARTER_PROGS);
-        body.innerHTML='<div class="mx-sec-lab" style="color:var(--em)">🏋️ Vos programmes d\'entraînement</div>'+all.map(function(p){return progCard(p,'#2d7a52','🏋️');}).join('');
-      } else {
-        var allt=(dyn.tips||[]).concat(STARTER_TIPS);
-        body.innerHTML='<div class="mx-sec-lab" style="color:#b8912e">🥩 Nutrition keto & prise de muscle</div>'+allt.map(function(t){return tipCard(t,'#b8912e','🥩');}).join('');
-      }
+      var all=(dyn.progs||[]).concat(STARTER_PROGS);
+      body.innerHTML='<div class="mx-sec-lab" style="color:var(--em)">🏋️ Vos programmes d\'entraînement</div>'+all.map(function(p){return progCard(p,'#2d7a52','🏋️');}).join('');
     });
   }
   window.kpMuscleSwitch=function(v){ window.kpMuscleView=v; window.renderMuscle(); };
@@ -25265,10 +25390,16 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       return;
     }
     var view=window.kpMuscleView||'progs';
-    host.innerHTML='<div class="mx-hero"><div class="mx-hero-tag">✦ Premium</div><div class="mx-hero-title">Renforcement musculaire</div><div class="mx-hero-sub">Entraînez-vous, testez vos capacités et nourrissez vos muscles, façon keto.</div></div>'
-      +'<div class="mx-seg">'+segBtn('progs','🏋️','Progr.',view)+segBtn('nutri','🥩','Nutrition',view)+segBtn('gainage','🧘','Gainage',view)+segBtn('tests','📊','Tests',view)+'</div>'
+    if(view==='nutri') view=window.kpMuscleView='progs';
+    host.innerHTML='<div class="mx-hero"><div class="mx-hero-tag">✦ Premium</div><div class="mx-hero-title">Renforcement musculaire</div><div class="mx-hero-sub">Entraînez-vous, testez vos capacités et suivez un programme de gainage adapté à vous.</div></div>'
+      +'<div class="mx-seg">'+segBtn('progs','🏋️','Progr.',view)+segBtn('gainage','🧘','Gainage',view)+segBtn('tests','📊','Tests',view)+'</div>'
       +'<div id="mxBody"></div>';
     renderMuscleBody(view);
+    muFbLoad(function(loaded){
+      if(loaded){ renderMuscleBody(window.kpMuscleView||'progs'); return; }
+      var st=muLoad();
+      if((!st||!st.done) && !window._muscuQuizPrompted){ window._muscuQuizPrompted=true; setTimeout(function(){ var s=muLoad(); if(!(s&&s.done)) kpOpenMuscuQuiz(); }, 450); }
+    });
   };
 
   /* ═══ ADMIN : ÉDITION / SUPPRESSION / RESTAURATION (toutes recettes) ═══ */

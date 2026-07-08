@@ -25069,6 +25069,22 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     {q:'Quel est votre objectif principal ?', opts:['Perdre du poids','Renforcer / tonifier','Soulager le dos / posture','Performance']},
     {q:'Combien de temps par séance pouvez-vous consacrer ?', opts:['5 à 10 min','10 à 15 min','15 à 20 min','20 min ou plus']}
   ];
+  function muKey(){ var u=(window.currentUser&&window.currentUser.uid)?('u-'+window.currentUser.uid):'guest'; return 'kp_muscu_'+u; }
+  function muLoad(){ try{ return JSON.parse(localStorage.getItem(muKey())||'null'); }catch(e){ return null; } }
+  function muSetLocal(o){ try{ localStorage.setItem(muKey(), JSON.stringify(o)); }catch(e){} }
+  function muStore(o){ muSetLocal(o);
+    try{ var fs=kpFs(); if(fs && window.currentUser){ fs.collection('users').doc(window.currentUser.uid).collection('ketoMuscu').doc('data').set({done:!!o.done, profile:o.profile||null, ans:o.ans||null, updatedAt:Date.now()},{merge:true}); } }catch(e){} }
+  var _muFbLoaded=false;
+  function muFbLoad(cb){
+    if(_muFbLoaded || muLoad()){ cb(false); return; }
+    var fs=kpFs(); if(!fs || !window.currentUser){ cb(false); return; }
+    _muFbLoaded=true;
+    fs.collection('users').doc(window.currentUser.uid).collection('ketoMuscu').doc('data').get().then(function(d){
+      var loaded=false;
+      if(d && d.exists){ var v=d.data()||{}; if(v.done||v.profile){ muSetLocal({done:!!v.done, profile:v.profile||null, ans:v.ans||null}); loaded=true; } }
+      cb(loaded);
+    }).catch(function(){ cb(false); });
+  }
   function kpMuscuRecommend(a){
     function v(i){ return typeof a[i]==='number'?a[i]:0; }
     var fitness=v(1)+v(2)+v(3), age=v(0);
@@ -25144,7 +25160,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     if(Object.keys(ans).length<MUSCU_Q.length){ var m=document.getElementById('mqMsg'); if(m){m.style.display='block'; m.textContent='Merci de répondre à toutes les questions ('+Object.keys(ans).length+'/'+MUSCU_Q.length+').';} return; }
     var arr=[]; for(var i=0;i<MUSCU_Q.length;i++) arr[i]=ans[i];
     var rec=kpMuscuRecommend(arr);
-    try{ localStorage.setItem('kp_muscu_quiz_done','1'); localStorage.setItem('kp_muscu_profile', JSON.stringify(rec)); }catch(e){}
+    muStore({done:true, profile:rec, ans:arr});
     kpCloseMuscuQuiz();
     window.kpMuscleView='gainage'; window.renderMuscle();
     setTimeout(function(){ var b=document.getElementById('mxBody'); if(b) b.scrollIntoView({block:'start'}); }, 100);
@@ -25286,7 +25302,8 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var idx=kpCarouselIndex(c), n=c.children.length;
     var dots=document.querySelectorAll('#mxDots .mx-dot');
     dots.forEach(function(d,i){ d.classList.toggle('active', i===idx); });
-    var cnt=document.getElementById('mxCounter'); if(cnt) cnt.textContent='Test '+(idx+1)+' / '+n;
+    var lbl=(c.getAttribute('data-label'))||'Test';
+    var cnt=document.getElementById('mxCounter'); if(cnt) cnt.textContent=lbl+' '+(idx+1)+' / '+n;
     var prev=document.getElementById('mxNavPrev'), next=document.getElementById('mxNavNext');
     if(prev) prev.style.visibility = idx<=0 ? 'hidden' : 'visible';
     if(next) next.style.visibility = idx>=n-1 ? 'hidden' : 'visible';
@@ -25314,7 +25331,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
         +'<div class="mx-carousel-wrap">'
           +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
           +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
-          +'<div class="mx-carousel" id="mxCarousel">'
+          +'<div class="mx-carousel" id="mxCarousel" data-label="Test">'
             +PHYS_TESTS.map(function(t){ return '<div class="mx-slide">'+testCard(t)+'</div>'; }).join('')
           +'</div>'
           +'<div class="mx-dots" id="mxDots">'+PHYS_TESTS.map(function(_t,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Test '+(i+1)+'"></button>';}).join('')+'</div>'
@@ -25326,24 +25343,36 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       var glvl=window.kpGainageLvl||'all';
       var exos=GAINAGE_EXOS.filter(function(e){ return glvl==='all' || e.level===glvl; });
       function gfbtn(k,label){ return '<button class="mx-filter-btn'+(glvl===k?' active':'')+'" onclick="kpGainageFilter(\''+k+'\')">'+label+'</button>'; }
-      body.innerHTML='<div class="mx-sec-lab" style="color:#2d7a52">🧘 Gainage & renforcement du tronc</div>'
+      var st=muLoad(), reco='';
+      if(st && st.profile){ reco=muscuRecoCard(st.profile); }
+      else { reco='<div class="mx-card" style="text-align:center;border:1.5px dashed var(--border2)"><div style="font-size:38px">📝</div><div class="mx-title" style="margin:6px 0">Programme personnalisé</div><div class="mx-intro" style="margin-bottom:14px">Réponds au questionnaire forme &amp; santé pour obtenir un programme de gainage adapté à ta condition et à tes éventuelles douleurs.</div><button class="mx-calc-btn" style="width:auto;padding:12px 22px;background:linear-gradient(135deg,#1f6a41,#2d7a52)" onclick="kpOpenMuscuQuiz()">📝 Faire le questionnaire</button></div>'; }
+      var carousel;
+      if(exos.length){
+        carousel='<div class="mx-counter" id="mxCounter">Exercice 1 / '+exos.length+'</div>'
+          +'<div class="mx-carousel-wrap">'
+          +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
+          +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
+          +'<div class="mx-carousel" id="mxCarousel" data-label="Exercice">'
+          +exos.map(function(e){ return '<div class="mx-slide">'+gainageExoCard(e)+'</div>'; }).join('')
+          +'</div>'
+          +'<div class="mx-dots" id="mxDots">'+exos.map(function(_e,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Exercice '+(i+1)+'"></button>';}).join('')+'</div>'
+          +'</div>';
+      } else { carousel='<div class="mx-intro">Aucun exercice pour ce niveau.</div>'; }
+      body.innerHTML='<div class="mx-sec-lab" style="color:#2d7a52">🧘 Gainage &amp; renforcement du tronc</div>'
         +'<div class="mx-intro" style="margin-bottom:16px">Renforce ta sangle abdominale, tes lombaires et tes fessiers. Garde une respiration fluide et ne bloque jamais ton souffle.</div>'
-        +'<div class="mx-sec-lab" style="color:#8a5f18">🔥 Programmes guidés</div>'
+        +reco
+        +'<div class="mx-sec-lab" style="color:#8a5f18;margin-top:20px">🔥 Programmes guidés</div>'
         +GAINAGE_PROGRAMS.map(gainageProgCard).join('')
-        +'<div class="mx-sec-lab" style="color:#2d7a52;margin-top:20px">💪 Exercices</div>'
+        +'<div class="mx-sec-lab" style="color:#2d7a52;margin-top:20px">💪 Exercices — glissez pour parcourir ›</div>'
         +'<div class="mx-filter">'+gfbtn('all','Tous')+gfbtn('Débutant','🟢 Débutant')+gfbtn('Intermédiaire','🟠 Interm.')+gfbtn('Avancé','🔴 Avancé')+'</div>'
-        +(exos.length?exos.map(gainageExoCard).join(''):'<div class="mx-intro">Aucun exercice pour ce niveau.</div>');
+        +carousel;
+      if(exos.length) kpBindCarousel();
       return;
     }
     loadMuscleDyn(function(dyn){
       if((window.kpMuscleView||'progs')!==view) return;
-      if(view==='progs'){
-        var all=(dyn.progs||[]).concat(STARTER_PROGS);
-        body.innerHTML='<div class="mx-sec-lab" style="color:var(--em)">🏋️ Vos programmes d\'entraînement</div>'+all.map(function(p){return progCard(p,'#2d7a52','🏋️');}).join('');
-      } else {
-        var allt=(dyn.tips||[]).concat(STARTER_TIPS);
-        body.innerHTML='<div class="mx-sec-lab" style="color:#b8912e">🥩 Nutrition keto & prise de muscle</div>'+allt.map(function(t){return tipCard(t,'#b8912e','🥩');}).join('');
-      }
+      var all=(dyn.progs||[]).concat(STARTER_PROGS);
+      body.innerHTML='<div class="mx-sec-lab" style="color:var(--em)">🏋️ Vos programmes d\'entraînement</div>'+all.map(function(p){return progCard(p,'#2d7a52','🏋️');}).join('');
     });
   }
   window.kpMuscleSwitch=function(v){ window.kpMuscleView=v; window.renderMuscle(); };
@@ -25361,10 +25390,16 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       return;
     }
     var view=window.kpMuscleView||'progs';
-    host.innerHTML='<div class="mx-hero"><div class="mx-hero-tag">✦ Premium</div><div class="mx-hero-title">Renforcement musculaire</div><div class="mx-hero-sub">Entraînez-vous, testez vos capacités et nourrissez vos muscles, façon keto.</div></div>'
-      +'<div class="mx-seg">'+segBtn('progs','🏋️','Progr.',view)+segBtn('nutri','🥩','Nutrition',view)+segBtn('gainage','🧘','Gainage',view)+segBtn('tests','📊','Tests',view)+'</div>'
+    if(view==='nutri') view=window.kpMuscleView='progs';
+    host.innerHTML='<div class="mx-hero"><div class="mx-hero-tag">✦ Premium</div><div class="mx-hero-title">Renforcement musculaire</div><div class="mx-hero-sub">Entraînez-vous, testez vos capacités et suivez un programme de gainage adapté à vous.</div></div>'
+      +'<div class="mx-seg">'+segBtn('progs','🏋️','Progr.',view)+segBtn('gainage','🧘','Gainage',view)+segBtn('tests','📊','Tests',view)+'</div>'
       +'<div id="mxBody"></div>';
     renderMuscleBody(view);
+    muFbLoad(function(loaded){
+      if(loaded){ renderMuscleBody(window.kpMuscleView||'progs'); return; }
+      var st=muLoad();
+      if((!st||!st.done) && !window._muscuQuizPrompted){ window._muscuQuizPrompted=true; setTimeout(function(){ var s=muLoad(); if(!(s&&s.done)) kpOpenMuscuQuiz(); }, 450); }
+    });
   };
 
   /* ═══ ADMIN : ÉDITION / SUPPRESSION / RESTAURATION (toutes recettes) ═══ */
