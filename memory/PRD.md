@@ -129,3 +129,6 @@ Bugs signalés :
 
 ## Badge unifié marque + version + statut (fork, juin 2026)
 - Fusion des 2 badges de l'en-tête mobile (.app-version-badge « Keto - Essenciel · v1.1 » + .plan-status-mobile « Version Gratuite ») en UN seul badge élégant .brand-badge (lignes ~7702) : 🥑 + « Keto Essenciel » + chip « v1.1 » + séparateur + segment statut (ids conservés planStatusMobile/planStatusMobileTxt pour compat JS ligne 14485). Segment statut vert en Gratuit, dégradé doré en Premium (.bb-status.is-premium). Vérifié mobile 390px, 0 erreur JS.
+
+## Fix débordement badge unifié (fork, juin 2026)
+- .brand-badge débordait sur écrans étroits (325px sur vw 320). Corrigé : flex-wrap:wrap + justify-content:center + max-width:calc(100% - 28px) + row-gap, white-space nowrap déplacé sur les segments internes (.bb-name/.bb-ver/.bb-status). Vérifié 320px (wrap, pas de débordement) et 390px (1 ligne).
