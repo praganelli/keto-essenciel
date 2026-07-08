@@ -25056,18 +25056,19 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 
   /* ═══ Questionnaire forme & santé (12 Q) → programme personnalisé ═══ */
   var MUSCU_Q=[
-    {q:'Quel est votre âge ?', opts:['Moins de 30 ans','30 à 45 ans','45 à 60 ans','Plus de 60 ans']},
-    {q:'À quelle fréquence pratiquez-vous une activité physique ?', opts:['Jamais / rarement','1 à 2 fois par semaine','3 à 4 fois par semaine','5 fois ou plus']},
-    {q:'Comment évaluez-vous votre condition physique actuelle ?', opts:['Débutante','Moyenne','Bonne','Très bonne / sportive']},
-    {q:'Combien de temps pouvez-vous tenir une planche (gainage) ?', opts:['Jamais essayé','Quelques secondes','Environ 30 secondes','1 minute ou plus']},
-    {q:'Avez-vous des douleurs de DOS (lombaires, hernie discale) ?', opts:['Non','Occasionnelles','Chroniques / hernie']},
-    {q:'Avez-vous des problèmes aux GENOUX ?', opts:['Non','Sensibles','Blessure / arthrose']},
-    {q:'Avez-vous des problèmes aux ÉPAULES ou POIGNETS ?', opts:['Non','Sensibles','Blessure / limitation']},
-    {q:'Avez-vous des problèmes CARDIAQUES ou d\'HYPERTENSION ?', opts:['Non','Hypertension contrôlée','Oui / suivi médical']},
-    {q:'Êtes-vous enceinte ou en post-partum récent (< 3 mois) ?', opts:['Non concernée','Enceinte','Post-partum récent']},
-    {q:'Comment est votre ÉQUILIBRE ?', opts:['Bon','Parfois instable','Vertiges / troubles']},
-    {q:'Quel est votre objectif principal ?', opts:['Perdre du poids','Renforcer / tonifier','Soulager le dos / posture','Performance']},
-    {q:'Combien de temps par séance pouvez-vous consacrer ?', opts:['5 à 10 min','10 à 15 min','15 à 20 min','20 min ou plus']}
+    {key:'age', q:'Quel est votre âge ?', opts:['Moins de 30 ans','30 à 45 ans','45 à 60 ans','Plus de 60 ans']},
+    {key:'freq', q:'À quelle fréquence pratiquez-vous une activité physique ?', opts:['Jamais / rarement','1 à 2 fois par semaine','3 à 4 fois par semaine','5 fois ou plus']},
+    {key:'cond', q:'Comment évaluez-vous votre condition physique actuelle ?', opts:['Débutante','Moyenne','Bonne','Très bonne / sportive']},
+    {key:'plank', q:'Combien de temps pouvez-vous tenir une planche (gainage) ?', opts:['Jamais essayé','Quelques secondes','Environ 30 secondes','1 minute ou plus']},
+    {key:'back', q:'Avez-vous des douleurs de DOS (lombaires, hernie discale) ?', opts:['Non','Occasionnelles','Chroniques / hernie']},
+    {key:'knee', q:'Avez-vous des problèmes aux GENOUX ?', opts:['Non','Sensibles','Blessure / arthrose']},
+    {key:'shoulder', q:'Avez-vous des problèmes aux ÉPAULES ou POIGNETS ?', opts:['Non','Sensibles','Blessure / limitation']},
+    {key:'cardio', q:'Avez-vous des problèmes CARDIAQUES ou d\'HYPERTENSION ?', opts:['Non','Hypertension contrôlée','Oui / suivi médical']},
+    {key:'diabetes', q:'Avez-vous un DIABÈTE de type 2 ?', opts:['Non','Pré-diabète / limite','Oui, traité']},
+    {key:'preg', q:'Êtes-vous enceinte ou en post-partum récent (< 3 mois) ?', opts:['Non concernée','Enceinte','Post-partum récent']},
+    {key:'balance', q:'Comment est votre ÉQUILIBRE ?', opts:['Bon','Parfois instable','Vertiges / troubles']},
+    {key:'goal', q:'Quel est votre objectif principal ?', opts:['Perdre du poids','Renforcer / tonifier','Soulager le dos / posture','Performance']},
+    {key:'time', q:'Combien de temps par séance pouvez-vous consacrer ?', opts:['5 à 10 min','10 à 15 min','15 à 20 min','20 min ou plus']}
   ];
   function muKey(){ var u=(window.currentUser&&window.currentUser.uid)?('u-'+window.currentUser.uid):'guest'; return 'kp_muscu_'+u; }
   function muLoad(){ try{ return JSON.parse(localStorage.getItem(muKey())||'null'); }catch(e){ return null; } }
@@ -25085,13 +25086,14 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       cb(loaded);
     }).catch(function(){ cb(false); });
   }
-  function kpMuscuRecommend(a){
-    function v(i){ return typeof a[i]==='number'?a[i]:0; }
-    var fitness=v(1)+v(2)+v(3), age=v(0);
+  function kpMuscuRecommend(ansArr){
+    var A={}; MUSCU_Q.forEach(function(q,i){ A[q.key]=(typeof ansArr[i]==='number'?ansArr[i]:0); });
+    var age=A.age, fitness=A.freq+A.cond+A.plank;
     var lvlScore=fitness-(age>=2?1:0);
     var level=lvlScore<=2?'Débutant':(lvlScore<=6?'Intermédiaire':'Avancé');
-    var backSevere=v(4)>=2, back=v(4)>=1, knee=v(5)>=1, shoulder=v(6)>=1, shoulderSevere=v(6)>=2;
-    var cardio=v(7)>=1, cardioSevere=v(7)>=2, preg=v(8)>=1, balance=v(9)>=1, balanceSevere=v(9)>=2;
+    var back=A.back>=1, backSevere=A.back>=2, knee=A.knee>=1, shoulder=A.shoulder>=1, shoulderSevere=A.shoulder>=2;
+    var cardio=A.cardio>=1, cardioSevere=A.cardio>=2, diab=A.diabetes>=1;
+    var preg=A.preg>=1, balance=A.balance>=1, balanceSevere=A.balance>=2;
     if(backSevere||shoulderSevere||cardioSevere||balanceSevere){ if(level==='Avancé') level='Intermédiaire'; }
     if(preg||backSevere) level='Débutant';
     var cautions=[];
@@ -25099,6 +25101,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     if(shoulder) cautions.push('Épaules/poignets sensibles : reste sur les avant-bras, évite les appuis bras tendus et la planche dynamique.');
     if(knee) cautions.push('Genoux sensibles : pose un tapis, évite les mouvements rapides ; vélo et natation sont idéaux.');
     if(cardio) cautions.push('Cœur / tension : respire en continu, ne bloque JAMAIS ton souffle, garde une intensité modérée.');
+    if(diab) cautions.push('Diabète type 2 : bouge régulièrement — une marche de 10 à 15 min après les repas fait baisser la glycémie. Garde un encas à portée, hydrate-toi et arrête au moindre signe d\'hypoglycémie (sueurs, tremblements, vertiges).');
     if(preg) cautions.push('Grossesse / post-partum : demande l\'avis de ton médecin ; évite le Hollow Hold et les exercices prolongés sur le dos.');
     if(balance) cautions.push('Équilibre : place-toi près d\'un mur ; évite les appuis sur une seule jambe.');
     var exclude={};
@@ -25108,62 +25111,103 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     if(backSevere||balance){ exclude['Planche avec lever de jambe']=1; }
     var order=['Bird Dog (quadrupédie)','Dead Bug','Gainage ventral (Planche)','Gainage latéral jambes fléchies','Gainage latéral','Planche bras tendus','Planche avec lever de jambe','Planche dynamique','Mountain Climber lent','Hollow Hold'];
     var exos=[]; order.forEach(function(nm){ var e=GAINAGE_EXOS.filter(function(x){return x.name===nm;})[0]; if(e && !exclude[nm]) exos.push(e); });
-    var maxN=v(11)<=0?4:(v(11)===1?6:(v(11)===2?8:10)); exos=exos.slice(0,maxN);
-    var sport=[]; var obj=v(10);
+    var maxN=A.time<=0?4:(A.time===1?6:(A.time===2?8:10)); exos=exos.slice(0,maxN);
+    var sport=[]; var obj=A.goal;
     if(obj===0) sport.push('Perte de poids : 30 à 40 min de cardio doux 3-4x/semaine (marche rapide, vélo, natation).');
     else if(obj===1) sport.push('Tonification : gainage 3x/semaine + renforcement au poids du corps (squats, pompes adaptées).');
     else if(obj===2) sport.push('Dos / posture : natation, Pilates et marche quotidienne renforcent durablement la posture.');
     else sport.push('Performance : circuits de gainage + fractionné cardio 3-4x/semaine.');
+    if(diab) sport.push('Diabète : vise 150 min d\'activité modérée par semaine + une courte marche après chaque repas pour stabiliser ta glycémie.');
     if(knee||age>=3) sport.push('Privilégie les activités à faible impact : natation, vélo, elliptique.');
     if(cardio) sport.push('Reste à une intensité où tu peux encore parler ; progresse très graduellement.');
     return {level:level, color:lvlColor(level), cautions:cautions, exos:exos, sport:sport};
   }
+  function muscuRecoExoCard(e,i,color){
+    var steps=(e.pos||[]).map(function(s,k){return '<div class="mx-step"><div class="mx-step-n" style="background:'+color+'">'+(k+1)+'</div><div>'+esc(s)+'</div></div>';}).join('');
+    return '<div class="mrx-exo">'
+      +'<div class="mrx-exo-head"><span class="mrx-exo-num" style="background:'+color+'">'+(i+1)+'</span><span class="mrx-exo-ic">'+(e.icon||'💪')+'</span><span class="mrx-exo-name">'+esc(e.name)+'</span></div>'
+      +(e.desc?'<div class="mx-intro" style="margin:0 0 8px;font-size:12.5px">'+esc(e.desc)+'</div>':'')
+      +'<div class="mrx-how">👉 Comment faire, étape par étape</div>'
+      +'<div class="mx-steps">'+steps+'</div>'
+      +(e.tip?'<div class="mrx-tip"><span>💡</span><span>'+esc(e.tip)+'</span></div>':'')
+      +(e.mistakes?'<div class="mx-warn" style="margin-top:8px"><span>⚠️</span><span>À éviter : '+esc(e.mistakes)+'</span></div>':'')
+      +'<div class="mrx-dur">⏱ '+esc(e.dur||'')+'</div>'
+      +'</div>';
+  }
   function muscuRecoCard(p){
-    var exos=(p.exos||[]).map(function(e){ return '<div class="mx-ex"><div class="mx-ex-n" style="background:'+hexA(p.color,.16)+';color:'+p.color+'">✓</div><div class="mx-ex-name">'+esc(e.name)+'</div><div class="mx-ex-sets" style="color:'+p.color+';background:'+hexA(p.color,.12)+'">'+esc(e.dur)+'</div></div>'; }).join('');
+    var color=p.color||'#2d7a52';
     var cautions=(p.cautions||[]).map(function(c){return '<div class="mx-warn"><span>⚠️</span><span>'+esc(c)+'</span></div>';}).join('');
-    var sport=(p.sport||[]).map(function(s){return '<div style="display:flex;gap:8px;font-size:12.5px;line-height:1.45;margin-bottom:6px;color:var(--text)"><span>🏃</span><span>'+esc(s)+'</span></div>';}).join('');
-    return '<div class="mx-card" style="border:1.5px solid '+hexA(p.color,.45)+'">'
-      +'<div class="mx-head"><div class="mx-ic" style="background:'+hexA(p.color,.14)+';color:'+p.color+'">🎯</div>'
-      +'<div style="flex:1"><div class="mx-lvl" style="color:'+p.color+'">Votre programme personnalisé</div><div class="mx-title">Niveau '+esc(p.level)+'</div></div></div>'
-      +(cautions?('<div style="margin:8px 0 4px">'+cautions+'</div>'):'')
-      +'<div class="mx-sec-lab" style="color:'+p.color+';margin:10px 0 8px">Exercices recommandés</div>'+exos
-      +(sport?('<div class="mx-sec-lab" style="color:#8a5f18;margin:14px 0 8px">Activité sportive conseillée</div>'+sport):'')
-      +'<button class="mx-filter-btn" style="margin-top:14px" onclick="kpOpenMuscuQuiz()">↻ Refaire le questionnaire</button>'
+    var sport=(p.sport||[]).map(function(s){return '<div class="mrx-sport"><span>🏃</span><span>'+esc(s)+'</span></div>';}).join('');
+    var exos=(p.exos||[]).map(function(e,i){ return muscuRecoExoCard(e,i,color); }).join('');
+    return '<div class="mrx-card">'
+      +'<div class="mrx-top" style="background:linear-gradient(135deg,'+color+',#1f4f34)"><div class="mrx-badge">🎯 Sur-mesure</div><div class="mrx-level">Niveau '+esc(p.level)+'</div><div class="mrx-sub">'+(p.exos||[]).length+' exercices de gainage sélectionnés pour vous</div></div>'
+      +(cautions?('<div class="mrx-block"><div class="mrx-block-lab">⚠️ Vos points de vigilance</div>'+cautions+'</div>'):'')
+      +'<div class="mrx-block"><div class="mrx-block-lab" style="color:'+color+'">🧘 Vos exercices — le mouvement détaillé</div>'+(exos||'<div class="mx-intro">—</div>')+'</div>'
+      +(sport?('<div class="mrx-block"><div class="mrx-block-lab" style="color:#8a5f18">🏃 Activité sportive conseillée</div>'+sport+'</div>'):'')
+      +'<button class="mrx-redo" onclick="kpOpenMuscuQuiz()">↻ Refaire le questionnaire</button>'
       +'</div>';
   }
   window.kpOpenMuscuQuiz=function(){
-    window._muscuAns={};
+    window._muscuAns=window._muscuAns||{};
+    var st=muLoad(); if(st && st.ans && Object.keys(window._muscuAns).length===0){ st.ans.forEach(function(o,i){ if(typeof o==='number') window._muscuAns[i]=o; }); }
+    window._muscuStep=0;
     var ov=document.getElementById('muscuQuizOverlay');
     if(!ov){ ov=document.createElement('div'); ov.id='muscuQuizOverlay'; ov.className='recipe-overlay'; ov.onclick=function(e){ if(e.target===ov) kpCloseMuscuQuiz(); }; document.body.appendChild(ov); }
-    ov.innerHTML='<div class="recipe-modal" style="max-width:560px">'
-      +'<div class="recipe-modal-head"><div class="recipe-modal-title" style="font-style:italic">📝 Questionnaire forme & santé</div><button onclick="kpCloseMuscuQuiz()" style="border:none;background:var(--s2);border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;color:var(--text)">✕</button></div>'
-      +'<div style="padding:14px 18px">'
-      +'<div class="mx-intro" style="margin-bottom:16px">Réponds à ces 12 questions pour obtenir un programme de gainage et de sport adapté à ton niveau et à tes éventuelles pathologies.</div>'
-      +MUSCU_Q.map(function(q,qi){ return '<div style="margin-bottom:18px"><div style="font-weight:700;font-size:14px;margin-bottom:9px;color:var(--text)">'+(qi+1)+'. '+esc(q.q)+'</div><div style="display:flex;flex-wrap:wrap;gap:8px">'
-        +q.opts.map(function(o,oi){ return '<button type="button" class="mq-opt" data-q="'+qi+'" data-o="'+oi+'" onclick="kpMuscuAnswer('+qi+','+oi+')" style="border:1px solid var(--border2);background:var(--s1);color:var(--text);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer">'+esc(o)+'</button>'; }).join('')
-        +'</div></div>'; }).join('')
-      +'<div id="mqMsg" style="font-size:12.5px;color:#c0392b;margin:4px 0 10px;display:none"></div>'
-      +'<button class="mx-calc-btn" style="background:linear-gradient(135deg,#1f6a41,#2d7a52)" onclick="kpMuscuSubmit()">✓ Voir mon programme personnalisé</button>'
-      +'</div></div>';
+    ov.innerHTML='<div class="mq-modal">'
+      +'<div class="mq-header">'
+        +'<button class="mq-close" onclick="kpCloseMuscuQuiz()" aria-label="Fermer">✕</button>'
+        +'<div class="mq-eyebrow">✦ Forme &amp; Santé</div>'
+        +'<div class="mq-title">Personnalisons votre programme</div>'
+        +'<div class="mq-progress"><div class="mq-progress-bar" id="mqBar"></div></div>'
+        +'<div class="mq-stepno" id="mqStepNo"></div>'
+      +'</div>'
+      +'<div class="mq-body" id="mqBody"></div>'
+      +'<div class="mq-footer">'
+        +'<button class="mq-btn mq-prev" id="mqPrev" onclick="kpMuscuPrev()">‹ Précédent</button>'
+        +'<button class="mq-btn mq-next" id="mqNext" onclick="kpMuscuNext()">Suivant ›</button>'
+      +'</div>'
+    +'</div>';
     ov.classList.add('open');
+    kpMuscuRenderStep();
   };
+  function kpMuscuRenderStep(){
+    var i=window._muscuStep||0, q=MUSCU_Q[i]; if(!q) return;
+    var body=document.getElementById('mqBody'); if(!body) return;
+    var cur=window._muscuAns[i];
+    body.innerHTML='<div class="mq-q">'+esc(q.q)+'</div>'
+      +'<div class="mq-opts">'+q.opts.map(function(o,oi){
+        var sel=cur===oi;
+        return '<button type="button" class="mq-opt'+(sel?' sel':'')+'" onclick="kpMuscuAnswer('+i+','+oi+')"><span class="mq-opt-radio">'+(sel?'✓':'')+'</span><span class="mq-opt-txt">'+esc(o)+'</span></button>';
+      }).join('')+'</div>'
+      +'<div id="mqMsg" class="mq-msg"></div>';
+    var bar=document.getElementById('mqBar'); if(bar) bar.style.width=Math.round(((i+1)/MUSCU_Q.length)*100)+'%';
+    var sn=document.getElementById('mqStepNo'); if(sn) sn.textContent='Question '+(i+1)+' sur '+MUSCU_Q.length;
+    var prev=document.getElementById('mqPrev'); if(prev) prev.style.visibility=(i===0)?'hidden':'visible';
+    var next=document.getElementById('mqNext'); if(next) next.textContent=(i===MUSCU_Q.length-1)?'✓ Voir mon programme':'Suivant ›';
+    body.classList.remove('mq-in'); void body.offsetWidth; body.classList.add('mq-in');
+  }
   window.kpCloseMuscuQuiz=function(){ var o=document.getElementById('muscuQuizOverlay'); if(o) o.classList.remove('open'); };
   window.kpMuscuAnswer=function(qi,oi){
     window._muscuAns=window._muscuAns||{}; window._muscuAns[qi]=oi;
-    document.querySelectorAll('.mq-opt[data-q="'+qi+'"]').forEach(function(b){
-      var sel=parseInt(b.getAttribute('data-o'),10)===oi;
-      b.style.background=sel?'#2d7a52':'var(--s1)'; b.style.color=sel?'#fff':'var(--text)'; b.style.borderColor=sel?'#2d7a52':'var(--border2)';
-    });
+    kpMuscuRenderStep();
+    if((window._muscuStep||0) < MUSCU_Q.length-1){ setTimeout(kpMuscuNext, 240); }
+  };
+  window.kpMuscuPrev=function(){ var i=window._muscuStep||0; if(i>0){ window._muscuStep=i-1; kpMuscuRenderStep(); } };
+  window.kpMuscuNext=function(){
+    var i=window._muscuStep||0;
+    if(window._muscuAns[i]==null){ var m=document.getElementById('mqMsg'); if(m){ m.textContent='Choisissez une réponse pour continuer.'; m.classList.add('show'); } return; }
+    if(i>=MUSCU_Q.length-1){ kpMuscuSubmit(); return; }
+    window._muscuStep=i+1; kpMuscuRenderStep();
   };
   window.kpMuscuSubmit=function(){
     var ans=window._muscuAns||{};
-    if(Object.keys(ans).length<MUSCU_Q.length){ var m=document.getElementById('mqMsg'); if(m){m.style.display='block'; m.textContent='Merci de répondre à toutes les questions ('+Object.keys(ans).length+'/'+MUSCU_Q.length+').';} return; }
-    var arr=[]; for(var i=0;i<MUSCU_Q.length;i++) arr[i]=ans[i];
+    for(var i=0;i<MUSCU_Q.length;i++){ if(ans[i]==null){ window._muscuStep=i; kpMuscuRenderStep(); var m=document.getElementById('mqMsg'); if(m){ m.textContent='Merci de répondre à cette question.'; m.classList.add('show'); } return; } }
+    var arr=[]; for(var j=0;j<MUSCU_Q.length;j++) arr[j]=ans[j];
     var rec=kpMuscuRecommend(arr);
     muStore({done:true, profile:rec, ans:arr});
     kpCloseMuscuQuiz();
     window.kpMuscleView='gainage'; window.renderMuscle();
-    setTimeout(function(){ var b=document.getElementById('mxBody'); if(b) b.scrollIntoView({block:'start'}); }, 100);
+    setTimeout(function(){ var b=document.getElementById('mxBody'); if(b) b.scrollIntoView({block:'start'}); }, 120);
   };
 
   function hexA(hex,a){ hex=String(hex).replace('#',''); if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');} var n=parseInt(hex,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
@@ -25220,7 +25264,54 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       +'.mx-filter-btn{border:1px solid var(--border2);background:var(--s1);color:var(--muted);font-weight:700;font-size:12px;padding:7px 13px;border-radius:100px;cursor:pointer}'
       +'.mx-filter-btn.active{background:#2d7a52;color:#fff;border-color:#2d7a52}'
       +'.mx-warn{margin-top:10px;display:flex;gap:8px;font-size:12.5px;line-height:1.45;color:#b06a0a;background:rgba(217,119,6,.09);border:1px solid rgba(217,119,6,.22);border-radius:10px;padding:9px 11px}'
-      +'.mx-dur{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#2d7a52;background:rgba(45,122,82,.1);padding:6px 11px;border-radius:10px;margin-top:10px}';
+      +'.mx-dur{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#2d7a52;background:rgba(45,122,82,.1);padding:6px 11px;border-radius:10px;margin-top:10px}'
+      /* ── Quiz wizard ── */
+      +'.mq-modal{background:var(--s1);border-radius:24px;width:calc(100% - 20px);max-width:520px;margin:auto;display:flex;flex-direction:column;max-height:92vh;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}'
+      +'.mq-header{position:relative;padding:22px 22px 18px;background:linear-gradient(135deg,#123a25,#1f6a41 60%,#2d7a52);color:#fff}'
+      +'.mq-close{position:absolute;top:14px;right:14px;border:none;background:rgba(255,255,255,.2);color:#fff;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer}'
+      +'.mq-eyebrow{font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.85}'
+      +'.mq-title{font-family:var(--font-display),serif;font-style:italic;font-size:22px;margin:4px 0 15px;line-height:1.15}'
+      +'.mq-progress{height:6px;border-radius:100px;background:rgba(255,255,255,.24);overflow:hidden}'
+      +'.mq-progress-bar{height:100%;width:8%;background:#fff;border-radius:100px;transition:width .4s cubic-bezier(.16,1,.3,1)}'
+      +'.mq-stepno{font-size:11.5px;font-weight:700;opacity:.92;margin-top:9px}'
+      +'.mq-body{padding:22px;overflow-y:auto;-webkit-overflow-scrolling:touch}'
+      +'.mq-body.mq-in{animation:mqIn .32s cubic-bezier(.16,1,.3,1)}'
+      +'@keyframes mqIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}'
+      +'.mq-q{font-weight:800;font-size:17.5px;line-height:1.35;color:var(--text);margin-bottom:18px}'
+      +'.mq-opts{display:flex;flex-direction:column;gap:10px}'
+      +'.mq-opt{display:flex;align-items:center;gap:12px;text-align:left;border:1.5px solid var(--border2);background:var(--s2);color:var(--text);border-radius:14px;padding:14px 15px;font-size:14.5px;font-weight:600;cursor:pointer;transition:border-color .18s,background .18s}'
+      +'.mq-opt:active{transform:scale(.99)}'
+      +'.mq-opt.sel{border-color:#2d7a52;background:rgba(45,122,82,.1)}'
+      +'.mq-opt-radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;flex-shrink:0;transition:all .18s}'
+      +'.mq-opt.sel .mq-opt-radio{background:#2d7a52;border-color:#2d7a52}'
+      +'.mq-opt-txt{flex:1;line-height:1.35}'
+      +'.mq-msg{font-size:12.5px;color:#c0392b;margin-top:14px;min-height:16px;opacity:0;transition:opacity .2s;font-weight:600}'
+      +'.mq-msg.show{opacity:1}'
+      +'.mq-footer{display:flex;gap:10px;padding:14px 22px 18px;border-top:1px solid var(--border2)}'
+      +'.mq-btn{border:none;border-radius:12px;padding:13px 18px;font-weight:800;font-size:14px;cursor:pointer}'
+      +'.mq-prev{background:var(--s2);color:var(--text)}'
+      +'.mq-next{flex:1;background:linear-gradient(135deg,#1f6a41,#2d7a52);color:#fff}'
+      /* ── Programme personnalisé ── */
+      +'.mrx-card{background:var(--s1);border:1px solid var(--border2);border-radius:22px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.07)}'
+      +'.mrx-top{padding:20px;color:#fff}'
+      +'.mrx-badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,255,255,.22);padding:5px 11px;border-radius:100px}'
+      +'.mrx-level{font-family:var(--font-display),serif;font-style:italic;font-size:25px;margin:9px 0 3px}'
+      +'.mrx-sub{font-size:12.5px;opacity:.92}'
+      +'.mrx-block{padding:16px 18px;border-top:1px solid var(--border2)}'
+      +'.mrx-block-lab{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#b06a0a;margin-bottom:12px}'
+      +'.mrx-exo{background:var(--s2);border:1px solid var(--border2);border-radius:16px;padding:14px 15px;margin-bottom:12px}'
+      +'.mrx-exo:last-child{margin-bottom:0}'
+      +'.mrx-exo-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}'
+      +'.mrx-exo-num{width:26px;height:26px;border-radius:50%;color:#fff;font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}'
+      +'.mrx-exo-ic{font-size:19px}'
+      +'.mrx-exo-name{flex:1;font-weight:800;font-size:15px;color:var(--text)}'
+      +'.mrx-how{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:8px 0 6px}'
+      +'.mrx-tip{display:flex;gap:8px;font-size:12.5px;line-height:1.45;color:var(--text);margin-top:9px;background:rgba(45,122,82,.09);border-radius:10px;padding:9px 11px}'
+      +'.mrx-dur{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#2d7a52;background:rgba(45,122,82,.1);padding:6px 11px;border-radius:9px;margin-top:10px}'
+      +'.mrx-sport{display:flex;gap:9px;font-size:13px;line-height:1.5;color:var(--text);margin-bottom:9px}'
+      +'.mrx-sport:last-child{margin-bottom:0}'
+      +'.mrx-redo{margin:6px 18px 18px;border:1px solid var(--border2);background:var(--s1);color:var(--muted);font-weight:700;font-size:13px;padding:11px 16px;border-radius:100px;cursor:pointer}'
+      +'.mrx-divider{height:1px;background:var(--border2);margin:26px 0}';
     document.head.appendChild(st);
   }
   function progCard(p,accent,icon){
@@ -25358,12 +25449,17 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
           +'<div class="mx-dots" id="mxDots">'+exos.map(function(_e,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Exercice '+(i+1)+'"></button>';}).join('')+'</div>'
           +'</div>';
       } else { carousel='<div class="mx-intro">Aucun exercice pour ce niveau.</div>'; }
-      body.innerHTML='<div class="mx-sec-lab" style="color:#2d7a52">🧘 Gainage &amp; renforcement du tronc</div>'
-        +'<div class="mx-intro" style="margin-bottom:16px">Renforce ta sangle abdominale, tes lombaires et tes fessiers. Garde une respiration fluide et ne bloque jamais ton souffle.</div>'
+      body.innerHTML=
+        '<div class="mx-sec-lab" style="color:#2d7a52">🎯 Mon programme personnalisé</div>'
+        +'<div class="mx-intro" style="margin-bottom:14px">Un programme de gainage construit à partir de votre condition physique et de vos éventuelles pathologies.</div>'
         +reco
-        +'<div class="mx-sec-lab" style="color:#8a5f18;margin-top:20px">🔥 Programmes guidés</div>'
+        +'<div class="mrx-divider"></div>'
+        +'<div class="mx-sec-lab" style="color:#8a5f18">🔥 Programmes guidés</div>'
+        +'<div class="mx-intro" style="margin-bottom:14px">Des séances clé en main, à suivre du début à la fin, quel que soit votre niveau.</div>'
         +GAINAGE_PROGRAMS.map(gainageProgCard).join('')
-        +'<div class="mx-sec-lab" style="color:#2d7a52;margin-top:20px">💪 Exercices — glissez pour parcourir ›</div>'
+        +'<div class="mrx-divider"></div>'
+        +'<div class="mx-sec-lab" style="color:#2d7a52">💪 Bibliothèque d\'exercices — glissez ›</div>'
+        +'<div class="mx-intro" style="margin-bottom:12px">Tous les exercices de gainage, avec le mouvement détaillé. Filtrez par niveau.</div>'
         +'<div class="mx-filter">'+gfbtn('all','Tous')+gfbtn('Débutant','🟢 Débutant')+gfbtn('Intermédiaire','🟠 Interm.')+gfbtn('Avancé','🔴 Avancé')+'</div>'
         +carousel;
       if(exos.length) kpBindCarousel();
