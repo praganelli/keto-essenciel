@@ -24803,6 +24803,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     fs.collection('muscle_content').add(obj).then(function(){
       if(msg){msg.style.color='#1a7a44';msg.textContent='✓ Ajouté !';}
       ['mkTitle','mkLevel','mkBody'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+      window._muscleDyn=null;
       kpAdminLoadMuscleList(); toastMsg('💪 Contenu ajouté');
     }).catch(function(e){ if(msg){msg.style.color='#c0392b';msg.textContent='⚠️ '+(e&&e.message||'Erreur');} });
   };
@@ -24822,10 +24823,10 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
   };
   window.kpAdminDeleteMuscle=function(docId){
     var fs=kpFs(); if(!fs) return;
-    fs.collection('muscle_content').doc(docId).delete().then(function(){ kpAdminLoadMuscleList(); toastMsg('Contenu supprimé'); });
+    fs.collection('muscle_content').doc(docId).delete().then(function(){ window._muscleDyn=null; kpAdminLoadMuscleList(); toastMsg('Contenu supprimé'); });
   };
 
-  /* ═══ ONGLET RENFORCEMENT MUSCULAIRE (Premium) ═══ */
+  /* ═══ ONGLET RENFORCEMENT MUSCULAIRE (Premium) — refonte + Tests physiques ═══ */
   var STARTER_PROGS=[
     {title:'Full-body débutant (maison)', level:'Débutant · 3x/semaine', body:['Squats au poids du corps — 4 x 12','Pompes (genoux si besoin) — 4 x 10','Fentes alternées — 3 x 12 / jambe','Gainage planche — 3 x 30-45s','Superman (lombaires) — 3 x 15']},
     {title:'Haut du corps — force', level:'Intermédiaire · 2x/semaine', body:['Pompes lestées — 5 x 8','Tractions (ou tirage élastique) — 4 x 6-8','Dips sur chaise — 4 x 10','Développé haltères épaules — 4 x 10','Curl biceps — 3 x 12']}
@@ -24834,44 +24835,179 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     {title:'Protéines & prise de muscle en keto', level:'Nutrition', body:['Visez 1,6 à 2,2 g de protéines par kg de poids de corps / jour.','Répartissez sur 3-4 repas (~30-40 g par prise) pour maximiser la synthèse musculaire.','Œufs, viandes, poissons gras, fromages fermes : vos alliés keto riches en protéines.']},
     {title:'Énergie & récupération', level:'Nutrition', body:['En keto, les lipides sont votre carburant : n\'ayez pas peur du bon gras (avocat, huile d\'olive, beurre).','Hydratation + électrolytes (sodium, magnésium, potassium) = moins de crampes et meilleure perf.','Dormez 7-8h : la récupération musculaire se joue surtout la nuit.']}
   ];
-  function mProgCard(p, accent){
-    return '<div style="background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:16px 18px;margin-bottom:12px;border-left:4px solid '+accent+'">'
-      +'<div style="font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:'+accent+'">'+esc(p.level||'')+'</div>'
-      +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:18px;margin:3px 0 10px">'+esc(p.title)+'</div>'
-      +'<div style="display:flex;flex-direction:column;gap:6px">'+ (p.body||[]).map(function(b){return '<div style="display:flex;gap:8px;font-size:13.5px;line-height:1.4"><span style="color:'+accent+'">•</span><span>'+esc(b)+'</span></div>';}).join('') +'</div></div>';
+  /* Tests physiques (source : présentation « Testez vos capacités physiques ») */
+  var PHYS_TESTS=[
+    {key:'cooper',icon:'🏃',color:'#2d7a52',title:'Test de Cooper',tag:'Endurance · VO₂max',
+      intro:'Après un bon échauffement, courez au maximum de vos capacités pendant 12 minutes sur un terrain plat, puis relevez la distance parcourue. Ne terminez pas par un sprint : ce test mesure votre consommation d\'oxygène (filière aérobie).',
+      steps:['Échauffez-vous 10 à 15 minutes','Courez 12 minutes à allure maximale soutenable','Relevez la distance totale parcourue (mètres)','Ne finissez surtout pas en sprint'],interactive:'cooper'},
+    {key:'ruffier',icon:'❤️',color:'#c0392b',title:'Test de Ruffier-Dickson',tag:'Récupération cardiaque',
+      intro:'Évalue la façon dont votre cœur réagit à l\'effort et récupère. Une bonne récupération = moins de fatigue au sport comme au quotidien. C\'est un excellent marqueur de votre condition physique générale.',
+      steps:['Allongé au calme ~2 min, prenez votre pouls au repos = F0','Réalisez 30 flexions complètes (squats) en 45 s (~1,5 s chacune), bras tendus, pieds à plat','Juste après l\'effort, prenez votre pouls = F1','1 minute après la fin de l\'effort, reprenez votre pouls = F2'],interactive:'ruffier'},
+    {key:'souplesse',icon:'🧘',color:'#3a9966',title:'Test de souplesse',tag:'Dos · ischio-jambiers · mollets',
+      intro:'Assis jambes tendues, penchez-vous lentement vers l\'avant, mains vers les orteils, sans à-coups, et mesurez l\'écart entre vos mains et vos orteils.',
+      steps:['Assis au sol, jambes tendues et jointes, pieds fléchis','Penchez le buste vers l\'avant, tout en douceur','Tenez 2 secondes à l\'amplitude maximale'],
+      bareme:[['Mains au-delà des orteils','Excellent'],['Mains sur les orteils','Bon'],['Mains sur les chevilles','Moyen'],['Mains sous les genoux','À travailler']]},
+    {key:'equilibre',icon:'🦩',color:'#2d7a52',title:'Équilibre statique unipodal',tag:'Proprioception · yeux fermés',
+      intro:'Debout sur une seule jambe, yeux fermés : ce test mesure la proprioception et le contrôle de la posture. Il révèle un éventuel trouble de l\'équilibre que vous ignorez peut-être.',
+      steps:['Debout, pieds nus, en appui sur une seule jambe','Fermez les yeux et déclenchez le chrono','Arrêtez dès que le pied bouge ou que l\'autre pied se pose'],
+      bareme:[['> 30 s','Excellent'],['15 – 30 s','Bon'],['5 – 15 s','Moyen'],['< 5 s','À travailler']]},
+    {key:'suspension',icon:'🧗',color:'#b8912e',title:'Test de suspension',tag:'Force de préhension (grip)',
+      intro:'Suspendez-vous à une barre, bras tendus, le plus longtemps possible. Visez au-dessus des meilleurs scores de votre tranche d\'âge.',
+      steps:['Saisissez la barre, mains largeur d\'épaules','Suspendez-vous bras tendus, pieds décollés du sol','Tenez le plus longtemps possible'],
+      bareme:[['> 60 s','Excellent'],['30 – 60 s','Bon'],['15 – 30 s','Moyen'],['< 15 s','À travailler']]},
+    {key:'traction',icon:'💪',color:'#2d7a52',title:'Maintien de la traction',tag:'Force dos & bras',
+      intro:'Menton au-dessus de la barre, tenez le plus longtemps possible. Femme en supination, homme en pronation. Décalez le barème d\'un niveau après 40 ans, puis à chaque décennie.',
+      steps:['Hissez-vous, menton au-dessus de la barre','Tenez la position sans redescendre','Chronométrez jusqu\'à la rupture'],
+      bareme:[['20 – 25 s','Très bon à 30 ans'],['15 – 20 s','Très bon après 40 ans'],['10 – 15 s','Très bon après 50 ans'],['8 – 10 s','Très bon après 60 ans']]},
+    {key:'pompes',icon:'🙇',color:'#3a9966',title:'Test des pompes',tag:'Force & endurance haut du corps',
+      intro:'Homme en appui sur les orteils, femme sur les genoux : corps parfaitement horizontal, descendez le menton près du sol à chaque répétition (ni ventre ni cuisses au sol). Faites le maximum de répétitions.',
+      steps:['Position de gainage bras tendus (orteils H / genoux F)','Descendez, menton près du sol, corps bien droit','Remontez bras tendus = 1 répétition','Enchaînez le maximum de répétitions'],
+      bareme:[['H : > 35  ·  F : > 25','Excellent'],['H : 25-35  ·  F : 15-25','Bon'],['H : 15-25  ·  F : 8-15','Moyen'],['H : < 15  ·  F : < 8','À travailler']]},
+    {key:'abdos',icon:'🔥',color:'#c0392b',title:'Redressements assis',tag:'Endurance abdominale · 1 min',
+      intro:'Sur le dos, genoux pliés à angle droit, mains contre les oreilles : faites le MAXIMUM de redressements en 1 minute, poitrine vers les genoux. Si vous manquez de souplesse, bloquez vos pieds.',
+      steps:['Dos au sol, genoux à 90°, pieds largeur d\'épaules','Mains de chaque côté de la tête, doigts sur les oreilles','Montez la poitrine vers les genoux, redescendez','Comptez le maximum en 60 secondes'],
+      bareme:[['> 45','Excellent'],['35 – 45','Bon'],['25 – 35','Moyen'],['< 25','À travailler']]}
+  ];
+
+  function hexA(hex,a){ hex=String(hex).replace('#',''); if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');} var n=parseInt(hex,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+  function kpEnsureMuscleStyles(){
+    if(document.getElementById('mxStyles')) return;
+    var st=document.createElement('style'); st.id='mxStyles';
+    st.textContent=''
+      +'.mx-hero{position:relative;overflow:hidden;border-radius:22px;padding:22px 20px;margin-bottom:16px;background:linear-gradient(135deg,#123a25,#1f6a41 55%,#2d7a52);color:#fff}'
+      +'.mx-hero:before{content:"";position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 70%)}'
+      +'.mx-hero-tag{font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.9}'
+      +'.mx-hero-title{font-family:var(--font-display),serif;font-style:italic;font-size:28px;line-height:1.08;margin:5px 0 6px}'
+      +'.mx-hero-sub{font-size:13px;opacity:.92;max-width:88%;line-height:1.5}'
+      +'.mx-seg{display:flex;gap:6px;background:var(--s2);border:1px solid var(--border2);border-radius:16px;padding:5px;margin-bottom:18px}'
+      +'.mx-seg-btn{flex:1;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:11.5px;padding:9px 4px;border-radius:12px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px}'
+      +'.mx-seg-btn .mx-seg-ic{font-size:17px}'
+      +'.mx-seg-btn.active{background:var(--s1);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.1)}'
+      +'.mx-sec-lab{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:2px 0 12px}'
+      +'.mx-card{background:var(--s1);border:1px solid var(--border2);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.04)}'
+      +'.mx-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}'
+      +'.mx-ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}'
+      +'.mx-lvl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}'
+      +'.mx-title{font-family:var(--font-display),serif;font-style:italic;font-size:19px;color:var(--text)}'
+      +'.mx-ex{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border2)}'
+      +'.mx-ex:first-of-type{border-top:none}'
+      +'.mx-ex-n{width:22px;height:22px;border-radius:50%;background:var(--s2);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0}'
+      +'.mx-ex-name{flex:1;font-size:14px;font-weight:600;color:var(--text)}'
+      +'.mx-ex-sets{font-size:12px;font-weight:700;color:#2d7a52;background:rgba(45,122,82,.12);padding:4px 9px;border-radius:8px;white-space:nowrap}'
+      +'.mx-intro{font-size:13.5px;color:var(--muted);line-height:1.55}'
+      +'.mx-steps{display:flex;flex-direction:column;gap:8px;margin:12px 0 4px}'
+      +'.mx-step{display:flex;gap:9px;font-size:13.5px;line-height:1.45;color:var(--text)}'
+      +'.mx-step-n{width:20px;height:20px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}'
+      +'.mx-bareme{margin-top:12px;border:1px solid var(--border2);border-radius:12px;overflow:hidden}'
+      +'.mx-brow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;font-size:13px;border-top:1px solid var(--border2);color:var(--text)}'
+      +'.mx-brow:first-child{border-top:none}'
+      +'.mx-calc{margin-top:12px;background:var(--s2);border-radius:14px;padding:14px}'
+      +'.mx-calc-in{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:10px;background:var(--s1);color:var(--text);font-size:14px;box-sizing:border-box}'
+      +'.mx-calc-btn{margin-top:10px;width:100%;padding:11px;border:none;border-radius:10px;color:#fff;font-weight:800;font-size:14px;cursor:pointer}'
+      +'.mx-calc-res{margin-top:12px;text-align:center;font-size:13px}'
+      +'.mx-calc-res .big{font-family:var(--font-display),serif;font-style:italic;font-size:32px;display:block;line-height:1.1;margin-bottom:2px}';
+    document.head.appendChild(st);
   }
-  window.renderMuscle=function(){
-    var host=document.getElementById('muscleContent'); if(!host) return;
-    var prem=!!(window.isPremium && window.isPremium());
-    if(!prem){
-      host.innerHTML='<div style="text-align:center;padding:40px 20px">'
-        +'<div style="font-size:52px">💪</div>'
-        +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:24px;margin:10px 0 6px">Renforcement musculaire</div>'
-        +'<div style="color:var(--muted);font-size:14px;line-height:1.6;max-width:340px;margin:0 auto 20px">Programmes d\'entraînement et conseils nutrition keto pour développer votre masse musculaire. Réservé aux membres <b>Premium</b>.</div>'
-        +'<button onclick="openPremiumModal&&openPremiumModal(\'muscle\')" style="padding:14px 26px;border:none;border-radius:14px;background:linear-gradient(135deg,#b8912e,#e6c25a);color:#2a1e07;font-weight:800;font-size:15px;cursor:pointer">👑 Débloquer avec Premium</button>'
-        +'</div>';
+  function progCard(p,accent,icon){
+    icon=icon||'🏋️';
+    var exs=(p.body||[]).map(function(b,i){
+      var parts=String(b).split('—'); var name=parts[0]?parts[0].trim():String(b); var sets=parts[1]?parts.slice(1).join('—').trim():'';
+      return '<div class="mx-ex"><div class="mx-ex-n">'+(i+1)+'</div><div class="mx-ex-name">'+esc(name)+'</div>'+(sets?'<div class="mx-ex-sets">'+esc(sets)+'</div>':'')+'</div>';
+    }).join('');
+    return '<div class="mx-card"><div class="mx-head"><div class="mx-ic" style="background:'+hexA(accent,.12)+';color:'+accent+'">'+icon+'</div>'
+      +'<div><div class="mx-lvl" style="color:'+accent+'">'+esc(p.level||'')+'</div><div class="mx-title">'+esc(p.title)+'</div></div></div>'+exs+'</div>';
+  }
+  function tipCard(t,accent,icon){
+    icon=icon||'🥩';
+    return '<div class="mx-card" style="border-left:4px solid '+accent+'"><div class="mx-head" style="margin-bottom:10px"><div class="mx-ic" style="background:'+hexA(accent,.12)+';color:'+accent+'">'+icon+'</div>'
+      +'<div><div class="mx-lvl" style="color:'+accent+'">'+esc(t.level||'Nutrition')+'</div><div class="mx-title">'+esc(t.title)+'</div></div></div>'
+      +'<div style="display:flex;flex-direction:column;gap:8px">'+(t.body||[]).map(function(b){return '<div style="display:flex;gap:8px;font-size:13.5px;line-height:1.5;color:var(--text)"><span style="color:'+accent+';font-weight:800">✓</span><span>'+esc(b)+'</span></div>';}).join('')+'</div></div>';
+  }
+  function cooperCalcHTML(){
+    return '<div class="mx-calc"><div class="mx-lvl" style="color:var(--muted);margin-bottom:6px">Calculez votre VO₂max</div>'
+      +'<input id="mxCooperD" type="number" inputmode="numeric" class="mx-calc-in" placeholder="Distance en 12 min (mètres)">'
+      +'<button class="mx-calc-btn" style="background:linear-gradient(135deg,#1f6a41,#2d7a52)" onclick="kpCooperCalc()">Calculer ma VO₂max</button>'
+      +'<div id="mxCooperRes" class="mx-calc-res"></div></div>';
+  }
+  function ruffierCalcHTML(){
+    return '<div class="mx-calc"><div class="mx-lvl" style="color:var(--muted);margin-bottom:6px">Calculez votre indice (pouls en battements/min)</div>'
+      +'<div style="display:flex;gap:8px;margin-bottom:2px"><input id="mxF0" type="number" inputmode="numeric" class="mx-calc-in" placeholder="F0 repos"><input id="mxF1" type="number" inputmode="numeric" class="mx-calc-in" placeholder="F1 effort"><input id="mxF2" type="number" inputmode="numeric" class="mx-calc-in" placeholder="F2 1 min"></div>'
+      +'<button class="mx-calc-btn" style="background:linear-gradient(135deg,#a52a1f,#c0392b)" onclick="kpRuffierCalc()">Calculer mon indice</button>'
+      +'<div id="mxRuffierRes" class="mx-calc-res"></div></div>';
+  }
+  window.kpCooperCalc=function(){
+    var el=document.getElementById('mxCooperD'), res=document.getElementById('mxCooperRes'); if(!res) return;
+    var d=el?parseFloat(el.value):NaN;
+    if(isNaN(d)||d<500){ res.innerHTML='<span style="color:#c0392b">Entrez une distance valide (≥ 500 m).</span>'; return; }
+    var vo2=(d-504.9)/44.73, cat, col;
+    if(vo2>=52){cat='Excellent';col='#1a7a44';} else if(vo2>=45){cat='Très bon';col='#2d7a52';} else if(vo2>=38){cat='Bon';col='#3a9966';} else if(vo2>=32){cat='Moyen';col='#b8912e';} else {cat='À travailler';col='#c0392b';}
+    res.innerHTML='<span class="big" style="color:'+col+'">'+vo2.toFixed(1)+'</span><span style="color:var(--muted)">ml/kg/min · '+cat+'</span>';
+  };
+  window.kpRuffierCalc=function(){
+    function gv(id){var e=document.getElementById(id);return e?parseFloat(e.value):NaN;}
+    var res=document.getElementById('mxRuffierRes'); if(!res) return;
+    var f0=gv('mxF0'), f1=gv('mxF1'), f2=gv('mxF2');
+    if(isNaN(f0)||isNaN(f1)||isNaN(f2)){ res.innerHTML='<span style="color:#c0392b">Renseignez F0, F1 et F2.</span>'; return; }
+    var idx=((f1-70)+(f2-f0))/10, cat, col;
+    if(idx<0){cat='Excellente condition';col='#1a7a44';} else if(idx<3){cat='Bonne condition';col='#2d7a52';} else if(idx<6){cat='Condition moyenne';col='#b8912e';} else if(idx<=8){cat='Condition faible';col='#d17a1f';} else {cat='À surveiller — avis médical conseillé';col='#c0392b';}
+    res.innerHTML='<span class="big" style="color:'+col+'">'+idx.toFixed(1)+'</span><span style="color:var(--muted)">Indice Ruffier-Dickson · '+cat+'</span>';
+  };
+  function testCard(t){
+    var steps=(t.steps||[]).map(function(s,i){return '<div class="mx-step"><div class="mx-step-n" style="background:'+t.color+'">'+(i+1)+'</div><div>'+esc(s)+'</div></div>';}).join('');
+    var bareme=t.bareme?('<div class="mx-bareme">'+t.bareme.map(function(r){return '<div class="mx-brow"><span>'+esc(r[0])+'</span><b style="color:'+t.color+'">'+esc(r[1])+'</b></div>';}).join('')+'</div>'):'';
+    var calc=''; if(t.interactive==='cooper') calc=cooperCalcHTML(); else if(t.interactive==='ruffier') calc=ruffierCalcHTML();
+    return '<div class="mx-card"><div class="mx-head"><div class="mx-ic" style="background:'+hexA(t.color,.12)+';color:'+t.color+'">'+t.icon+'</div>'
+      +'<div><div class="mx-lvl" style="color:'+t.color+'">'+esc(t.tag)+'</div><div class="mx-title">'+esc(t.title)+'</div></div></div>'
+      +'<div class="mx-intro">'+esc(t.intro)+'</div><div class="mx-steps">'+steps+'</div>'+bareme+calc+'</div>';
+  }
+  function segBtn(k,ic,label,cur){ return '<button class="mx-seg-btn'+(cur===k?' active':'')+'" onclick="kpMuscleSwitch(\''+k+'\')"><span class="mx-seg-ic">'+ic+'</span>'+label+'</button>'; }
+  function loadMuscleDyn(cb){
+    if(window._muscleDyn){ cb(window._muscleDyn); return; }
+    var fs=kpFs(); if(!fs){ cb({progs:[],tips:[]}); return; }
+    fs.collection('muscle_content').get().then(function(snap){
+      var progs=[], tips=[];
+      snap.forEach(function(doc){ var d=doc.data()||{}; if(d.kind==='conseil') tips.push(d); else progs.push(d); });
+      window._muscleDyn={progs:progs,tips:tips}; cb(window._muscleDyn);
+    }).catch(function(e){ console.warn('[muscle]', e&&e.message); cb({progs:[],tips:[]}); });
+  }
+  function renderMuscleBody(view){
+    var body=document.getElementById('mxBody'); if(!body) return;
+    if(view==='tests'){
+      body.innerHTML='<div class="mx-sec-lab" style="color:#c0392b">📊 Testez vos capacités physiques</div>'
+        +'<div class="mx-intro" style="margin-bottom:14px">Situez-vous par rapport à la population, identifiez vos points forts et vos points faibles, puis mesurez vos progrès.</div>'
+        +PHYS_TESTS.map(testCard).join('');
       return;
     }
-    host.innerHTML='<div style="margin-bottom:6px"><div style="font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#c0392b">Premium</div>'
-      +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:26px">💪 Renforcement musculaire</div>'
-      +'<div style="color:var(--muted);font-size:13px;margin-bottom:16px">Entraînez-vous et nourrissez vos muscles, façon keto.</div></div>'
-      +'<div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--em);margin:6px 0 10px">🏋️ Programmes d\'entraînement</div>'
-      +'<div id="mProgs">'+STARTER_PROGS.map(function(p){return mProgCard(p,'#2d7a52');}).join('')+'</div>'
-      +'<div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#b8912e;margin:18px 0 10px">🥩 Nutrition keto & prise de muscle</div>'
-      +'<div id="mTips">'+STARTER_TIPS.map(function(p){return mProgCard(p,'#b8912e');}).join('')+'</div>';
-    // Contenu dynamique (Admin)
-    var fs=kpFs();
-    if(fs){
-      fs.collection('muscle_content').get().then(function(snap){
-        var progs='', tips='';
-        snap.forEach(function(doc){ var d=doc.data();
-          if(d.kind==='conseil') tips+=mProgCard(d,'#b8912e'); else progs+=mProgCard(d,'#2d7a52');
-        });
-        var pe=document.getElementById('mProgs'), te=document.getElementById('mTips');
-        if(pe && progs) pe.insertAdjacentHTML('afterbegin', progs);
-        if(te && tips) te.insertAdjacentHTML('afterbegin', tips);
-      }).catch(function(e){ console.warn('[muscle]', e && e.message); });
+    loadMuscleDyn(function(dyn){
+      if((window.kpMuscleView||'progs')!==view) return;
+      if(view==='progs'){
+        var all=(dyn.progs||[]).concat(STARTER_PROGS);
+        body.innerHTML='<div class="mx-sec-lab" style="color:var(--em)">🏋️ Vos programmes d\'entraînement</div>'+all.map(function(p){return progCard(p,'#2d7a52','🏋️');}).join('');
+      } else {
+        var allt=(dyn.tips||[]).concat(STARTER_TIPS);
+        body.innerHTML='<div class="mx-sec-lab" style="color:#b8912e">🥩 Nutrition keto & prise de muscle</div>'+allt.map(function(t){return tipCard(t,'#b8912e','🥩');}).join('');
+      }
+    });
+  }
+  window.kpMuscleSwitch=function(v){ window.kpMuscleView=v; window.renderMuscle(); };
+  window.renderMuscle=function(){
+    var host=document.getElementById('muscleContent'); if(!host) return;
+    kpEnsureMuscleStyles();
+    var prem=!!(window.isPremium && window.isPremium());
+    if(!prem){
+      host.innerHTML='<div class="mx-hero"><div class="mx-hero-tag">✦ Premium</div><div class="mx-hero-title">Renforcement musculaire</div><div class="mx-hero-sub">Programmes, tests physiques et nutrition keto pour développer vos muscles.</div></div>'
+        +'<div class="mx-card" style="text-align:center;padding:34px 22px">'
+        +'<div style="font-size:52px">💪</div>'
+        +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:22px;margin:8px 0 6px;color:var(--text)">Réservé aux membres Premium</div>'
+        +'<div style="color:var(--muted);font-size:14px;line-height:1.6;max-width:340px;margin:0 auto 20px">Débloquez les programmes d\'entraînement, les tests physiques (Cooper, Ruffier-Dickson, souplesse…) et les conseils nutrition keto.</div>'
+        +'<button onclick="openPremiumModal&&openPremiumModal(\'muscle\')" style="padding:14px 26px;border:none;border-radius:14px;background:linear-gradient(135deg,#b8912e,#e6c25a);color:#2a1e07;font-weight:800;font-size:15px;cursor:pointer">👑 Débloquer avec Premium</button></div>';
+      return;
     }
+    var view=window.kpMuscleView||'progs';
+    host.innerHTML='<div class="mx-hero"><div class="mx-hero-tag">✦ Premium</div><div class="mx-hero-title">Renforcement musculaire</div><div class="mx-hero-sub">Entraînez-vous, testez vos capacités et nourrissez vos muscles, façon keto.</div></div>'
+      +'<div class="mx-seg">'+segBtn('progs','🏋️','Programmes',view)+segBtn('nutri','🥩','Nutrition',view)+segBtn('tests','📊','Tests physiques',view)+'</div>'
+      +'<div id="mxBody"></div>';
+    renderMuscleBody(view);
   };
 
   /* ═══ ADMIN : ÉDITION / SUPPRESSION / RESTAURATION (toutes recettes) ═══ */

@@ -100,3 +100,9 @@ Bugs signalés :
 - firestore.rules: 2 nouvelles collections recipe_overrides + recipe_deletions (lecture publique, écriture admin infos@essencielonaturel.fr). → UTILISATEUR DOIT RECOLLER firestore.rules dans la console Firebase.
 - Corrigé: résidu « ml> » supprimé en fin de keto.html. Fichier synchronisé vers backend/keto_app.html.
 - Vérifié (screenshot/DOM): openRecipe OK, barre admin présente, éditeur ouvert pré-rempli (Saumon citron-aneth), 0 erreur JS. NON testable en sandbox: écritures Firestore réelles (nécessitent login admin + connexion Firestore) → à valider par l'utilisateur en prod.
+
+## Refonte onglet Musculation + Tests physiques (fork, juin 2026)
+- Onglet Musculation (renderMuscle) entièrement redesigné : hero dégradé vert, navigation segmentée 3 vues (🏋️ Programmes / 🥩 Nutrition / 📊 Tests physiques) via kpMuscleSwitch, cartes premium (styles injectés #mxStyles, classes mx-*). Cache contenu Admin window._muscleDyn (invalidé à l'ajout/suppression muscle_content).
+- NOUVEAU : vue « Tests physiques » (source : PPTX utilisateur « Testez vos capacités physiques »). 8 tests : Cooper, Ruffier-Dickson, Souplesse, Équilibre unipodal, Suspension (grip), Maintien traction, Pompes, Redressements assis. Chaque carte = intro + étapes numérotées + barème.
+- 2 calculateurs INTERACTIFS : Cooper → VO₂max = (d-504.9)/44.73 + catégorie (kpCooperCalc). Ruffier-Dickson → indice = ((F1-70)+(F2-F0))/10 + interprétation (kpRuffierCalc). Vérifiés : 2600m→46.8 Très bon ; F0=70,F1=120,F2=85→6.5 faible.
+- Vérifié via screenshots (Premium forcé) : hero + 3 onglets + switch OK, 8 cartes tests, calculateurs corrects, 0 erreur JS.
