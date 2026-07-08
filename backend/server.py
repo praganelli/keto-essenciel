@@ -711,6 +711,72 @@ async def content_generate_image(payload: dict, authorization: Optional[str] = H
     return {"ok": True, "url": url, "kind": kind, "dayIdx": day_idx}
 
 
+@api_router.post("/recipe/detailed-steps")
+async def recipe_detailed_steps(payload: dict):
+    """Génère une préparation détaillée (étapes pas-à-pas) pour une recette existante.
+    Public (accessible à tous les utilisateurs). Utilise la clé OpenAI du serveur."""
+    if not OPENAI_API_KEY:
+        return {"ok": False, "error": "no_openai_key", "steps": []}
+    name = (payload.get("name") or "").strip()
+    if not name:
+        return {"ok": False, "error": "missing_name", "steps": []}
+    ingredients = payload.get("ingredients") or []
+    spices = payload.get("spices") or []
+    current = payload.get("steps") or []
+    try:
+        ing_txt = "; ".join([str(i) for i in ingredients if i]) or "(non précisés)"
+        sp_txt = ", ".join([str(s) for s in spices if s]) or "(aucune)"
+        cur_txt = " | ".join([str(s) for s in current if s]) or "(aucune)"
+    except Exception:
+        ing_txt, sp_txt, cur_txt = "(non précisés)", "(aucune)", "(aucune)"
+    system = (
+        "Tu es un chef cuisinier spécialisé en cuisine cétogène (keto), pédagogue et précis. "
+        "Tu rédiges des préparations détaillées, claires et infaillibles, en français, au tutoiement doux."
+    )
+    user_msg = (
+        f"Recette : \"{name}\".\n"
+        f"Ingrédients : {ing_txt}.\n"
+        f"Épices/assaisonnements : {sp_txt}.\n"
+        f"Étapes actuelles (à enrichir) : {cur_txt}.\n\n"
+        "Rédige une PRÉPARATION DÉTAILLÉE, pas-à-pas, plus complète que les étapes actuelles. "
+        "Chaque étape doit être une phrase actionnable et précise : indique les TEMPS de cuisson, "
+        "les TEMPÉRATURES/feux, les repères visuels, les gestes techniques et 1-2 astuces de chef. "
+        "Reste 100% cohérent avec les ingrédients fournis, ne rajoute pas d'ingrédient majeur. "
+        "Réponds STRICTEMENT en JSON : { \"steps\": string[] (6 à 10 étapes détaillées, "
+        "sans numérotation au début car elle sera ajoutée automatiquement), "
+        "\"tip\": string (une astuce de chef finale, courte) }."
+    )
+    payload_oa = {
+        "model": OPENAI_TEXT_MODEL,
+        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user_msg}],
+        "response_format": {"type": "json_object"},
+    }
+    try:
+        async with httpx.AsyncClient(timeout=90) as http:
+            r = await http.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"},
+                json=payload_oa,
+            )
+        data = r.json()
+        if r.status_code != 200:
+            err = (data.get('error') or {}).get('message', f'HTTP {r.status_code}')
+            code = (data.get('error') or {}).get('code', '')
+            # NB : on renvoie 200 avec un flag d'erreur — un statut 5xx serait remplacé
+            # par une page HTML d'erreur du proxy (le front ne pourrait plus lire le JSON).
+            return {"ok": False, "error": f"openai: {code or err}", "steps": []}
+        d = json.loads(data["choices"][0]["message"]["content"])
+    except Exception as e:
+        logger.error(f"recipe_detailed_steps: {e}")
+        return {"ok": False, "error": f"server_error: {e}", "steps": []}
+    steps = d.get("steps", [])
+    if not isinstance(steps, list):
+        steps = []
+    steps = [str(s).strip() for s in steps if str(s).strip()]
+    return {"ok": True, "steps": steps, "tip": (d.get("tip") or "").strip()}
+
+
+
 def now_ms():
     return datetime.now(timezone.utc).timestamp() * 1000
 

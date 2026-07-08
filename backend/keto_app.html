@@ -10309,7 +10309,10 @@ function openRecipe(id){
     </div>
     <div class="sec-block"><div class="sec-block-title">Ingrédients</div><div class="ing-rows">${ingHtml}</div></div>
     <div class="sec-block"><div class="sec-block-title">Assaisonnements</div><div class="chips">${spicesHtml}</div></div>
-    <div class="sec-block"><div class="sec-block-title">Préparation</div><div class="steps">${stepsHtml}</div></div>
+    <div class="sec-block"><div class="sec-block-title">Préparation</div><div class="steps" id="recipeSteps">${stepsHtml}</div>
+      <button id="btnDetailSteps" onclick="kpDetailSteps(${r.id})" style="margin-top:12px;width:100%;padding:12px;border:1px solid rgba(184,145,46,.4);border-radius:12px;background:linear-gradient(135deg,rgba(184,145,46,.14),rgba(230,194,90,.12));color:#8a5f18;font-weight:800;font-size:13.5px;cursor:pointer">✨ Générer une préparation détaillée</button>
+      <div id="detailStepsMsg" style="font-size:12.5px;margin-top:8px;display:none"></div>
+    </div>
     <div class="sec-block"><div class="sec-block-title">💡 Astuce du chef</div><div class="tip-box">${r.tip}</div></div>
     <div style="padding:16px 18px"></div>`;
   $('recipeOverlay').classList.add('open');
@@ -12633,10 +12636,13 @@ function generateMenu(){
   function pickRecipe(pool, targetK, usedIds){
     if(!pool || !pool.length) return null;
     var candidates = pool.filter(function(r){ return usedIds.indexOf(r.id) === -1; });
-    if(candidates.length === 0){ candidates = pool; usedIds.length = 0; }
+    if(candidates.length === 0){ candidates = pool.slice(); usedIds.length = 0; }
     var scored = candidates.map(function(r){ return {r:r, s:recipeScore(r,Math.max(targetK,120))}; });
     scored.sort(function(a,b){return b.s - a.s;});
-    var chosen = scored[0].r;
+    // Variété : on pioche AU HASARD parmi les meilleurs candidats (≈ 60% les mieux notés,
+    // au moins 8) au lieu de toujours prendre le n°1 → toutes les recettes finissent utilisées.
+    var topN = Math.min(scored.length, Math.max(8, Math.ceil(scored.length * 0.6)));
+    var chosen = scored[Math.floor(Math.random()*topN)].r;
     usedIds.push(chosen.id);
     return chosen;
   }
@@ -24647,6 +24653,38 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 
   /* ---- Photo + barre admin dans le modal recette ---- */
   function kpIsAdmin(){ try{ return !!(window.isAdmin && window.isAdmin()); }catch(e){ return false; } }
+  /* ---- Préparation détaillée par IA ---- */
+  function kpDetailKey(id){ return 'kp_detail_steps_'+id; }
+  function kpRenderDetailSteps(id, steps, tip){
+    var cont=document.getElementById('recipeSteps');
+    if(cont){ cont.innerHTML=(steps||[]).map(function(s,i){return '<div class="step"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+s+'</div></div>';}).join(''); }
+    var btn=document.getElementById('btnDetailSteps'); if(btn){ btn.style.display='none'; }
+    if(tip){ var tb=document.querySelector('#recipeModalContent .tip-box'); if(tb) tb.textContent=tip; }
+    var msg=document.getElementById('detailStepsMsg'); if(msg){ msg.style.display='block'; msg.style.color='#8a5f18'; msg.textContent='✨ Préparation détaillée (générée par IA)'; }
+  }
+  window.kpDetailSteps=function(id){
+    var r=(typeof findRecipe==='function')?findRecipe(id):null; if(!r) return;
+    var btn=document.getElementById('btnDetailSteps'), msg=document.getElementById('detailStepsMsg');
+    try{ var c=localStorage.getItem(kpDetailKey(id)); if(c){ var pd=JSON.parse(c); if(pd&&pd.steps&&pd.steps.length){ kpRenderDetailSteps(id, pd.steps, pd.tip); return; } } }catch(e){}
+    if(btn){ btn.disabled=true; btn.style.opacity='.6'; btn.textContent='✨ Génération en cours…'; }
+    if(msg){ msg.style.display='block'; msg.style.color='var(--muted)'; msg.textContent='L\'IA rédige une préparation détaillée, un instant…'; }
+    fetch('/api/recipe/detailed-steps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      name:r.name, ingredients:(r.ingredients||[]).map(function(i){return (i.qty||'')+' '+(i.name||'');}), spices:r.spices||[], steps:r.steps||[]
+    })}).then(function(res){ return res.json().then(function(j){ return {ok:res.ok, j:j}; }); }).then(function(o){
+      if(!o.ok || !o.j || !o.j.steps || !o.j.steps.length){ throw new Error((o.j&&(o.j.detail||o.j.error))||'Erreur'); }
+      try{ localStorage.setItem(kpDetailKey(id), JSON.stringify({steps:o.j.steps, tip:o.j.tip})); }catch(e){}
+      kpRenderDetailSteps(id, o.j.steps, o.j.tip);
+    }).catch(function(e){
+      if(btn){ btn.disabled=false; btn.style.opacity='1'; btn.textContent='✨ Générer une préparation détaillée'; }
+      var m=(e&&e.message)||'';
+      var friendly;
+      if(/quota|insufficient/i.test(m)) friendly='Crédit OpenAI épuisé — ajoutez du crédit à votre clé OpenAI.';
+      else if(/rate|429|too many/i.test(m)) friendly='Trop de requêtes OpenAI, réessayez dans un instant.';
+      else if(/no_openai_key/i.test(m)) friendly='Clé OpenAI non configurée sur le serveur.';
+      else friendly=(m||'Réessayez plus tard.');
+      if(msg){ msg.style.display='block'; msg.style.color='#c0392b'; msg.textContent='⚠️ '+friendly; }
+    });
+  };
   if(typeof window.openRecipe==='function'){
     var _origOpenRecipe=window.openRecipe;
     window.openRecipe=function(id){
@@ -24668,6 +24706,8 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
             +'<button onclick="kpAdminDeleteRecipeById('+id+')" style="flex:1;padding:12px;border:1px solid rgba(192,57,43,.3);border-radius:12px;background:rgba(192,57,43,.1);color:#c0392b;font-weight:700;cursor:pointer">🗑 Supprimer</button>';
           content.appendChild(bar);
         }
+        // Auto-charger la préparation détaillée déjà générée pour cette recette
+        try{ var _cd=localStorage.getItem(kpDetailKey(id)); if(_cd){ var _pd=JSON.parse(_cd); if(_pd&&_pd.steps&&_pd.steps.length){ kpRenderDetailSteps(id, _pd.steps, _pd.tip); } } }catch(_e){}
       }catch(e){}
     };
   }
