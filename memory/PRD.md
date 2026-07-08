@@ -118,3 +118,6 @@ Bugs signalés :
 
 ## CTA Premium repositionné en HAUT de la sidebar desktop (fork, juin 2026)
 - Suite retour utilisateur (« toujours pareil / mets-le ailleurs ») : le bouton .bnav-premium-cta est DÉPLACÉ tout en haut de la sidebar (order:-1, sous .bnav-brand order:-2, avant le label MENU + onglets). margin auto retirée du CTA et reportée sur .bnav-profile-card (margin-top:auto) pour garder profil/réglages ancrés en bas. Vérifié desktop 1440 : CTA en haut (top~228), au-dessus des onglets.
+
+## Fix troncature CTA Premium sidebar desktop (fork, juin 2026)
+- Cause : .bottom-nav-inner (sidebar desktop) height:100% sans overflow → sur petits écrans le contenu dépassait et les items étaient rognés (flex-shrink). Fix : overflow-y:auto + scrollbar fine + `.bottom-nav-inner>*{flex:0 0 auto}` (aucun écrasement) + padding top 34→22. CTA reste en haut (order:-1), toujours entièrement visible. Vérifié 1280x700 : CTA fullyVisible true, sidebar scrollable.
