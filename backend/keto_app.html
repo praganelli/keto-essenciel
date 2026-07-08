@@ -24988,6 +24988,84 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     return html;
   }
 
+  /* ═══ GAINAGE (renforcement du tronc) ═══ */
+  var GAINAGE_EXOS=[
+    {name:'Gainage ventral (Planche)', icon:'🧱', level:'Débutant', muscles:['Abdominaux','Lombaires','Épaules','Fessiers'],
+      pos:['Avant-bras au sol, coudes sous les épaules','Corps parfaitement aligné','Regard vers le sol'],
+      tip:'Contracte les abdominaux et les fessiers sans creuser le dos.',
+      dur:'Débutant 20 s · Interm. 40 s · Avancé 1 min', mistakes:'dos cambré, épaules remontées, bassin trop haut'},
+    {name:'Planche bras tendus', icon:'💪', level:'Débutant', muscles:['Tout le tronc','Épaules','Bras'],
+      desc:'Très efficace pour renforcer tout le tronc.',
+      pos:['Mains sous les épaules','Bras tendus','Corps droit'],
+      tip:'Ne laisse pas les hanches s\'affaisser.', dur:'20 à 60 s', mistakes:'hanches qui tombent, dos arrondi'},
+    {name:'Gainage latéral', icon:'↔️', level:'Intermédiaire', muscles:['Obliques'],
+      desc:'Travaille particulièrement les obliques.',
+      pos:['Appui sur un avant-bras','Pieds superposés','Bassin relevé'],
+      tip:'Maintiens une ligne droite. Fais les deux côtés.', dur:'20 à 45 s par côté', mistakes:'bassin qui descend, épaule non alignée'},
+    {name:'Gainage latéral jambes fléchies', icon:'🦵', level:'Débutant', muscles:['Obliques'],
+      desc:'Version débutant, très adaptée aux personnes en surpoids.',
+      pos:['Même principe que le gainage latéral','Genoux au sol'],
+      tip:'Garde le bassin bien relevé et le corps aligné.', dur:'20 à 40 s par côté', mistakes:'bassin trop bas'},
+    {name:'Planche avec lever de jambe', icon:'🏋️', level:'Intermédiaire', muscles:['Fessiers','Lombaires','Abdominaux'],
+      pos:['Depuis la planche ventrale','Lève une jambe de quelques centimètres','Alterne droite / gauche'],
+      tip:'Garde le bassin stable, sans rotation.', dur:'10 levées par jambe', mistakes:'rotation du bassin, dos creusé'},
+    {name:'Bird Dog (quadrupédie)', icon:'🐦', level:'Débutant', muscles:['Lombaires','Abdominaux','Stabilité'],
+      desc:'Très utilisé en rééducation.',
+      pos:['À quatre pattes','Tends simultanément bras droit + jambe gauche','Puis inverse'],
+      tip:'Garde le bassin stable pendant tout le mouvement.', dur:'10 à 15 répétitions', mistakes:'bascule du bassin, dos qui creuse'},
+    {name:'Dead Bug', icon:'🪲', level:'Débutant', muscles:['Lombaires','Abdominaux profonds'],
+      desc:'Excellent pour les lombaires.',
+      pos:['Allongé sur le dos, bras vers le plafond, genoux à 90°','Tends lentement un bras et la jambe opposée','Puis reviens'],
+      tip:'Garde le bas du dos plaqué au sol.', dur:'10 répétitions par côté', mistakes:'dos décollé du sol'},
+    {name:'Planche dynamique', icon:'🔄', level:'Intermédiaire', muscles:['Tronc','Épaules','Bras'],
+      pos:['Depuis la planche sur les avant-bras','Monte sur les mains','Puis redescends, en alternant le bras qui commence'],
+      tip:'Garde le bassin le plus stable possible.', dur:'10 à 15 répétitions', mistakes:'balancement des hanches'},
+    {name:'Mountain Climber lent', icon:'⛰️', level:'Intermédiaire', muscles:['Abdominaux','Stabilité','Cardio léger'],
+      pos:['Position de pompe','Ramène lentement un genou vers la poitrine','Alterne'],
+      tip:'Ne va pas vite : l\'objectif est la stabilité, pas le cardio intense.', dur:'30 à 60 s', mistakes:'aller trop vite, remonter les fesses'},
+    {name:'Hollow Hold', icon:'🌙', level:'Avancé', muscles:['Abdominaux profonds'],
+      desc:'Très utilisé chez les gymnastes.',
+      pos:['Allongé sur le dos','Décolle les épaules et les jambes','Bas du dos plaqué au sol'],
+      tip:'Maintiens la position, respiration fluide.', dur:'Débutant 15 s · Avancé 45 s', mistakes:'bas du dos décollé, jambes trop hautes'}
+  ];
+  var GAINAGE_PROGRAMS=[
+    {title:'Programme Débutant', tag:'🟢 5 minutes', level:'Débutant', steps:[
+      ['Planche ventrale','20 s'],['Repos','20 s'],['Gainage latéral droit','20 s'],['Repos','20 s'],
+      ['Gainage latéral gauche','20 s'],['Repos','20 s'],['Bird Dog','40 s'],['Repos','20 s'],
+      ['Dead Bug','40 s'],['Repos','20 s'],['Planche bras tendus','30 s']]},
+    {title:'Programme Intermédiaire', tag:'🟠 10 minutes', level:'Intermédiaire', steps:[
+      ['Planche','45 s'],['Planche bras tendus','45 s'],['Gainage latéral droit','40 s'],['Gainage latéral gauche','40 s'],
+      ['Planche dynamique','15 rép'],['Mountain Climber lent','45 s'],['Bird Dog','15 rép'],['Dead Bug','15 rép'],['Hollow Hold','30 s']]}
+  ];
+  function lvlColor(l){ return l==='Avancé'?'#c0392b':(l==='Intermédiaire'?'#b8912e':'#2d7a52'); }
+  function gainageExoCard(e){
+    var col=lvlColor(e.level);
+    var muscles=(e.muscles||[]).map(function(m){return '<span class="mx-chip">🎯 '+esc(m)+'</span>';}).join('');
+    var pos=(e.pos||[]).map(function(s,i){return '<div class="mx-step"><div class="mx-step-n" style="background:'+col+'">'+(i+1)+'</div><div>'+esc(s)+'</div></div>';}).join('');
+    return '<div class="mx-card" data-lvl="'+esc(e.level)+'">'
+      +'<div class="mx-head"><div class="mx-ic" style="background:'+hexA(col,.12)+';color:'+col+'">'+e.icon+'</div>'
+      +'<div style="flex:1;min-width:0"><div class="mx-title">'+esc(e.name)+'</div><span class="mx-lvlbadge" style="background:'+col+'">'+esc(e.level)+'</span></div></div>'
+      +(e.desc?'<div class="mx-intro" style="margin-bottom:8px">'+esc(e.desc)+'</div>':'')
+      +'<div style="margin:2px 0 6px">'+muscles+'</div>'
+      +'<div class="mx-steps">'+pos+'</div>'
+      +(e.tip?'<div style="display:flex;gap:8px;font-size:12.5px;line-height:1.45;margin-top:8px;color:var(--text)"><span>💡</span><span>'+esc(e.tip)+'</span></div>':'')
+      +(e.mistakes?'<div class="mx-warn"><span>⚠️</span><span>Erreurs à éviter : '+esc(e.mistakes)+'</span></div>':'')
+      +'<div class="mx-dur">⏱ '+esc(e.dur)+'</div>'
+      +'</div>';
+  }
+  function gainageProgCard(p){
+    var col=lvlColor(p.level);
+    var rows=(p.steps||[]).map(function(s){
+      var rest=/repos/i.test(s[0]);
+      return '<div class="mx-ex"><div class="mx-ex-n"'+(rest?'':' style="background:'+hexA(col,.16)+';color:'+col+'"')+'>'+(rest?'⏸':'•')+'</div>'
+        +'<div class="mx-ex-name"'+(rest?' style="color:var(--muted);font-weight:500"':'')+'>'+esc(s[0])+'</div>'
+        +'<div class="mx-ex-sets" style="color:'+(rest?'var(--muted)':col)+';background:'+(rest?'var(--s2)':hexA(col,.12))+'">'+esc(s[1])+'</div></div>';
+    }).join('');
+    return '<div class="mx-card"><div class="mx-head"><div class="mx-ic" style="background:'+hexA(col,.12)+';color:'+col+'">🔥</div>'
+      +'<div><div class="mx-lvl" style="color:'+col+'">'+esc(p.tag)+'</div><div class="mx-title">'+esc(p.title)+'</div></div></div>'+rows+'</div>';
+  }
+  window.kpGainageFilter=function(l){ window.kpGainageLvl=l; window.kpMuscleView='gainage'; window.renderMuscle(); };
+
   function hexA(hex,a){ hex=String(hex).replace('#',''); if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');} var n=parseInt(hex,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
   function kpEnsureMuscleStyles(){
     if(document.getElementById('mxStyles')) return;
@@ -25035,7 +25113,14 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       +'.mx-dot{width:8px;height:8px;border-radius:50%;border:none;background:rgba(94,124,97,.28);cursor:pointer;padding:0;transition:width .25s,background .25s,border-radius .25s}'
       +'.mx-dot.active{width:22px;border-radius:5px;background:#2d7a52}'
       +'.mx-nav-arrow{position:absolute;top:38px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--s1);color:var(--text);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.1);z-index:2}'
-      +'.mx-nav-prev{left:-2px}.mx-nav-next{right:-2px}';
+      +'.mx-nav-prev{left:-2px}.mx-nav-next{right:-2px}'
+      +'.mx-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:100px;background:rgba(94,124,97,.12);color:var(--em);margin:0 6px 6px 0}'
+      +'.mx-lvlbadge{display:inline-block;margin-top:4px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:100px;color:#fff}'
+      +'.mx-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}'
+      +'.mx-filter-btn{border:1px solid var(--border2);background:var(--s1);color:var(--muted);font-weight:700;font-size:12px;padding:7px 13px;border-radius:100px;cursor:pointer}'
+      +'.mx-filter-btn.active{background:#2d7a52;color:#fff;border-color:#2d7a52}'
+      +'.mx-warn{margin-top:10px;display:flex;gap:8px;font-size:12.5px;line-height:1.45;color:#b06a0a;background:rgba(217,119,6,.09);border:1px solid rgba(217,119,6,.22);border-radius:10px;padding:9px 11px}'
+      +'.mx-dur{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#2d7a52;background:rgba(45,122,82,.1);padding:6px 11px;border-radius:10px;margin-top:10px}';
     document.head.appendChild(st);
   }
   function progCard(p,accent,icon){
@@ -25153,6 +25238,19 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       kpBindCarousel();
       return;
     }
+    if(view==='gainage'){
+      var glvl=window.kpGainageLvl||'all';
+      var exos=GAINAGE_EXOS.filter(function(e){ return glvl==='all' || e.level===glvl; });
+      function gfbtn(k,label){ return '<button class="mx-filter-btn'+(glvl===k?' active':'')+'" onclick="kpGainageFilter(\''+k+'\')">'+label+'</button>'; }
+      body.innerHTML='<div class="mx-sec-lab" style="color:#2d7a52">🧘 Gainage & renforcement du tronc</div>'
+        +'<div class="mx-intro" style="margin-bottom:16px">Renforce ta sangle abdominale, tes lombaires et tes fessiers. Garde une respiration fluide et ne bloque jamais ton souffle.</div>'
+        +'<div class="mx-sec-lab" style="color:#8a5f18">🔥 Programmes guidés</div>'
+        +GAINAGE_PROGRAMS.map(gainageProgCard).join('')
+        +'<div class="mx-sec-lab" style="color:#2d7a52;margin-top:20px">💪 Exercices</div>'
+        +'<div class="mx-filter">'+gfbtn('all','Tous')+gfbtn('Débutant','🟢 Débutant')+gfbtn('Intermédiaire','🟠 Interm.')+gfbtn('Avancé','🔴 Avancé')+'</div>'
+        +(exos.length?exos.map(gainageExoCard).join(''):'<div class="mx-intro">Aucun exercice pour ce niveau.</div>');
+      return;
+    }
     loadMuscleDyn(function(dyn){
       if((window.kpMuscleView||'progs')!==view) return;
       if(view==='progs'){
@@ -25180,7 +25278,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     }
     var view=window.kpMuscleView||'progs';
     host.innerHTML='<div class="mx-hero"><div class="mx-hero-tag">✦ Premium</div><div class="mx-hero-title">Renforcement musculaire</div><div class="mx-hero-sub">Entraînez-vous, testez vos capacités et nourrissez vos muscles, façon keto.</div></div>'
-      +'<div class="mx-seg">'+segBtn('progs','🏋️','Programmes',view)+segBtn('nutri','🥩','Nutrition',view)+segBtn('tests','📊','Tests physiques',view)+'</div>'
+      +'<div class="mx-seg">'+segBtn('progs','🏋️','Progr.',view)+segBtn('nutri','🥩','Nutrition',view)+segBtn('gainage','🧘','Gainage',view)+segBtn('tests','📊','Tests',view)+'</div>'
       +'<div id="mxBody"></div>';
     renderMuscleBody(view);
   };
