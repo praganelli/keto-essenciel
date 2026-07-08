@@ -112,3 +112,6 @@ Bugs signalés :
 - Stockage localStorage scoping par utilisateur (kp_test_journal_u-<uid> / guest) + miroir best-effort Firestore users/{uid}/ketoTests/data.
 - Vérifié : tagline masquée, Cooper autofill 46.8, 2 entrées enregistrées et affichées, 0 erreur JS.
 - Tagline d'en-tête « Bonjour ! Plan · Bibliothèque · Suivi · Profil » SUPPRIMÉE (.tagline{display:none}).
+
+## CTA « Passez Premium » sidebar desktop plus visible (fork, juin 2026)
+- Le bouton doré .bnav-premium-cta était trop pâle et se fondait dans le fond crème. Refait : dégradé doré plus profond (#e9b73f→#a86f16), texte + flèche BLANCS avec ombre, bordure dorée + halo (box-shadow ring 3px), padding augmenté. Vérifié via screenshot desktop 1440 : bouton bien lisible et contrasté.
