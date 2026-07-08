@@ -20853,7 +20853,7 @@ authGuest = function(){
   window.kpUpdateProfileIdentity = kpUpdateProfileIdentity;
 
   function kpStartProfileIdentityObserver(){
-    setInterval(kpUpdateProfileIdentity, 1200);
+    setInterval(kpUpdateProfileIdentity, 3000);
     // Mise à jour initiale après chargement
     setTimeout(kpUpdateProfileIdentity, 600);
     setTimeout(kpUpdateProfileIdentity, 2000);
@@ -21528,7 +21528,7 @@ body.nav-hidden .fab-help{
       el.dataset.animAttached = '1';
       observer.observe(el);
     });
-  }, 1500);
+  }, 3000);
 })();
 </script>
 <button id="fabHelp" class="fab-help" onclick="switchTab('help')" data-testid="fab-help" aria-label="Aide">
@@ -25267,6 +25267,37 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
   })(0);
 })();
 </script>
+
+<style id="kp-perf-mobile">
+/* ═══ Optimisation performance mobile/tablette (réduit la surchauffe & la latence iOS) ═══
+   Sur écran TACTILE uniquement (le desktop garde son rendu complet). Le coût GPU n°1 sur iOS
+   est le backdrop-filter (flou) recalculé à CHAQUE frame de scroll sur les dizaines de cartes
+   « verre ». On le retire partout, puis on le réactive léger UNIQUEMENT là où c'est nécessaire
+   à la lisibilité (menu, header, overlays), avec un fond plus opaque. */
+@media (pointer: coarse){
+  *{ -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+  /* Menu bas mobile : fond translucide → on le rend lisible sans flou lourd. */
+  .bottom-nav-inner{
+    -webkit-backdrop-filter: blur(10px) !important; backdrop-filter: blur(10px) !important;
+    background: linear-gradient(180deg, rgba(250,252,248,.88), rgba(244,250,243,.82)) !important;
+  }
+  body.dark .bottom-nav-inner{
+    background: linear-gradient(180deg, rgba(14,26,18,.9), rgba(12,22,16,.86)) !important;
+  }
+  header{ -webkit-backdrop-filter: blur(10px) !important; backdrop-filter: blur(10px) !important; }
+
+  /* Overlays / feuilles / modaux : flou léger réactivé (ouverts ponctuellement). */
+  .recipe-overlay, .kp-modal-overlay, .prefs-overlay, .subst-overlay,
+  .day-sheet-backdrop, .day-sheet, .quiz-overlay, .kp-cprofile-overlay{
+    -webkit-backdrop-filter: blur(8px) !important; backdrop-filter: blur(8px) !important;
+  }
+
+  /* Couches de grain plein écran : mix-blend-mode fait re-blender tout le viewport à chaque
+     repaint → blend normal + opacité minime (grain quasi identique, coût quasi nul). */
+  body::before, body::after{ mix-blend-mode: normal !important; opacity: .04 !important; }
+}
+</style>
 
 </body>
 </html>

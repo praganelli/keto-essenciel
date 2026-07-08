@@ -135,3 +135,8 @@ Bugs signalés :
 
 ## Bannière quiz masquée après complétion (fork, juin 2026)
 - Avant : la bannière #quizPromoBanner ne disparaissait que si score 100% (kp_quiz_perfect). Désormais : à la fin du quiz (renderQuizResult, quel que soit le score) on set kp_quiz_done='1' + display:none. Logique d'affichage au chargement masque si kp_quiz_done/kp_quiz_perfect/kp_quiz_score présent. Vérifié : bannière flex→none après 15 réponses, reste none au reload.
+
+## Optimisation performance iOS (surchauffe/latence) (fork, juin 2026)
+- Diagnostic : orbs blur(100-120px) déjà masqués (body.kp-v13). Vrais coûts GPU mobiles repeints à chaque frame de scroll : (1) backdrop-filter (128 usages, surtout blur(30px)+saturate(200%) sur menu bas + header FIXES, saturate = très coûteux iOS), (2) body::before/::after = grain plein écran en mix-blend-mode:multiply (blend de tout le viewport), (3) setInterval 1200ms (kpUpdateProfileIdentity) + 1500ms (observer scan).
+- Fix (bloc <style id="kp-perf-mobile"> avant </body>, scoped @media (pointer:coarse) = tactile only, desktop intact) : `*{backdrop-filter:none}` puis flou léger RÉACTIVÉ uniquement sur .bottom-nav-inner (blur 10px + fond opaque light/dark), header, et overlays (.recipe-overlay/.kp-modal-overlay/.prefs-overlay/.subst-overlay/.day-sheet*/.quiz-overlay/.kp-cprofile-overlay blur 8px). body::before/after → mix-blend-mode:normal + opacity .04. Timers throttlés 1200→3000ms et 1500→3000ms.
+- Desktop non affecté (pointer:coarse ne matche pas). App charge sans erreur. NON mesurable en sandbox (pas d'iPhone) → à valider par l'utilisateur sur son appareil.
