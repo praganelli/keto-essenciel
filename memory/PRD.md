@@ -49,6 +49,11 @@ Bugs signalés :
 ## Renommage marque + version + menu du jour (fork, juin 2026)
 - Marque "Keto Premium" → "Keto - Essenciel" partout ; badge version "v1.1" en haut ; onglet Plan par défaut = jour actuel.
 
+## Barre d'onglets mobile : pleine largeur + zéro latence (fork, juin 2026)
+- BUG: la barre d'onglets flottait (insets ~4px + gap ~6px au bas, coins arrondis) et le changement d'onglet paraissait lent (cascade de cartes ~1s).
+- Fix largeur/position: override mobile `.bottom-nav{padding:0;left/right/bottom:0}` + `.bottom-nav .bottom-nav-inner{width:100%;max-width:none;margin:0;border-radius:0;padding:9px 10px max(9px,safe-area)}`. Vérifié testing_agent: left 0/right 390/bottom 844/gap 0/radius 0.
+- Fix latence: kpAnimateCards stagger i*55→Math.min(i,6)*20 (≤120ms), appel via requestAnimationFrame (au lieu de setTimeout 30), .kp-card-in .34s→.26s, .tab-slide .22s→.16s. Vérifié: latences switchTab 2–60ms, aucune régression, 0 erreur JS.
+
 ## Impression menu/liste en popup interne (fork, juin 2026)
 - Les 3 fonctions d'impression (exportPDF menu, printShopping liste, exportWeightPDF poids) utilisaient `window.open('','_blank')` → sur mobile/PWA ça ouvrait un onglet et le retour rechargeait l'app (→ écran connexion / perte session invité).
 - Nouveau: popup INTERNE `#kpPrintOverlay` (overlay `.recipe-overlay`, z-index 1300, portalé body) affichant l'aperçu formaté dans une `<iframe srcdoc>`, avec boutons « Fermer » (kpClosePrint) et « Imprimer » (kpDoPrint → iframe.print()). Aucun nouvel onglet, l'utilisateur reste dans l'app. Fallback window.open conservé si l'iframe indisponible.
