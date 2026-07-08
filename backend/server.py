@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter, Request, Header, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -138,21 +138,38 @@ class StatusCheckCreate(BaseModel):
 async def root():
     return {"message": "Hello World"}
 
+def _api_base_from_request(request: Request) -> str:
+    """URL publique absolue du backend, déduite des en-têtes (derrière le proxy ingress)."""
+    proto = request.headers.get("x-forwarded-proto") or request.url.scheme or "https"
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host") or request.url.netloc
+    return f"{proto}://{host}"
+
+def _serve_html_with_base(request: Request, filename: str) -> HTMLResponse:
+    """Sert le HTML en injectant l'URL absolue du backend (window.__KP_API_BASE__).
+    Ainsi les fonctionnalités qui appellent le backend (IA, etc.) fonctionnent même si
+    le fichier est téléchargé et hébergé ailleurs (domaine perso, Firebase Hosting)."""
+    html = (ROOT_DIR / filename).read_text(encoding="utf-8")
+    base = _api_base_from_request(request)
+    inject = '<script>window.__KP_API_BASE__=' + json.dumps(base) + ';</script>'
+    if "</head>" in html:
+        html = html.replace("</head>", inject + "</head>", 1)
+    else:
+        html = inject + html
+    return HTMLResponse(html)
+
 @api_router.get("/app")
-async def serve_keto_app():
-    return FileResponse(ROOT_DIR / "keto_app.html", media_type="text/html")
+async def serve_keto_app(request: Request):
+    return _serve_html_with_base(request, "keto_app.html")
 
 @api_router.get("/app-preview")
 async def serve_keto_preview():
     return FileResponse(ROOT_DIR / "keto_preview.html", media_type="text/html")
 
 @api_router.get("/download")
-async def download_keto_app():
-    return FileResponse(
-        ROOT_DIR / "keto_app.html",
-        media_type="text/html",
-        filename="index.html",
-    )
+async def download_keto_app(request: Request):
+    resp = _serve_html_with_base(request, "keto_app.html")
+    resp.headers["Content-Disposition"] = 'attachment; filename="index.html"'
+    return resp
 
 @api_router.get("/download-functions")
 async def download_functions():

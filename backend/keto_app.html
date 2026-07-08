@@ -24696,7 +24696,8 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     try{ var c=localStorage.getItem(kpDetailKey(id)); if(c){ var pd=JSON.parse(c); if(pd&&pd.steps&&pd.steps.length){ kpRenderDetailSteps(id, pd.steps, pd.tip); return; } } }catch(e){}
     if(btn){ btn.disabled=true; btn.style.opacity='.6'; btn.textContent='✨ Génération en cours…'; }
     if(msg){ msg.style.display='block'; msg.style.color='var(--muted)'; msg.textContent='L\'IA rédige une préparation détaillée, un instant…'; }
-    fetch('/api/recipe/detailed-steps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    var apiBase=(window.__KP_API_BASE__ && /^https?:/.test(window.__KP_API_BASE__)) ? window.__KP_API_BASE__ : '';
+    fetch(apiBase+'/api/recipe/detailed-steps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       name:r.name, ingredients:(r.ingredients||[]).map(function(i){return (i.qty||'')+' '+(i.name||'');}), spices:r.spices||[], steps:r.steps||[]
     })}).then(function(res){ return res.json().then(function(j){ return {ok:res.ok, j:j}; }); }).then(function(o){
       if(!o.ok || !o.j || !o.j.steps || !o.j.steps.length){ throw new Error((o.j&&(o.j.detail||o.j.error))||'Erreur'); }
