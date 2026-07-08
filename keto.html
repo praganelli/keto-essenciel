@@ -24609,6 +24609,13 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     if(arr.some(function(x){return x.id===r.id;})) return;
     arr.push(r);
   }
+  /* Helpers : parcourir tous les pools (recettes en dur + perso) */
+  var ALL_POOLS=['BFAST_RECIPES','MAIN_RECIPES','STARTER_RECIPES','DESSERT_RECIPES','SAUCE_RECIPES','SNACK_RECIPES','PAIN_RECIPES'];
+  function poolArrays(){ return ALL_POOLS.map(function(n){return window[n];}).filter(Boolean); }
+  function poolCatOf(arr){ for(var k in POOL_MAP){ if(window[POOL_MAP[k]]===arr) return k; } return 'main'; }
+  function findAnywhere(id){ var ps=poolArrays(); for(var i=0;i<ps.length;i++){ for(var j=0;j<ps[i].length;j++){ if(ps[i][j].id===id) return {arr:ps[i],idx:j,rec:ps[i][j]}; } } return null; }
+  function applyOverride(o){ var f=findAnywhere(o.id); if(f){ Object.keys(o).forEach(function(k){ if(k!=='_docId') f.rec[k]=o[k]; }); } }
+  function applyDeletion(id){ var f=findAnywhere(id); if(f){ f.arr.splice(f.idx,1); } }
   function normalizeRecipe(d, docId){
     d._docId=docId;
     if(d.id==null){ d.id = 900000 + (Math.abs(hashStr(docId))%9000000); }
@@ -24622,9 +24629,15 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var fs=kpFs(); if(!fs){ if(cb)cb(); return; }
     fs.collection('custom_recipes').get().then(function(snap){
       snap.forEach(function(doc){ kpMergePool(normalizeRecipe(doc.data(), doc.id)); });
+      return fs.collection('recipe_overrides').get();
+    }).then(function(snap){
+      if(snap) snap.forEach(function(doc){ var d=doc.data(); if(d && d.id!=null) applyOverride(d); });
+      return fs.collection('recipe_deletions').get();
+    }).then(function(snap){
+      if(snap) snap.forEach(function(doc){ var id=parseInt(doc.id,10); if(!isNaN(id)) applyDeletion(id); });
       if(typeof renderLibrary==='function' && typeof currentTab!=='undefined' && currentTab==='library'){ try{renderLibrary();}catch(e){} }
       if(cb)cb();
-    }).catch(function(e){ console.warn('[custom recipes]', e && e.message); if(cb)cb(); });
+    }).catch(function(e){ console.warn('[recipes load]', e && e.message); if(cb)cb(); });
   };
 
   /* ---- Photo dans le modal recette ---- */
