@@ -106,3 +106,9 @@ Bugs signalés :
 - NOUVEAU : vue « Tests physiques » (source : PPTX utilisateur « Testez vos capacités physiques »). 8 tests : Cooper, Ruffier-Dickson, Souplesse, Équilibre unipodal, Suspension (grip), Maintien traction, Pompes, Redressements assis. Chaque carte = intro + étapes numérotées + barème.
 - 2 calculateurs INTERACTIFS : Cooper → VO₂max = (d-504.9)/44.73 + catégorie (kpCooperCalc). Ruffier-Dickson → indice = ((F1-70)+(F2-F0))/10 + interprétation (kpRuffierCalc). Vérifiés : 2600m→46.8 Très bon ; F0=70,F1=120,F2=85→6.5 faible.
 - Vérifié via screenshots (Premium forcé) : hero + 3 onglets + switch OK, 8 cartes tests, calculateurs corrects, 0 erreur JS.
+
+## Journal des tests + suppression tagline (fork, juin 2026)
+- Journal de progression dans la vue « Tests physiques » (Muscu) : chaque carte de test a un champ « 📔 Enregistrer mon résultat » + bouton 💾 (kpTestSave). Cooper & Ruffier auto-remplissent le champ après calcul. Carte « Mon journal des tests » en tête listant par test la dernière valeur, la variation vs précédent (progrès/baisse, ruffier = plus bas = mieux via TEST_LOWER), l'historique daté + suppression (kpTestDelete).
+- Stockage localStorage scoping par utilisateur (kp_test_journal_u-<uid> / guest) + miroir best-effort Firestore users/{uid}/ketoTests/data.
+- Vérifié : tagline masquée, Cooper autofill 46.8, 2 entrées enregistrées et affichées, 0 erreur JS.
+- Tagline d'en-tête « Bonjour ! Plan · Bibliothèque · Suivi · Profil » SUPPRIMÉE (.tagline{display:none}).

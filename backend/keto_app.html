@@ -198,7 +198,7 @@ header{
 
 h1{font-size:clamp(2rem,6.5vw,3.6rem);line-height:1.05;color:var(--text)}
 h1 em{color:var(--gold2)}
-.tagline{margin-top:10px;color:var(--muted);font-size:13px;font-weight:300;letter-spacing:.01em}
+.tagline{display:none !important}
 .app-version-badge{
   display:inline-flex;align-items:center;gap:6px;
   margin:8px auto 0;padding:3px 12px;
@@ -24869,6 +24869,51 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       bareme:[['> 45','Excellent'],['35 – 45','Bon'],['25 – 35','Moyen'],['< 25','À travailler']]}
   ];
 
+  /* ── Journal des tests (suivi de progression) ── */
+  var TEST_UNITS={cooper:'ml/kg/min',ruffier:'',souplesse:'cm',equilibre:'s',suspension:'s',traction:'s',pompes:'reps',abdos:'reps'};
+  var TEST_LOWER={ruffier:true};
+  function jKey(){ var u=(window.currentUser&&window.currentUser.uid)?('u-'+window.currentUser.uid):'guest'; return 'kp_test_journal_'+u; }
+  function jLoad(){ try{ return JSON.parse(localStorage.getItem(jKey())||'[]'); }catch(e){ return []; } }
+  function jStore(arr){ try{ localStorage.setItem(jKey(), JSON.stringify(arr)); }catch(e){}
+    try{ var fs=kpFs(); if(fs && window.currentUser){ fs.collection('users').doc(window.currentUser.uid).collection('ketoTests').doc('data').set({entries:arr, updatedAt:Date.now()},{merge:true}); } }catch(e){} }
+  function jTitle(key){ for(var i=0;i<PHYS_TESTS.length;i++){ if(PHYS_TESTS[i].key===key) return PHYS_TESTS[i].title; } return key; }
+  function fmtDate(ts){ try{ return new Date(ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+  window.kpTestSave=function(key){
+    var el=document.getElementById('mxScore_'+key), msg=document.getElementById('mxSaveMsg_'+key);
+    var v=el?parseFloat(el.value):NaN;
+    if(isNaN(v)){ if(msg){msg.style.color='#c0392b';msg.textContent='Entrez un résultat.';} return; }
+    var arr=jLoad(); arr.push({key:key,title:jTitle(key),unit:TEST_UNITS[key]||'',value:Math.round(v*10)/10,date:Date.now()}); jStore(arr);
+    if(el) el.value='';
+    if(msg){msg.style.color='#1a7a44';msg.textContent='✓ Enregistré dans votre journal';}
+    var jc=document.getElementById('mxJournal'); if(jc) jc.innerHTML=journalInnerHTML();
+  };
+  window.kpTestDelete=function(ts){
+    var arr=jLoad().filter(function(e){return e.date!==ts;}); jStore(arr);
+    var jc=document.getElementById('mxJournal'); if(jc) jc.innerHTML=journalInnerHTML();
+  };
+  function journalInnerHTML(){
+    var arr=jLoad();
+    if(!arr.length) return '<div style="color:var(--muted);font-size:13px;line-height:1.5">Aucun résultat enregistré. Réalisez un test, puis enregistrez votre score pour suivre vos progrès dans le temps. 📈</div>';
+    var groups={}; arr.forEach(function(e){ (groups[e.key]=groups[e.key]||[]).push(e); });
+    var html='';
+    Object.keys(groups).forEach(function(k){
+      var list=groups[k].slice().sort(function(a,b){return a.date-b.date;});
+      var latest=list[list.length-1], prev=list.length>1?list[list.length-2]:null;
+      var unit=latest.unit||'', badge='';
+      if(prev){ var delta=Math.round((latest.value-prev.value)*10)/10;
+        if(delta!==0){ var improved=TEST_LOWER[k]?(delta<0):(delta>0); var col=improved?'#1a7a44':'#c0392b';
+          badge='<div style="font-size:11px;font-weight:700;color:'+col+';margin-top:2px">'+(delta>0?'▲ +':'▼ ')+Math.abs(delta)+' '+esc(unit)+' · '+(improved?'progrès 🎉':'en baisse')+'</div>'; } }
+      var hist=list.slice().reverse().map(function(e){
+        return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid var(--border2);font-size:12.5px"><span style="color:var(--muted)">'+fmtDate(e.date)+'</span><span style="font-weight:700;color:var(--text)">'+e.value+' '+esc(e.unit||'')+'</span><button onclick="kpTestDelete('+e.date+')" style="border:none;background:transparent;color:#c0392b;cursor:pointer;font-size:14px;line-height:1">✕</button></div>';
+      }).join('');
+      html+='<div style="background:var(--s2);border-radius:12px;padding:12px 14px;margin-bottom:10px">'
+        +'<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><div style="font-weight:700;font-size:14px;color:var(--text)">'+esc(latest.title)+'</div>'
+        +'<div style="font-family:var(--font-display),serif;font-style:italic;font-size:21px;color:var(--em)">'+latest.value+' <span style="font-size:12px;color:var(--muted)">'+esc(unit)+'</span></div></div>'
+        +badge+hist+'</div>';
+    });
+    return html;
+  }
+
   function hexA(hex,a){ hex=String(hex).replace('#',''); if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');} var n=parseInt(hex,16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
   function kpEnsureMuscleStyles(){
     if(document.getElementById('mxStyles')) return;
@@ -24942,6 +24987,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var vo2=(d-504.9)/44.73, cat, col;
     if(vo2>=52){cat='Excellent';col='#1a7a44';} else if(vo2>=45){cat='Très bon';col='#2d7a52';} else if(vo2>=38){cat='Bon';col='#3a9966';} else if(vo2>=32){cat='Moyen';col='#b8912e';} else {cat='À travailler';col='#c0392b';}
     res.innerHTML='<span class="big" style="color:'+col+'">'+vo2.toFixed(1)+'</span><span style="color:var(--muted)">ml/kg/min · '+cat+'</span>';
+    var s=document.getElementById('mxScore_cooper'); if(s) s.value=vo2.toFixed(1);
   };
   window.kpRuffierCalc=function(){
     function gv(id){var e=document.getElementById(id);return e?parseFloat(e.value):NaN;}
@@ -24951,14 +24997,20 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var idx=((f1-70)+(f2-f0))/10, cat, col;
     if(idx<0){cat='Excellente condition';col='#1a7a44';} else if(idx<3){cat='Bonne condition';col='#2d7a52';} else if(idx<6){cat='Condition moyenne';col='#b8912e';} else if(idx<=8){cat='Condition faible';col='#d17a1f';} else {cat='À surveiller — avis médical conseillé';col='#c0392b';}
     res.innerHTML='<span class="big" style="color:'+col+'">'+idx.toFixed(1)+'</span><span style="color:var(--muted)">Indice Ruffier-Dickson · '+cat+'</span>';
+    var s=document.getElementById('mxScore_ruffier'); if(s) s.value=idx.toFixed(1);
   };
   function testCard(t){
     var steps=(t.steps||[]).map(function(s,i){return '<div class="mx-step"><div class="mx-step-n" style="background:'+t.color+'">'+(i+1)+'</div><div>'+esc(s)+'</div></div>';}).join('');
     var bareme=t.bareme?('<div class="mx-bareme">'+t.bareme.map(function(r){return '<div class="mx-brow"><span>'+esc(r[0])+'</span><b style="color:'+t.color+'">'+esc(r[1])+'</b></div>';}).join('')+'</div>'):'';
     var calc=''; if(t.interactive==='cooper') calc=cooperCalcHTML(); else if(t.interactive==='ruffier') calc=ruffierCalcHTML();
+    var unit=TEST_UNITS[t.key]||'';
+    var save='<div class="mx-calc" style="margin-top:10px"><div class="mx-lvl" style="color:var(--muted);margin-bottom:6px">📔 Enregistrer mon résultat</div>'
+      +'<div style="display:flex;gap:8px"><input id="mxScore_'+t.key+'" type="number" inputmode="decimal" class="mx-calc-in" placeholder="Résultat'+(unit?(' ('+unit+')'):'')+'">'
+      +'<button class="mx-calc-btn" style="margin-top:0;width:auto;padding:11px 15px;background:linear-gradient(135deg,#8a5f18,#b07a22)" onclick="kpTestSave(\''+t.key+'\')">💾</button></div>'
+      +'<div id="mxSaveMsg_'+t.key+'" style="font-size:12px;margin-top:6px"></div></div>';
     return '<div class="mx-card"><div class="mx-head"><div class="mx-ic" style="background:'+hexA(t.color,.12)+';color:'+t.color+'">'+t.icon+'</div>'
       +'<div><div class="mx-lvl" style="color:'+t.color+'">'+esc(t.tag)+'</div><div class="mx-title">'+esc(t.title)+'</div></div></div>'
-      +'<div class="mx-intro">'+esc(t.intro)+'</div><div class="mx-steps">'+steps+'</div>'+bareme+calc+'</div>';
+      +'<div class="mx-intro">'+esc(t.intro)+'</div><div class="mx-steps">'+steps+'</div>'+bareme+calc+save+'</div>';
   }
   function segBtn(k,ic,label,cur){ return '<button class="mx-seg-btn'+(cur===k?' active':'')+'" onclick="kpMuscleSwitch(\''+k+'\')"><span class="mx-seg-ic">'+ic+'</span>'+label+'</button>'; }
   function loadMuscleDyn(cb){
@@ -24975,6 +25027,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     if(view==='tests'){
       body.innerHTML='<div class="mx-sec-lab" style="color:#c0392b">📊 Testez vos capacités physiques</div>'
         +'<div class="mx-intro" style="margin-bottom:14px">Situez-vous par rapport à la population, identifiez vos points forts et vos points faibles, puis mesurez vos progrès.</div>'
+        +'<div class="mx-card"><div class="mx-head" style="margin-bottom:10px"><div class="mx-ic" style="background:'+hexA('#8a5f18',.12)+';color:#8a5f18">📔</div><div><div class="mx-lvl" style="color:#8a5f18">Suivi de progression</div><div class="mx-title">Mon journal des tests</div></div></div><div id="mxJournal">'+journalInnerHTML()+'</div></div>'
         +PHYS_TESTS.map(testCard).join('');
       return;
     }
