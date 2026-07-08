@@ -115,3 +115,6 @@ Bugs signalés :
 
 ## CTA « Passez Premium » sidebar desktop plus visible (fork, juin 2026)
 - Le bouton doré .bnav-premium-cta était trop pâle et se fondait dans le fond crème. Refait : dégradé doré plus profond (#e9b73f→#a86f16), texte + flèche BLANCS avec ombre, bordure dorée + halo (box-shadow ring 3px), padding augmenté. Vérifié via screenshot desktop 1440 : bouton bien lisible et contrasté.
+
+## CTA Premium repositionné en HAUT de la sidebar desktop (fork, juin 2026)
+- Suite retour utilisateur (« toujours pareil / mets-le ailleurs ») : le bouton .bnav-premium-cta est DÉPLACÉ tout en haut de la sidebar (order:-1, sous .bnav-brand order:-2, avant le label MENU + onglets). margin auto retirée du CTA et reportée sur .bnav-profile-card (margin-top:auto) pour garder profil/réglages ancrés en bas. Vérifié desktop 1440 : CTA en haut (top~228), au-dessus des onglets.
