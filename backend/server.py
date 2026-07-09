@@ -322,13 +322,13 @@ OPENAI_IMAGE_MODEL = 'gpt-image-1.5'
 CONTENT_PREFIX = 'content-photos'
 
 CONTENT_THEMES = [
-    {"day": "Lundi", "theme": "Mythe Keto"},
+    {"day": "Lundi", "theme": "Mythe Kéto"},
     {"day": "Mardi", "theme": "Choix impossible"},
     {"day": "Mercredi", "theme": "Astuce Naturo"},
-    {"day": "Jeudi", "theme": "Question"},
-    {"day": "Vendredi", "theme": "Conseil"},
-    {"day": "Samedi", "theme": "Défi photo"},
-    {"day": "Dimanche", "theme": "Motivation"},
+    {"day": "Jeudi", "theme": "Question à la communauté"},
+    {"day": "Vendredi", "theme": "La recette commentée"},
+    {"day": "Samedi", "theme": "La mission Kéto"},
+    {"day": "Dimanche", "theme": "Inspiration & bien-être"},
 ]
 
 BRAND_VOICE = (
@@ -376,13 +376,13 @@ def build_infographic_prompt(day: dict, kind: str) -> str:
                 or day.get('image_prompt') or day.get('story_prompt')
                 or 'une belle assiette keto colorée : avocat, saumon, légumes verts, bonnes graisses').strip()
     cta_defaults = {
-        "Mythe Keto": "Tu y croyais aussi ?",
+        "Mythe Kéto": "Tu y croyais aussi ?",
         "Choix impossible": "Tu choisis lequel ?",
         "Astuce Naturo": "Prête à tester ce petit geste ?",
-        "Question": "Dis-moi tout en commentaire !",
-        "Conseil": "On essaie cette semaine ?",
-        "Défi photo": "Montre-nous ton assiette !",
-        "Motivation": "Fière de toi ?",
+        "Question à la communauté": "Dis-moi tout en commentaire !",
+        "La recette commentée": "Tu la testes ce week-end ?",
+        "La mission Kéto": "Prête à relever la mission ?",
+        "Inspiration & bien-être": "Fière de toi ?",
     }
     cta = str(day.get('cta') or cta_defaults.get(theme, "Prête à tester ?")).strip()
     if len(cta) > 45:
@@ -543,16 +543,38 @@ async def content_generate_day(payload: dict, authorization: Optional[str] = Hea
     week_id = _iso_week_id(now)
     t = CONTENT_THEMES[day_idx]
     theme_hint = {
-        "Mythe Keto": "démonte une idée reçue sur le keto",
+        "Mythe Kéto": "démonte une idée reçue sur le keto",
         "Choix impossible": "un jeu \"tu préfères A ou B ?\" avec 2 options keto pour engager",
         "Astuce Naturo": "un conseil naturopathique concret",
-        "Question": "une question ouverte à la communauté",
-        "Conseil": "un conseil keto pratique et actionnable",
-        "Défi photo": "invite à poster une photo (assiette keto, etc.)",
-        "Motivation": "un message inspirant et bienveillant",
+        "Question à la communauté": "une question ouverte à la communauté",
+        "La recette commentée": "présente une recette keto simple et commente ses bienfaits",
+        "La mission Kéto": "lance une petite mission/défi keto de la semaine (photo, geste, habitude)",
+        "Inspiration & bien-être": "un message inspirant et bienveillant sur le bien-être",
     }.get(t["theme"], "")
+    # ── Anti-répétition : sujets déjà publiés les semaines précédentes pour ce jour/thème ──
+    past_topics = []
+    try:
+        fs = get_firestore()
+        if fs:
+            for doc in fs.collection("generated_content").stream():
+                if doc.id == week_id:
+                    continue
+                arr = (doc.to_dict() or {}).get("days") or []
+                if day_idx < len(arr) and isinstance(arr[day_idx], dict):
+                    prev = arr[day_idx]
+                    topic = (prev.get("title") or "").strip() or (prev.get("post") or "").strip()[:90]
+                    if topic:
+                        past_topics.append(topic)
+    except Exception as e:
+        logger.error(f"content history read: {e}")
+    avoid = ""
+    if past_topics:
+        avoid = ("IMPORTANT — Ces sujets ont DÉJÀ été publiés les semaines précédentes pour ce thème, "
+                 "tu dois impérativement proposer un sujet DIFFÉRENT et inédit : "
+                 + " | ".join(past_topics[-15:]) + ". ")
     user_msg = (
         f"Semaine {week_id}. Rédige la publication Facebook du {t['day']}, thème \"{t['theme']}\" ({theme_hint}). "
+        + avoid +
         "Contenu original et inédit. Réponds STRICTEMENT en JSON : { "
         "\"post\": string (3-6 phrases avec émojis et appel à l'action), "
         "\"story\": string (1-2 phrases percutantes), "

@@ -17625,6 +17625,27 @@ authGuest = function(){
 .kp-cc-tags{ display:flex; flex-wrap:wrap; gap:5px; }
 .kp-cc-tag{ font-size:11.5px; color:var(--ed-sage-dark,#236648); background:rgba(35,102,72,.09); padding:2px 8px; border-radius:6px; }
 .kp-cc-reply{ font-size:12.5px; line-height:1.5; color:var(--ed-ink); background:var(--ed-paper-warm); border-left:3px solid var(--ed-sage-dark,#236648); padding:6px 10px; border-radius:0 6px 6px 0; margin-bottom:6px; }
+/* ── Content Wizard (style essenciel-content-wiz) ── */
+.kp-cw-hero{ text-align:center; padding:26px 16px 20px; background:linear-gradient(180deg, rgba(35,102,72,.05), transparent); border-radius:14px; margin-bottom:18px; }
+.kp-cw-eyebrow{ font-size:10px; font-weight:700; letter-spacing:.3em; text-transform:uppercase; color:var(--ed-sage-dark,#236648); margin-bottom:10px; }
+.kp-cw-title{ font-family:var(--font-display),Georgia,serif; font-size:clamp(24px,4vw,34px); line-height:1.15; color:var(--ed-ink); }
+.kp-cw-title em{ font-style:italic; color:var(--ed-sage-dark,#236648); }
+.kp-cw-sub{ font-size:13.5px; color:var(--ed-muted); line-height:1.6; max-width:520px; margin:10px auto 16px; }
+.kp-cw-actions{ display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+.kp-cw-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+.kp-cw-daycard{ background:var(--ed-paper); border:1px solid var(--ed-hair-soft); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:10px; }
+.kp-cw-dayhead{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.kp-cw-dayname{ font-family:var(--font-display),Georgia,serif; font-style:italic; font-size:19px; color:var(--ed-ink); }
+.kp-cw-empty{ font-size:12.5px; color:var(--ed-muted); text-align:center; padding:14px 4px; }
+.kp-cw-btn{ border:none; border-radius:10px; padding:9px 14px; font-size:12.5px; font-weight:700; cursor:pointer; background:linear-gradient(135deg,var(--ed-sage-dark,#236648),#2f8a5f); color:#fff; }
+.kp-cw-btn.ghost{ background:var(--ed-paper-warm); color:var(--ed-sage-dark,#236648); border:1px solid var(--ed-hair); }
+.kp-cw-btn:disabled{ opacity:.55; cursor:wait; }
+.kp-cw-imgbtns{ display:flex; gap:8px; flex-wrap:wrap; }
+.kp-cw-hist{ margin-top:26px; border-top:1px solid var(--ed-hair-soft); padding-top:16px; }
+.kp-cw-hist-title{ font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--ed-muted); margin-bottom:10px; }
+.kp-cw-hist-item{ display:flex; align-items:center; gap:10px; padding:8px 12px; background:var(--ed-paper-warm); border:1px solid var(--ed-hair-soft); border-radius:10px; margin-bottom:6px; font-size:13px; }
+.kp-cw-hist-item strong{ color:var(--ed-ink); }
+.kp-cw-hist-item .spacer{ flex:1; }
 
 .kp-admin-form-row{
   display:flex; gap:8px; flex-wrap:wrap;
@@ -19622,14 +19643,19 @@ authGuest = function(){
         '<div class="kp-admin-list" id="kpAdminLpevList" data-testid="admin-lpev-list"><div class="kp-admin-empty">Chargement…</div></div>' +
       '</div>' +
       '<div class="kp-admin-panel" id="kpAdminContent" data-testid="admin-panel-content">' +
-        '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ed-terra-dark);margin-bottom:6px">Générateur de contenu Facebook · Keto-Essenciel</div>' +
-        '<div style="font-size:13px;color:var(--ed-muted);line-height:1.6;margin-bottom:14px">Un clic génère les <strong>7 publications</strong> de la semaine (Lundi→Dimanche), leurs <strong>stories</strong>, <strong>hashtags</strong>, <strong>réponses types</strong> et les <strong>visuels IA</strong> (carré + story), dans le style de votre marque.</div>' +
-        '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">' +
-          '<button class="kp-admin-btn" data-testid="content-generate-btn" onclick="kpContentGenerate()" id="kpContentGenBtn">✨ Générer la semaine</button>' +
-          '<label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ed-muted)"><input type="checkbox" id="kpContentWithImages" checked> Générer aussi les visuels</label>' +
+        '<div class="kp-cw-hero">' +
+          '<div class="kp-cw-eyebrow">un clic · une semaine complète</div>' +
+          '<div class="kp-cw-title">Ta semaine Facebook,<br><em>générée en beauté</em></div>' +
+          '<div class="kp-cw-sub">7 publications, 7 stories, 7 visuels carrés + stories, les hashtags et les réponses types — tout dans ton univers Kéto-Essenciel.</div>' +
+          '<div class="kp-cw-actions">' +
+            '<button class="kp-admin-btn" data-testid="content-generate-btn" onclick="kpContentGenerate()" id="kpContentGenBtn">✨ Générer ma semaine</button>' +
+            '<button class="kp-admin-btn outline" data-testid="content-clear-history" onclick="kpContentClearHistory()">🗑 Vider l\'historique</button>' +
+            '<label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ed-muted)"><input type="checkbox" id="kpContentWithImages"> Visuels auto</label>' +
+          '</div>' +
+          '<div class="kp-admin-msg" id="kpContentMsg"></div>' +
         '</div>' +
-        '<div class="kp-admin-msg" id="kpContentMsg"></div>' +
-        '<div id="kpContentResults" data-testid="content-results"></div>' +
+        '<div class="kp-cw-grid" id="kpContentResults" data-testid="content-results"></div>' +
+        '<div class="kp-cw-hist"><div class="kp-cw-hist-title">📚 Historique des semaines générées</div><div id="kpContentHistory"><div class="kp-admin-empty">Chargement…</div></div></div>' +
       '</div>' +
     '</div>';
   }
@@ -19691,29 +19717,131 @@ authGuest = function(){
     catch(e){ throw new Error('Réponse inattendue du serveur (HTTP '+r.status+'). Utilisez l\'outil depuis le lien Emergent.'); }
   }
 
+  var KP_CW_THEMES = [
+    ['Lundi','Mythe Kéto'], ['Mardi','Choix impossible'], ['Mercredi','Astuce Naturo'],
+    ['Jeudi','Question à la communauté'], ['Vendredi','La recette commentée'],
+    ['Samedi','La mission Kéto'], ['Dimanche','Inspiration & bien-être']
+  ];
+
   window.kpContentRenderDays = function(content){
+    content = content || { weekId: kpIsoWeekId(new Date()), days: [] };
     window._kpLastContent = content;
     var box = document.getElementById('kpContentResults');
     if(!box) return;
-    var days = (content && content.days) || [];
-    var html = '<div style="font-size:12px;color:var(--ed-muted);margin:12px 0 6px">📅 Semaine <strong>'+kpCcEscape(content.weekId||'')+'</strong> · '+days.length+' publications</div>';
-    days.forEach(function(d, i){
+    var days = content.days || [];
+    var html = '';
+    for(var i=0;i<7;i++){
+      var d = (days[i] && days[i].post) ? days[i] : null;
+      var head = '<div class="kp-cw-dayhead"><span class="kp-cw-dayname">'+KP_CW_THEMES[i][0]+'</span><span class="kp-cc-theme">'+kpCcEscape((d&&d.theme)||KP_CW_THEMES[i][1])+'</span></div>';
+      if(!d){
+        html += '<div class="kp-cw-daycard" data-testid="content-day-'+i+'">'+head+
+          '<div class="kp-cw-empty">Aucune publication générée pour ce jour.</div>'+
+          '<button class="kp-cw-btn" id="kpCwDayBtn-'+i+'" onclick="kpContentGenerateDay('+i+')">✨ Générer cette journée</button>'+
+        '</div>';
+        continue;
+      }
       window._kpCC['post-'+i] = d.post||'';
       window._kpCC['story-'+i] = d.story||'';
       window._kpCC['tags-'+i] = (d.hashtags||[]).join(' ');
       window._kpCC['replies-'+i] = (d.replies||[]).join('\n\n');
       var sq = d.square_url ? '<img src="'+kpCcEscape(d.square_url)+'" alt=""><a class="kp-cc-dl" href="'+kpCcEscape(d.square_url)+'" target="_blank" rel="noopener">⬇︎</a>' : '<div class="kp-cc-img-ph">Carré 1:1</div>';
       var st = d.story_url ? '<img src="'+kpCcEscape(d.story_url)+'" alt=""><a class="kp-cc-dl" href="'+kpCcEscape(d.story_url)+'" target="_blank" rel="noopener">⬇︎</a>' : '<div class="kp-cc-img-ph">Story 9:16</div>';
-      html += '<div class="kp-cc-card" data-testid="content-day-'+i+'">'+
-        '<div class="kp-cc-head"><span class="kp-cc-day">'+kpCcEscape(d.day)+'</span><span class="kp-cc-theme">'+kpCcEscape(d.theme)+'</span></div>'+
+      html += '<div class="kp-cw-daycard" data-testid="content-day-'+i+'">'+head+
         '<div class="kp-cc-imgs"><div class="kp-cc-img" id="kpContentImg-'+i+'-square">'+sq+'</div><div class="kp-cc-img kp-cc-img-story" id="kpContentImg-'+i+'-story">'+st+'</div></div>'+
+        '<div class="kp-cw-imgbtns">'+
+          '<button class="kp-cw-btn ghost" id="kpCwImgBtn-'+i+'-square" onclick="kpContentGenImageBtn('+i+',\'square\')">🖼 '+(d.square_url?'Régénérer le carré':'Générer le carré')+'</button>'+
+          '<button class="kp-cw-btn ghost" id="kpCwImgBtn-'+i+'-story" onclick="kpContentGenImageBtn('+i+',\'story\')">📱 '+(d.story_url?'Régénérer la story':'Générer la story')+'</button>'+
+        '</div>'+
         '<div class="kp-cc-block"><div class="kp-cc-lbl">📝 Publication <button class="kp-cc-copy" onclick="kpContentCopy(\'post-'+i+'\',this)">Copier</button></div><div class="kp-cc-text">'+kpCcEscape(d.post)+'</div></div>'+
         '<div class="kp-cc-block"><div class="kp-cc-lbl">📱 Story <button class="kp-cc-copy" onclick="kpContentCopy(\'story-'+i+'\',this)">Copier</button></div><div class="kp-cc-text">'+kpCcEscape(d.story)+'</div></div>'+
         '<div class="kp-cc-block"><div class="kp-cc-lbl"># Hashtags <button class="kp-cc-copy" onclick="kpContentCopy(\'tags-'+i+'\',this)">Copier</button></div><div class="kp-cc-tags">'+(d.hashtags||[]).map(function(h){return '<span class="kp-cc-tag">'+kpCcEscape(h)+'</span>';}).join('')+'</div></div>'+
         '<div class="kp-cc-block"><div class="kp-cc-lbl">💬 Réponses types <button class="kp-cc-copy" onclick="kpContentCopy(\'replies-'+i+'\',this)">Copier</button></div>'+(d.replies||[]).map(function(rp){return '<div class="kp-cc-reply">'+kpCcEscape(rp)+'</div>';}).join('')+'</div>'+
+        '<button class="kp-cw-btn ghost" id="kpCwDayBtn-'+i+'" onclick="kpContentGenerateDay('+i+')">🔄 Régénérer cette journée</button>'+
       '</div>';
-    });
+    }
     box.innerHTML = html;
+  };
+
+  // ── Génération d'UNE journée (texte) ──
+  window.kpContentGenerateDay = async function(di){
+    var msg = document.getElementById('kpContentMsg');
+    var user = kpCcUser();
+    if(!user || typeof user.getIdToken!=='function'){ if(msg){ msg.textContent='⚠️ Reconnectez-vous pour utiliser cet outil.'; msg.style.color='var(--ed-terra-dark)'; } return null; }
+    var btn = document.getElementById('kpCwDayBtn-'+di);
+    if(btn){ btn.disabled=true; btn.textContent='✍️ Rédaction en cours…'; }
+    try{
+      var token = await user.getIdToken();
+      var r = await fetch(kpContentApi('/content/generate-day'), {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({dayIdx:di})});
+      var j = await kpSafeJson(r);
+      if(!r.ok || !j.ok){ throw new Error((j&&(j.detail||j.message||j.error))||('HTTP '+r.status)); }
+      var content = window._kpLastContent || { weekId:j.weekId, days:[] };
+      content.weekId = j.weekId;
+      content.days[di] = j.day;
+      window.kpContentRenderDays(content);
+      if(msg){ msg.textContent='✓ '+KP_CW_THEMES[di][0]+' généré.'; msg.style.color='var(--ed-sage-dark)'; }
+      kpContentHistoryLoad();
+      return j.day;
+    }catch(e){
+      var em=(e&&e.message)?e.message:String(e);
+      if(em==='forbidden') em='Accès réservé à l\'administrateur.';
+      if(msg){ msg.textContent='❌ '+KP_CW_THEMES[di][0]+' : '+em; msg.style.color='var(--ed-terra-dark)'; }
+      if(btn){ btn.disabled=false; btn.textContent='✨ Générer cette journée'; }
+      return null;
+    }
+  };
+
+  // ── Génération d'UNE image (bouton par visuel) ──
+  window.kpContentGenImageBtn = async function(di, kind){
+    var c = window._kpLastContent;
+    if(!c || !c.days[di]){ toast && toast('⚠️ Générez d\'abord le texte de cette journée'); return; }
+    var user = kpCcUser(); if(!user) return;
+    var b = document.getElementById('kpCwImgBtn-'+di+'-'+kind);
+    if(b){ b.disabled=true; b.textContent='🎨 Génération…'; }
+    try{
+      var token = await user.getIdToken();
+      await window.kpContentGenImage(token, c.weekId, di, kind, c.days[di]);
+    } finally {
+      if(b){ b.disabled=false; b.textContent = (kind==='story'?'📱 Régénérer la story':'🖼 Régénérer le carré'); }
+    }
+  };
+
+  // ── Historique des semaines ──
+  window.kpContentHistoryLoad = function(){
+    var box = document.getElementById('kpContentHistory'); if(!box) return;
+    var fs = (typeof getFirestoreDb==='function') ? getFirestoreDb() : null;
+    if(!fs){ box.innerHTML='<div class="kp-admin-empty">Firebase indisponible</div>'; return; }
+    fs.collection('generated_content').get().then(function(snap){
+      var weeks = [];
+      snap.forEach(function(doc){ var d=doc.data()||{}; var n=(d.days||[]).filter(function(x){return x&&x.post;}).length; weeks.push({id:doc.id, n:n}); });
+      if(!weeks.length){ box.innerHTML='<div class="kp-admin-empty">Aucune semaine générée pour l\'instant.</div>'; return; }
+      weeks.sort(function(a,b){ return a.id<b.id?1:-1; });
+      var cur = kpIsoWeekId(new Date());
+      box.innerHTML = weeks.map(function(w){
+        return '<div class="kp-cw-hist-item"><strong>📅 '+kpCcEscape(w.id)+'</strong>'+(w.id===cur?' <span class="kp-cc-tag">semaine en cours</span>':'')+'<span>'+w.n+'/7 posts</span><span class="spacer"></span>'+
+          '<button class="kp-cc-copy" onclick="kpContentHistoryView(\''+kpCcEscape(w.id)+'\')">Voir</button>'+
+          '<button class="kp-cc-copy" style="color:#b04a2f" onclick="kpContentHistoryDelete(\''+kpCcEscape(w.id)+'\')">✕</button></div>';
+      }).join('');
+    }).catch(function(e){ box.innerHTML='<div class="kp-admin-empty">'+kpCcEscape(e&&e.message||'Erreur')+'</div>'; });
+  };
+  window.kpContentHistoryView = function(weekId){
+    var fs = (typeof getFirestoreDb==='function') ? getFirestoreDb() : null; if(!fs) return;
+    fs.collection('generated_content').doc(weekId).get().then(function(snap){
+      if(snap.exists){ window.kpContentRenderDays(snap.data()); var box=document.getElementById('kpContentResults'); if(box) box.scrollIntoView({behavior:'smooth',block:'start'}); }
+    });
+  };
+  window.kpContentHistoryDelete = function(weekId){
+    if(!confirm('Supprimer la semaine '+weekId+' de l\'historique ?')) return;
+    var fs = (typeof getFirestoreDb==='function') ? getFirestoreDb() : null; if(!fs) return;
+    fs.collection('generated_content').doc(weekId).delete().then(function(){ kpContentHistoryLoad(); toast && toast('🗑 Semaine supprimée'); });
+  };
+  window.kpContentClearHistory = function(){
+    if(!confirm('Vider TOUT l\'historique des contenus générés ?\n(L\'IA pourra alors reproposer des sujets déjà publiés.)')) return;
+    var fs = (typeof getFirestoreDb==='function') ? getFirestoreDb() : null; if(!fs) return;
+    fs.collection('generated_content').get().then(function(snap){
+      var batch = fs.batch();
+      snap.forEach(function(doc){ batch.delete(doc.ref); });
+      return batch.commit();
+    }).then(function(){ kpContentHistoryLoad(); window.kpContentRenderDays(null); toast && toast('🗑 Historique vidé'); });
   };
 
   window.kpContentGenImage = async function(token, weekId, dayIdx, kind, day){
@@ -19724,6 +19852,7 @@ authGuest = function(){
       var r = await fetch(kpContentApi('/content/generate-image'), {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({weekId:weekId,dayIdx:dayIdx,kind:kind,prompt:prompt||'',day:day||null})});
       var j = await kpSafeJson(r);
       if(!r.ok || !j.ok) throw new Error((j&&(j.detail||j.error))||('HTTP '+r.status));
+      try{ var c=window._kpLastContent; if(c&&c.days&&c.days[dayIdx]) c.days[dayIdx][kind==='story'?'story_url':'square_url']=j.url; }catch(e2){}
       if(imgEl) imgEl.innerHTML = '<img src="'+j.url+'" alt=""><a class="kp-cc-dl" href="'+j.url+'" target="_blank" rel="noopener">⬇︎</a>';
     }catch(e){
       if(imgEl) imgEl.innerHTML = '<div class="kp-cc-img-err">⚠️ '+kpCcEscape(e.message||'échec')+'<br><button class="kp-cc-copy" onclick="kpContentRetry('+dayIdx+',\''+kind+'\')">Réessayer</button></div>';
@@ -19738,48 +19867,46 @@ authGuest = function(){
   window.kpContentGenerate = async function(){
     var btn = document.getElementById('kpContentGenBtn');
     var msg = document.getElementById('kpContentMsg');
-    var results = document.getElementById('kpContentResults');
     var withImages = document.getElementById('kpContentWithImages');
-    var doImages = withImages ? withImages.checked : true;
+    var doImages = withImages ? withImages.checked : false;
     var user = kpCcUser();
     if(!user || typeof user.getIdToken!=='function'){ if(msg){ msg.textContent='⚠️ Reconnectez-vous pour utiliser cet outil.'; msg.style.color='var(--ed-terra-dark)'; } return; }
     if(btn){ btn.disabled=true; btn.textContent='✍️ Rédaction en cours…'; }
-    if(msg){ msg.textContent='Génération des 7 publications… (≈20-40s)'; msg.style.color='var(--ed-muted)'; }
-    if(results) results.innerHTML='';
     try{
-      var token = await user.getIdToken();
-      var content = { weekId: '', days: [] };
       for(var di=0; di<7; di++){
-        if(msg){ msg.textContent = '✍️ Rédaction en cours… jour '+(di+1)+'/7'; msg.style.color='var(--ed-muted)'; }
-        var r = await fetch(kpContentApi('/content/generate-day'), {method:'POST', headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, body:JSON.stringify({dayIdx:di})});
-        var j = await kpSafeJson(r);
-        if(!r.ok || !j.ok){ throw new Error((j&&(j.detail||j.message||j.error))||('HTTP '+r.status)); }
-        content.weekId = j.weekId;
-        content.days[di] = j.day;
-        window.kpContentRenderDays(content);
+        if(msg){ msg.textContent = '✍️ Rédaction en cours… '+KP_CW_THEMES[di][0]+' ('+(di+1)+'/7)'; msg.style.color='var(--ed-muted)'; }
+        var day = await window.kpContentGenerateDay(di);
+        if(!day) return; // erreur déjà affichée
       }
-      if(msg){ msg.textContent='✓ Textes générés (semaine '+content.weekId+').'; msg.style.color='var(--ed-sage-dark)'; }
-      if(doImages){
+      var content = window._kpLastContent;
+      if(msg){ msg.textContent='✓ 7 publications générées (semaine '+content.weekId+').'; msg.style.color='var(--ed-sage-dark)'; }
+      if(doImages && content){
         if(msg){ msg.textContent='✓ Textes prêts. Génération des visuels IA… (≈15s/image, patientez)'; msg.style.color='var(--ed-muted)'; }
-        for(var i=0;i<content.days.length;i++){
+        var token = await user.getIdToken();
+        for(var i=0;i<7;i++){
+          if(!content.days[i]) continue;
+          if(msg){ msg.textContent='🎨 Visuels '+KP_CW_THEMES[i][0]+' ('+(i+1)+'/7)…'; }
           await window.kpContentGenImage(token, content.weekId, i, 'square', content.days[i]);
           await window.kpContentGenImage(token, content.weekId, i, 'story', content.days[i]);
         }
         if(msg){ msg.textContent='🎉 Semaine complète (textes + visuels) générée !'; msg.style.color='var(--ed-sage-dark)'; }
       }
+      kpContentHistoryLoad();
     }catch(e){
       var em = (e && e.message) ? e.message : String(e);
-      if(em==='no_openai_key') em='Clé OpenAI absente — ajoutez OPENAI_API_KEY dans functions/.env puis redéployez.';
+      if(em==='no_openai_key') em='Clé OpenAI absente sur le serveur.';
       if(em==='forbidden') em='Accès réservé à l\'administrateur.';
       if(msg){ msg.textContent='❌ Erreur : '+em; msg.style.color='var(--ed-terra-dark)'; }
     }finally{
-      if(btn){ btn.disabled=false; btn.textContent='✨ Générer la semaine'; }
+      if(btn){ btn.disabled=false; btn.textContent='✨ Générer ma semaine'; }
     }
   };
 
   window.kpContentLoadExisting = function(){
     var results = document.getElementById('kpContentResults');
     if(!results) return;
+    window.kpContentRenderDays(null); // grille vide par défaut
+    kpContentHistoryLoad();
     var fs = (typeof getFirestoreDb==='function') ? getFirestoreDb() : null;
     if(!fs) return;
     var weekId = kpIsoWeekId(new Date());
