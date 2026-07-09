@@ -10398,6 +10398,35 @@ function generateMenu(){
   doneDays={};aiCache={};save();if(!window._suppressMenuToast){toast('📅 Menu généré — légume à chaque repas !');}renderPlan();
 }
 
+/* ═══ Légumes d'accompagnement keto (ajoutés quand le plat n'a pas de légume) ═══ */
+var KETO_VEG_SIDES=[
+  {name:"Brocoli vapeur", emoji:"🥦", qty:"150g", shop:"Brocoli"},
+  {name:"Épinards poêlés à l'ail", emoji:"🥬", qty:"120g", shop:"Épinards"},
+  {name:"Courgettes sautées", emoji:"🥒", qty:"150g", shop:"Courgettes"},
+  {name:"Haricots verts au beurre", emoji:"🫛", qty:"150g", shop:"Haricots verts"},
+  {name:"Chou-fleur rôti", emoji:"🥦", qty:"150g", shop:"Chou-fleur"},
+  {name:"Salade verte vinaigrette", emoji:"🥗", qty:"80g", shop:"Salade verte"},
+  {name:"Asperges grillées", emoji:"🌿", qty:"120g", shop:"Asperges"},
+  {name:"Champignons sautés", emoji:"🍄", qty:"120g", shop:"Champignons"},
+  {name:"Poêlée de chou kale", emoji:"🥬", qty:"100g", shop:"Chou kale"},
+  {name:"Endives braisées", emoji:"🥬", qty:"150g", shop:"Endives"},
+  {name:"Poivrons sautés à l'huile d'olive", emoji:"🫑", qty:"120g", shop:"Poivrons"},
+  {name:"Concombre en salade", emoji:"🥒", qty:"100g", shop:"Concombre"}
+];
+function kpRecipeHasVeg(r){
+  return !!(r && r.ingredients && r.ingredients.some(function(i){ return i && i.type==='veg'; }));
+}
+function kpVegSidesDisabled(){
+  return !!(profile && profile.dietMode==='carnivore');
+}
+function kpPickVegSide(used){
+  used = used || [];
+  var pool = KETO_VEG_SIDES.filter(function(v){ return used.indexOf(v.name)===-1; });
+  if(!pool.length){ used.length=0; pool = KETO_VEG_SIDES; }
+  var v = pool[Math.floor(Math.random()*pool.length)];
+  used.push(v.name);
+  return {name:v.name, emoji:v.emoji, qty:v.qty, shop:v.shop};
+}
 function swapMeal(di,slot){
   var d=menu[di];
   var pool=recipePoolForSlot(slot);
@@ -10410,6 +10439,11 @@ function swapMeal(di,slot){
     att++;
     if(att>50) break;
   }while(d[key]===o);
+  // Recalcule le légume d'accompagnement pour déjeuner/dîner
+  if(slot==='lunch' || slot==='dinner'){
+    var nr = pool[d[key]];
+    d[slot+'Veg'] = (!kpVegSidesDisabled() && nr && !kpRecipeHasVeg(nr)) ? kpPickVegSide([]) : null;
+  }
   delete aiCache[di+'-'+slot];
   save();renderDayPanel();renderWeekGrid();
 }
@@ -11009,12 +11043,13 @@ function mlRow(dc,name,val,unit,pct,fc){
 }
 
 /* ══ Fiche « Menu du jour » : cartes repas compactes & élégantes (Option A + résumé d'ingrédients) ══ */
-function _dmcMealCard(r, badge, slotCls, di, slot){
+function _dmcMealCard(r, badge, slotCls, di, slot, vegSide){
   if(!r) return '';
   var kcal = r.kcal || Math.round((r.fat||0)*9+(r.prot||0)*4+(r.carb||0)*4);
   var ings = (r.ingredients||[]).map(function(ing){
     return '<span class="dmc-ing">'+(ing.emoji?ing.emoji+' ':'')+(ing.name||'')+'</span>';
   }).join('');
+  var vegHtml = vegSide ? '<div class="dmc-veg" style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 12px;background:rgba(58,153,102,.10);border:1.5px dashed rgba(58,153,102,.45);border-radius:12px;font-size:13px;flex-wrap:wrap"><span style="font-size:17px">'+(vegSide.emoji||'🥦')+'</span><span style="font-weight:700;color:#1a7a44">+ Légume d\'accompagnement</span><span style="color:var(--text)">'+vegSide.name+' · '+(vegSide.qty||'')+'</span></div>' : '';
   return '<div class="dmc '+slotCls+'">'
     + '<div class="dmc-top">'
     +   '<div class="dmc-emoji">'+(r.img?'<img src="'+r.img+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:16px">':(r.emoji||'🍽'))+'</div>'
@@ -11032,6 +11067,7 @@ function _dmcMealCard(r, badge, slotCls, di, slot){
     +   (r.time?'<span class="dmc-time">⏱ '+r.time+'</span>':'')
     + '</div>'
     + (ings?'<div class="dmc-ings"><span class="dmc-ings-label">Ingrédients</span><div class="dmc-ings-chips">'+ings+'</div></div>':'')
+    + vegHtml
     + '<div class="dmc-actions">'
     +   '<button class="dmc-btn primary" onclick="openRecipe('+r.id+')">📖 Voir la recette</button>'
     +   '<button class="dmc-btn" onclick="swapMeal('+di+',\''+slot+'\')">🔄 Changer</button>'
@@ -11046,7 +11082,7 @@ function dmcMain(di, slot){
   var r = MAIN_RECIPES[menu[di][slot]];
   if(!r) return '';
   var badge = slot==='lunch' ? '🌞 Déjeuner' : '🌙 Dîner';
-  return _dmcMealCard(r, badge, (slot==='lunch'?'lunch':'dinner'), di, slot);
+  return _dmcMealCard(r, badge, (slot==='lunch'?'lunch':'dinner'), di, slot, menu[di][slot+'Veg']);
 }
 function dmcCourse(di, slot, label, icon, slotCls){
   var pool = recipePoolForSlot(slot);
@@ -11278,9 +11314,11 @@ function generateShopping(){
     }
     if(meals.lunch){
       addShop('lunchStarter'); addShop('lunch'); addShop('lunchDessert');
+      if(d.lunchVeg && d.lunchVeg.shop) counts[d.lunchVeg.shop]=(counts[d.lunchVeg.shop]||0)+1;
     }
     if(meals.dinner){
       addShop('dinnerStarter'); addShop('dinner'); addShop('dinnerDessert');
+      if(d.dinnerVeg && d.dinnerVeg.shop) counts[d.dinnerVeg.shop]=(counts[d.dinnerVeg.shop]||0)+1;
     }
   });
   shopTotal=Object.keys(counts).length;
@@ -12695,7 +12733,7 @@ function generateMenu(){
     return out;
   }
 
-  var usedBfast=[], usedMain=[], usedStarter=[], usedDessert=[];
+  var usedBfast=[], usedMain=[], usedStarter=[], usedDessert=[], usedVegSides=[];
   // ── Pool petit-déjeuner SANS légumes (filtrer les recettes contenant un ingrédient de type 'veg') ──
   var BFAST_POOL_NO_VEG = (BFAST_RECIPES||[]).filter(function(r){
     if(!r || !r.ingredients) return true;
@@ -12726,9 +12764,11 @@ function generateMenu(){
       lunch:lunchIdx,
       lunchStarter:lunchStarterIdx,
       lunchDessert:lunchDessertIdx,
+      lunchVeg:(!kpVegSidesDisabled() && lunchIdx!=null && !kpRecipeHasVeg(MAIN_RECIPES[lunchIdx])) ? kpPickVegSide(usedVegSides) : null,
       dinner:dinnerIdx,
       dinnerStarter:dinnerStarterIdx,
-      dinnerDessert:dinnerDessertIdx
+      dinnerDessert:dinnerDessertIdx,
+      dinnerVeg:(!kpVegSidesDisabled() && dinnerIdx!=null && !kpRecipeHasVeg(MAIN_RECIPES[dinnerIdx])) ? kpPickVegSide(usedVegSides) : null
     };
   });
   doneDays={};aiCache={};save();
