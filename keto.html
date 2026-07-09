@@ -10312,6 +10312,12 @@ function renderLibrary(){
 function findRecipe(id){
   return [...BFAST_RECIPES,...MAIN_RECIPES,...STARTER_RECIPES,...DESSERT_RECIPES,...SAUCE_RECIPES,...SNACK_RECIPES,...PAIN_RECIPES].find(function(r){return r.id===id});
 }
+/* Ouvre la fiche recette depuis le menu du jour en incluant le légume d'accompagnement comme ingrédient */
+function openRecipeFromMenu(id, di, slot){
+  window._kpMenuVeg = (menu && menu[di] && (slot==='lunch'||slot==='dinner')) ? (menu[di][slot+'Veg']||null) : null;
+  openRecipe(id);
+  window._kpMenuVeg = null;
+}
 function openRecipe(id){
   var r=findRecipe(id);if(!r)return;
   $('recipeModalTitle').textContent=r.emoji+' '+r.name;
@@ -10320,6 +10326,11 @@ function openRecipe(id){
     var label=ing.type==='prot'?'Protéine':ing.type==='fat'?'Corps gras':'Légume';
     return `<div class="ing-row"><div class="ing-dot" style="background:${dotC}"></div><div class="ing-qty">${ing.qty}</div><div class="ing-name">${ing.emoji} ${ing.name}</div><div class="ing-note">${label}</div></div>`;
   }).join('');
+  // Légume d'accompagnement du menu (si le plat n'en contient pas)
+  if(window._kpMenuVeg){
+    var _v=window._kpMenuVeg;
+    ingHtml += '<div class="ing-row" style="background:rgba(58,153,102,.08);border-radius:10px"><div class="ing-dot" style="background:#7db56a"></div><div class="ing-qty">'+(_v.qty||'')+'</div><div class="ing-name">'+(_v.emoji||'🥦')+' '+(_v.shop||_v.name)+'</div><div class="ing-note" style="color:#1a7a44;font-weight:600">Légume ajouté</div></div>';
+  }
   var spicesHtml=r.spices.map(function(s){return`<span class="chip">🧂 ${s}</span>`}).join('');
   var stepsHtml=r.steps.map(function(s,i){return`<div class="step"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`}).join('');
   $('recipeModalContent').innerHTML=`
@@ -11049,6 +11060,10 @@ function _dmcMealCard(r, badge, slotCls, di, slot, vegSide){
   var ings = (r.ingredients||[]).map(function(ing){
     return '<span class="dmc-ing">'+(ing.emoji?ing.emoji+' ':'')+(ing.name||'')+'</span>';
   }).join('');
+  // Légume d'accompagnement ajouté comme ingrédient (mis en évidence en vert)
+  if(vegSide){
+    ings += '<span class="dmc-ing" style="background:rgba(58,153,102,.14);border:1px solid rgba(58,153,102,.45);color:#1a7a44;font-weight:600">'+(vegSide.emoji||'🥦')+' '+(vegSide.shop||vegSide.name)+' ('+(vegSide.qty||'')+')</span>';
+  }
   var vegHtml = vegSide ? '<div class="dmc-veg" style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 12px;background:rgba(58,153,102,.10);border:1.5px dashed rgba(58,153,102,.45);border-radius:12px;font-size:13px;flex-wrap:wrap"><span style="font-size:17px">'+(vegSide.emoji||'🥦')+'</span><span style="font-weight:700;color:#1a7a44">+ Légume d\'accompagnement</span><span style="color:var(--text)">'+vegSide.name+' · '+(vegSide.qty||'')+'</span></div>' : '';
   return '<div class="dmc '+slotCls+'">'
     + '<div class="dmc-top">'
@@ -11069,7 +11084,7 @@ function _dmcMealCard(r, badge, slotCls, di, slot, vegSide){
     + (ings?'<div class="dmc-ings"><span class="dmc-ings-label">Ingrédients</span><div class="dmc-ings-chips">'+ings+'</div></div>':'')
     + vegHtml
     + '<div class="dmc-actions">'
-    +   '<button class="dmc-btn primary" onclick="openRecipe('+r.id+')">📖 Voir la recette</button>'
+    +   '<button class="dmc-btn primary" onclick="openRecipeFromMenu('+r.id+','+di+',\''+slot+'\')">📖 Voir la recette</button>'
     +   '<button class="dmc-btn" onclick="swapMeal('+di+',\''+slot+'\')">🔄 Changer</button>'
     + '</div>'
     + '</div>';
