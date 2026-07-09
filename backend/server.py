@@ -625,7 +625,7 @@ async def content_generate_day(payload: dict, authorization: Optional[str] = Hea
         "image_prompt": d.get("image_prompt", ""), "story_prompt": d.get("story_prompt", ""),
         "square_url": None, "story_url": None,
     }
-    # Sauvegarde incrémentale dans Firestore
+    # Sauvegarde incrémentale dans Firestore (en conservant les visuels déjà générés)
     try:
         fs = get_firestore()
         if fs:
@@ -635,6 +635,11 @@ async def content_generate_day(payload: dict, authorization: Optional[str] = Hea
                 arr = snap.to_dict()["days"]
                 while len(arr) < 7:
                     arr.append({})
+                prev = arr[day_idx] if isinstance(arr[day_idx], dict) else {}
+                if prev.get("square_url"):
+                    day["square_url"] = prev["square_url"]
+                if prev.get("story_url"):
+                    day["story_url"] = prev["story_url"]
                 arr[day_idx] = day
                 ref.set({"weekId": week_id, "days": arr, "generatedAt": iso_now()}, merge=True)
             else:

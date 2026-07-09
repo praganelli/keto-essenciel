@@ -19756,7 +19756,7 @@ authGuest = function(){
         '<div class="kp-cc-block"><div class="kp-cc-lbl">📱 Story <button class="kp-cc-copy" onclick="kpContentCopy(\'story-'+i+'\',this)">Copier</button></div><div class="kp-cc-text">'+kpCcEscape(d.story)+'</div></div>'+
         '<div class="kp-cc-block"><div class="kp-cc-lbl"># Hashtags <button class="kp-cc-copy" onclick="kpContentCopy(\'tags-'+i+'\',this)">Copier</button></div><div class="kp-cc-tags">'+(d.hashtags||[]).map(function(h){return '<span class="kp-cc-tag">'+kpCcEscape(h)+'</span>';}).join('')+'</div></div>'+
         '<div class="kp-cc-block"><div class="kp-cc-lbl">💬 Réponses types <button class="kp-cc-copy" onclick="kpContentCopy(\'replies-'+i+'\',this)">Copier</button></div>'+(d.replies||[]).map(function(rp){return '<div class="kp-cc-reply">'+kpCcEscape(rp)+'</div>';}).join('')+'</div>'+
-        '<button class="kp-cw-btn ghost" id="kpCwDayBtn-'+i+'" onclick="kpContentGenerateDay('+i+')">🔄 Régénérer cette journée</button>'+
+        '<button class="kp-cw-btn ghost" id="kpCwDayBtn-'+i+'" onclick="kpContentGenerateDay('+i+')">🔄 Régénérer le texte du post</button>'+
       '</div>';
     }
     box.innerHTML = html;
