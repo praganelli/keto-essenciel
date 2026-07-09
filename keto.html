@@ -25045,16 +25045,41 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       +'<div class="mx-dur">⏱ '+esc(e.dur)+'</div>'
       +'</div>';
   }
-  function gainageProgCard(p){
+  var PROG_MAP={
+    'planche':'Gainage ventral (Planche)','planche ventrale':'Gainage ventral (Planche)',
+    'planche bras tendus':'Planche bras tendus','gainage latéral droit':'Gainage latéral',
+    'gainage latéral gauche':'Gainage latéral','gainage latéral':'Gainage latéral',
+    'bird dog':'Bird Dog (quadrupédie)','dead bug':'Dead Bug','planche dynamique':'Planche dynamique',
+    'mountain climber lent':'Mountain Climber lent','hollow hold':'Hollow Hold'
+  };
+  function findGainageByLabel(nm){
+    var key=String(nm||'').toLowerCase().trim(), target=PROG_MAP[key];
+    if(!target){ for(var k in PROG_MAP){ if(key.indexOf(k)>-1||k.indexOf(key)>-1){ target=PROG_MAP[k]; break; } } }
+    if(!target) return null;
+    return GAINAGE_EXOS.filter(function(e){ return e.name===target; })[0]||null;
+  }
+  function progStepSlide(step, idx, color){
+    var name=step[0], dur=step[1];
+    if(/repos/i.test(name)){
+      return '<div class="mrx-exo" style="text-align:center"><div style="font-size:36px">⏸️</div><div class="mrx-exo-name" style="justify-content:center;margin:4px 0">Repos</div><div class="mx-intro" style="margin:0 0 10px">Respirez profondément, relâchez et préparez le prochain exercice.</div><div class="mrx-dur" style="margin:0 auto">⏱ '+esc(dur)+'</div></div>';
+    }
+    var e=findGainageByLabel(name);
+    var steps = (e&&e.pos) ? ('<div class="mrx-how">👉 Comment faire</div><div class="mx-steps">'+e.pos.map(function(s,k){return '<div class="mx-step"><div class="mx-step-n" style="background:'+color+'">'+(k+1)+'</div><div>'+esc(s)+'</div></div>';}).join('')+'</div>') : '';
+    var tip = (e&&e.tip) ? ('<div class="mrx-tip"><span>💡</span><span>'+esc(e.tip)+'</span></div>') : '';
+    var ic = e ? e.icon : '💪';
+    return '<div class="mrx-exo"><div class="mrx-exo-head"><span class="mrx-exo-num" style="background:'+color+'">'+idx+'</span><span class="mrx-exo-ic">'+ic+'</span><span class="mrx-exo-name">'+esc(name)+'</span></div>'
+      +steps+tip
+      +'<div class="mrx-dur">⏱ '+esc(dur)+'</div></div>';
+  }
+  function gainageProgCard(p,pidx){
     var col=lvlColor(p.level);
-    var rows=(p.steps||[]).map(function(s){
-      var rest=/repos/i.test(s[0]);
-      return '<div class="mx-ex"><div class="mx-ex-n"'+(rest?'':' style="background:'+hexA(col,.16)+';color:'+col+'"')+'>'+(rest?'⏸':'•')+'</div>'
-        +'<div class="mx-ex-name"'+(rest?' style="color:var(--muted);font-weight:500"':'')+'>'+esc(s[0])+'</div>'
-        +'<div class="mx-ex-sets" style="color:'+(rest?'var(--muted)':col)+';background:'+(rest?'var(--s2)':hexA(col,.12))+'">'+esc(s[1])+'</div></div>';
-    }).join('');
+    var steps=(p.steps||[]);
+    var exoSteps=steps.filter(function(s){ return !/repos/i.test(s[0]); });
+    var slides=steps.map(function(s,i){ return progStepSlide(s, i+1, col); });
     return '<div class="mx-card"><div class="mx-head"><div class="mx-ic" style="background:'+hexA(col,.12)+';color:'+col+'">🔥</div>'
-      +'<div><div class="mx-lvl" style="color:'+col+'">'+esc(p.tag)+'</div><div class="mx-title">'+esc(p.title)+'</div></div></div>'+rows+'</div>';
+      +'<div><div class="mx-lvl" style="color:'+col+'">'+esc(p.tag)+' · '+exoSteps.length+' exercices</div><div class="mx-title">'+esc(p.title)+'</div></div></div>'
+      +buildCarousel('mxProg'+pidx,'Étape', slides)
+      +'</div>';
   }
   window.kpGainageFilter=function(l){ window.kpGainageLvl=l; window.kpMuscleView='gainage'; window.renderMuscle(); };
 
@@ -25143,18 +25168,9 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var cautions=(p.cautions||[]).map(function(c){return '<div class="mx-warn"><span>⚠️</span><span>'+esc(c)+'</span></div>';}).join('');
     var sport=(p.sport||[]).map(function(s){return '<div class="mrx-sport"><span>🏃</span><span>'+esc(s)+'</span></div>';}).join('');
     var exosArr=p.exos||[];
-    var exosSlider;
-    if(exosArr.length){
-      exosSlider='<div class="mx-counter" id="mxCounter" style="margin-top:2px">Exercice 1 / '+exosArr.length+'</div>'
-        +'<div class="mx-carousel-wrap">'
-        +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
-        +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
-        +'<div class="mx-carousel" id="mxCarousel" data-label="Exercice">'
-        +exosArr.map(function(e,i){ return '<div class="mx-slide">'+muscuRecoExoCard(e,i,color)+'</div>'; }).join('')
-        +'</div>'
-        +'<div class="mx-dots" id="mxDots">'+exosArr.map(function(_e,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Exercice '+(i+1)+'"></button>';}).join('')+'</div>'
-        +'</div>';
-    } else { exosSlider='<div class="mx-intro">—</div>'; }
+    var exosSlider = exosArr.length
+      ? buildCarousel('mxPerso','Exercice', exosArr.map(function(e,i){ return muscuRecoExoCard(e,i,color); }))
+      : '<div class="mx-intro">—</div>';
     return '<div class="mrx-card">'
       +'<div class="mrx-top" style="background:linear-gradient(135deg,'+color+',#1f4f34)"><div class="mrx-badge">🎯 Sur-mesure</div><div class="mrx-level">Niveau '+esc(p.level)+'</div><div class="mrx-sub">'+exosArr.length+' exercices de gainage sélectionnés pour vous</div></div>'
       +(cautions?('<div class="mrx-block"><div class="mrx-block-lab">⚠️ Vos points de vigilance</div>'+cautions+'</div>'):'')
@@ -25401,34 +25417,45 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       window._muscleDyn={progs:progs,tips:tips}; cb(window._muscleDyn);
     }).catch(function(e){ console.warn('[muscle]', e&&e.message); cb({progs:[],tips:[]}); });
   }
-  function kpCarouselIndex(c){
+  function kpCarIndex(c){
     if(!c || c.children.length<2) return 0;
     var step=(c.children[1].offsetLeft - c.children[0].offsetLeft) || c.clientWidth;
     return Math.max(0, Math.min(c.children.length-1, Math.round(c.scrollLeft/step)));
   }
-  function kpCarouselUpdate(){
-    var c=document.getElementById('mxCarousel'); if(!c) return;
-    var idx=kpCarouselIndex(c), n=c.children.length;
-    var dots=document.querySelectorAll('#mxDots .mx-dot');
-    dots.forEach(function(d,i){ d.classList.toggle('active', i===idx); });
-    var lbl=(c.getAttribute('data-label'))||'Test';
-    var cnt=document.getElementById('mxCounter'); if(cnt) cnt.textContent=lbl+' '+(idx+1)+' / '+n;
-    var prev=document.getElementById('mxNavPrev'), next=document.getElementById('mxNavNext');
+  function kpCarUpdate(id){
+    var c=document.getElementById(id); if(!c) return;
+    var idx=kpCarIndex(c), n=c.children.length;
+    document.querySelectorAll('[data-dots="'+id+'"] .mx-dot').forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+    var lbl=(c.getAttribute('data-label'))||'Élément';
+    var cnt=document.querySelector('[data-counter="'+id+'"]'); if(cnt) cnt.textContent=lbl+' '+(idx+1)+' / '+n;
+    var prev=document.querySelector('[data-prev="'+id+'"]'), next=document.querySelector('[data-next="'+id+'"]');
     if(prev) prev.style.visibility = idx<=0 ? 'hidden' : 'visible';
     if(next) next.style.visibility = idx>=n-1 ? 'hidden' : 'visible';
   }
-  window.kpCarouselGo=function(i){
-    var c=document.getElementById('mxCarousel'); if(!c || !c.children[i]) return;
+  window.kpCarGo=function(id,i){
+    var c=document.getElementById(id); if(!c || !c.children[i]) return;
     c.scrollTo({left:(c.children[i].offsetLeft - c.children[0].offsetLeft), behavior:'smooth'});
   };
-  window.kpCarouselStep=function(dir){
-    var c=document.getElementById('mxCarousel'); if(!c) return;
-    kpCarouselGo(Math.max(0, Math.min(c.children.length-1, kpCarouselIndex(c)+dir)));
+  window.kpCarStep=function(id,dir){
+    var c=document.getElementById(id); if(!c) return;
+    kpCarGo(id, Math.max(0, Math.min(c.children.length-1, kpCarIndex(c)+dir)));
   };
-  function kpBindCarousel(){
-    var c=document.getElementById('mxCarousel'); if(!c) return;
-    var t; c.addEventListener('scroll', function(){ clearTimeout(t); t=setTimeout(kpCarouselUpdate, 60); }, {passive:true});
-    kpCarouselUpdate();
+  function kpBindCar(id){
+    var c=document.getElementById(id); if(!c) return;
+    var t; c.addEventListener('scroll', function(){ clearTimeout(t); t=setTimeout(function(){ kpCarUpdate(id); }, 60); }, {passive:true});
+    kpCarUpdate(id);
+  }
+  function buildCarousel(id,label,slides){
+    var n=slides.length;
+    return '<div class="mx-counter" data-counter="'+id+'">'+label+' 1 / '+n+'</div>'
+      +'<div class="mx-carousel-wrap">'
+      +'<button class="mx-nav-arrow mx-nav-prev" data-prev="'+id+'" onclick="kpCarStep(\''+id+'\',-1)" aria-label="Précédent">‹</button>'
+      +'<button class="mx-nav-arrow mx-nav-next" data-next="'+id+'" onclick="kpCarStep(\''+id+'\',1)" aria-label="Suivant">›</button>'
+      +'<div class="mx-carousel" id="'+id+'" data-label="'+label+'">'
+      +slides.map(function(s){ return '<div class="mx-slide">'+s+'</div>'; }).join('')
+      +'</div>'
+      +'<div class="mx-dots" data-dots="'+id+'">'+slides.map(function(_s,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarGo(\''+id+'\','+i+')" aria-label="'+label+' '+(i+1)+'"></button>';}).join('')+'</div>'
+      +'</div>';
   }
   function renderMuscleBody(view){
     var body=document.getElementById('mxBody'); if(!body) return;
@@ -25436,23 +25463,15 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       body.innerHTML='<div class="mx-sec-lab" style="color:#c0392b">📊 Testez vos capacités physiques</div>'
         +'<div class="mx-intro" style="margin-bottom:14px">Situez-vous par rapport à la population, identifiez vos points forts et vos points faibles, puis mesurez vos progrès. Glissez pour parcourir les tests.</div>'
         +'<div class="mx-card"><div class="mx-head" style="margin-bottom:10px"><div class="mx-ic" style="background:'+hexA('#8a5f18',.12)+';color:#8a5f18">📔</div><div><div class="mx-lvl" style="color:#8a5f18">Suivi de progression</div><div class="mx-title">Mon journal des tests</div></div></div><div id="mxJournal">'+journalInnerHTML()+'</div></div>'
-        +'<div class="mx-counter" id="mxCounter">Test 1 / '+PHYS_TESTS.length+'</div>'
-        +'<div class="mx-carousel-wrap">'
-          +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
-          +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
-          +'<div class="mx-carousel" id="mxCarousel" data-label="Test">'
-            +PHYS_TESTS.map(function(t){ return '<div class="mx-slide">'+testCard(t)+'</div>'; }).join('')
-          +'</div>'
-          +'<div class="mx-dots" id="mxDots">'+PHYS_TESTS.map(function(_t,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Test '+(i+1)+'"></button>';}).join('')+'</div>'
-        +'</div>';
-      kpBindCarousel();
+        +buildCarousel('mxTests','Test', PHYS_TESTS.map(function(t){ return testCard(t); }));
+      kpBindCar('mxTests');
       return;
     }
     if(view==='perso'){
       var stp=muLoad();
       if(stp && stp.profile){
         body.innerHTML=muscuRecoCard(stp.profile);
-        if((stp.profile.exos||[]).length) kpBindCarousel();
+        if((stp.profile.exos||[]).length) kpBindCar('mxPerso');
       } else {
         body.innerHTML='<div class="mx-sec-lab" style="color:#2d7a52">🎯 Mon programme personnalisé</div>'
           +'<div class="mx-card" style="text-align:center;border:1.5px dashed var(--border2)"><div style="font-size:44px">📝</div><div class="mx-title" style="margin:8px 0 6px">Créons votre programme</div><div class="mx-intro" style="margin-bottom:16px">Répondez au questionnaire forme &amp; santé (13 questions) pour obtenir un programme de gainage sur-mesure, adapté à votre condition physique et à vos éventuelles pathologies (dos, genoux, cœur, diabète…).</div><button class="mx-calc-btn" style="width:auto;padding:13px 24px;background:linear-gradient(135deg,#1f6a41,#2d7a52)" onclick="kpOpenMuscuQuiz()">📝 Faire le questionnaire</button></div>';
@@ -25463,28 +25482,18 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       var glvl=window.kpGainageLvl||'all';
       var exos=GAINAGE_EXOS.filter(function(e){ return glvl==='all' || e.level===glvl; });
       function gfbtn(k,label){ return '<button class="mx-filter-btn'+(glvl===k?' active':'')+'" onclick="kpGainageFilter(\''+k+'\')">'+label+'</button>'; }
-      var carousel;
-      if(exos.length){
-        carousel='<div class="mx-counter" id="mxCounter">Exercice 1 / '+exos.length+'</div>'
-          +'<div class="mx-carousel-wrap">'
-          +'<button class="mx-nav-arrow mx-nav-prev" id="mxNavPrev" onclick="kpCarouselStep(-1)" aria-label="Précédent">‹</button>'
-          +'<button class="mx-nav-arrow mx-nav-next" id="mxNavNext" onclick="kpCarouselStep(1)" aria-label="Suivant">›</button>'
-          +'<div class="mx-carousel" id="mxCarousel" data-label="Exercice">'
-          +exos.map(function(e){ return '<div class="mx-slide">'+gainageExoCard(e)+'</div>'; }).join('')
-          +'</div>'
-          +'<div class="mx-dots" id="mxDots">'+exos.map(function(_e,i){return '<button class="mx-dot'+(i===0?' active':'')+'" onclick="kpCarouselGo('+i+')" aria-label="Exercice '+(i+1)+'"></button>';}).join('')+'</div>'
-          +'</div>';
-      } else { carousel='<div class="mx-intro">Aucun exercice pour ce niveau.</div>'; }
+      var carousel = exos.length ? buildCarousel('mxGain','Exercice', exos.map(function(e){ return gainageExoCard(e); })) : '<div class="mx-intro">Aucun exercice pour ce niveau.</div>';
       body.innerHTML=
-        '<div class="mx-sec-lab" style="color:#8a5f18">🔥 Programmes guidés</div>'
-        +'<div class="mx-intro" style="margin-bottom:14px">Des séances clé en main, à suivre du début à la fin, quel que soit votre niveau.</div>'
-        +GAINAGE_PROGRAMS.map(gainageProgCard).join('')
+        '<div class="mx-sec-lab" style="color:#8a5f18">🔥 Programmes guidés — glissez ›</div>'
+        +'<div class="mx-intro" style="margin-bottom:14px">Des séances clé en main : faites défiler chaque exercice, avec le mouvement détaillé et sa durée.</div>'
+        +GAINAGE_PROGRAMS.map(function(p,i){ return gainageProgCard(p,i); }).join('')
         +'<div class="mrx-divider"></div>'
         +'<div class="mx-sec-lab" style="color:#2d7a52">💪 Bibliothèque d\'exercices — glissez ›</div>'
         +'<div class="mx-intro" style="margin-bottom:12px">Tous les exercices de gainage, avec le mouvement détaillé. Filtrez par niveau.</div>'
         +'<div class="mx-filter">'+gfbtn('all','Tous')+gfbtn('Débutant','🟢 Débutant')+gfbtn('Intermédiaire','🟠 Interm.')+gfbtn('Avancé','🔴 Avancé')+'</div>'
         +carousel;
-      if(exos.length) kpBindCarousel();
+      GAINAGE_PROGRAMS.forEach(function(_p,i){ kpBindCar('mxProg'+i); });
+      if(exos.length) kpBindCar('mxGain');
       return;
     }
     loadMuscleDyn(function(dyn){
