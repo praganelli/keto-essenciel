@@ -11081,6 +11081,11 @@ function dmcBfast(di){
 function dmcMain(di, slot){
   var r = MAIN_RECIPES[menu[di][slot]];
   if(!r) return '';
+  // Rattrapage : menus générés avant la mise à jour → calcule le légume manquant à la volée
+  if(menu[di][slot+'Veg']===undefined){
+    menu[di][slot+'Veg'] = (!kpVegSidesDisabled() && !kpRecipeHasVeg(r)) ? kpPickVegSide([]) : null;
+    try{ save(); }catch(e){}
+  }
   var badge = slot==='lunch' ? '🌞 Déjeuner' : '🌙 Dîner';
   return _dmcMealCard(r, badge, (slot==='lunch'?'lunch':'dinner'), di, slot, menu[di][slot+'Veg']);
 }
