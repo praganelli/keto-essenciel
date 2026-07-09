@@ -113,5 +113,11 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null
                             && request.auth.token.email == 'infos@essencielonaturel.fr';
     }
+    // ═══ Contenu généré (Générateur de contenu Facebook 7 jours) ═══
+    match /generated_content/{docId} {
+      // Lecture + écriture : admin uniquement
+      allow read, write: if request.auth != null
+                         && request.auth.token.email == 'infos@essencielonaturel.fr';
+    }
   }
 }
