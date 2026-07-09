@@ -392,71 +392,80 @@ def build_infographic_prompt(day: dict, kind: str) -> str:
     pos_photo = 'basse' if is_story else 'droite'
     compositions = {
         "Mythe Kéto": (
-            f"COMPOSITION « MYTHE vs RÉALITÉ » : la zone centrale est divisée en DEUX panneaux arrondis côte à côte"
-            f"{' (empilés verticalement)' if is_story else ''} : à gauche un panneau crème foncé avec une grande croix "
-            "verte forêt dessinée au pinceau et le mot manuscrit « Mythe », à droite un panneau vert très clair avec "
-            f"une grande coche verte au pinceau et le mot manuscrit « Réalité ». Une photo photoréaliste plus petite "
-            f"en bas : {scene}."
+            f"COMPOSITION « MYTHE DÉMONTÉ » : le texte occupe la colonne gauche ; au-dessus du mot d'accent, la "
+            "phrase du mythe en petites majuscules vert forêt surlignée d'un trait vert anis avec une petite croix "
+            f"dessinée à la main. La photo photoréaliste lumineuse se fond dans la moitié {pos_photo} : {scene}."
         ),
         "Choix impossible": (
-            f"COMPOSITION « FACE À FACE » : DEUX photos photoréalistes appétissantes de même taille, côte à côte"
-            f"{' (empilées verticalement)' if is_story else ''}, séparées par un grand cercle doré avec le mot "
-            f"manuscrit « ou » à l'intérieur. Les deux photos illustrent les deux options : {scene}. "
-            "Le titre est placé AU-DESSUS des deux photos."
+            f"COMPOSITION « DUEL » : le titre-question est centré en haut ; la moitié basse montre les DEUX aliments "
+            f"photoréalistes côte à côte : {scene}, avec entre eux un petit médaillon crème dessiné à la main "
+            "contenant « VS » en doodle vert anis. Un petit tampon incliné vert anis « À toi de choisir » avec un cœur."
         ),
         "Astuce Naturo": (
-            f"COMPOSITION « ÉDITORIALE » : le texte occupe la colonne gauche, et une grande photo photoréaliste "
-            f"occupe la moitié {pos_photo} du visuel : {scene}. Une main en action est autorisée."
+            f"COMPOSITION « ÉDITORIALE » : le texte occupe la colonne gauche, la photo photoréaliste lumineuse se "
+            f"fond dans la moitié {pos_photo} : {scene}. Une main en action est la bienvenue."
         ),
         "Question à la communauté": (
-            f"COMPOSITION « CONVERSATION » : le titre-question est CENTRÉ en grand au milieu du visuel, entouré de "
-            "deux ou trois bulles de dialogue dessinées à la main (vert clair et doré) et d'un grand point "
-            f"d'interrogation calligraphié au pinceau. Une bande photo photoréaliste en bas : {scene}."
+            f"COMPOSITION « CONVERSATION » : le titre-question est CENTRÉ en grand au milieu, entouré de deux petites "
+            "bulles de dialogue doodle vert anis et d'un grand point d'interrogation manuscrit. La photo "
+            f"photoréaliste se fond dans le bas du visuel : {scene}."
         ),
         "La recette commentée": (
-            f"COMPOSITION « CARTE RECETTE » : une très grande photo photoréaliste du plat occupe le haut du visuel "
-            f"(pleine largeur) : {scene}. En dessous, une carte crème arrondie contient le titre et la phrase, comme "
-            "une fiche recette de magazine, avec une petite étiquette dorée « recette kéto » et des couverts dessinés à la main."
+            f"COMPOSITION « RECETTE GOURMANDE » : une grande photo photoréaliste appétissante du plat se fond dans "
+            f"la moitié {'haute' if is_story else 'droite'} : {scene}. Une petite étiquette doodle vert anis "
+            "« recette kéto » avec des couverts dessinés à la main près du titre."
         ),
         "La mission Kéto": (
             f"COMPOSITION « MISSION » : la photo photoréaliste est présentée dans un cadre polaroid crème légèrement "
-            f"incliné, fixé par un morceau de ruban adhésif dessiné : {scene}. À côté du polaroid, un badge rond doré "
-            "façon tampon avec une étoile, et une case à cocher verte dessinée à la main devant le titre."
+            f"incliné fixé par un ruban adhésif vert anis : {scene}. Une case à cocher doodle vert anis devant le "
+            "titre et un petit tampon rond « mission de la semaine » en écriture manuscrite."
         ),
         "Inspiration & bien-être": (
-            f"COMPOSITION « CITATION SEREINE » : la photo photoréaliste douce et lumineuse occupe TOUT le fond du "
-            f"visuel : {scene}, recouverte d'un léger voile crème translucide. Le titre est présenté comme une "
-            "citation centrée en grande typographie serif italique vert forêt, entre deux guillemets calligraphiés dorés."
+            f"COMPOSITION « CITATION SEREINE » : la photo photoréaliste douce et très lumineuse occupe tout le fond, "
+            f"voilée de crème translucide : {scene}. Le titre est présenté comme une citation centrée en serif "
+            "italique vert forêt entre deux guillemets manuscrits vert anis."
         ),
     }
     composition = compositions.get(theme, (
         f"COMPOSITION « ÉDITORIALE » : texte à gauche, grande photo photoréaliste occupant la moitié {pos_photo} : {scene}."
     ))
+    benefits = day.get('benefits') if isinstance(day.get('benefits'), list) else []
+    benefit = str(benefits[0]).strip() if benefits and str(benefits[0]).strip() else "STABILISE TON ÉNERGIE ET TA SATIÉTÉ"
+    if len(benefit) > 45:
+        benefit = benefit[:42] + '…'
 
     return (
         f"Crée un visuel de réseau social haut de gamme, {fmt}, pour la marque de naturopathie cétogène "
         "française « Kéto-Essenciel ».\n"
-        "CHARTE OBLIGATOIRE (identique chaque jour) : fond crème/beige très clair et doux, palette vert forêt "
-        "profond + vert clair + touches dorées discrètes, titres en typographie SERIF élégante vert forêt, "
-        "accents en écriture manuscrite (script), petites décorations botaniques dessinées à la main (feuilles, "
-        "brins, étincelles) dispersées avec parcimonie, rendu premium type magazine bien-être.\n"
+        "CHARTE GRAPHIQUE EXACTE ET OBLIGATOIRE :\n"
+        "- FOND : crème chaud très clair (blanc cassé #F7F2E8). La photo photoréaliste, très lumineuse et "
+        "ensoleillée, se FOND naturellement dans ce fond crème (transition douce, aucun cadre dur).\n"
+        "- PALETTE EXACTE : vert forêt très profond (#1E3D2A) pour les titres et textes ; vert anis / citron vert "
+        "(#A9C83C) pour les accents manuscrits, le badge, les surlignages et les doodles ; crème chaud en fond ; "
+        "touches dorées naturelles apportées par la photo (huile d'olive, lumière).\n"
+        "- TYPOGRAPHIES : TITRE en très grandes MAJUSCULES serif condensé bold vert forêt profond ; mots d'accent "
+        "en écriture manuscrite style feutre/pinceau vert anis ; sous-titre en serif italique vert forêt ; petites "
+        "lignes en petites majuscules bold vert forêt.\n"
+        "- DOODLES : petits dessins à la main vert anis dispersés avec parcimonie : cœurs, feuilles, étincelles, "
+        "flèches, traits de soulignement.\n"
         f"{composition}\n"
-        "Lumière naturelle douce, verdure floue en arrière-plan des photos, style photo culinaire/produit "
-        "professionnel. Aucun visage humain (une main en action est autorisée si pertinent).\n"
-        "TEXTES — RÈGLE STRICTE : TRÈS PEU DE TEXTE, uniquement les éléments listés ci-dessous, en FRANÇAIS "
-        "parfaitement orthographié :\n"
-        "1. En haut à gauche : le logo « Kéto-Essenciel » en typographie verte forêt avec deux petites feuilles "
-        "vertes, et en dessous en toutes petites majuscules espacées vert clair : « NATURELLEMENT CÉTOGÈNE ».\n"
-        f"2. En haut au centre : un petit badge arrondi vert avec en petites majuscules blanches : "
-        f"« {jour.upper()} — {theme.upper()} ».\n"
-        f"3. Un mot d'accent en écriture manuscrite (script) vert clair, souligné d'un trait de pinceau : "
-        f"« {theme} ».\n"
-        f"4. Le TITRE en très grandes majuscules serif vert forêt profond, 2 lignes maximum : « {title} ».\n"
-        + (f"5. UNE seule courte phrase en italique sous le titre : « {subtitle} ».\n" if subtitle else "")
-        + f"6. En bas : un bandeau en coup de pinceau vert clair traversant le visuel, avec une très courte "
-        f"question manuscrite vert foncé : « {cta} » et un petit cœur dessiné à la main.\n"
-        "INTERDIT : tout autre texte, paragraphe, liste à puces, tableau de bénéfices ou hashtags sur l'image. "
-        "Le visuel doit rester aéré, élégant et respirer — la photo et le titre dominent."
+        "Lumière naturelle dorée, ambiance fraîche et méditerranéenne (branches d'olivier, verdure floue). "
+        "Aucun visage humain (une main en action est autorisée si pertinent).\n"
+        "ÉLÉMENTS DE TEXTE (UNIQUEMENT ceux-ci, en FRANÇAIS parfaitement orthographié) :\n"
+        "1. En haut à gauche : le logo « Kéto-Essenciel » en serif vert forêt avec une petite feuille verte, et en "
+        "dessous en toutes petites majuscules espacées : « NATURELLEMENT CÉTOGÈNE ».\n"
+        f"2. En haut au centre : une pilule arrondie VERT ANIS clair contenant une petite icône calendrier et le "
+        f"texte en petites majuscules vert forêt : « {jour.upper()} — {theme.upper()} ».\n"
+        f"3. Le mot d'accent en écriture manuscrite feutre vert anis, encadré de petits traits : « {theme} ».\n"
+        f"4. Le TITRE en très grandes majuscules serif condensé vert forêt profond, 2 à 3 lignes : « {title} ».\n"
+        + (f"5. Le sous-titre en serif italique vert forêt : « {subtitle} ».\n" if subtitle else "")
+        + f"6. Une courte ligne en petites majuscules bold vert forêt avec une petite icône (éclair ou feuille) et "
+        f"un trait de soulignement vert anis : « {benefit} ».\n"
+        f"7. En bas à gauche : une NOTE en papier crème légèrement inclinée, fixée par un morceau de ruban adhésif "
+        f"vert anis, avec la question d'engagement écrite À LA MAIN en vert forêt : « {cta} », accompagnée d'un "
+        "petit cœur dessiné.\n"
+        "INTERDIT : tout autre texte, paragraphe, longue liste, tableau ou hashtags sur l'image. Le visuel doit "
+        "rester aéré et élégant — la photo lumineuse et le grand titre dominent."
     )
 
 
