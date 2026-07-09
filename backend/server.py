@@ -171,6 +171,14 @@ async def download_keto_app(request: Request):
     resp.headers["Content-Disposition"] = 'attachment; filename="index.html"'
     return resp
 
+@api_router.get("/download-rules")
+async def download_firestore_rules():
+    return FileResponse(
+        Path("/app/firestore.rules"),
+        media_type="text/plain",
+        filename="firestore.rules",
+    )
+
 @api_router.get("/download-functions")
 async def download_functions():
     return FileResponse(
