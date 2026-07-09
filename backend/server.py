@@ -357,87 +357,62 @@ BRAND_LOGO_DESC = (
 
 
 def build_infographic_prompt(day: dict, kind: str) -> str:
-    """Construit un prompt détaillé pour un VISUEL DE POST complet (texte inclus), dans la charte Keto-Essenciel.
-    La COMPOSITION varie selon le thème du jour pour obtenir des visuels différents d'un post à l'autre."""
+    """Prompt visuel « Kéto-Essenciel » calqué sur le template de la marque :
+    fond crème, gros titre serif vert forêt, mot d'accent manuscrit, grande photo
+    photoréaliste, accents botaniques — et TRÈS PEU de texte sur l'image."""
     day = day or {}
     is_story = (kind == 'story')
-    fmt = ("Format vertical 9:16 (story Instagram/Facebook), composition en hauteur"
+    fmt = ("Format vertical 9:16 (story Instagram/Facebook)"
            if is_story else "Format carré 1:1 (publication Facebook/Instagram)")
     theme = str(day.get('theme') or '').strip()
+    jour = str(day.get('day') or '').strip()
     title = str(day.get('title') or theme or '').strip()
-    message = str(day.get('visual_text') or day.get('story') or day.get('post') or '').strip()
-    if len(message) > 220:
-        message = message[:217] + '…'
-    benefits = day.get('benefits') if isinstance(day.get('benefits'), list) else []
-    benefits = [str(b).strip() for b in benefits if str(b).strip()][:4]
-    if not benefits:
-        benefits = ["ÉNERGIE", "SATIÉTÉ DURABLE", "FAIBLE EN GLUCIDES", "BIEN-ÊTRE"]
-    hashtags = day.get('hashtags') if isinstance(day.get('hashtags'), list) else []
-    hashtags = [str(h).strip() for h in hashtags if str(h).strip()][:5]
+    if len(title) > 48:
+        title = title[:45] + '…'
+    subtitle = str(day.get('visual_text') or day.get('story') or '').strip()
+    if len(subtitle) > 90:
+        subtitle = subtitle[:87] + '…'
     scene = str((day.get('story_prompt') if is_story else day.get('image_prompt'))
-                or day.get('image_prompt') or day.get('story_prompt') or '').strip()
-    benefits_txt = " ; ".join(benefits)
-    tags_txt = " ".join(hashtags)
-
-    # ── Mise en page distincte selon le thème (chaque post est visuellement différent) ──
-    archetypes = {
-        "Mythe Keto": (
-            f"COMPOSITION « MYTHE vs RÉALITÉ » : divise la zone centrale en DEUX colonnes. À gauche, un panneau "
-            f"« MYTHE » avec une grande croix rouge et le mythe barré ; à droite, un panneau « RÉALITÉ » avec une "
-            f"coche verte et la vérité. Intègre une photo culinaire keto illustrant : {scene}. "
-            f"Titre en haut : « {title} ». Texte de fond : « {message} »."
-        ),
-        "Choix impossible": (
-            f"COMPOSITION « FACE À FACE / OU » : deux panneaux côte à côte séparés par un grand cercle « OU » doré. "
-            f"Chaque panneau montre une belle photo d'aliment keto (options du choix), en lien avec : {scene}. "
-            f"Titre-question en haut : « {title} ». Sous-texte : « {message} ». Ambiance ludique, appel à commenter."
-        ),
-        "Astuce Naturo": (
-            f"COMPOSITION « FICHE ASTUCE » esprit herboristerie : une carte crème avec une liste de 2-3 astuces "
-            f"numérotées (petits ronds verts), et une photo de plantes/herbes/aliment keto illustrant : {scene}. "
-            f"Bandeau titre : « {title} ». Astuce mise en avant : « {message} ». Icônes botaniques dessinées main."
-        ),
-        "Question": (
-            f"COMPOSITION « SONDAGE / QUESTION » : un grand point d'interrogation stylisé et deux bulles de réponse "
-            f"(style sondage) invitant à commenter, avec une photo culinaire keto : {scene}. "
-            f"Grande question en haut : « {title} ». Précision : « {message} ». Ambiance conversationnelle, chaleureuse."
-        ),
-        "Conseil": (
-            f"COMPOSITION « CONSEIL DU JOUR » : un ruban/étiquette « CONSEIL » en haut, un conseil clair mis en avant "
-            f"dans une carte, et une photo culinaire keto épurée : {scene}. "
-            f"Titre : « {title} ». Conseil : « {message} ». Icône ampoule/feuille, mise en page aérée et premium."
-        ),
-        "Défi photo": (
-            f"COMPOSITION « DÉFI PHOTO » : une carte défi avec une grande icône appareil photo et un cadre polaroid, "
-            f"invitant à partager sa photo ; une belle assiette keto à reproduire : {scene}. "
-            f"Titre : « {title} ». Consigne du défi : « {message} ». Ton motivant « à vous de jouer »."
-        ),
-        "Motivation": (
-            f"COMPOSITION « CITATION INSPIRANTE » : une grande citation en typographie serif italique élégante, "
-            f"centrée, sur un visuel serein (photo lifestyle/culinaire keto douce) : {scene}. "
-            f"Accroche : « {title} ». Citation/message : « {message} ». Ambiance apaisante, lumineuse, motivante."
-        ),
+                or day.get('image_prompt') or day.get('story_prompt')
+                or 'une belle assiette keto colorée : avocat, saumon, légumes verts, bonnes graisses').strip()
+    cta_defaults = {
+        "Mythe Keto": "Tu y croyais aussi ?",
+        "Choix impossible": "Tu choisis lequel ?",
+        "Astuce Naturo": "Prête à tester ce petit geste ?",
+        "Question": "Dis-moi tout en commentaire !",
+        "Conseil": "On essaie cette semaine ?",
+        "Défi photo": "Montre-nous ton assiette !",
+        "Motivation": "Fière de toi ?",
     }
-    layout = archetypes.get(theme, (
-        f"COMPOSITION : bandeau titre peint au pinceau vert forêt (texte MAJUSCULES blanc cassé) : « {title} ». "
-        f"Carte blanche arrondie avec le message : « {message} ». Photo culinaire keto appétissante : {scene}."
-    ))
+    cta = str(day.get('cta') or cta_defaults.get(theme, "Prête à tester ?")).strip()
+    if len(cta) > 45:
+        cta = cta[:42] + '…'
 
     return (
-        f"Crée une infographie de réseau social professionnelle et haut de gamme, {fmt}, pour la marque de "
-        "naturopathie cétogène \"Keto-Essenciel\". Style : infographie française chaleureuse, qualité magazine, "
-        "fond crème/beige clair, palette vert forêt profond et touches dorées. "
-        "TOUT LE TEXTE DOIT ÊTRE EN FRANÇAIS, parfaitement orthographié et bien lisible.\n"
-        f"{layout}\n"
-        "PHOTO : lumière naturelle douce, aliments keto sains (avocat, œufs, légumes verts, bons gras, viandes, "
-        "baies), style photo food premium, faible profondeur de champ. Petites icônes vertes dessinées à la main "
-        "(soleil, ampoule, appareil photo, feuille, cœurs, bulles de dialogue, flèches).\n"
-        f"{BRAND_LOGO_DESC}\n"
-        f"BANDEAU DU BAS : un large bandeau vert forêt sur toute la largeur contenant 4 petites icônes rondes à "
-        f"contour blanc, avec sous chacune un court label en majuscules : {benefits_txt}. "
-        + (f"À droite du bandeau, affiche les hashtags en texte crème : {tags_txt}.\n" if tags_txt else "\n") +
-        "Aucune personne, aucun visage. Composition équilibrée, aérée, élégante, moderne et engageante, "
-        "clairement différente d'un thème à l'autre."
+        f"Crée un visuel de réseau social haut de gamme, {fmt}, pour la marque de naturopathie cétogène "
+        "française « Kéto-Essenciel ».\n"
+        "STYLE GLOBAL : fond crème/beige très clair et doux, direction artistique naturelle et fraîche, "
+        "palette vert forêt profond + vert clair + touches dorées discrètes, petites décorations botaniques "
+        "dessinées à la main (feuilles, brins, étincelles) dispersées avec parcimonie, rendu premium type "
+        "magazine bien-être.\n"
+        f"PHOTO PRINCIPALE : une grande photo PHOTORÉALISTE et appétissante occupant environ la moitié "
+        f"{'basse' if is_story else 'droite'} du visuel : {scene}. Lumière naturelle douce, verdure floue en "
+        "arrière-plan, style photo produit/culinaire professionnel. Aucun visage humain (une main en action "
+        "est autorisée si pertinent).\n"
+        "TEXTES — RÈGLE STRICTE : TRÈS PEU DE TEXTE, uniquement les éléments listés ci-dessous, en FRANÇAIS "
+        "parfaitement orthographié :\n"
+        "1. En haut à gauche : le logo « Kéto-Essenciel » en typographie verte forêt avec deux petites feuilles "
+        "vertes, et en dessous en toutes petites majuscules espacées vert clair : « NATURELLEMENT CÉTOGÈNE ».\n"
+        f"2. En haut au centre : un petit badge arrondi vert avec en petites majuscules blanches : "
+        f"« {jour.upper()} — {theme.upper()} ».\n"
+        f"3. Un mot d'accent en écriture manuscrite (script) vert clair, souligné d'un trait de pinceau : "
+        f"« {theme} ».\n"
+        f"4. Le TITRE en très grandes majuscules serif vert forêt profond, 2 lignes maximum : « {title} ».\n"
+        + (f"5. UNE seule courte phrase en italique sous le titre : « {subtitle} ».\n" if subtitle else "")
+        + f"6. En bas : un bandeau en coup de pinceau vert clair traversant le visuel, avec une très courte "
+        f"question manuscrite vert foncé : « {cta} » et un petit cœur dessiné à la main.\n"
+        "INTERDIT : tout autre texte, paragraphe, liste à puces, tableau de bénéfices ou hashtags sur l'image. "
+        "Le visuel doit rester aéré, élégant et respirer — la photo et le titre dominent."
     )
 
 
@@ -621,6 +596,7 @@ async def content_generate_day(payload: dict, authorization: Optional[str] = Hea
         "day": t["day"], "theme": t["theme"],
         "post": d.get("post", ""), "story": d.get("story", ""),
         "title": d.get("title", ""), "visual_text": d.get("visual_text", ""),
+        "cta": d.get("cta", ""),
         "benefits": d.get("benefits", []) if isinstance(d.get("benefits"), list) else [],
         "hashtags": d.get("hashtags", []) if isinstance(d.get("hashtags"), list) else [],
         "replies": d.get("replies", []) if isinstance(d.get("replies"), list) else [],
