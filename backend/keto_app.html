@@ -24851,13 +24851,24 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       list.innerHTML=h;
     }).catch(function(e){ list.innerHTML='<div style="color:#c0392b;font-size:13px">'+esc(e&&e.message||'Erreur')+'</div>'; });
   };
+  /* Nettoie les clés runtime (_docId, custom…) avant archivage Firestore */
+  function kpStripRuntime(r){
+    var o={}; Object.keys(r||{}).forEach(function(k){ if(k.charAt(0)!=='_' && k!=='custom' && r[k]!==undefined) o[k]=r[k]; });
+    return o;
+  }
   window.kpAdminDeleteRecipe=function(docId){
     var fs=kpFs(); if(!fs) return;
-    fs.collection('custom_recipes').doc(docId).delete().then(function(){
+    var ref=fs.collection('custom_recipes').doc(docId);
+    ref.get().then(function(snap){
+      var d=snap.exists?(snap.data()||{}):{};
+      // Archive la recette perso dans recipe_deletions pour pouvoir la restaurer
+      return fs.collection('recipe_deletions').doc('c_'+docId).set({custom:true, name:d.name||'', deletedAt:Date.now(), data:kpStripRuntime(d)}).then(function(){ return ref.delete(); });
+    }).then(function(){
       Object.keys(POOL_MAP).forEach(function(k){ var arr=window[POOL_MAP[k]]; if(arr){ for(var i=arr.length-1;i>=0;i--){ if(arr[i]._docId===docId) arr.splice(i,1); } } });
       kpAdminLoadRecipeList(); if(typeof renderLibrary==='function'){try{renderLibrary();}catch(e){}}
+      if(typeof window.kpAdminLoadDeletions==='function') window.kpAdminLoadDeletions();
       toastMsg('Recette supprimée');
-    });
+    }).catch(function(e){ toastMsg('⚠️ '+(e&&e.message||'Erreur (règles Firestore ?)')); });
   };
 
   window.kpAdminSaveMuscle=function(){
@@ -25625,7 +25636,10 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       toastMsg('🗑 Recette supprimée');
     };
     if(r.custom && r._docId){
-      fs.collection('custom_recipes').doc(r._docId).delete().then(after).catch(function(e){ toastMsg('⚠️ '+(e&&e.message||'Erreur')); });
+      // Archive la recette perso avant suppression pour pouvoir la restaurer
+      fs.collection('recipe_deletions').doc('c_'+r._docId).set({custom:true, name:r.name||'', deletedAt:Date.now(), data:kpStripRuntime(r)}).then(function(){
+        return fs.collection('custom_recipes').doc(r._docId).delete();
+      }).then(after).catch(function(e){ toastMsg('⚠️ '+(e&&e.message||'Erreur (règles Firestore ?)')); });
     } else {
       fs.collection('recipe_deletions').doc(String(id)).set({id:id,name:r.name||'',deletedAt:Date.now()}).then(after).catch(function(e){ toastMsg('⚠️ '+(e&&e.message||'Erreur (règles Firestore ?)')); });
     }
@@ -25637,9 +25651,10 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     fs.collection('recipe_deletions').get().then(function(snap){
       if(snap.empty){ list.innerHTML='<div style="color:var(--muted);font-size:13px">Aucune recette supprimée</div>'; return; }
       var h=''; snap.forEach(function(doc){ var d=doc.data()||{};
+        var badge = d.custom ? '<span style="font-size:10px;font-weight:700;color:#8a5f18;background:rgba(212,160,23,.14);border-radius:6px;padding:2px 6px">Perso</span>' : '<span style="font-size:10px;font-weight:700;color:var(--muted);background:var(--s1);border-radius:6px;padding:2px 6px">Origine</span>';
         h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--s2);border-radius:10px;margin-bottom:6px">'
           +'<span style="font-size:20px">🗑</span>'
-          +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+esc(d.name||('#'+doc.id))+'</div></div>'
+          +'<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px">'+esc(d.name||('#'+doc.id))+' '+badge+'</div></div>'
           +'<button onclick="kpAdminRestoreRecipe(\''+doc.id+'\')" style="border:none;background:rgba(26,122,68,.12);color:#1a7a44;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer">↺ Restaurer</button></div>';
       });
       list.innerHTML=h;
@@ -25647,7 +25662,12 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
   };
   window.kpAdminRestoreRecipe=function(docId){
     var fs=kpFs(); if(!fs) return;
-    fs.collection('recipe_deletions').doc(docId).delete().then(function(){
+    var ref=fs.collection('recipe_deletions').doc(docId);
+    ref.get().then(function(snap){
+      var d=snap.exists?(snap.data()||{}):{};
+      var p = (d.custom && d.data) ? fs.collection('custom_recipes').add(d.data) : Promise.resolve();
+      return p.then(function(){ return ref.delete(); });
+    }).then(function(){
       toastMsg('↺ Recette restaurée — rechargement…');
       setTimeout(function(){ try{ location.reload(); }catch(e){} }, 700);
     }).catch(function(e){ toastMsg('⚠️ '+(e&&e.message||'Erreur')); });
