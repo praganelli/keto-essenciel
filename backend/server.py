@@ -388,17 +388,61 @@ def build_infographic_prompt(day: dict, kind: str) -> str:
     if len(cta) > 45:
         cta = cta[:42] + '…'
 
+    # ── Composition DIFFÉRENTE pour chaque jour (même charte couleurs/typo) ──
+    pos_photo = 'basse' if is_story else 'droite'
+    compositions = {
+        "Mythe Kéto": (
+            f"COMPOSITION « MYTHE vs RÉALITÉ » : la zone centrale est divisée en DEUX panneaux arrondis côte à côte"
+            f"{' (empilés verticalement)' if is_story else ''} : à gauche un panneau crème foncé avec une grande croix "
+            "verte forêt dessinée au pinceau et le mot manuscrit « Mythe », à droite un panneau vert très clair avec "
+            f"une grande coche verte au pinceau et le mot manuscrit « Réalité ». Une photo photoréaliste plus petite "
+            f"en bas : {scene}."
+        ),
+        "Choix impossible": (
+            f"COMPOSITION « FACE À FACE » : DEUX photos photoréalistes appétissantes de même taille, côte à côte"
+            f"{' (empilées verticalement)' if is_story else ''}, séparées par un grand cercle doré avec le mot "
+            f"manuscrit « ou » à l'intérieur. Les deux photos illustrent les deux options : {scene}. "
+            "Le titre est placé AU-DESSUS des deux photos."
+        ),
+        "Astuce Naturo": (
+            f"COMPOSITION « ÉDITORIALE » : le texte occupe la colonne gauche, et une grande photo photoréaliste "
+            f"occupe la moitié {pos_photo} du visuel : {scene}. Une main en action est autorisée."
+        ),
+        "Question à la communauté": (
+            f"COMPOSITION « CONVERSATION » : le titre-question est CENTRÉ en grand au milieu du visuel, entouré de "
+            "deux ou trois bulles de dialogue dessinées à la main (vert clair et doré) et d'un grand point "
+            f"d'interrogation calligraphié au pinceau. Une bande photo photoréaliste en bas : {scene}."
+        ),
+        "La recette commentée": (
+            f"COMPOSITION « CARTE RECETTE » : une très grande photo photoréaliste du plat occupe le haut du visuel "
+            f"(pleine largeur) : {scene}. En dessous, une carte crème arrondie contient le titre et la phrase, comme "
+            "une fiche recette de magazine, avec une petite étiquette dorée « recette kéto » et des couverts dessinés à la main."
+        ),
+        "La mission Kéto": (
+            f"COMPOSITION « MISSION » : la photo photoréaliste est présentée dans un cadre polaroid crème légèrement "
+            f"incliné, fixé par un morceau de ruban adhésif dessiné : {scene}. À côté du polaroid, un badge rond doré "
+            "façon tampon avec une étoile, et une case à cocher verte dessinée à la main devant le titre."
+        ),
+        "Inspiration & bien-être": (
+            f"COMPOSITION « CITATION SEREINE » : la photo photoréaliste douce et lumineuse occupe TOUT le fond du "
+            f"visuel : {scene}, recouverte d'un léger voile crème translucide. Le titre est présenté comme une "
+            "citation centrée en grande typographie serif italique vert forêt, entre deux guillemets calligraphiés dorés."
+        ),
+    }
+    composition = compositions.get(theme, (
+        f"COMPOSITION « ÉDITORIALE » : texte à gauche, grande photo photoréaliste occupant la moitié {pos_photo} : {scene}."
+    ))
+
     return (
         f"Crée un visuel de réseau social haut de gamme, {fmt}, pour la marque de naturopathie cétogène "
         "française « Kéto-Essenciel ».\n"
-        "STYLE GLOBAL : fond crème/beige très clair et doux, direction artistique naturelle et fraîche, "
-        "palette vert forêt profond + vert clair + touches dorées discrètes, petites décorations botaniques "
-        "dessinées à la main (feuilles, brins, étincelles) dispersées avec parcimonie, rendu premium type "
-        "magazine bien-être.\n"
-        f"PHOTO PRINCIPALE : une grande photo PHOTORÉALISTE et appétissante occupant environ la moitié "
-        f"{'basse' if is_story else 'droite'} du visuel : {scene}. Lumière naturelle douce, verdure floue en "
-        "arrière-plan, style photo produit/culinaire professionnel. Aucun visage humain (une main en action "
-        "est autorisée si pertinent).\n"
+        "CHARTE OBLIGATOIRE (identique chaque jour) : fond crème/beige très clair et doux, palette vert forêt "
+        "profond + vert clair + touches dorées discrètes, titres en typographie SERIF élégante vert forêt, "
+        "accents en écriture manuscrite (script), petites décorations botaniques dessinées à la main (feuilles, "
+        "brins, étincelles) dispersées avec parcimonie, rendu premium type magazine bien-être.\n"
+        f"{composition}\n"
+        "Lumière naturelle douce, verdure floue en arrière-plan des photos, style photo culinaire/produit "
+        "professionnel. Aucun visage humain (une main en action est autorisée si pertinent).\n"
         "TEXTES — RÈGLE STRICTE : TRÈS PEU DE TEXTE, uniquement les éléments listés ci-dessous, en FRANÇAIS "
         "parfaitement orthographié :\n"
         "1. En haut à gauche : le logo « Kéto-Essenciel » en typographie verte forêt avec deux petites feuilles "
