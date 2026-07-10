@@ -4249,35 +4249,34 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
    CONNEXION MOBILE v2 — Hero photo immersif + carte aérée
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 980px){
-  #authScreen{ background:#f6f1e6 !important; }
+  #authScreen{ background:#f6f1e6 !important; padding:0 !important; }
   #authScreen .auth-card{
-    padding:0 0 calc(18px + env(safe-area-inset-bottom)) !important;
-    justify-content:flex-start !important;
+    padding:clamp(8px,2dvh,18px) 22px calc(10px + env(safe-area-inset-bottom)) !important;
+    justify-content:center !important;
     background:transparent !important;
+    min-height:100dvh;
   }
-  /* ── Bandeau photo pleine largeur ── */
+  /* ── En-tête marque compact (sans image) ── */
   #authScreen .auth-card .auth-logo{
     width:100% !important;
-    margin:0 0 20px !important;
-    padding:40px 26px 54px !important;
-    background:
-      linear-gradient(180deg, rgba(24,38,26,.28) 0%, rgba(20,34,22,.55) 55%, rgba(18,30,20,.82) 100%),
-      var(--kp-bg-auth) center 32%/cover no-repeat !important;
-    border-radius:0 0 30px 30px;
-    box-shadow:0 20px 44px -20px rgba(20,34,22,.55);
+    margin:0 0 clamp(8px,1.6dvh,16px) !important;
+    padding:0 !important;
+    background:none !important;
+    border-radius:0;
+    box-shadow:none;
   }
   #authScreen .auth-card .auth-logo-avo{
-    width:54px !important; height:54px !important;
-    margin:0 auto 10px !important;
-    filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));
+    width:clamp(38px,6dvh,52px) !important; height:clamp(38px,6dvh,52px) !important;
+    margin:0 auto 6px !important;
+    filter:drop-shadow(0 4px 10px rgba(20,34,22,.25));
   }
-  #authScreen .auth-brand{ color:#f7f3e8 !important; font-size:31px !important; text-shadow:0 2px 16px rgba(0,0,0,.38); }
-  #authScreen .auth-brand em{ color:#f0d98d !important; }
-  #authScreen .auth-sub{ color:#a9d8bd !important; letter-spacing:.22em !important; }
-  #authScreen .auth-tagline{ color:rgba(247,243,232,.95) !important; margin-top:8px; }
-  #authScreen .auth-tagline .auth-tag-italic{ color:#f0d98d !important; }
+  #authScreen .auth-brand{ color:#1e3d2a !important; font-size:clamp(24px,3.6dvh,30px) !important; text-shadow:none; }
+  #authScreen .auth-brand em{ color:#8a6d1d !important; }
+  #authScreen .auth-sub{ color:#4a6b52 !important; letter-spacing:.22em !important; }
+  #authScreen .auth-tagline{ color:#5b5546 !important; margin-top:5px; font-size:clamp(12px,1.7dvh,14px) !important; }
+  #authScreen .auth-tagline .auth-tag-italic{ color:#8a6d1d !important; }
 
-  /* ── Zone formulaire : marges latérales confortables ── */
+  /* ── Zone formulaire pleine largeur ── */
   #authScreen .auth-card .auth-tabs,
   #authScreen .auth-card #authLoginForm,
   #authScreen .auth-card #authRegisterForm,
@@ -4285,8 +4284,8 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
   #authScreen .auth-card .auth-msg,
   #authScreen .auth-card .auth-guest-btn,
   #authScreen .auth-card .auth-footer{
-    margin-left:22px !important; margin-right:22px !important;
-    width:auto !important;
+    margin-left:0 !important; margin-right:0 !important;
+    width:100% !important;
   }
 
   /* ── Onglets segmentés (pill iOS) ── */
@@ -4294,11 +4293,11 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
     background:#ece5d3 !important;
     border-radius:16px !important;
     padding:4px !important;
-    margin-bottom:16px !important;
+    margin-bottom:clamp(8px,1.6dvh,14px) !important;
     box-shadow:inset 0 1px 3px rgba(60,50,30,.10);
   }
   #authScreen .auth-tab{
-    padding:11px 8px !important;
+    padding:clamp(8px,1.4dvh,11px) 8px !important;
     border-radius:13px !important;
     font-size:14px !important;
     color:#6f6a56 !important;
@@ -4313,13 +4312,13 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
   #authScreen .auth-field-label{
     color:#4a6b52 !important;
     font-size:11px !important;
-    margin-bottom:6px !important;
+    margin-bottom:4px !important;
   }
   #authScreen .auth-input{
     background:#fffdf8 !important;
     border:1.5px solid #e2dac6 !important;
     border-radius:15px !important;
-    padding:14px 16px !important;
+    padding:clamp(10px,1.8dvh,14px) 16px !important;
     font-size:15px !important;
     color:#26301f !important;
     box-shadow:0 2px 8px -4px rgba(60,50,30,.10);
@@ -4330,8 +4329,8 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
     box-shadow:0 0 0 3px rgba(47,138,95,.14) !important;
     outline:none;
   }
-  #authScreen .auth-field{ margin-bottom:12px !important; }
-  #authScreen .auth-forgot{ text-align:right; margin:-4px 0 12px; }
+  #authScreen .auth-field{ margin-bottom:clamp(6px,1.2dvh,11px) !important; }
+  #authScreen .auth-forgot{ text-align:right; margin:-2px 0 clamp(6px,1.2dvh,12px); }
   #authScreen .auth-forgot a{ font-size:12.5px; color:#4a6b52; }
 
   /* ── Boutons ── */
@@ -4339,7 +4338,7 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
     background:linear-gradient(135deg,#236648,#2f8a5f) !important;
     border:none !important;
     border-radius:16px !important;
-    padding:16px !important;
+    padding:clamp(12px,2dvh,16px) !important;
     font-size:15px !important;
     letter-spacing:.06em;
     color:#fdfaf3 !important;
@@ -4350,15 +4349,15 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
     background:#fffdf8 !important;
     border:1.5px solid #e2dac6 !important;
     border-radius:16px !important;
-    padding:14px !important;
+    padding:clamp(10px,1.8dvh,14px) !important;
     font-size:14.5px !important;
     color:#26301f !important;
     box-shadow:0 3px 10px -4px rgba(60,50,30,.14) !important;
   }
-  #authScreen .auth-divider{ margin:14px 0 !important; color:#a49e88; }
+  #authScreen .auth-divider{ margin:clamp(7px,1.3dvh,12px) 0 !important; color:#a49e88; }
   #authScreen .auth-guest-btn{
-    margin-top:14px !important;
-    padding:12px !important;
+    margin-top:clamp(6px,1.3dvh,12px) !important;
+    padding:clamp(7px,1.3dvh,11px) !important;
     font-size:13.5px !important;
     color:#4a6b52 !important;
     text-decoration:underline;
@@ -4367,10 +4366,19 @@ body.dark .gen-modal{background:var(--s2);border-color:var(--border)}
 
   /* ── Footer compact ── */
   #authScreen .auth-footer{
-    margin-top:14px !important;
-    padding-top:14px !important;
+    margin-top:clamp(6px,1.3dvh,12px) !important;
+    padding-top:clamp(6px,1.3dvh,12px) !important;
     border-top:1px solid #e6dfcc;
   }
+  /* Tout doit tenir sur 1 écran : footer minimal sur mobile */
+  #authScreen .auth-coord-mini{ display:none !important; }
+}
+/* Petits écrans : compactage supplémentaire pour garantir 1 page */
+@media (max-width: 980px) and (max-height: 700px){
+  #authScreen .auth-coord-tag{ display:none !important; }
+  #authScreen .auth-footer{ font-size:11px !important; }
+  #authScreen .auth-card .auth-logo-avo{ width:34px !important; height:34px !important; margin-bottom:4px !important; }
+  #authScreen .auth-tagline{ display:none !important; }
 }
 
 /* Très petits écrans : on resserre encore un peu */
@@ -6119,7 +6127,7 @@ body{
   body{ font-size:14px; }
 
   /* AUTH SCREEN */
-  #authScreen{ padding:14px !important; }
+  #authScreen{ padding:0 !important; }
   .auth-card{ max-width:100% !important; margin:0 !important; }
   .auth-logo{ padding:24px 22px 12px !important; }
   .auth-brand{ font-size:32px !important; }
