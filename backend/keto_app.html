@@ -14748,8 +14748,8 @@ function sendReset(){
   }
   authInstance.sendPasswordResetEmail(email)
     .then(function(){
-      if(msg){msg.textContent='✅ Email envoyé ! Vérifiez votre boîte de réception.';msg.className='auth-msg success';}
-      setTimeout(closeReset, 3000);
+      if(msg){msg.innerHTML='✅ Si un compte existe avec cet email, le lien de réinitialisation a été envoyé.<br><small>Pensez à vérifier vos <strong>SPAMS / courriers indésirables</strong> (expéditeur : noreply@…firebaseapp.com). Si le compte a été créé avec Google, reconnectez-vous via le bouton Google.</small>';msg.className='auth-msg success';}
+      setTimeout(closeReset, 9000);
     })
     .catch(function(err){
       if(msg){msg.textContent=authTranslateError(err.code);msg.className='auth-msg error';}
