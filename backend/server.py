@@ -83,6 +83,19 @@ def update_premium_status(email: str, active: bool, source: str = 'stripe'):
     return email_key
 
 
+EMAIL_SIGNATURE_HTML = (
+    "<hr style=\"border:none;border-top:1px solid #e2dac6;margin:26px 0 14px\">"
+    "<p style=\"font-family:Georgia,serif;color:#5b5546;font-size:13px;line-height:1.7;margin:0\">"
+    "<strong style=\"color:#1e3d2a\">Essenciel O Naturel</strong> — Marie-Cécile, Naturopathe<br>"
+    "Naturopathie · Phytothérapie · Kéto<br>"
+    "🌐 <a href=\"https://www.essencielonaturel.fr\" style=\"color:#236648\">www.essencielonaturel.fr</a><br>"
+    "✉️ <a href=\"mailto:infos@essencielonaturel.fr\" style=\"color:#236648\">infos@essencielonaturel.fr</a><br>"
+    "📍 Lunéville, France<br>"
+    "Consultations sur rendez-vous · Téléphone &amp; visioconférence"
+    "</p>"
+)
+
+
 def send_premium_email(to_email: str):
     """Send subscription confirmation email via Resend (non-blocking caller)."""
     if not RESEND_API_KEY:
@@ -98,6 +111,7 @@ def send_premium_email(to_email: str):
             "<p>Votre accès Premium est désormais activé : modes alimentaires, suivi avancé et toutes les recettes sont débloqués dans l'application.</p>"
             "<p>Connectez-vous avec l'email de votre paiement pour en profiter immédiatement.</p>"
             "<p style=\"margin-top:24px;color:#8a7659\">Belle cétose,<br>Essenciel O Naturel · Naturopathie</p>"
+            + EMAIL_SIGNATURE_HTML +
             "</div>"
         ),
     }
@@ -142,6 +156,7 @@ def send_welcome_email(to_email: str, firstname: str = ''):
             "(végétarien, carnivore, diabète…), le renforcement musculaire et bien plus.</p>"
             "<p style=\"margin-top:24px;color:#8a7659\">Belle cétose,<br>"
             "Marie-Cécile · Essenciel O Naturel · Naturopathie</p>"
+            + EMAIL_SIGNATURE_HTML +
             "</div>"
         ),
     }
