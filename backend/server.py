@@ -86,11 +86,12 @@ def update_premium_status(email: str, active: bool, source: str = 'stripe'):
 EMAIL_SIGNATURE_HTML = (
     "<hr style=\"border:none;border-top:1px solid #e2dac6;margin:26px 0 14px\">"
     "<p style=\"font-family:Georgia,serif;color:#5b5546;font-size:13px;line-height:1.7;margin:0\">"
-    "<strong style=\"color:#1e3d2a\">Essenciel O Naturel</strong> — Marie-Cécile, Naturopathe<br>"
+    "<strong style=\"color:#1e3d2a\">Essenciel O Naturel</strong> — Patrice Raganelli, Naturopathe<br>"
     "Naturopathie · Phytothérapie · Kéto<br>"
     "🌐 <a href=\"https://www.essencielonaturel.fr\" style=\"color:#236648\">www.essencielonaturel.fr</a><br>"
     "✉️ <a href=\"mailto:infos@essencielonaturel.fr\" style=\"color:#236648\">infos@essencielonaturel.fr</a><br>"
-    "📍 Lunéville, France<br>"
+    "📞 <a href=\"tel:+33658838641\" style=\"color:#236648\">06 58 83 86 41</a><br>"
+    "📍 47 rue de la République, 54300 Lunéville, France<br>"
     "Consultations sur rendez-vous · Téléphone &amp; visioconférence"
     "</p>"
 )
@@ -155,7 +156,7 @@ def send_welcome_email(to_email: str, firstname: str = ''):
             "<p>Envie d'aller plus loin ? Le <strong>Premium</strong> débloque les modes alimentaires "
             "(végétarien, carnivore, diabète…), le renforcement musculaire et bien plus.</p>"
             "<p style=\"margin-top:24px;color:#8a7659\">Belle cétose,<br>"
-            "Marie-Cécile · Essenciel O Naturel · Naturopathie</p>"
+            "Patrice Raganelli · Essenciel O Naturel · Naturopathie</p>"
             + EMAIL_SIGNATURE_HTML +
             "</div>"
         ),
@@ -946,6 +947,15 @@ async def content_generate_image(payload: dict, authorization: Optional[str] = H
     return {"ok": True, "url": url, "kind": kind, "dayIdx": day_idx}
 
 
+@api_router.post("/recipe/dump")
+async def recipe_dump(payload: dict):
+    """Reçoit la liste complète des recettes (depuis l'app) pour la génération en masse des préparations."""
+    recipes = payload.get("recipes") or []
+    with open("/tmp/recipes_dump.json", "w", encoding="utf-8") as f:
+        json.dump(recipes, f, ensure_ascii=False)
+    return {"ok": True, "count": len(recipes)}
+
+
 @api_router.post("/recipe/detailed-steps")
 async def recipe_detailed_steps(payload: dict):
     """Génère une préparation détaillée (étapes pas-à-pas) pour une recette existante.
@@ -955,6 +965,20 @@ async def recipe_detailed_steps(payload: dict):
     name = (payload.get("name") or "").strip()
     if not name:
         return {"ok": False, "error": "missing_name", "steps": []}
+    # ── Cache global Firestore : une recette n'est détaillée qu'UNE fois pour tous ──
+    rid = payload.get("id")
+    rid_key = str(rid) if rid is not None and str(rid).strip() else None
+    if rid_key:
+        try:
+            fs = get_firestore()
+            if fs:
+                snap = fs.collection("recipe_details").document(rid_key).get()
+                if snap.exists:
+                    d = snap.to_dict() or {}
+                    if d.get("steps"):
+                        return {"ok": True, "steps": d["steps"], "tip": d.get("tip", ""), "cached": True}
+        except Exception as e:
+            logger.error(f"recipe_details cache read: {e}")
     ingredients = payload.get("ingredients") or []
     spices = payload.get("spices") or []
     current = payload.get("steps") or []
@@ -1008,7 +1032,19 @@ async def recipe_detailed_steps(payload: dict):
     if not isinstance(steps, list):
         steps = []
     steps = [str(s).strip() for s in steps if str(s).strip()]
-    return {"ok": True, "steps": steps, "tip": (d.get("tip") or "").strip()}
+    tip = (d.get("tip") or "").strip()
+    # ── Écrit dans le cache global Firestore ──
+    if rid_key and steps:
+        try:
+            fs = get_firestore()
+            if fs:
+                fs.collection("recipe_details").document(rid_key).set({
+                    "name": name, "steps": steps, "tip": tip,
+                    "generatedAt": datetime.now(timezone.utc).isoformat(),
+                })
+        except Exception as e:
+            logger.error(f"recipe_details cache write: {e}")
+    return {"ok": True, "steps": steps, "tip": tip}
 
 
 

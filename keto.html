@@ -25116,7 +25116,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     if(msg){ msg.style.display='block'; msg.style.color='var(--muted)'; msg.textContent='L\'IA rédige une préparation détaillée, un instant…'; }
     var apiBase=(window.__KP_API_BASE__ && /^https?:/.test(window.__KP_API_BASE__)) ? window.__KP_API_BASE__ : '';
     fetch(apiBase+'/api/recipe/detailed-steps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      name:r.name, ingredients:(r.ingredients||[]).map(function(i){return (i.qty||'')+' '+(i.name||'');}), spices:r.spices||[], steps:r.steps||[]
+      id:id, name:r.name, ingredients:(r.ingredients||[]).map(function(i){return (i.qty||'')+' '+(i.name||'');}), spices:r.spices||[], steps:r.steps||[]
     })}).then(function(res){ return res.json().then(function(j){ return {ok:res.ok, j:j}; }); }).then(function(o){
       if(!o.ok || !o.j || !o.j.steps || !o.j.steps.length){ throw new Error((o.j&&(o.j.detail||o.j.error))||'Erreur'); }
       try{ localStorage.setItem(kpDetailKey(id), JSON.stringify({steps:o.j.steps, tip:o.j.tip})); }catch(e){}
@@ -25153,8 +25153,12 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
             +'<button onclick="kpAdminDeleteRecipeById('+id+')" style="flex:1;padding:12px;border:1px solid rgba(192,57,43,.3);border-radius:12px;background:rgba(192,57,43,.1);color:#c0392b;font-weight:700;cursor:pointer">🗑 Supprimer</button>';
           content.appendChild(bar);
         }
-        // Auto-charger la préparation détaillée déjà générée pour cette recette
-        try{ var _cd=localStorage.getItem(kpDetailKey(id)); if(_cd){ var _pd=JSON.parse(_cd); if(_pd&&_pd.steps&&_pd.steps.length){ kpRenderDetailSteps(id, _pd.steps, _pd.tip); } } }catch(_e){}
+        // Préparation détaillée : cache local sinon GÉNÉRATION AUTOMATIQUE (cache global serveur)
+        try{
+          var _cd=localStorage.getItem(kpDetailKey(id));
+          if(_cd){ var _pd=JSON.parse(_cd); if(_pd&&_pd.steps&&_pd.steps.length){ kpRenderDetailSteps(id, _pd.steps, _pd.tip); } }
+          else { setTimeout(function(){ try{ window.kpDetailSteps(id); }catch(_e2){} }, 350); }
+        }catch(_e){}
       }catch(e){}
     };
   }
