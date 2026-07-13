@@ -104,14 +104,68 @@ def send_premium_email(to_email: str):
     resend.Emails.send(params)
 
 
-def notify_admin_new_subscriber(email: str):
+def notify_admin_new_subscriber(email: str, source: str = ''):
     if not RESEND_API_KEY or not PREMIUM_ADMIN_EMAIL:
         return
+    extra = f" <em>({source})</em>" if source else ""
     params = {
         "from": PREMIUM_FROM_EMAIL,
         "to": [PREMIUM_ADMIN_EMAIL],
         "subject": "🎉 Nouvel abonné Premium",
-        "html": f"<p>Nouvel abonnement Keto Premium : <strong>{email}</strong></p>",
+        "html": f"<p>Nouvel abonnement Keto Premium : <strong>{email}</strong>{extra}</p>",
+    }
+    resend.Emails.send(params)
+
+
+def send_welcome_email(to_email: str, firstname: str = ''):
+    """Email de bienvenue à l'inscription (compte gratuit)."""
+    if not RESEND_API_KEY:
+        return
+    prenom = f" {firstname}" if firstname else ""
+    params = {
+        "from": PREMIUM_FROM_EMAIL,
+        "to": [to_email],
+        "subject": "Bienvenue chez Kéto-Essenciel 🌿",
+        "html": (
+            "<div style=\"font-family:Georgia,serif;max-width:540px;margin:auto;color:#26301f;"
+            "background:#f7f2e8;padding:28px;border-radius:14px\">"
+            f"<h1 style=\"color:#1e3d2a;font-weight:600\">Bienvenue{prenom} !</h1>"
+            "<p>Votre compte <strong>Kéto-Essenciel · Naturellement Cétogène</strong> est créé. 🎉</p>"
+            "<p>Vous pouvez dès maintenant :</p>"
+            "<ul style=\"line-height:1.8\">"
+            "<li>🍽 Générer votre <strong>plan de menus keto</strong> de la semaine</li>"
+            "<li>📖 Explorer la <strong>bibliothèque de recettes</strong></li>"
+            "<li>🛒 Obtenir votre <strong>liste de courses automatique</strong></li>"
+            "<li>📊 Suivre vos mesures et votre bien-être</li>"
+            "</ul>"
+            "<p>Envie d'aller plus loin ? Le <strong>Premium</strong> débloque les modes alimentaires "
+            "(végétarien, carnivore, diabète…), le renforcement musculaire et bien plus.</p>"
+            "<p style=\"margin-top:24px;color:#8a7659\">Belle cétose,<br>"
+            "Marie-Cécile · Essenciel O Naturel · Naturopathie</p>"
+            "</div>"
+        ),
+    }
+    resend.Emails.send(params)
+
+
+def notify_admin_new_signup(email: str, firstname: str = '', provider: str = ''):
+    """Notifie l'admin qu'un nouvel utilisateur vient de s'inscrire."""
+    if not RESEND_API_KEY or not PREMIUM_ADMIN_EMAIL:
+        return
+    prov = {'google.com': '🟢 Google', 'password': '✉️ Email + mot de passe'}.get(provider, provider or '—')
+    params = {
+        "from": PREMIUM_FROM_EMAIL,
+        "to": [PREMIUM_ADMIN_EMAIL],
+        "subject": f"🌱 Nouvel inscrit — {email}",
+        "html": (
+            "<div style=\"font-family:Arial,sans-serif;color:#26301f\">"
+            "<h2 style=\"color:#1e3d2a\">Nouvelle inscription sur Kéto-Essenciel</h2>"
+            f"<p><strong>Email :</strong> {email}<br>"
+            f"<strong>Prénom :</strong> {firstname or '—'}<br>"
+            f"<strong>Méthode :</strong> {prov}<br>"
+            f"<strong>Date :</strong> {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')} (UTC)</p>"
+            "</div>"
+        ),
     }
     resend.Emails.send(params)
 
@@ -311,6 +365,91 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None, 
         logger.error(f"[stripe webhook] handler error: {e}")
         # Still return 200 so Stripe does not retry indefinitely on our internal errors
     return {"received": True}
+
+
+# ═══════════════ NOTIFICATIONS EMAIL (inscription & passage premium) ═══════════════
+@api_router.post("/notify")
+async def notify_event(request: Request, authorization: Optional[str] = Header(None)):
+    """Appelé par l'app après une inscription ou une activation premium (code promo).
+    Le token Firebase de l'utilisateur authentifie la demande (email = celui du token)."""
+    if not authorization or not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="no_token")
+    token = authorization.split(' ', 1)[1]
+    try:
+        get_firestore()
+        decoded = firebase_auth.verify_id_token(token)
+    except Exception:
+        raise HTTPException(status_code=401, detail="invalid_token")
+    email = (decoded.get('email') or '').strip().lower()
+    if not email:
+        raise HTTPException(status_code=400, detail="no_email")
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    kind = str(body.get('kind') or '')
+    firstname = str(body.get('firstname') or '')[:40]
+    if kind == 'signup':
+        provider = str(body.get('provider') or '')[:40]
+        try:
+            send_welcome_email(email, firstname)
+        except Exception as e:
+            logger.error(f"welcome email failed: {e}")
+        try:
+            notify_admin_new_signup(email, firstname, provider)
+        except Exception as e:
+            logger.error(f"admin signup notif failed: {e}")
+    elif kind == 'premium':
+        source = str(body.get('source') or '')[:60]
+        try:
+            send_premium_email(email)
+        except Exception as e:
+            logger.error(f"premium email failed: {e}")
+        try:
+            notify_admin_new_subscriber(email, source)
+        except Exception as e:
+            logger.error(f"admin premium notif failed: {e}")
+    else:
+        raise HTTPException(status_code=400, detail="bad_kind")
+    return {"ok": True}
+
+
+# ═══════════════ LISTE COMPLÈTE DES INSCRITS (admin) ═══════════════
+@api_router.get("/admin/users")
+async def admin_list_users(authorization: Optional[str] = Header(None)):
+    _verify_admin(authorization)
+    # Statuts premium pour croiser les données
+    premium = {}
+    try:
+        fs = get_firestore()
+        if fs:
+            for doc in fs.collection(PREMIUM_COLLECTION).stream():
+                d = doc.to_dict() or {}
+                premium[doc.id] = bool(d.get('active'))
+    except Exception as e:
+        logger.error(f"premium map failed: {e}")
+    users = []
+    try:
+        page = firebase_auth.list_users()
+        while page:
+            for u in page.users:
+                em = (u.email or '').lower()
+                meta = u.user_metadata
+                users.append({
+                    "email": em,
+                    "name": u.display_name or '',
+                    "created": meta.creation_timestamp if meta else None,
+                    "last_login": meta.last_sign_in_timestamp if meta else None,
+                    "provider": (u.provider_data[0].provider_id if u.provider_data else 'password'),
+                    "premium": premium.get(em, False),
+                    "disabled": bool(u.disabled),
+                })
+            page = page.get_next_page() if page.has_next_page else None
+    except Exception as e:
+        logger.error(f"list_users failed: {e}")
+        raise HTTPException(status_code=500, detail=f"list_users: {e}")
+    users.sort(key=lambda x: x["created"] or 0, reverse=True)
+    return {"ok": True, "count": len(users), "users": users}
 
 
 # ═══════════════ GÉNÉRATEUR DE CONTENU FACEBOOK (admin) ═══════════════

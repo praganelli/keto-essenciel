@@ -13594,9 +13594,15 @@ function authOnSuccess(user, isNewUser){
   authShowMsg('✅ Bienvenue ' + name + ' !', 'success');
   // Log activity to Firestore (login or signup)
   try { logUserActivity(isNewUser ? 'signup' : 'login', user); } catch(e){}
-  // Notify admin + send welcome email on new signup —
-  // géré côté serveur par la Cloud Function Firebase `welcomeOnSignup`
-  // (déclencheur Auth onCreate), permanent et fiable même après déploiement Netlify.
+  // Email de bienvenue + notification admin (via le backend FastAPI /api/notify)
+  if(isNewUser){
+    try {
+      kpNotifyServer(user, 'signup', {
+        firstname: (user.displayName || '').split(' ')[0] || '',
+        provider: (user.providerData && user.providerData[0] && user.providerData[0].providerId) || 'password'
+      });
+    } catch(e){}
+  }
   // Apply pending referral code (entered at signup) — async, non-blocking
   if(isNewUser && window._pendingReferralCode){
     try { kpApplyReferralCodeOnSignup(window._pendingReferralCode, user); } catch(e){ console.warn('referral apply err', e); }
@@ -13707,6 +13713,22 @@ function kpRewardParrainViaFunction(code, userObj){
 }
 window.kpRewardParrainViaFunction = kpRewardParrainViaFunction;
 
+
+/* ── Notifications serveur (emails bienvenue / premium via /api/notify) ── */
+function kpNotifyServer(user, kind, extra){
+  try{
+    if(!user || typeof user.getIdToken !== 'function') return;
+    var base = (location.hostname.indexOf('emergentagent.com') >= 0) ? '/api' : 'https://body-metrics-bug.preview.emergentagent.com/api';
+    user.getIdToken().then(function(t){
+      fetch(base + '/notify', {
+        method:'POST',
+        headers:{'Authorization':'Bearer '+t, 'Content-Type':'application/json'},
+        body: JSON.stringify(Object.assign({kind:kind}, extra||{}))
+      }).catch(function(){});
+    }).catch(function(){});
+  }catch(e){}
+}
+window.kpNotifyServer = kpNotifyServer;
 
 /* ── Activity logging (admin analytics) ── */
 function logUserActivity(type, user){
@@ -19532,6 +19554,8 @@ authGuest = function(){
         msgEl.innerHTML = '✨ Code activé — <em>Premium pendant ' + days + ' jours</em> !';
         msgEl.style.color='var(--ed-sage-dark)';
         input.value = '';
+        // Email de confirmation premium + notification admin
+        try{ if(window.kpNotifyServer) kpNotifyServer(user, 'premium', {source:'code promo ' + code}); }catch(e){}
         // Recharger le statut
         setTimeout(function(){
           kpCheckPremium().then(function(){ kpRefreshUI(); closePremiumModal(); });
@@ -19721,6 +19745,16 @@ authGuest = function(){
         '<div class="kp-admin-msg" id="kpAdminCodeMsg"></div>' +
         '<div class="kp-admin-list" id="kpAdminCodeList" data-testid="admin-code-list"><div class="kp-admin-empty">Chargement…</div></div>' +
       '</div>' +
+      '<div class="kp-admin-panel" id="kpAdminUsers" data-testid="admin-panel-users">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">' +
+          '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ed-terra-dark)">Tous les inscrits</div>' +
+          '<button class="kp-admin-btn outline kp-admin-chip-act" onclick="kpAdminLoadUsers()" data-testid="admin-users-refresh">🔄 Rafraîchir</button>' +
+        '</div>' +
+        '<div class="kp-admin-activity-stats" id="kpAdminUsersStats"></div>' +
+        '<input class="kp-admin-input" id="kpAdminUsersSearch" type="text" placeholder="🔎 Rechercher un email ou un prénom…" oninput="kpAdminRenderUsers()" style="margin:8px 0">' +
+        '<div class="kp-admin-msg" id="kpAdminUsersMsg"></div>' +
+        '<div class="kp-admin-list" id="kpAdminUsersList" data-testid="admin-users-list"><div class="kp-admin-empty">Chargement…</div></div>' +
+      '</div>' +
       '<div class="kp-admin-panel" id="kpAdminActivity" data-testid="admin-panel-activity">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">' +
           '<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--ed-terra-dark)">Activité des utilisateurs</div>' +
@@ -19823,6 +19857,12 @@ authGuest = function(){
     } else if(which === 'activity' && activity){
       activity.classList.toggle('open');
       if(activity.classList.contains('open')) kpAdminLoadActivity();
+    } else if(which === 'users'){
+      var usersP = document.getElementById('kpAdminUsers');
+      if(usersP){
+        usersP.classList.toggle('open');
+        if(usersP.classList.contains('open')) kpAdminLoadUsers();
+      }
     } else if(which === 'referrals' && referrals){
       referrals.classList.toggle('open');
       if(referrals.classList.contains('open')) kpAdminLoadReferrals();
@@ -19847,6 +19887,59 @@ authGuest = function(){
   // Base API du générateur : relatif sur Emergent, absolu ailleurs (Netlify) — CORS autorisé côté backend
   var KP_CONTENT_BASE = (location.hostname.indexOf('emergentagent.com') >= 0) ? '/api' : 'https://body-metrics-bug.preview.emergentagent.com/api';
   function kpContentApi(path){ return KP_CONTENT_BASE + path; }
+
+  /* ═══ Tous les inscrits (Firebase Auth via backend) ═══ */
+  var _kpAdminUsersCache = [];
+  window.kpAdminLoadUsers = async function(){
+    var list = document.getElementById('kpAdminUsersList');
+    if(!list) return;
+    var user = kpCcUser();
+    if(!user || typeof user.getIdToken !== 'function'){ list.innerHTML='<div class="kp-admin-empty">Reconnectez-vous pour charger la liste.</div>'; return; }
+    list.innerHTML='<div class="kp-admin-empty">⏳ Chargement des inscrits…</div>';
+    try{
+      var token = await user.getIdToken();
+      var r = await fetch(kpContentApi('/admin/users'), {headers:{'Authorization':'Bearer '+token}});
+      var j = await kpSafeJson(r);
+      if(!r.ok || !j.ok) throw new Error((j&&(j.detail||j.error))||('HTTP '+r.status));
+      _kpAdminUsersCache = j.users || [];
+      window.kpAdminRenderUsers();
+    }catch(e){
+      list.innerHTML='<div class="kp-admin-empty">❌ '+kpCcEscape((e&&e.message)||'Erreur')+'</div>';
+    }
+  };
+  window.kpAdminRenderUsers = function(){
+    var list = document.getElementById('kpAdminUsersList');
+    if(!list) return;
+    var q = ((document.getElementById('kpAdminUsersSearch')||{}).value||'').trim().toLowerCase();
+    var arr = _kpAdminUsersCache.filter(function(u){
+      return !q || (u.email||'').indexOf(q)>-1 || (u.name||'').toLowerCase().indexOf(q)>-1;
+    });
+    var stats = document.getElementById('kpAdminUsersStats');
+    if(stats){
+      var total=_kpAdminUsersCache.length;
+      var prem=_kpAdminUsersCache.filter(function(u){return u.premium;}).length;
+      var goog=_kpAdminUsersCache.filter(function(u){return u.provider==='google.com';}).length;
+      var day=24*60*60*1000, now=Date.now();
+      var s7=_kpAdminUsersCache.filter(function(u){return u.created && (now-u.created)<=7*day;}).length;
+      stats.innerHTML = '<div class="kp-admin-stats-row">'
+        + '<div class="kp-admin-stat-tile"><div class="kp-admin-stat-val">'+total+'</div><div class="kp-admin-stat-lab">👥 Inscrits au total</div></div>'
+        + '<div class="kp-admin-stat-tile new"><div class="kp-admin-stat-val">'+s7+'</div><div class="kp-admin-stat-lab">Nouveaux · 7 jours</div></div>'
+        + '<div class="kp-admin-stat-tile"><div class="kp-admin-stat-val">'+prem+'</div><div class="kp-admin-stat-lab">⭐ Premium actifs</div></div>'
+        + '<div class="kp-admin-stat-tile"><div class="kp-admin-stat-val">'+goog+' / '+(total-goog)+'</div><div class="kp-admin-stat-lab">🟢 Google / ✉️ Email</div></div>'
+        + '</div>';
+    }
+    if(!arr.length){ list.innerHTML='<div class="kp-admin-empty">Aucun inscrit trouvé.</div>'; return; }
+    list.innerHTML = arr.map(function(u){
+      var created = u.created ? new Date(u.created).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+      var last = u.last_login ? new Date(u.last_login).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+      var prov = u.provider==='google.com' ? '🟢 Google' : '✉️ Email';
+      var badge = u.premium ? '<span class="kp-admin-type-badge signup">⭐ Premium</span>' : '<span class="kp-admin-type-badge login">Gratuit</span>';
+      return '<div class="kp-admin-row"><div class="kp-admin-row-info">'
+        + '<div class="kp-admin-row-email">'+kpCcEscape(u.email||'—')+(u.name?' <span style="color:var(--ed-muted);font-weight:400">· '+kpCcEscape(u.name)+'</span>':'')+'</div>'
+        + '<div class="kp-admin-row-meta">'+badge+' · '+prov+' · inscrit le '+created+' · dernière connexion '+last+'</div>'
+        + '</div></div>';
+    }).join('');
+  };
   async function kpSafeJson(r){
     var t = await r.text();
     try{ return JSON.parse(t); }
