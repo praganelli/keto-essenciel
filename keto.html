@@ -8059,6 +8059,50 @@ body{
       body.dark #tab-suivi .stat-tile,
       body.dark #tab-suivi .suivi-acc > .sec-label{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
       body.dark #tab-suivi .suivi-acc > .sec-label::after{background:rgba(255,255,255,.09);color:#9fd4b4}
+      /* ═══ Mobile : lisibilité & harmonie de l'onglet Suivi ═══ */
+      @media(max-width:767px){
+        /* Héro compact et aéré */
+        .sv-hero{border-radius:22px;padding:20px 18px 18px;margin-bottom:22px}
+        .sv-hero-weight{font-size:42px}
+        .sv-hero-weight small{font-size:16px}
+        .sv-hero-row{gap:12px}
+        .sv-chip{font-size:11px;padding:5px 10px}
+        .sv-hero-meta{gap:20px;margin-top:14px}
+        .sv-hero-meta-item{font-size:10px}
+        .sv-hero-meta-item b{font-size:16px}
+        /* Titres de sections : compacts, retour à la ligne propre */
+        #tab-suivi .sec-label{font-size:10px;letter-spacing:.13em;line-height:1.6;flex-wrap:wrap;row-gap:4px}
+        #tab-suivi .suivi-section:not(.suivi-acc) > .sec-label::after{min-width:20px}
+        #tab-suivi .suivi-section{margin-bottom:24px !important}
+        /* Cartes : padding équilibré */
+        #tab-suivi .card .card-body{padding:16px 14px}
+        #tab-suivi .stat-tile{padding:13px 10px;border-radius:16px}
+        /* Score métabolique : anneau centré, barres pleine largeur */
+        .diab-score-wrap{flex-direction:column;align-items:center;gap:16px}
+        .diab-parts{width:100%;min-width:0}
+        .diab-part-lab{flex:0 0 118px;font-size:10.5px}
+        .diab-part-pts{flex:0 0 40px;font-size:10.5px}
+        /* Tuiles diabète : 2 colonnes régulières */
+        .diab-dash{grid-template-columns:repeat(2,1fr);gap:9px}
+        .diab-tile{padding:11px 8px 9px;border-radius:13px}
+        .diab-tile-val{font-size:19px}
+        .diab-tile-lab{font-size:8.5px;letter-spacing:.07em}
+        /* Saisie du jour : grille 2 colonnes fixe */
+        .diab-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+        /* Humeur : pleine largeur, boutons compacts sans débordement */
+        .diab-grid > div:has(.diab-mood-row){grid-column:1/-1}
+        .diab-mood-row{gap:6px;flex-wrap:wrap;justify-content:flex-start}
+        .diab-mood-btn{font-size:19px;padding:4px 7px;border-radius:11px}
+        /* Accordéons : en-têtes compacts */
+        #tab-suivi .suivi-acc > .sec-label{padding:14px;border-radius:16px}
+        #tab-suivi .suivi-acc{margin-bottom:12px !important}
+        /* Historique : rangées souples */
+        #tab-suivi .kp-log-row{flex-wrap:wrap;row-gap:4px}
+        /* Boutons pleine largeur, cible tactile ≥44px */
+        #tab-suivi .btn-primary{width:100%;min-height:46px}
+        /* Graphique un peu plus bas de plafond */
+        #diabChart{height:170px !important}
+      }
     </style>
 
     <!-- Conseil naturopathique du jour -->
@@ -8155,8 +8199,13 @@ body{
       .suivi-acc-inner{overflow:hidden;min-height:0}
       .suivi-acc.acc-open .suivi-acc-inner{overflow:visible}
     </style>
-    <div class="suivi-section" id="diabeteSection" style="display:none" data-testid="diabete-section">
-      <div class="sec-label">🩸 Tableau de bord Diabète · aujourd'hui</div>
+    <div class="suivi-section suivi-premium-section" id="diabeteSection" style="display:none" data-testid="diabete-section">
+      <div class="sec-label" style="display:flex;align-items:center;gap:10px">
+        <span>🩸 Tableau de bord Diabète · aujourd'hui</span>
+        <span class="premium-pill">Premium</span>
+      </div>
+      <div class="suivi-premium-wrap">
+      <div class="suivi-premium-content">
       <div class="card"><div class="card-body">
         <div id="diabScoreWrap"></div>
         <div id="diabDash" class="diab-dash"></div>
@@ -8207,6 +8256,16 @@ body{
         </div>
         <div id="diabHistory" style="margin-top:14px"></div>
       </div></div>
+      </div>
+      <div class="suivi-premium-overlay" data-testid="diabete-locked">
+        <div class="suivi-premium-overlay-inner">
+          <div class="suivi-premium-icon">🔒</div>
+          <div class="suivi-premium-title">Suivi Diabète <em>Premium</em></div>
+          <div class="suivi-premium-sub">Glycémies · traitement · score métabolique /100 · graphiques — le tableau de bord complet du mode Diabète</div>
+          <button class="suivi-premium-cta" onclick="openPremiumModal('diabete')" data-testid="diabete-unlock-btn">Débloquer en Premium</button>
+        </div>
+      </div>
+      </div>
     </div>
 
     <!-- Respect des macros — 30 jours (Premium) -->
@@ -14955,7 +15014,7 @@ function _kpIsPremium(){
 /* ─── Gate Premium suivi sections (blur + overlay if not premium) ─── */
 function kpApplyPremiumGate(){
   var isPremium = _kpIsPremium();
-  ['wellnessSection','measuresSection'].forEach(function(id){
+  ['wellnessSection','measuresSection','diabeteSection'].forEach(function(id){
     var el = document.getElementById(id);
     if(!el) return;
     el.classList.toggle('locked', !isPremium);

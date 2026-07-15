@@ -250,3 +250,12 @@ Bugs signalés :
 - Bloc <style> « SUIVI v2 » scopé #tab-suivi en tête de l'onglet : héro de progression .sv-hero (dégradé vert sapin, poids serif 52px, chips ▼/▲ delta total + 7j, méta IMC/pesées/départ, feuille 🌿 en filigrane), titres de sections en petites capitales dorées avec filet dégradé (::after, seulement pour :not(.suivi-acc)), cartes 20px unifiées avec ombres douces, tuiles stats hover-lift serif, accordéons transformés en cartes-boutons (pastille chevron ronde verte), inputs focus ring vert, dark mode complet.
 - JS kpRenderSuiviHero() (appelé en fin de renderSuivi) : calcule delta total, tendance 7j (pesée la plus récente ≥7j), IMC via profile.height ; état vide élégant « Commencez votre suivi 🌱 ».
 - ⚠️ RÉCURRENCE TOOL GLITCH : 2e fois qu'une édition « successful » sur keto.html ne persiste pas (JS hero perdu, réappliqué). TOUJOURS grep après édition + resync cp vers backend/keto_app.html.
+
+## Gating Premium du Suivi Diabète (fork, juillet 2026)
+- #diabeteSection = classe suivi-premium-section + pill « Premium » dans le titre + contenu enveloppé dans .suivi-premium-wrap > .suivi-premium-content + .suivi-premium-overlay (🔒 Suivi Diabète Premium, CTA openPremiumModal('diabete')).
+- 'diabeteSection' ajouté à la liste kpApplyPremiumGate (toggle .locked → flou + overlay). Double protection : mode diabète déjà premium-only + onglet Suivi entier gaté.
+- ⚠️ 3e occurrence du TOOL GLITCH sur keto.html : l'édit d'ouverture (wrap) n'a pas persisté alors que la fermeture oui → DOM mal imbriqué (overlay hors section). Réappliqué + vérifié par evaluate (wrap:true, overlay display:flex, flou visible).
+
+## Optimisation mobile onglet Suivi (fork, juillet 2026)
+- Bloc @media(max-width:767px) dans le style « SUIVI v2 » : héro compact (42px), titres sections 10px/flex-wrap, cartes padding 16/14, score métabolique en colonne centrée (anneau + barres pleine largeur), tuiles diabète 2 colonnes fixes (19px), diab-grid 2 colonnes, champ Humeur en pleine largeur via :has(.diab-mood-row) + boutons emoji compacts (fin du débordement), accordéons 14px, bouton principal pleine largeur ≥46px, #diabChart 170px.
+- Vérifié par screenshots 390px : héro, score, saisie, historique, accordéons tous lisibles.
