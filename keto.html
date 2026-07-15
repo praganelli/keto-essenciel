@@ -8053,7 +8053,7 @@ body{
     <!-- Historique -->
     <div class="suivi-section">
       <div class="sec-label">📋 Historique</div>
-      <div id="weightHistory"></div>
+      <div id="weightHistory" class="suivi-scroll"></div>
     </div>
 
     <!-- ─── Suivi Diabète (visible uniquement en mode Diabète) ─── -->
@@ -8081,6 +8081,14 @@ body{
       .diab-range-btn.on{background:var(--em,#236648);color:#fff;border-color:var(--em,#236648)}
       body.dark .diab-tile{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
       body.dark .diab-part-bar{background:rgba(255,255,255,.1)}
+      /* Ascenseurs internes des sections Suivi (hors tableau de bord Diabète) */
+      .suivi-scroll{max-height:320px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin;scrollbar-color:rgba(35,102,72,.35) transparent}
+      .suivi-scroll::-webkit-scrollbar{width:7px}
+      .suivi-scroll::-webkit-scrollbar-track{background:transparent}
+      .suivi-scroll::-webkit-scrollbar-thumb{background:rgba(35,102,72,.3);border-radius:4px}
+      .suivi-scroll::-webkit-scrollbar-thumb:hover{background:rgba(35,102,72,.5)}
+      body.dark .suivi-scroll{scrollbar-color:rgba(255,255,255,.25) transparent}
+      body.dark .suivi-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22)}
     </style>
     <div class="suivi-section" id="diabeteSection" style="display:none" data-testid="diabete-section">
       <div class="sec-label">🩸 Tableau de bord Diabète · aujourd'hui</div>
@@ -8142,7 +8150,7 @@ body{
         <span>📊 Respect des macros · 30 derniers jours</span>
         <span class="premium-pill" id="macroCompliancePill" style="display:none">Premium</span>
       </div>
-      <div id="macroComplianceBody"></div>
+      <div id="macroComplianceBody" class="suivi-scroll"></div>
     </div>
 
     <!-- ─── Suivi Premium : Bien-être quotidien ─── -->
@@ -8209,7 +8217,7 @@ body{
               <input type="date" id="mDate" class="form-input suivi-input" style="flex:0 0 auto" data-testid="measure-date">
               <button class="btn btn-primary" onclick="kpLogMeasures()" data-testid="measure-save">+ Enregistrer mesures</button>
             </div>
-            <div id="measuresHistory" style="margin-top:14px"></div>
+            <div id="measuresHistory" class="suivi-scroll" style="margin-top:14px"></div>
           </div>
         </div>
         <div class="suivi-premium-overlay" data-testid="measures-locked">

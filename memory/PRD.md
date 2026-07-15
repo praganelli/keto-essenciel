@@ -236,3 +236,7 @@ Bugs signalés :
   • Stockage localStorage kp_diabete_v1__profileId + SYNC CLOUD (data.diabete dans syncProfileToCloud/FromCloud).
 - TESTÉ via evaluate + screenshots desktop 1920 et mobile 390 : score 97/100 correct, tuiles, graphes 7j/30j, formulaire pré-rempli. NB : l'onglet Suivi entier est gaté Premium (overlay kp-suivi-overlay-wrap) — le mode diabète étant Premium, cohérent.
 - ⚠️ TOOL GLITCH observé : sur keto.html (2.9MB), une édition « successful » peut ne pas persister — TOUJOURS vérifier par grep après une grosse insertion.
+
+## Ascenseurs onglet Suivi (fork, juillet 2026)
+- Classe .suivi-scroll (max-height:320px, overflow-y:auto, scrollbar fine thématisée + dark mode) appliquée à : #weightHistory, #wellnessHistory, #measuresHistory, #macroComplianceBody. Le tableau de bord Diabète (#diabeteSection) N'A PAS d'ascenseur (affichage complet, demande explicite). Section diabète toujours conditionnée à profile.dietMode==='diabete'.
+- Testé : historique 31 poids → conteneur 320px scrollable (scrollHeight 1798), diabète masqué en mode standard.
