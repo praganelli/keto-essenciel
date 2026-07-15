@@ -240,3 +240,8 @@ Bugs signalés :
 ## Ascenseurs onglet Suivi (fork, juillet 2026)
 - Classe .suivi-scroll (max-height:320px, overflow-y:auto, scrollbar fine thématisée + dark mode) appliquée à : #weightHistory, #wellnessHistory, #measuresHistory, #macroComplianceBody. Le tableau de bord Diabète (#diabeteSection) N'A PAS d'ascenseur (affichage complet, demande explicite). Section diabète toujours conditionnée à profile.dietMode==='diabete'.
 - Testé : historique 31 poids → conteneur 320px scrollable (scrollHeight 1798), diabète masqué en mode standard.
+
+## Accordéons onglet Suivi (fork, juillet 2026)
+- kpInitSuiviAccordions() (appelé en fin de renderSuivi, idempotent via data-acc) : transforme en accordéons repliés par défaut les sections #macroComplianceSection, #wellnessSection, #measuresSection, #exportSection (id ajouté). Le .sec-label devient l'en-tête cliquable (chevron ::after animé), le contenu est déplacé dans .suivi-acc-body > .suivi-acc-inner (animation grid-template-rows 0fr→1fr).
+- EXCLUS des accordéons (demande explicite) : tableau de bord Diabète (#diabeteSection) et toutes les sections perte de poids (Enregistrer mon poids, Courbe, Historique).
+- Testé : 4 accordéons fermés par défaut, ouverture au clic (h 0→234px), diabète non-accordéon et affiché entier.

@@ -8089,6 +8089,15 @@ body{
       .suivi-scroll::-webkit-scrollbar-thumb:hover{background:rgba(35,102,72,.5)}
       body.dark .suivi-scroll{scrollbar-color:rgba(255,255,255,.25) transparent}
       body.dark .suivi-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22)}
+      /* Accordéons des sections Suivi (hors Diabète et perte de poids) */
+      .suivi-acc > .sec-label{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:10px}
+      .suivi-acc > .sec-label::after{content:'▾';margin-left:auto;font-size:14px;color:var(--muted);transition:transform .32s cubic-bezier(.22,1,.36,1);transform:rotate(-90deg);flex:0 0 auto}
+      .suivi-acc.acc-open > .sec-label::after{transform:rotate(0deg)}
+      .suivi-acc > .sec-label:hover{opacity:.8}
+      .suivi-acc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.22,1,.36,1)}
+      .suivi-acc.acc-open .suivi-acc-body{grid-template-rows:1fr}
+      .suivi-acc-inner{overflow:hidden;min-height:0}
+      .suivi-acc.acc-open .suivi-acc-inner{overflow:visible}
     </style>
     <div class="suivi-section" id="diabeteSection" style="display:none" data-testid="diabete-section">
       <div class="sec-label">🩸 Tableau de bord Diabète · aujourd'hui</div>
@@ -8232,7 +8241,7 @@ body{
     </div>
 
     <!-- Export PDF -->
-    <div class="suivi-section">
+    <div class="suivi-section" id="exportSection">
       <div class="sec-label">📄 Export & Partage</div>
       <div class="export-grid">
         <button class="export-btn" onclick="exportPDF()">
@@ -12661,7 +12670,33 @@ function renderSuivi(){
   try{ if(typeof kpRenderWellnessHistory === 'function') kpRenderWellnessHistory(); }catch(e){}
   try{ if(typeof kpRenderMeasuresHistory === 'function') kpRenderMeasuresHistory(); }catch(e){}
   try{ if(typeof kpDiabRender === 'function') kpDiabRender(); }catch(e){}
+  try{ kpInitSuiviAccordions(); }catch(e){}
 }
+
+/* ─── Accordéons de l'onglet Suivi — toutes les sections SAUF Diabète et perte de poids ─── */
+function kpInitSuiviAccordions(){
+  ['macroComplianceSection','wellnessSection','measuresSection','exportSection'].forEach(function(id){
+    var sec = document.getElementById(id);
+    if(!sec || sec.getAttribute('data-acc')) return;
+    sec.setAttribute('data-acc','1');
+    sec.classList.add('suivi-acc');
+    var label = sec.querySelector('.sec-label');
+    if(!label) return;
+    /* Déplace tout le contenu après le titre dans un corps repliable */
+    var body = document.createElement('div');
+    body.className = 'suivi-acc-body';
+    var inner = document.createElement('div');
+    inner.className = 'suivi-acc-inner';
+    var nodes = [];
+    var n = label.nextSibling;
+    while(n){ nodes.push(n); n = n.nextSibling; }
+    nodes.forEach(function(x){ inner.appendChild(x); });
+    body.appendChild(inner);
+    sec.appendChild(body);
+    label.addEventListener('click', function(){ sec.classList.toggle('acc-open'); });
+  });
+}
+window.kpInitSuiviAccordions = kpInitSuiviAccordions;
 
 /* ═══ 30-DAY MACRO COMPLIANCE (Premium) ═══ */
 function renderMacroCompliance(){
