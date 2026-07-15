@@ -266,3 +266,12 @@ Bugs signalés :
 - Règle d'affichage stricte Suivi Diabète : kpApplyPremiumGate force diabeteSection.style.display selon kpDiabIsActive() UNIQUEMENT (dietMode==='diabete'). Le Premium seul n'affiche JAMAIS la section. Vérifié par evaluate : display none en mode standard même avec isPremium()=true.
 - Écran de connexion : ajout bloc .auth-focus sous la tagline — « Spécialement conçue pour » + 3 pastilles responsive (⚖️ Perte de poids · 🩸 Diabète · ⚡ Épilepsie), CSS @media ≤480px + dark mode. Vérifié par screenshot mobile 390px.
 - ⚠️ 4e occurrence TOOL GLITCH keto.html : l'édit JS accordéon diabète « successful » n'a pas persisté (CSS oui) → réappliqué + grep + resync cp /app/keto.html → /app/backend/keto_app.html + restart backend.
+
+## Questionnaire Diabète + Profil utilisateur (fork, session courante)
+- Nouveau bloc #diabQuizOverlay (réutilise les classes .quiz-* du Bilan Keto) + IIFE juste avant le script kpRecipeDetailsData dans keto.html.
+- 13 questions (Q10 = multi-sélection complications, « Aucune » exclusive). Réponses stockées profile.diabQuiz={answers,score,profil,complications,date} + save() + syncProfileToCloud.
+- Lancement AUTO : applyDietMode('diabete') → setTimeout 600ms → openDiabQuiz() (skip si profile.diabQuiz.profil déjà présent ; openDiabQuiz(true) pour refaire). NB : peut apparaître avec ~1-2s de délai car generateMenu() bloque le thread.
+- Calcul du profil (points de risque par option, complications plafonnées à 4, max ≈26) : 🔴 Prioritaire (score≥14 OU HbA1c>8% OU ≥2 complications, + encart suivi médical), 🟠 Métabolique Fragile (≥9), 🟡 À Optimiser (≥4), 🟢 Équilibré (<4). Exposé via window.KP_DIAB_PROFILES {emoji,name,color,bg,desc,advice,tips}.
+- Écran résultat : emoji + nom du profil + description + 3 conseils personnalisés + encart médical (Prioritaire) + boutons ↺ Refaire / C'est parti.
+- Tableau de bord Diabète (kpDiabRender → diabScoreWrap) : chip profil coloré + conseil (advice) + lien « Refaire le questionnaire » ; si non complété → CTA pointillé « 📋 Faire le questionnaire Diabète ».
+- Testé par evaluate : flux 13 questions, multi Q10 [0,2], score 20 → Prioritaire, sauvegarde OK, chip 🟡 rendu OK, ouverture auto après applyDietMode OK (screenshot).

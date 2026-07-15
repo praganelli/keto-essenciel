@@ -14895,8 +14895,22 @@ function kpDiabRender(){
   var sc=kpDiabScore(today);
   var pct=sc.total, circ=2*Math.PI*44;
   var ringColor = pct>=70?'#236648':(pct>=40?'#b07a22':'#b05522');
-  document.getElementById('diabScoreWrap').innerHTML =
-    '<div class="diab-score-wrap">'
+  /* Profil Diabète issu du questionnaire (chip + conseil personnalisé, ou CTA si non complété) */
+  var dqHtml='';
+  try{
+    var dq = profile && profile.diabQuiz;
+    if(dq && dq.profil && window.KP_DIAB_PROFILES && KP_DIAB_PROFILES[dq.profil]){
+      var DP = KP_DIAB_PROFILES[dq.profil];
+      dqHtml = '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">'
+        + '<span data-testid="diab-profile-chip" style="display:inline-flex;align-items:center;gap:6px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12px;font-weight:700;padding:5px 13px;border-radius:20px;background:'+DP.bg+';color:'+DP.color+';border:1px solid '+DP.color+'44">'+DP.emoji+' '+DP.name+'</span>'
+        + '<a onclick="openDiabQuiz(true)" style="font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline">Refaire le questionnaire</a></div>'
+        + '<div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;font-style:italic">'+DP.advice+'</div>';
+    } else {
+      dqHtml = '<button onclick="openDiabQuiz(true)" data-testid="diab-quiz-cta" style="display:block;width:100%;margin-bottom:14px;padding:11px 14px;border-radius:12px;border:1px dashed rgba(164,84,60,.45);background:rgba(164,84,60,.06);color:#a4543c;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer">📋 Faire le questionnaire Diabète — obtenez votre profil personnalisé</button>';
+    }
+  }catch(e){}
+  document.getElementById('diabScoreWrap').innerHTML = dqHtml
+    + '<div class="diab-score-wrap">'
     + '<div class="diab-score-ring"><svg width="104" height="104" viewBox="0 0 104 104">'
     + '<circle cx="52" cy="52" r="44" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="9"/>'
     + '<circle cx="52" cy="52" r="44" fill="none" stroke="'+ringColor+'" stroke-width="9" stroke-linecap="round" '
@@ -16745,6 +16759,10 @@ authGuest = function(){
     if(typeof toast==='function') toast(m.emoji+' Mode « '+m.label+' » — nouveau menu généré ✅');
     if(m.warn){
       setTimeout(function(){alert('⚠️ '+m.label+'\n\n'+m.warn);},250);
+    }
+    /* Mode Diabète : lancer automatiquement le Questionnaire Diabète (si pas déjà complété) */
+    if(modeId==='diabete'){
+      setTimeout(function(){ try{ if(typeof openDiabQuiz==='function') openDiabQuiz(); }catch(e){} }, 600);
     }
     // Sync cloud si dispo
     if(typeof syncProfileToCloud==='function' && typeof currentUser!=='undefined' && currentUser){
@@ -27466,6 +27484,170 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
   body::before, body::after{ mix-blend-mode: normal !important; opacity: .04 !important; }
 }
 </style>
+
+<!-- ═══ QUESTIONNAIRE DIABÈTE — lancé automatiquement à la sélection du mode alimentaire Diabète ═══ -->
+<div id="diabQuizOverlay" class="quiz-overlay" data-testid="diab-quiz-overlay">
+  <div class="quiz-card" onclick="event.stopPropagation()">
+    <button class="quiz-close" onclick="closeDiabQuiz()" data-testid="diab-quiz-close" aria-label="Fermer">×</button>
+    <div id="diabQuizContent"></div>
+  </div>
+</div>
+<script>
+(function(){
+  /* Questions + points de risque par option (multi = cases à cocher) */
+  var DQ = [
+    {q:"Quel type de diabète avez-vous ?", o:[["Diabète de type 1",2],["Diabète de type 2",1],["Diabète gestationnel",1],["Prédiabète",0],["Je ne sais pas",1]]},
+    {q:"Depuis combien de temps êtes-vous diabétique ?", o:[["Moins de 6 mois",0],["6 mois à 2 ans",0],["2 à 5 ans",1],["Plus de 5 ans",1],["Plus de 10 ans",2]]},
+    {q:"Quel est votre dernier taux d'HbA1c ?", o:[["Moins de 6 %",0],["Entre 6 et 7 %",1],["Entre 7 et 8 %",2],["Plus de 8 %",3],["Je ne le connais pas",1]]},
+    {q:"Prenez-vous un traitement contre le diabète ?", o:[["Aucun",0],["Comprimés uniquement",1],["Insuline uniquement",2],["Comprimés + insuline",3],["Autre traitement injectable (GLP-1, etc.)",1]]},
+    {q:"Contrôlez-vous votre glycémie ?", o:[["Plusieurs fois par jour",0],["Une fois par jour",0],["Quelques fois par semaine",1],["Rarement",2],["Jamais",2]]},
+    {q:"Quel est votre objectif principal ?", o:[["Faire baisser ma glycémie",0],["Perdre du poids",0],["Réduire mes médicaments (avec mon médecin)",0],["Mieux manger",0],["Améliorer mon énergie",0]]},
+    {q:"À quelle fréquence pratiquez-vous une activité physique ?", o:[["Jamais",2],["1 à 2 fois par semaine",1],["3 à 4 fois par semaine",0],["5 fois ou plus par semaine",0]]},
+    {q:"Comment qualifieriez-vous votre alimentation actuelle ?", o:[["Très riche en sucres",2],["Équilibrée",1],["Pauvre en glucides",0],["Cétogène",0],["Je ne sais pas",1]]},
+    {q:"Avez-vous déjà eu des hypoglycémies ?", o:[["Jamais",0],["Rarement",0],["Parfois",1],["Souvent",2]]},
+    {q:"Avez-vous déjà présenté une ou plusieurs complications liées au diabète ?", sub:"Cochez tout ce qui s'applique", multi:true,
+     o:[["Hypertension",1],["Cholestérol élevé",1],["Neuropathie",1],["Rétinopathie",1],["Problèmes rénaux",1],["Maladie cardiovasculaire",1],["Aucune",0]]},
+    {q:"Comment évaluez-vous votre niveau de stress ?", o:[["Très faible",0],["Faible",0],["Modéré",1],["Élevé",2],["Très élevé",2]]},
+    {q:"Comment dormez-vous en général ?", o:[["Très bien",0],["Bien",0],["Moyen",1],["Mal",2],["Très mal",2]]},
+    {q:"Êtes-vous prêt(e) à modifier progressivement votre alimentation pour améliorer votre diabète ?", o:[["Oui, totalement",0],["Oui, avec un accompagnement",0],["Peut-être",0],["Pas pour le moment",0]]}
+  ];
+
+  /* Profils utilisateur Diabétique calculés à partir du score de risque */
+  window.KP_DIAB_PROFILES = {
+    equilibre:   {emoji:"🟢", name:"Profil Équilibré", color:"#236648", bg:"rgba(35,102,72,.1)",
+      desc:"Votre glycémie est globalement maîtrisée et vos habitudes de vie sont bonnes. Le programme keto va vous aider à consolider ces excellents résultats.",
+      advice:"Vos habitudes sont solides : maintenez le cap et surveillez simplement vos glycémies régulières.",
+      tips:["Poursuivez vos contrôles de glycémie au même rythme","Maintenez 20-30 g de glucides nets par jour pour rester en zone stable","Continuez votre activité physique : c'est votre meilleur allié métabolique"]},
+    optimiser:   {emoji:"🟡", name:"Profil À Optimiser", color:"#b07a22", bg:"rgba(176,122,34,.12)",
+      desc:"Quelques points d'amélioration ont été identifiés (activité physique, alimentation, sommeil…). De petits ajustements réguliers feront une grande différence.",
+      advice:"Quelques ajustements simples (activité, sommeil, régularité des repas) amélioreront nettement votre équilibre glycémique.",
+      tips:["Visez 30 minutes de marche après le repas principal pour lisser la glycémie","Enregistrez vos glycémies chaque jour dans le tableau de bord ci-dessous","Couchez-vous à heures régulières : le sommeil influence directement la glycémie"]},
+    fragile:     {emoji:"🟠", name:"Profil Métabolique Fragile", color:"#c2611e", bg:"rgba(194,97,30,.12)",
+      desc:"Votre glycémie est souvent élevée et plusieurs facteurs de risque sont présents. Le mode Diabète va structurer votre alimentation pour stabiliser votre métabolisme.",
+      advice:"Votre métabolisme a besoin de régularité : suivez strictement les menus du mode Diabète et notez chaque glycémie.",
+      tips:["Suivez les menus du mode Diabète sans écart les 4 premières semaines","Contrôlez votre glycémie à jeun + après les repas et notez tout dans le suivi","Parlez de votre démarche keto à votre médecin lors de votre prochain rendez-vous"]},
+    prioritaire: {emoji:"🔴", name:"Profil Prioritaire", color:"#b03030", bg:"rgba(176,48,48,.12)",
+      desc:"Votre diabète semble mal équilibré ou des complications sont déclarées. Un suivi médical renforcé est recommandé en complément des conseils de l'application.",
+      advice:"Un suivi médical renforcé est recommandé : utilisez l'application en complément, jamais en remplacement, de votre médecin.",
+      medical:true,
+      tips:["Consultez votre médecin avant tout changement alimentaire important","Ne modifiez JAMAIS votre traitement sans avis médical","Surveillez vos glycémies plusieurs fois par jour et signalez toute hypoglycémie"]}
+  };
+
+  var idx = 0, answers = [];
+
+  function computeProfile(){
+    var score = 0, compCount = 0, hba1cHigh = false;
+    DQ.forEach(function(item, i){
+      var a = answers[i];
+      if(item.multi){
+        var pts = 0;
+        (a||[]).forEach(function(oi){ pts += item.o[oi][1]; if(item.o[oi][1]>0) compCount++; });
+        score += Math.min(pts, 4);
+      } else if(typeof a === 'number'){
+        score += item.o[a][1];
+        if(i===2 && a===3) hba1cHigh = true; /* HbA1c > 8 % */
+      }
+    });
+    var profil;
+    if(score >= 14 || hba1cHigh || compCount >= 2) profil = 'prioritaire';
+    else if(score >= 9) profil = 'fragile';
+    else if(score >= 4) profil = 'optimiser';
+    else profil = 'equilibre';
+    return {score:score, profil:profil, complications:compCount};
+  }
+
+  function renderQ(){
+    var c = document.getElementById('diabQuizContent');
+    var item = DQ[idx];
+    var pct = Math.round(100*idx/DQ.length);
+    var a = answers[idx];
+    var html = '<div class="quiz-eyebrow">Questionnaire Diabète · Question '+(idx+1)+'/'+DQ.length+'</div>'
+      + '<div class="quiz-progress-wrap"><div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:'+pct+'%"></div></div>'
+      + '<div class="quiz-progress-text">'+pct+' % complété</div></div>'
+      + '<div class="quiz-question">'+item.q+'</div>'
+      + (item.sub ? '<div class="quiz-sub" style="margin-top:-12px">('+item.sub+')</div>' : '')
+      + '<div class="quiz-options">'
+      + item.o.map(function(opt, oi){
+          var sel = item.multi ? (Array.isArray(a) && a.indexOf(oi)>-1) : (a===oi);
+          return '<button class="quiz-option'+(sel?' selected':'')+'" onclick="kpDiabQuizPick('+oi+')" data-testid="diab-quiz-opt-'+oi+'">'
+            + '<span class="quiz-option-letter">'+(item.multi?(sel?'✓':'+'):String.fromCharCode(65+oi))+'</span>'+opt[0]+'</button>';
+        }).join('')
+      + '</div>'
+      + '<div class="quiz-actions">'
+      + '<button class="quiz-back" onclick="kpDiabQuizBack()"'+(idx===0?' disabled':'')+'>← Retour</button>'
+      + '<button class="quiz-next" onclick="kpDiabQuizNext()"'+(isAnswered()?'':' disabled')+' data-testid="diab-quiz-next">'+(idx===DQ.length-1?'Voir mon profil →':'Suivant →')+'</button>'
+      + '</div>';
+    c.innerHTML = html;
+  }
+
+  function isAnswered(){
+    var a = answers[idx];
+    return DQ[idx].multi ? (Array.isArray(a) && a.length>0) : (typeof a === 'number');
+  }
+
+  window.kpDiabQuizPick = function(oi){
+    var item = DQ[idx];
+    if(item.multi){
+      var a = answers[idx] = Array.isArray(answers[idx]) ? answers[idx] : [];
+      var noneIdx = item.o.length-1; /* « Aucune » = dernière option, exclusive */
+      var pos = a.indexOf(oi);
+      if(pos > -1){ a.splice(pos,1); }
+      else{
+        if(oi === noneIdx){ answers[idx] = [noneIdx]; }
+        else{ var ni = a.indexOf(noneIdx); if(ni>-1) a.splice(ni,1); a.push(oi); }
+      }
+      renderQ();
+    } else {
+      answers[idx] = oi;
+      renderQ();
+      setTimeout(function(){ if(idx < DQ.length-1){ idx++; renderQ(); } else { renderResult(); } }, 260);
+    }
+  };
+  window.kpDiabQuizBack = function(){ if(idx>0){ idx--; renderQ(); } };
+  window.kpDiabQuizNext = function(){
+    if(!isAnswered()) return;
+    if(idx < DQ.length-1){ idx++; renderQ(); } else { renderResult(); }
+  };
+
+  function renderResult(){
+    var r = computeProfile();
+    var P = KP_DIAB_PROFILES[r.profil];
+    /* Sauvegarde dans le profil utilisateur */
+    try{
+      profile = profile || {};
+      profile.diabQuiz = {answers:answers.slice(), score:r.score, profil:r.profil, complications:r.complications, date:new Date().toISOString().slice(0,10)};
+      if(typeof save === 'function') save();
+      if(typeof syncProfileToCloud === 'function' && typeof currentUser !== 'undefined' && currentUser){ try{ syncProfileToCloud(); }catch(e){} }
+      if(typeof kpDiabRender === 'function') setTimeout(function(){ try{ kpDiabRender(); }catch(e){} }, 100);
+    }catch(e){}
+    var c = document.getElementById('diabQuizContent');
+    c.innerHTML = '<div class="quiz-eyebrow">Questionnaire Diabète · Résultat</div>'
+      + '<div class="quiz-result-score"><div style="font-size:64px;line-height:1;margin-bottom:10px">'+P.emoji+'</div>'
+      + '<div class="quiz-result-level" style="color:'+P.color+'" data-testid="diab-quiz-profile">'+P.name+'</div></div>'
+      + '<div class="quiz-result-desc" style="text-align:center">'+P.desc+'</div>'
+      + (P.medical ? '<div style="background:rgba(176,48,48,.08);border:1px solid rgba(176,48,48,.3);border-radius:14px;padding:14px 16px;margin-bottom:16px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12.5px;line-height:1.55;color:#8a2626"><strong>⚕️ Important :</strong> ce profil recommande un suivi médical renforcé. Les conseils de l\'application complètent, mais ne remplacent jamais, l\'avis de votre médecin.</div>' : '')
+      + '<div class="quiz-result-tips"><div class="quiz-result-tips-title">Vos conseils personnalisés</div>'
+      + P.tips.map(function(t){ return '<div class="quiz-result-tip"><span class="quiz-result-tip-bullet">→</span>'+t+'</div>'; }).join('')
+      + '</div>'
+      + '<div class="quiz-actions" style="justify-content:center;gap:14px">'
+      + '<button class="quiz-back" onclick="openDiabQuiz(true)">↺ Refaire</button>'
+      + '<button class="quiz-next" onclick="closeDiabQuiz()" data-testid="diab-quiz-done">C\'est parti →</button>'
+      + '</div>';
+  }
+
+  window.openDiabQuiz = function(force){
+    if(!force && profile && profile.diabQuiz && profile.diabQuiz.profil) return; /* déjà complété */
+    idx = 0; answers = [];
+    var ov = document.getElementById('diabQuizOverlay');
+    if(ov.parentNode !== document.body) document.body.appendChild(ov);
+    renderQ();
+    ov.classList.add('open');
+  };
+  window.closeDiabQuiz = function(){
+    document.getElementById('diabQuizOverlay').classList.remove('open');
+  };
+})();
+</script>
 
 <script id="kpRecipeDetailsData">
 /* Préparations détaillées EN DUR pour toutes les recettes (474) — aucune requête IA nécessaire */
