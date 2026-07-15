@@ -132,6 +132,82 @@ def notify_admin_new_subscriber(email: str, source: str = ''):
     resend.Emails.send(params)
 
 
+KP_APP_URL = os.environ.get('KP_APP_URL', 'https://body-metrics-bug.preview.emergentagent.com/api/app')
+
+
+def send_trial_ended_email(to_email: str):
+    """Email de relance envoyé à la fin de la période d'essai Premium de 7 jours."""
+    if not RESEND_API_KEY:
+        return
+    params = {
+        "from": PREMIUM_FROM_EMAIL,
+        "to": [to_email],
+        "subject": "Votre essai Premium est terminé — continuez l'aventure kéto 🌿",
+        "html": (
+            "<div style=\"font-family:Georgia,serif;max-width:540px;margin:auto;color:#26301f;"
+            "background:#f7f3ea;border-radius:14px;padding:32px 30px\">"
+            "<h1 style=\"color:#236648;font-size:23px;margin:0 0 16px\">Vos 7 jours d'essai Premium sont terminés</h1>"
+            "<p style=\"line-height:1.7\">Nous espérons que vous avez apprécié l'expérience complète : "
+            "modes alimentaires personnalisés, suivi avancé, toutes les recettes débloquées et vos menus "
+            "validés selon nos critères nutritionnels kéto.</p>"
+            "<p style=\"line-height:1.7\">Pour <strong>ne rien perdre de vos habitudes</strong> et continuer à profiter "
+            "de tous les avantages Premium :</p>"
+            "<ul style=\"line-height:1.9;padding-left:20px;margin:10px 0 20px\">"
+            "<li>🍽️ Menus hebdomadaires illimités, contrôlés et équilibrés</li>"
+            "<li>🥑 Modes alimentaires (végétarien, sans laitages, carnivore…)</li>"
+            "<li>📊 Suivi avancé de vos mesures et de votre progression</li>"
+            "<li>📖 L'intégralité des recettes avec préparations détaillées</li>"
+            "</ul>"
+            "<p style=\"text-align:center;margin:26px 0\">"
+            f"<a href=\"{KP_APP_URL}\" style=\"background:#236648;color:#ffffff;text-decoration:none;"
+            "padding:14px 30px;border-radius:12px;font-weight:bold;display:inline-block\">"
+            "✨ Passer en Premium</a></p>"
+            "<p style=\"line-height:1.7;color:#5b5546;font-size:14px\">Ouvrez l'application puis rendez-vous dans "
+            "l'onglet <strong>Premium</strong> pour choisir la formule qui vous convient. "
+            "Une question ? Répondez simplement à cet email.</p>"
+            "<p style=\"margin-top:24px;color:#8a7659\">Belle continuation,<br>Patrice</p>"
+            + EMAIL_SIGNATURE_HTML +
+            "</div>"
+        ),
+    }
+    resend.Emails.send(params)
+
+
+def check_expired_trials() -> int:
+    """Repère les essais Premium expirés et envoie l'email de relance (une seule fois par compte)."""
+    fs = get_firestore()
+    if not fs:
+        return 0
+    now = datetime.now(timezone.utc)
+    sent = 0
+    for doc in fs.collection(PREMIUM_COLLECTION).where('plan', '==', 'trial').stream():
+        d = doc.to_dict() or {}
+        # Ignore : déjà relancé, passé en payant (source != trial), ou pas de date d'expiration
+        if d.get('trialEndEmailSent') or d.get('source') != 'trial' or not d.get('expires'):
+            continue
+        try:
+            exp = datetime.fromisoformat(str(d['expires']).replace('Z', '+00:00'))
+        except (ValueError, TypeError):
+            continue
+        if exp.tzinfo is None:
+            exp = exp.replace(tzinfo=timezone.utc)
+        if exp > now:
+            continue
+        email = doc.id
+        try:
+            send_trial_ended_email(email)
+            doc.reference.set({
+                'active': False,
+                'trialEndEmailSent': True,
+                'trialEndEmailAt': iso_now(),
+            }, merge=True)
+            sent += 1
+            logger.info(f"Trial ended email sent to {email}")
+        except Exception as e:
+            logger.error(f"Trial ended email FAILED for {email}: {e}")
+    return sent
+
+
 def send_welcome_email(to_email: str, firstname: str = ''):
     """Email de bienvenue à l'inscription (compte gratuit)."""
     if not RESEND_API_KEY:
@@ -225,7 +301,11 @@ def _serve_html_with_base(request: Request, filename: str) -> HTMLResponse:
         html = html.replace("</head>", inject + "</head>", 1)
     else:
         html = inject + html
-    return HTMLResponse(html)
+    return HTMLResponse(html, headers={
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+    })
 
 @api_router.get("/app")
 async def serve_keto_app(request: Request):
@@ -248,6 +328,14 @@ async def download_firestore_rules():
         media_type="text/plain",
         filename="firestore.rules",
     )
+
+
+@api_router.post("/admin/check-trials")
+async def admin_check_trials():
+    """Déclenche manuellement la vérification des essais expirés (aussi exécutée toutes les 6 h)."""
+    import asyncio
+    n = await asyncio.get_event_loop().run_in_executor(None, check_expired_trials)
+    return {"ok": True, "emails_sent": n}
 
 @api_router.get("/download-functions")
 async def download_functions():
@@ -1089,6 +1177,25 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+@app.on_event("startup")
+async def start_trial_expiry_loop():
+    """Vérifie toutes les 6 h les essais Premium expirés et envoie l'email de relance."""
+    import asyncio
+
+    async def _loop():
+        await asyncio.sleep(20)  # laisse le serveur démarrer
+        while True:
+            try:
+                n = await asyncio.get_event_loop().run_in_executor(None, check_expired_trials)
+                if n:
+                    logger.info(f"Trial expiry check: {n} email(s) de relance envoyé(s)")
+            except Exception as e:
+                logger.error(f"Trial expiry loop error: {e}")
+            await asyncio.sleep(6 * 3600)
+
+    asyncio.create_task(_loop())
+
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

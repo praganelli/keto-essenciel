@@ -8056,6 +8056,86 @@ body{
       <div id="weightHistory"></div>
     </div>
 
+    <!-- ─── Suivi Diabète (visible uniquement en mode Diabète) ─── -->
+    <style>
+      .diab-dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+      .diab-tile{background:var(--em-pale,rgba(35,102,72,.08));border:1px solid var(--border2,rgba(0,0,0,.07));border-radius:14px;padding:12px 12px 10px;text-align:center}
+      .diab-tile-val{font-family:var(--font-display,Georgia),serif;font-size:22px;font-weight:700;color:var(--text,#1e2a1e);line-height:1.1}
+      .diab-tile-val small{font-size:11px;font-weight:600;color:var(--muted)}
+      .diab-tile-lab{font-family:'Plus Jakarta Sans',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+      .diab-score-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+      .diab-score-ring{position:relative;width:104px;height:104px;flex:0 0 auto}
+      .diab-score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font-display,Georgia),serif;font-weight:700;font-size:27px;color:var(--em,#236648)}
+      .diab-score-num small{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700}
+      .diab-parts{flex:1;min-width:220px;display:flex;flex-direction:column;gap:5px}
+      .diab-part{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text)}
+      .diab-part-lab{flex:0 0 145px;color:var(--muted);font-size:11px}
+      .diab-part-bar{flex:1;height:6px;border-radius:4px;background:rgba(0,0,0,.07);overflow:hidden}
+      .diab-part-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--em,#236648),#4f9d72)}
+      .diab-part-pts{flex:0 0 46px;text-align:right;font-weight:700;font-size:11px}
+      .diab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0 4px}
+      .diab-mood-row{display:flex;gap:8px;margin-top:6px}
+      .diab-mood-btn{font-size:22px;background:transparent;border:2px solid transparent;border-radius:12px;padding:4px 8px;cursor:pointer;transition:transform .15s,border-color .15s;filter:grayscale(.7);opacity:.6}
+      .diab-mood-btn.sel{border-color:var(--em,#236648);filter:none;opacity:1;transform:scale(1.12)}
+      .diab-range-btn{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--border2,rgba(0,0,0,.12));background:transparent;color:var(--muted);cursor:pointer}
+      .diab-range-btn.on{background:var(--em,#236648);color:#fff;border-color:var(--em,#236648)}
+      body.dark .diab-tile{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+      body.dark .diab-part-bar{background:rgba(255,255,255,.1)}
+    </style>
+    <div class="suivi-section" id="diabeteSection" style="display:none" data-testid="diabete-section">
+      <div class="sec-label">🩸 Tableau de bord Diabète · aujourd'hui</div>
+      <div class="card"><div class="card-body">
+        <div id="diabScoreWrap"></div>
+        <div id="diabDash" class="diab-dash"></div>
+      </div></div>
+
+      <div class="sec-label" style="margin-top:20px">📈 Progression du score métabolique</div>
+      <div class="card"><div class="card-body" style="padding:14px">
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px">
+          <button class="diab-range-btn on" id="diabRange7" onclick="kpDiabSetRange(7)">Semaine</button>
+          <button class="diab-range-btn" id="diabRange30" onclick="kpDiabSetRange(30)">Mois</button>
+        </div>
+        <canvas id="diabChart" height="190" style="width:100%;display:block"></canvas>
+        <div id="diabChartEmpty" style="display:none;text-align:center;padding:34px 20px;color:var(--muted);font-size:13.5px">
+          <div style="font-size:38px;margin-bottom:10px;opacity:.4">🩸</div>
+          <p>Enregistrez vos premières journées pour visualiser votre progression.</p>
+        </div>
+      </div></div>
+
+      <div class="sec-label" style="margin-top:20px">✍️ Saisie du jour</div>
+      <div class="card"><div class="card-body">
+        <div class="suivi-field-label" style="font-size:12px;margin-bottom:4px">🩸 Glycémies (mg/dL)</div>
+        <div class="diab-grid" id="diabGlyGrid"></div>
+        <div class="suivi-field-label" style="font-size:12px;margin:16px 0 4px">💊 Traitement</div>
+        <div class="diab-grid">
+          <div><div class="suivi-field-label">Médicaments pris</div><input type="text" id="diabMeds" placeholder="ex : Metformine 1000mg" class="form-input suivi-input" data-testid="diab-meds"></div>
+          <div><div class="suivi-field-label">Dose d'insuline (UI)</div><input type="number" id="diabInsulin" min="0" step="0.5" placeholder="ex : 12" class="form-input suivi-input" data-testid="diab-insulin"></div>
+          <div><div class="suivi-field-label">Heure d'injection</div><input type="time" id="diabInjTime" class="form-input suivi-input" data-testid="diab-inj-time"></div>
+          <div><div class="suivi-field-label">Effets secondaires</div><input type="text" id="diabSideFx" placeholder="Aucun / décrivez…" class="form-input suivi-input" data-testid="diab-sidefx"></div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;cursor:pointer">
+          <input type="checkbox" id="diabMissed" data-testid="diab-missed" style="width:17px;height:17px;accent-color:#b05522"> ⚠️ Oubli de traitement aujourd'hui
+        </label>
+        <div class="suivi-field-label" style="font-size:12px;margin:16px 0 4px">🌿 Habitudes du jour</div>
+        <div class="diab-grid">
+          <div><div class="suivi-field-label">Pas réalisés</div><input type="number" id="diabSteps" min="0" step="100" placeholder="ex : 7500" class="form-input suivi-input" data-testid="diab-steps"></div>
+          <div><div class="suivi-field-label">Eau consommée (L)</div><input type="number" id="diabWater" min="0" step="0.1" placeholder="ex : 1.8" class="form-input suivi-input" data-testid="diab-water"></div>
+          <div><div class="suivi-field-label">Sommeil (heures)</div><input type="number" id="diabSleep" min="0" max="16" step="0.5" placeholder="ex : 7.5" class="form-input suivi-input" data-testid="diab-sleep"></div>
+          <div>
+            <div class="suivi-field-label">Humeur</div>
+            <div class="diab-mood-row" id="diabMoodRow"></div>
+          </div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;cursor:pointer">
+          <input type="checkbox" id="diabCarbsOk" data-testid="diab-carbs-ok" style="width:17px;height:17px;accent-color:#236648"> ✅ Glucides respectés aujourd'hui (20-30 g nets max)
+        </label>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="kpDiabSave()" data-testid="diab-save" style="flex:1;min-width:200px">+ Enregistrer ma journée</button>
+        </div>
+        <div id="diabHistory" style="margin-top:14px"></div>
+      </div></div>
+    </div>
+
     <!-- Respect des macros — 30 jours (Premium) -->
     <div class="suivi-section" id="macroComplianceSection">
       <div class="sec-label" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
@@ -12572,6 +12652,7 @@ function renderSuivi(){
   // Rafraîchir bien-être & mesures pour le profil/compte actif (évite la fuite entre profils)
   try{ if(typeof kpRenderWellnessHistory === 'function') kpRenderWellnessHistory(); }catch(e){}
   try{ if(typeof kpRenderMeasuresHistory === 'function') kpRenderMeasuresHistory(); }catch(e){}
+  try{ if(typeof kpDiabRender === 'function') kpDiabRender(); }catch(e){}
 }
 
 /* ═══ 30-DAY MACRO COMPLIANCE (Premium) ═══ */
@@ -13479,6 +13560,7 @@ function syncProfileToCloud(){
     if(typeof _kpProfileKey === 'function' && typeof _kpLoadLog === 'function'){
       data.measures = JSON.stringify(_kpLoadLog(_kpProfileKey('kp_measures_v1')));
       data.wellness = JSON.stringify(_kpLoadLog(_kpProfileKey('kp_wellness_v1')));
+      data.diabete  = JSON.stringify(_kpLoadLog(_kpProfileKey('kp_diabete_v1')));
     }
   }catch(e){}
 
@@ -13520,6 +13602,7 @@ function syncProfileFromCloud(){
           if(typeof _kpProfileKey === 'function'){
             if(d.measures) localStorage.setItem(_kpProfileKey('kp_measures_v1'), d.measures);
             if(d.wellness) localStorage.setItem(_kpProfileKey('kp_wellness_v1'), d.wellness);
+            if(d.diabete)  localStorage.setItem(_kpProfileKey('kp_diabete_v1'), d.diabete);
           }
         }catch(e){}
         // Sauvegarder aussi en local pour le mode offline
@@ -14425,6 +14508,294 @@ function kpDeleteMeasure(at){
 }
 window.kpDeleteMeasure = kpDeleteMeasure;
 window.kpLogMeasures = kpLogMeasures;
+
+/* ═══ SUIVI DIABÈTE : tableau de bord journalier + saisies + score métabolique /100 ═══ */
+var KP_DIAB_KEY = 'kp_diabete_v1';
+var KP_GLY_FIELDS = [
+  ['jeun','À jeun (réveil)'],['postPdj','2h après petit-déj'],
+  ['avDej','Avant déjeuner'],['postDej','2h après déjeuner'],
+  ['avDin','Avant dîner'],['postDin','2h après dîner'],
+  ['coucher','Au coucher'],['nuit','Nocturne (facultatif)']
+];
+var KP_MOODS = ['😞','😕','😐','🙂','😄'];
+var _diabRange = 7;
+var _diabMood = 0;
+
+function kpDiabLog(){ _kpMigrateLegacyKey(KP_DIAB_KEY); return _kpLoadLog(_kpProfileKey(KP_DIAB_KEY)); }
+function kpDiabSaveLog(log){ localStorage.setItem(_kpProfileKey(KP_DIAB_KEY), JSON.stringify(log.slice(-400))); }
+function kpDiabTodayKey(){ return new Date().toISOString().slice(0,10); }
+function kpDiabToday(){ var t=kpDiabTodayKey(); var log=kpDiabLog(); for(var i=log.length-1;i>=0;i--){ if(log[i]&&log[i].date===t) return log[i]; } return null; }
+function kpDiabGlyValues(e){
+  var out=[]; if(!e||!e.gly) return out;
+  KP_GLY_FIELDS.forEach(function(f){ var v=Number(e.gly[f[0]]); if(v>0) out.push(v); });
+  return out;
+}
+function kpDiabInTarget(v){ return v>=70 && v<=180; }
+function kpDiabLastDays(n){
+  var log=kpDiabLog(), out=[], now=new Date();
+  for(var i=n-1;i>=0;i--){
+    var d=new Date(now.getTime()-i*86400000).toISOString().slice(0,10);
+    var e=null; for(var j=log.length-1;j>=0;j--){ if(log[j]&&log[j].date===d){ e=log[j]; break; } }
+    out.push({date:d, entry:e});
+  }
+  return out;
+}
+/* Score métabolique /100 : glycémie 30 · glucides 20 · activité 15 · sommeil 15 · hydratation 10 · humeur 10 */
+function kpDiabScore(e){
+  var parts=[];
+  var g=kpDiabGlyValues(e);
+  var pctIn=g.length ? g.filter(kpDiabInTarget).length/g.length : 0;
+  parts.push({label:'Glycémie dans la cible', pts:Math.round(30*pctIn), max:30});
+  parts.push({label:'Glucides respectés', pts:(e&&e.carbsOk)?20:0, max:20});
+  var steps=(e&&Number(e.steps))||0;
+  parts.push({label:'Activité physique', pts:Math.round(15*Math.min(steps/8000,1)), max:15});
+  var sl=(e&&Number(e.sleep))||0, slPts=0;
+  if(sl>=7&&sl<=9) slPts=15; else if(sl>=6&&sl<=10) slPts=10; else if(sl>0) slPts=5;
+  parts.push({label:'Sommeil', pts:slPts, max:15});
+  var w=(e&&Number(e.water))||0;
+  parts.push({label:'Hydratation', pts:Math.round(10*Math.min(w/2,1)), max:10});
+  var mood=(e&&Number(e.mood))||0;
+  parts.push({label:'Humeur / stress', pts:mood?Math.round(10*mood/5):0, max:10});
+  return {total:parts.reduce(function(s,p){return s+p.pts;},0), parts:parts};
+}
+function kpDiabIsActive(){ return !!(profile && profile.dietMode==='diabete'); }
+
+function kpDiabRender(){
+  var sec=document.getElementById('diabeteSection');
+  if(!sec) return;
+  if(!kpDiabIsActive()){ sec.style.display='none'; return; }
+  sec.style.display='';
+  kpDiabBuildForm();
+  var today=kpDiabToday();
+  /* ── Score ── */
+  var sc=kpDiabScore(today);
+  var pct=sc.total, circ=2*Math.PI*44;
+  var ringColor = pct>=70?'#236648':(pct>=40?'#b07a22':'#b05522');
+  document.getElementById('diabScoreWrap').innerHTML =
+    '<div class="diab-score-wrap">'
+    + '<div class="diab-score-ring"><svg width="104" height="104" viewBox="0 0 104 104">'
+    + '<circle cx="52" cy="52" r="44" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="9"/>'
+    + '<circle cx="52" cy="52" r="44" fill="none" stroke="'+ringColor+'" stroke-width="9" stroke-linecap="round" '
+    + 'stroke-dasharray="'+(circ*pct/100).toFixed(1)+' '+circ.toFixed(1)+'" transform="rotate(-90 52 52)"/></svg>'
+    + '<div class="diab-score-num" style="color:'+ringColor+'">'+pct+'<small>/ 100</small></div></div>'
+    + '<div class="diab-parts">'
+    + sc.parts.map(function(p){
+        return '<div class="diab-part"><div class="diab-part-lab">'+p.label+'</div>'
+          + '<div class="diab-part-bar"><div class="diab-part-fill" style="width:'+Math.round(100*p.pts/p.max)+'%"></div></div>'
+          + '<div class="diab-part-pts">'+p.pts+'/'+p.max+'</div></div>';
+      }).join('')
+    + '</div></div>'
+    + '<div style="font-size:11px;color:var(--muted);margin-top:10px;font-style:italic">Score quotidien de santé métabolique — complétez votre saisie du jour pour l\'améliorer.</div>';
+  /* ── Tuiles du tableau de bord ── */
+  var gToday=kpDiabGlyValues(today);
+  var glyNow=gToday.length?gToday[gToday.length-1]:null;
+  var week=kpDiabLastDays(7), allG=[], inT=0;
+  week.forEach(function(d){ kpDiabGlyValues(d.entry).forEach(function(v){ allG.push(v); if(kpDiabInTarget(v)) inT++; }); });
+  var gly7=allG.length?Math.round(allG.reduce(function(s,v){return s+v;},0)/allG.length):null;
+  var tir=allG.length?Math.round(100*inT/allG.length):null;
+  var lastW=(typeof weightLog!=='undefined'&&weightLog&&weightLog.length)?weightLog[weightLog.length-1].weight:(profile&&profile.weight)||null;
+  function tile(val,unit,lab,emoji){
+    return '<div class="diab-tile"><div class="diab-tile-val">'+(val!=null&&val!==''?val:'—')+(val!=null&&unit?' <small>'+unit+'</small>':'')+'</div><div class="diab-tile-lab">'+emoji+' '+lab+'</div></div>';
+  }
+  document.getElementById('diabDash').innerHTML =
+      tile(glyNow,'mg/dL','Glycémie actuelle','🩸')
+    + tile(gly7,'mg/dL','Moyenne 7 jours','📊')
+    + tile(tir!=null?tir+'%':null,'','Temps dans la cible','🎯')
+    + tile(lastW,'kg','Poids','⚖️')
+    + tile(today&&today.steps?Number(today.steps).toLocaleString('fr-FR'):null,'','Pas réalisés','🚶')
+    + tile(today&&today.water?today.water:null,'L','Eau consommée','💧')
+    + tile(today&&today.sleep?today.sleep:null,'h','Sommeil','😴')
+    + tile(today&&today.mood?KP_MOODS[Number(today.mood)-1]:null,'','Humeur','💭');
+  kpDiabFillForm(today);
+  kpDiabDrawChart();
+  kpDiabRenderHistory();
+}
+
+function kpDiabBuildForm(){
+  var grid=document.getElementById('diabGlyGrid');
+  if(grid && !grid.childElementCount){
+    grid.innerHTML = KP_GLY_FIELDS.map(function(f){
+      return '<div><div class="suivi-field-label">'+f[1]+'</div>'
+        + '<input type="number" id="diabGly_'+f[0]+'" min="20" max="600" placeholder="mg/dL" class="form-input suivi-input" data-testid="diab-gly-'+f[0]+'"></div>';
+    }).join('');
+  }
+  var moodRow=document.getElementById('diabMoodRow');
+  if(moodRow && !moodRow.childElementCount){
+    moodRow.innerHTML = KP_MOODS.map(function(m,i){
+      return '<button type="button" class="diab-mood-btn" id="diabMood_'+(i+1)+'" data-testid="diab-mood-'+(i+1)+'" onclick="kpDiabSetMood('+(i+1)+')">'+m+'</button>';
+    }).join('');
+  }
+}
+function kpDiabSetMood(v){
+  _diabMood = (_diabMood===v) ? 0 : v;
+  KP_MOODS.forEach(function(_,i){
+    var b=document.getElementById('diabMood_'+(i+1));
+    if(b) b.classList.toggle('sel', (i+1)===_diabMood);
+  });
+}
+function kpDiabFillForm(e){
+  if(!e) return;
+  KP_GLY_FIELDS.forEach(function(f){
+    var inp=document.getElementById('diabGly_'+f[0]);
+    if(inp && !inp.value && e.gly && e.gly[f[0]]!=null) inp.value=e.gly[f[0]];
+  });
+  [['diabMeds','meds'],['diabInsulin','insulinDose'],['diabInjTime','insulinTime'],['diabSideFx','sideFx'],['diabSteps','steps'],['diabWater','water'],['diabSleep','sleep']].forEach(function(p){
+    var inp=document.getElementById(p[0]);
+    if(inp && !inp.value && e[p[1]]!=null && e[p[1]]!=='') inp.value=e[p[1]];
+  });
+  var mi=document.getElementById('diabMissed'); if(mi) mi.checked=!!e.missedMeds;
+  var co=document.getElementById('diabCarbsOk'); if(co) co.checked=!!e.carbsOk;
+  if(e.mood && !_diabMood) kpDiabSetMood(Number(e.mood));
+}
+function kpDiabSave(){
+  if(!kpDiabIsActive()) return;
+  function num(id){ var v=parseFloat((document.getElementById(id)||{}).value); return isNaN(v)?null:v; }
+  function txt(id){ return ((document.getElementById(id)||{}).value||'').trim(); }
+  var gly={}, anyGly=false;
+  KP_GLY_FIELDS.forEach(function(f){ var v=num('diabGly_'+f[0]); if(v!=null){ gly[f[0]]=v; anyGly=true; } });
+  var entry={
+    date: kpDiabTodayKey(), at: new Date().toISOString(),
+    gly: gly,
+    meds: txt('diabMeds'),
+    insulinDose: num('diabInsulin'),
+    insulinTime: txt('diabInjTime'),
+    missedMeds: !!(document.getElementById('diabMissed')||{}).checked,
+    sideFx: txt('diabSideFx'),
+    carbsOk: !!(document.getElementById('diabCarbsOk')||{}).checked,
+    steps: num('diabSteps'),
+    water: num('diabWater'),
+    sleep: num('diabSleep'),
+    mood: _diabMood||null
+  };
+  if(!anyGly && !entry.meds && entry.insulinDose==null && !entry.steps && !entry.water && !entry.sleep && !entry.mood && !entry.carbsOk){
+    if(typeof toast==='function') toast('Renseignez au moins un champ'); return;
+  }
+  var log=kpDiabLog();
+  /* Fusionne avec l'entrée du jour existante (saisie progressive matin → soir) */
+  var prev=null, idx=-1;
+  for(var i=log.length-1;i>=0;i--){ if(log[i]&&log[i].date===entry.date){ prev=log[i]; idx=i; break; } }
+  if(prev){
+    entry.gly = Object.assign({}, prev.gly||{}, gly);
+    ['meds','insulinDose','insulinTime','sideFx','steps','water','sleep','mood'].forEach(function(k){
+      if((entry[k]==null||entry[k]==='') && prev[k]!=null && prev[k]!=='') entry[k]=prev[k];
+    });
+    log[idx]=entry;
+  } else {
+    log.push(entry);
+  }
+  kpDiabSaveLog(log);
+  var s=kpDiabScore(entry);
+  if(typeof toast==='function') toast('✓ Journée enregistrée — score '+s.total+'/100');
+  if(typeof save==='function') save();
+  kpDiabRender();
+}
+function kpDiabSetRange(n){
+  _diabRange=n;
+  var b7=document.getElementById('diabRange7'), b30=document.getElementById('diabRange30');
+  if(b7) b7.classList.toggle('on', n===7);
+  if(b30) b30.classList.toggle('on', n===30);
+  kpDiabDrawChart();
+}
+function kpDiabDrawChart(){
+  var cv=document.getElementById('diabChart'), empty=document.getElementById('diabChartEmpty');
+  if(!cv) return;
+  var days=kpDiabLastDays(_diabRange);
+  var hasData=days.some(function(d){ return !!d.entry; });
+  if(!hasData){ cv.style.display='none'; if(empty) empty.style.display='block'; return; }
+  cv.style.display='block'; if(empty) empty.style.display='none';
+  var dpr=window.devicePixelRatio||1;
+  var W=cv.clientWidth||600, H=190;
+  cv.width=W*dpr; cv.height=H*dpr;
+  var ctx=cv.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
+  var padL=30, padR=34, padT=12, padB=24;
+  var iw=W-padL-padR, ih=H-padT-padB;
+  var n=days.length, bw=Math.min(26, iw/n*0.62);
+  var dark=document.body.classList.contains('dark');
+  var mutCol=dark?'rgba(255,255,255,.45)':'rgba(0,0,0,.42)';
+  ctx.font='9.5px "Plus Jakarta Sans",sans-serif'; ctx.fillStyle=mutCol;
+  /* Axe gauche : score 0-100 */
+  [0,50,100].forEach(function(v){
+    var y=padT+ih*(1-v/100);
+    ctx.fillText(String(v),4,y+3);
+    ctx.strokeStyle=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.06)';
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+  });
+  /* Barres = score quotidien */
+  days.forEach(function(d,i){
+    var x=padL+iw*(i+0.5)/n;
+    if(d.entry){
+      var sc=kpDiabScore(d.entry).total;
+      var h=ih*sc/100;
+      ctx.fillStyle=sc>=70?'#2d7a52':(sc>=40?'#c8963e':'#b05522');
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(x-bw/2, padT+ih-h, bw, h, 4); else ctx.rect(x-bw/2, padT+ih-h, bw, h);
+      ctx.fill();
+    }
+    if(_diabRange===7 || i%5===0){
+      ctx.fillStyle=mutCol;
+      var lab=new Date(d.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+      ctx.save(); ctx.textAlign='center'; ctx.fillText(lab, x, H-8); ctx.restore();
+    }
+  });
+  /* Ligne = glycémie moyenne (axe droit 0-250 mg/dL) */
+  var pts=[];
+  days.forEach(function(d,i){
+    var g=kpDiabGlyValues(d.entry);
+    if(g.length){ var avg=g.reduce(function(s,v){return s+v;},0)/g.length; pts.push({i:i, v:avg}); }
+  });
+  if(pts.length){
+    ctx.strokeStyle='#b05522'; ctx.lineWidth=2; ctx.beginPath();
+    pts.forEach(function(p,k){
+      var x=padL+iw*(p.i+0.5)/n, y=padT+ih*(1-Math.min(p.v,250)/250);
+      if(k===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    pts.forEach(function(p){
+      var x=padL+iw*(p.i+0.5)/n, y=padT+ih*(1-Math.min(p.v,250)/250);
+      ctx.fillStyle='#b05522'; ctx.beginPath(); ctx.arc(x,y,3,0,7); ctx.fill();
+    });
+    ctx.fillStyle='#b05522'; ctx.textAlign='left';
+    [0,125,250].forEach(function(v){
+      var y=padT+ih*(1-v/250);
+      ctx.fillText(String(v), W-padR+5, y+3);
+    });
+    ctx.fillText('mg/dL', W-padR+2, padT-2);
+  }
+}
+function kpDiabRenderHistory(){
+  var holder=document.getElementById('diabHistory');
+  if(!holder) return;
+  var log=kpDiabLog().slice().reverse().slice(0,7);
+  if(!log.length){ holder.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:12.5px;font-style:italic">Aucune journée enregistrée pour le moment.</div>'; return; }
+  holder.innerHTML = '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px">7 dernières journées</div>'
+    + log.map(function(e){
+        var d=new Date(e.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+        var sc=kpDiabScore(e).total;
+        var g=kpDiabGlyValues(e);
+        var bits=[];
+        if(g.length) bits.push('🩸 <strong>'+Math.round(g.reduce(function(s,v){return s+v;},0)/g.length)+'</strong> mg/dL moy');
+        if(e.insulinDose!=null) bits.push('💉 <strong>'+e.insulinDose+'</strong> UI'+(e.insulinTime?' à '+e.insulinTime:''));
+        if(e.missedMeds) bits.push('<span style="color:#b05522">⚠️ oubli traitement</span>');
+        if(e.sideFx) bits.push('❗ '+e.sideFx);
+        var scColor=sc>=70?'var(--em)':(sc>=40?'#b07a22':'#b05522');
+        var delBtn='<button class="kp-log-del" data-testid="diab-delete" onclick="kpDiabDelete(\''+e.date+'\')" title="Supprimer cette journée" style="margin-left:10px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:4px 6px;border-radius:6px">🗑</button>';
+        return '<div class="kp-log-row" style="display:flex;align-items:center"><div class="kp-log-date">'+d+'</div>'
+          + '<div style="flex:1;text-align:right;font-size:11.5px">'+bits.join(' · ')+' · <strong style="color:'+scColor+'">'+sc+'/100</strong></div>'+delBtn+'</div>';
+      }).join('');
+}
+function kpDiabDelete(date){
+  if(typeof confirm==='function' && !confirm('Supprimer la journée du '+date+' ?')) return;
+  var log=kpDiabLog().filter(function(e){ return e && e.date!==date; });
+  kpDiabSaveLog(log);
+  if(typeof toast==='function') toast('🗑 Journée supprimée');
+  if(typeof save==='function') save();
+  kpDiabRender();
+}
+window.kpDiabRender = kpDiabRender;
+window.kpDiabSave = kpDiabSave;
+window.kpDiabSetMood = kpDiabSetMood;
+window.kpDiabSetRange = kpDiabSetRange;
+window.kpDiabDelete = kpDiabDelete;
 
 /* ─── Helpers ─── */
 function _kpLoadLog(key){
@@ -15961,6 +16332,7 @@ authGuest = function(){
     var m = DIET_MODES[modeId] || DIET_MODES.standard;
     profile = profile || {};
     profile.dietMode = modeId;
+    try{ if(typeof kpDiabRender === 'function') kpDiabRender(); }catch(e){}
     // Recalculer kcal de base à partir du profil (BMR + activité + goal) — STABLE
     // au lieu de partir des targets actuels (qui dérivent à chaque changement de mode)
     try{

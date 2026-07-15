@@ -222,3 +222,17 @@ Bugs signalés :
 - POPUP DESKTOP « menu du jour » : ≥1024px, setDayView('day') porte #daySheet dans <body> + body.day-modal-open → modale centrée (880px max, backdrop flouté, ✕ en haut à droite via .day-sheet-handle-wrap::after, anim dayModalIn). Fermeture : ✕, clic backdrop, touche Échap (listener keydown). Mobile <1024px inchangé (bottom-sheet). CSS bloc « POPUP centré (desktop) » après le bloc mobile ~L610.
 - COMPTE DEMO RECRÉÉ : demo.keto.qa2026@gmail.com / DemoKeto2026! (l'ancien demo.keto.1782045313 est INVALIDE) — mis à jour dans /app/memory/test_credentials.md.
 - Testé par testing_agent (iteration_10.json) : backend 8/8, frontend 10/10, aucun bug.
+
+## Email fin d'essai + Tableau de bord Diabète + anti-cache (fork, juillet 2026)
+- EMAIL FIN D'ESSAI (server.py) : send_trial_ended_email (relance premium, CTA vers KP_APP_URL, signature Patrice) + check_expired_trials() — scan premium_emails where plan=='trial', skip si trialEndEmailSent/source!='trial'/pas d'expires ; à expiration : envoie email, set {active:false, trialEndEmailSent:true, trialEndEmailAt}. Boucle asyncio @startup toutes les 6 h + endpoint manuel POST /api/admin/check-trials. TESTÉ : 1 vrai essai expiré relancé (sylvie.neimard@gmail.com), idempotent (2e appel = 0).
+- ANTI-CACHE : _serve_html_with_base renvoie Cache-Control no-cache/no-store — corrige le « popup desktop ne fonctionne pas » (ancienne version en cache navigateur ; le popup a été VÉRIFIÉ fonctionnel en conditions réelles avec login + clic réel).
+- ⚠️ INCIDENT server.py : une édition a dupliqué la fin du fichier (le tail depuis le prompt detailed-steps) → réparé par troncature ligne 1126 puis réinjection des fonctions trial. TOUJOURS vérifier `python3 -c "import ast; ast.parse(...)"` après édition de server.py.
+- TABLEAU DE BORD DIABÈTE (keto.html) : section #diabeteSection dans l'onglet Suivi, visible UNIQUEMENT si profile.dietMode==='diabete' (kpDiabRender appelé par renderSuivi + applyDietMode). Composants :
+  • 8 tuiles : glycémie actuelle, moyenne 7j, temps dans la cible (70-180 mg/dL), poids (weightLog), pas, eau, sommeil, humeur.
+  • SCORE MÉTABOLIQUE /100 (kpDiabScore) : glycémie cible 30 (prorata mesures dans cible) + glucides 20 (checkbox carbsOk) + activité 15 (pas/8000) + sommeil 15 (7-9h=15, 6-10h=10, >0=5) + hydratation 10 (eau/2L) + humeur 10 (mood/5). Anneau SVG + barres de décomposition.
+  • GRAPHIQUE canvas #diabChart : barres = score quotidien (vert/ambre/rouge), ligne terracotta = glycémie moyenne (axe droit 0-250), toggle Semaine/Mois (kpDiabSetRange).
+  • SAISIE DU JOUR : 8 glycémies (jeun, post-pdj, av/post déj, av/post dîner, coucher, nocturne facultatif), traitement (médicaments, dose insuline UI, heure injection, oubli checkbox, effets secondaires), habitudes (pas, eau L, sommeil h, humeur 5 emojis kpDiabSetMood), glucides respectés. FUSION par jour (saisie progressive matin→soir, kpDiabSave merge sur date du jour).
+  • Historique 7 journées avec score coloré + suppression (kpDiabDelete).
+  • Stockage localStorage kp_diabete_v1__profileId + SYNC CLOUD (data.diabete dans syncProfileToCloud/FromCloud).
+- TESTÉ via evaluate + screenshots desktop 1920 et mobile 390 : score 97/100 correct, tuiles, graphes 7j/30j, formulaire pré-rempli. NB : l'onglet Suivi entier est gaté Premium (overlay kp-suivi-overlay-wrap) — le mode diabète étant Premium, cohérent.
+- ⚠️ TOOL GLITCH observé : sur keto.html (2.9MB), une édition « successful » peut ne pas persister — TOUJOURS vérifier par grep après une grosse insertion.
