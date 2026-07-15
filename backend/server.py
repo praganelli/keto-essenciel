@@ -497,6 +497,25 @@ BRAND_VOICE = (
     "ou découvrir l'app/les consultations sans être trop commerciale."
 )
 
+KETO_FRAMEWORK = (
+    "CADRE NUTRITIONNEL KETO À RESPECTER dans toute recette ou conseil alimentaire : "
+    "20-30 g de glucides nets/jour répartis sur les repas ; protéines 1,2-1,5 g/kg de poids de référence, "
+    "réparties sans excès ; les lipides de qualité complètent les besoins énergétiques. "
+    "Aliments à privilégier — viandes : poulet, dinde, bœuf, veau, porc, agneau, canard ; "
+    "poissons gras (2-3 fois/semaine) : saumon, sardines, maquereau, hareng, truite ; "
+    "fruits de mer : crevettes, moules, Saint-Jacques, calamars ; œufs (1 à 2/jour max). "
+    "Légumes pauvres en glucides UNIQUEMENT, en rotation : brocoli, haricots verts, courgettes, épinards, "
+    "blettes, asperges, salade, concombre, radis, céleri branche, champignons, chou-fleur, chou vert, "
+    "chou rouge, aubergines, poivrons (avec modération). "
+    "Matières grasses : huile d'olive vierge extra, avocat, huile d'avocat, beurre, ghee, crème entière, "
+    "olives — jamais de produits ultra-transformés. "
+    "Produits laitiers selon tolérance : fromages (mozzarella, chèvre, brebis, parmesan), yaourt grec nature, mascarpone. "
+    "Fruits très limités : framboises, mûres, fraises, myrtilles — 50 à 80 g max/jour. "
+    "Fruits à coque avec modération : noix, macadamia, noisettes, amandes, noix du Brésil. "
+    "Boissons : eau, eau pétillante, café sans sucre, thé, infusions. "
+    "Interdits : sucre, céréales, féculents, légumineuses, fruits sucrés, produits ultra-transformés."
+)
+
 BRAND_IMAGE_STYLE = (
     "Style photographique Keto — Essenciel O Naturel : palette vert forêt profond et touches dorées, "
     "ambiance naturopathe chaleureuse et lumineuse, aliments keto sains et appétissants (avocat, légumes "
@@ -683,7 +702,7 @@ async def content_generate_text(request: Request, authorization: Optional[str] =
     payload = {
         "model": OPENAI_TEXT_MODEL,
         "messages": [
-            {"role": "system", "content": BRAND_VOICE},
+            {"role": "system", "content": BRAND_VOICE + " " + KETO_FRAMEWORK},
             {"role": "user", "content": user_msg},
         ],
         "response_format": {"type": "json_object"},
@@ -800,7 +819,7 @@ async def content_generate_day(payload: dict, authorization: Optional[str] = Hea
     )
     payload_oa = {
         "model": OPENAI_TEXT_MODEL,
-        "messages": [{"role": "system", "content": BRAND_VOICE}, {"role": "user", "content": user_msg}],
+        "messages": [{"role": "system", "content": BRAND_VOICE + " " + KETO_FRAMEWORK}, {"role": "user", "content": user_msg}],
         "response_format": {"type": "json_object"},
     }
     try:
@@ -990,7 +1009,8 @@ async def recipe_detailed_steps(payload: dict):
         ing_txt, sp_txt, cur_txt = "(non précisés)", "(aucune)", "(aucune)"
     system = (
         "Tu es un chef cuisinier spécialisé en cuisine cétogène (keto), pédagogue et précis. "
-        "Tu rédiges des préparations détaillées, claires et infaillibles, en français, au tutoiement doux."
+        "Tu rédiges des préparations détaillées, claires et infaillibles, en français, au tutoiement doux. "
+        + KETO_FRAMEWORK
     )
     user_msg = (
         f"Recette : \"{name}\".\n"
