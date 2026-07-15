@@ -1,0 +1,33 @@
+{
+  "summary": "ALL 4 requested changes verified end-to-end. Backend: /api/app returns 200 with ~2.86MB HTML, contains kpRecipeDetailsData script + window.KP_RECIPE_DETAILS with EXACTLY 474 entries; day-modal-open class, 'g/kg' + '1,2'..'1,5' protein target text, and '✨ Préparation détaillée pas-à-pas' marker all present in source. /api/recipe/detailed-steps still works as fallback for custom recipes (returns ok:true with steps[]). Frontend (desktop 1920x800): setDayView('day') applies body.day-modal-open (NOT day-sheet-open), portals #daySheet + backdrop into <body>, and popup closes via Échap, backdrop click, and ✕ handle. Protein tile displays EXACTLY '🎯 cible 90–113 g (1,2–1,5 g/kg · 75 kg)' as required. Quality widget shows '14/14 critères validés'. Opening recipe id=0 from library renders 9 numbered steps immediately, detailStepsMsg visible with text '✨ Préparation détaillée pas-à-pas', btnDetailSteps hidden, and ZERO network calls to /api/recipe/detailed-steps (verified via request listener). Mobile 390x844: setDayView('day') correctly applies day-sheet-open (NOT day-modal-open) — no regression. Admin form HTML contains 'emoji', 'optionnel'/'facultatif' markers and 'quantité | nom' example — parseIng optional-emoji support confirmed in source. Backend pytest suite: 8/8 PASSED. Admin login not tested (no admin password in test_credentials.md — SKIPPED as instructed).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_keto_hardcoded_details.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "No blocking action items. The 4 requested changes (protein target tile, optional emoji in admin form, hardcoded 474 recipe details in window.KP_RECIPE_DETAILS with no AI call, and desktop popup with body.day-modal-open) are all implemented correctly and observed live.",
+    "Optional (unchanged from iter 9): keto.html/keto_app.html is ~26.7k lines monolithic — future modularisation recommended but out of scope."
+  ],
+  "critical_code_review_comments": [
+    "kpDetailSteps (line ~25628 keto.html) correctly checks window.KP_RECIPE_DETAILS FIRST, then localStorage, then falls back to /api/recipe/detailed-steps — order matches spec exactly (no network call for the 474 embedded recipes).",
+    "setDayView (line ~10683) branches cleanly on innerWidth<1024: mobile → 'day-sheet-open', desktop → 'day-modal-open'. portalDaySheet moves #daySheet and #daySheetBackdrop to <body> and unportalDaySheet restores them — no DOM leaks observed across re-openings.",
+    "Escape/backdrop/✕ handlers all route through closeDaySheet(); the isMobile branch keeps the slide-out animation on mobile while desktop closes instantly — correct UX.",
+    "/app/keto.html and /app/backend/keto_app.html are byte-identical (both 2862806 bytes, same mtime) — sync process working."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_keto_hardcoded_details.py (new pytest suite: 8 tests, all passing)"
+  ],
+  "success_rate": {"backend": "100% (8/8 pytest)", "frontend": "100% (10/10 targeted checks: KP_RECIPE_DETAILS count, desktop popup class/portal, protein tile format 90-113g @ 1,2-1,5 g/kg, Escape/backdrop/✕ close, quality 14/14, recipe modal steps + no network call, mobile bottom-sheet regression, admin optional-emoji hint)"},
+  "seed_data_creation": "Guest profile seeded via JS console fast-path (weight=75kg, femme, 35y, 170cm, 3 meals) to bypass 7-step onboarding — identical to iter 8 approach. No persistent data written.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "App is /app/keto.html mirrored to /app/backend/keto_app.html, served at GET /api/app. To bypass welcome/onboarding: hide ['kpWelcomeScreen','quizOverlay','onboardingOverlay'] then set profile fields directly (see prior iterations). For desktop popup testing call setDayView('day') via page.evaluate — the popup uses body.day-modal-open, #daySheet is portaled to <body>. For recipe integrated details use openRecipe(id) where id is a key of window.KP_RECIPE_DETAILS (474 entries, keys are string ids '0'..'473'). To watch for the forbidden AI call, attach page.on('request', ...) filtered on '/api/recipe/detailed-steps' BEFORE calling openRecipe. Reuse /app/backend/tests/test_keto_hardcoded_details.py for regression.",
+  "rca_of_issue": "N/A — no defect found. All 4 requested changes are correctly implemented and behave as specified. Admin password path was not exercised (credential not in test_credentials.md) but the admin UI hint about optional emoji is confirmed via HTML source inspection."
+}
