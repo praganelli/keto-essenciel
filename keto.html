@@ -20729,6 +20729,19 @@ authGuest = function(){
         /* Essai strictement unique : mémorise localement + en cache pour la bannière */
         try{ localStorage.setItem('kp_trial_start_v1', String(Date.now())); }catch(e){}
         window._kpTrialUsed = true;
+        /* ACTIVATION INSTANTANÉE : bascule le statut Premium local immédiatement,
+           sans attendre le round-trip Firestore, puis rafraîchit toute l'UI */
+        try{
+          window.kpState = window.kpState || {};
+          window.kpState.premium = true;
+          window.kpState.email = user.email;
+          window.kpState.since = since.toISOString();
+          window.kpState.expires = expires.toISOString();
+          window.kpState.source = 'trial';
+          window.kpState.checkedAt = Date.now();
+          if(typeof kpSaveCache === 'function') kpSaveCache();
+          kpRefreshUI();
+        }catch(e){}
         setTimeout(function(){
           kpCheckPremium().then(function(){
             try{ kpRefreshUI(); }catch(e){}
@@ -20843,6 +20856,18 @@ authGuest = function(){
         input.value = '';
         // Email de confirmation premium + notification admin
         try{ if(window.kpNotifyServer) kpNotifyServer(user, 'premium', {source:'code promo ' + code}); }catch(e){}
+        /* ACTIVATION INSTANTANÉE : statut Premium local immédiat + refresh UI complet */
+        try{
+          window.kpState = window.kpState || {};
+          window.kpState.premium = true;
+          window.kpState.email = user.email;
+          window.kpState.since = since.toISOString();
+          window.kpState.expires = expires.toISOString();
+          window.kpState.source = 'promo:' + code;
+          window.kpState.checkedAt = Date.now();
+          if(typeof kpSaveCache === 'function') kpSaveCache();
+          kpRefreshUI();
+        }catch(e){}
         // Recharger le statut
         setTimeout(function(){
           kpCheckPremium().then(function(){ kpRefreshUI(); closePremiumModal(); });
@@ -20943,6 +20968,13 @@ authGuest = function(){
     try{ kpDecorateModesGrid(); }catch(e){}
     try{ if(typeof renderLibrary==='function') renderLibrary(); }catch(e){}
     try{ kpUpdateSuiviLock(); }catch(e){}
+    // 2b. ACTIVATION INSTANTANÉE : déverrouille/verrouille immédiatement toutes les
+    //     sections Premium (Suivi bien-être, mesures, diabète…) + bannière d'essai,
+    //     sans attendre un rechargement ou un changement d'onglet.
+    try{ if(typeof kpApplyPremiumGate==='function') kpApplyPremiumGate(); }catch(e){}
+    try{ if(typeof refreshTrialBanner==='function') refreshTrialBanner(); }catch(e){}
+    try{ if(typeof kpUpdateTrialCta==='function') kpUpdateTrialCta(); }catch(e){}
+    try{ if(typeof currentTab!=='undefined' && currentTab==='suivi' && typeof renderSuivi==='function') renderSuivi(); }catch(e){}
     // 3. Cadre abonnement sur la page Plan + cartes statut du Profil
     //    (doivent refléter immédiatement tout changement d'abonnement)
     try{ if(typeof window.kpRenderPremiumStatusCardInPlan==='function') window.kpRenderPremiumStatusCardInPlan(); }catch(e){}

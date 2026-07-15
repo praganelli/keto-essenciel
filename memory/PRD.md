@@ -275,3 +275,8 @@ Bugs signalés :
 - Écran résultat : emoji + nom du profil + description + 3 conseils personnalisés + encart médical (Prioritaire) + boutons ↺ Refaire / C'est parti.
 - Tableau de bord Diabète (kpDiabRender → diabScoreWrap) : chip profil coloré + conseil (advice) + lien « Refaire le questionnaire » ; si non complété → CTA pointillé « 📋 Faire le questionnaire Diabète ».
 - Testé par evaluate : flux 13 questions, multi Q10 [0,2], score 20 → Prioritaire, sauvegarde OK, chip 🟡 rendu OK, ouverture auto après applyDietMode OK (screenshot).
+
+## Activation Premium instantanée + verrou Diabète renforcé (fork, session courante)
+- kpRefreshUI enrichi (étape 2b) : appelle désormais aussi kpApplyPremiumGate + refreshTrialBanner + kpUpdateTrialCta + renderSuivi (si onglet suivi actif). Comme kpRefreshUI est déclenché par le listener Firestore temps réel (onSnapshot premium_emails), le watcher 5 min, l'essai et les codes promo → TOUTE activation/révocation Premium se propage instantanément à l'UI (sections Suivi déverrouillées, bannière essai masquée, teaser Premium retiré).
+- kpStartTrial + kpRedeemPromoCode : activation OPTIMISTE immédiate après écriture Firestore réussie (kpState.premium=true + kpSaveCache + kpRefreshUI) sans attendre le round-trip kpCheckPremium (900/800ms), qui reste en confirmation.
+- Verrou Suivi Diabète confirmé : kpApplyPremiumGate (appelé maintenant à chaque changement premium) force display selon kpDiabIsActive() uniquement. Testé par evaluate : premium ON + mode standard → diabète display:none ; mode diabète → block ; révocation → reverrouillage instantané.
