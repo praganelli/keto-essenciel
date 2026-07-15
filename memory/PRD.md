@@ -245,3 +245,8 @@ Bugs signalés :
 - kpInitSuiviAccordions() (appelé en fin de renderSuivi, idempotent via data-acc) : transforme en accordéons repliés par défaut les sections #macroComplianceSection, #wellnessSection, #measuresSection, #exportSection (id ajouté). Le .sec-label devient l'en-tête cliquable (chevron ::after animé), le contenu est déplacé dans .suivi-acc-body > .suivi-acc-inner (animation grid-template-rows 0fr→1fr).
 - EXCLUS des accordéons (demande explicite) : tableau de bord Diabète (#diabeteSection) et toutes les sections perte de poids (Enregistrer mon poids, Courbe, Historique).
 - Testé : 4 accordéons fermés par défaut, ouverture au clic (h 0→234px), diabète non-accordéon et affiché entier.
+
+## Refonte visuelle onglet Suivi v2 (fork, juillet 2026)
+- Bloc <style> « SUIVI v2 » scopé #tab-suivi en tête de l'onglet : héro de progression .sv-hero (dégradé vert sapin, poids serif 52px, chips ▼/▲ delta total + 7j, méta IMC/pesées/départ, feuille 🌿 en filigrane), titres de sections en petites capitales dorées avec filet dégradé (::after, seulement pour :not(.suivi-acc)), cartes 20px unifiées avec ombres douces, tuiles stats hover-lift serif, accordéons transformés en cartes-boutons (pastille chevron ronde verte), inputs focus ring vert, dark mode complet.
+- JS kpRenderSuiviHero() (appelé en fin de renderSuivi) : calcule delta total, tendance 7j (pesée la plus récente ≥7j), IMC via profile.height ; état vide élégant « Commencez votre suivi 🌱 ».
+- ⚠️ RÉCURRENCE TOOL GLITCH : 2e fois qu'une édition « successful » sur keto.html ne persiste pas (JS hero perdu, réappliqué). TOUJOURS grep après édition + resync cp vers backend/keto_app.html.
