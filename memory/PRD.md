@@ -259,3 +259,10 @@ Bugs signalés :
 ## Optimisation mobile onglet Suivi (fork, juillet 2026)
 - Bloc @media(max-width:767px) dans le style « SUIVI v2 » : héro compact (42px), titres sections 10px/flex-wrap, cartes padding 16/14, score métabolique en colonne centrée (anneau + barres pleine largeur), tuiles diabète 2 colonnes fixes (19px), diab-grid 2 colonnes, champ Humeur en pleine largeur via :has(.diab-mood-row) + boutons emoji compacts (fin du débordement), accordéons 14px, bouton principal pleine largeur ≥46px, #diabChart 170px.
 - Vérifié par screenshots 390px : héro, score, saisie, historique, accordéons tous lisibles.
+
+## Corrections & ajouts (fork, juin/juillet 2026 — session courante)
+- BUG texte de recettes en bas de page CORRIGÉ : keto.html contenait 2 fragments orphelins de payload recettes APRÈS le premier </html> (lignes ~27420 et ~27425, restes d'écritures partielles) + 2 blocs </script></body></html> dupliqués → rendus comme texte brut en bas de page. Fichier tronqué au premier </html> (27418 lignes). Payload KP_RECIPE_DETAILS principal validé (JSON OK, 474 recettes).
+- Accordéon Suivi Diabète : #diabeteSection est désormais un accordéon (classe suivi-acc-diab, fermé par défaut). En-tête .sv-group-head cliquable (chevron ::after terracotta animé), .suivi-premium-wrap déplacé dans .suivi-acc-body > .suivi-acc-inner (même mécanique grid 0fr→1fr). Init dans kpInitSuiviAccordions (idempotent via data-acc).
+- Règle d'affichage stricte Suivi Diabète : kpApplyPremiumGate force diabeteSection.style.display selon kpDiabIsActive() UNIQUEMENT (dietMode==='diabete'). Le Premium seul n'affiche JAMAIS la section. Vérifié par evaluate : display none en mode standard même avec isPremium()=true.
+- Écran de connexion : ajout bloc .auth-focus sous la tagline — « Spécialement conçue pour » + 3 pastilles responsive (⚖️ Perte de poids · 🩸 Diabète · ⚡ Épilepsie), CSS @media ≤480px + dark mode. Vérifié par screenshot mobile 390px.
+- ⚠️ 4e occurrence TOOL GLITCH keto.html : l'édit JS accordéon diabète « successful » n'a pas persisté (CSS oui) → réappliqué + grep + resync cp /app/keto.html → /app/backend/keto_app.html + restart backend.

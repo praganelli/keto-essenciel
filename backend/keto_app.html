@@ -6759,6 +6759,27 @@ body{
       <div class="auth-tagline" data-testid="auth-tagline">
         Le keto sans effort, <span class="auth-tag-italic">par un naturopathe</span>
       </div>
+      <style>
+        .auth-focus{margin-top:14px;text-align:center}
+        .auth-focus-lab{font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold,#a8813c);margin-bottom:8px}
+        .auth-focus-pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+        .auth-focus-pill{display:inline-flex;align-items:center;gap:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text,#1e2a1e);
+          background:var(--card,#fff);border:1px solid var(--border2,rgba(0,0,0,.09));border-radius:20px;padding:6px 13px;box-shadow:0 4px 12px -8px rgba(30,42,30,.2)}
+        @media(max-width:480px){
+          .auth-focus{margin-top:11px}
+          .auth-focus-pills{gap:6px}
+          .auth-focus-pill{font-size:11px;padding:5px 10px}
+        }
+        body.dark .auth-focus-pill{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.11);color:#e8e4da}
+      </style>
+      <div class="auth-focus" data-testid="auth-focus">
+        <div class="auth-focus-lab">Spécialement conçue pour</div>
+        <div class="auth-focus-pills">
+          <span class="auth-focus-pill">⚖️ Perte de poids</span>
+          <span class="auth-focus-pill">🩸 Diabète</span>
+          <span class="auth-focus-pill">⚡ Épilepsie</span>
+        </div>
+      </div>
     </div>
 
     <!-- Firebase config banner (kept hidden — config gérée directement par développeur) -->
@@ -7965,6 +7986,23 @@ body{
       <div class="quiz-promo-arrow">→</div>
     </div>
     <div id="daySheetBackdrop" class="day-sheet-backdrop" onclick="closeDaySheet()"></div>
+
+    <!-- Saisie rapide glycémie (mobile, mode Diabète uniquement) -->
+    <button id="glyFab" onclick="kpGlyQuickOpen()" data-testid="gly-fab" aria-label="Saisie rapide glycémie">🩸</button>
+    <div id="glyQuickOverlay" onclick="if(event.target===this)kpGlyQuickClose()">
+      <div id="glyQuickCard">
+        <div style="font-family:var(--font-display,Georgia),serif;font-size:19px;font-weight:700;margin-bottom:2px">🩸 Glycémie express</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Enregistrée dans votre journée en un geste</div>
+        <label class="suivi-field-label" style="display:block;margin-bottom:5px">Moment</label>
+        <select id="glyQuickMoment" class="form-input suivi-input" data-testid="gly-quick-moment" style="width:100%;margin-bottom:12px"></select>
+        <label class="suivi-field-label" style="display:block;margin-bottom:5px">Valeur (mg/dL)</label>
+        <input type="number" inputmode="numeric" id="glyQuickVal" class="form-input suivi-input" data-testid="gly-quick-val" placeholder="ex : 112" min="20" max="600" style="width:100%;margin-bottom:16px">
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost" style="flex:1" onclick="kpGlyQuickClose()">Annuler</button>
+          <button class="btn btn-primary" style="flex:1.4" onclick="kpGlyQuickSave()" data-testid="gly-quick-save">Enregistrer</button>
+        </div>
+      </div>
+    </div>
     <div id="daySheet" class="day-sheet">
       <div class="day-sheet-handle-wrap" id="daySheetHandle" onclick="closeDaySheet()" role="button" aria-label="Fermer le menu du jour"><span class="day-sheet-handle"></span></div>
       <div id="day-panel"></div>
@@ -8059,6 +8097,48 @@ body{
       body.dark #tab-suivi .stat-tile,
       body.dark #tab-suivi .suivi-acc > .sec-label{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
       body.dark #tab-suivi .suivi-acc > .sec-label::after{background:rgba(255,255,255,.09);color:#9fd4b4}
+      /* ═══ Groupes distincts : Gestion du poids / Suivi Diabète ═══ */
+      .sv-group{border:1.5px solid rgba(35,102,72,.18);border-radius:28px;padding:22px 16px 8px;margin-bottom:40px;
+        background:linear-gradient(180deg,rgba(35,102,72,.05),rgba(35,102,72,.008) 240px)}
+      .sv-group-head{display:flex;align-items:center;gap:13px;margin-bottom:20px;padding-bottom:16px;
+        border-bottom:1px dashed rgba(35,102,72,.24)}
+      .sv-group-ico{width:44px;height:44px;border-radius:14px;background:rgba(35,102,72,.1);
+        display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 auto}
+      .sv-group-title{font-family:var(--font-display,Georgia),serif;font-size:20px;font-weight:700;color:var(--text,#1e2a1e);line-height:1.15}
+      .sv-group-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+      #tab-suivi .sv-group .suivi-section{margin-bottom:22px !important}
+      #tab-suivi .sv-group-diab{border-color:rgba(164,84,60,.26);padding-bottom:18px;
+        background:linear-gradient(180deg,rgba(164,84,60,.06),rgba(164,84,60,.012) 240px)}
+      .sv-group-head-diab{border-bottom-color:rgba(164,84,60,.3)}
+      .sv-group-head-diab .sv-group-ico{background:rgba(164,84,60,.13)}
+      #tab-suivi .sv-group-diab .sec-label{color:#a4543c;display:flex;align-items:center;gap:12px}
+      #tab-suivi .sv-group-diab .sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(164,84,60,.3),transparent)}
+      body.dark .sv-group{border-color:rgba(120,190,150,.16);background:linear-gradient(180deg,rgba(120,190,150,.05),transparent 240px)}
+      body.dark #tab-suivi .sv-group-diab{border-color:rgba(210,130,100,.2);background:linear-gradient(180deg,rgba(210,130,100,.06),transparent 240px)}
+      body.dark .sv-group-ico{background:rgba(255,255,255,.08)}
+      @media(max-width:767px){
+        .sv-group{padding:16px 10px 4px;border-radius:22px;margin-bottom:30px}
+        #tab-suivi .sv-group-diab{padding-bottom:12px}
+        .sv-group-head{gap:10px;margin-bottom:16px;padding-bottom:13px}
+        .sv-group-ico{width:38px;height:38px;border-radius:12px;font-size:18px}
+        .sv-group-title{font-size:17px}
+        .sv-group-sub{font-size:10.5px}
+      }
+      /* ═══ Saisie rapide glycémie : FAB + fiche express ═══ */
+      #glyFab{display:none;position:fixed;left:14px;bottom:98px;z-index:840;width:54px;height:54px;border-radius:50%;
+        border:none;cursor:pointer;font-size:23px;color:#fff;
+        background:linear-gradient(145deg,#b3583e,#8f4430);box-shadow:0 12px 28px -10px rgba(143,68,48,.6);
+        transition:transform .2s ease}
+      #glyFab:active{transform:scale(.92)}
+      @media(max-width:1023px){ body.gly-fab-on #glyFab{display:flex;align-items:center;justify-content:center} }
+      #glyQuickOverlay{display:none;position:fixed;inset:0;z-index:940;background:rgba(18,13,6,.45);
+        -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center}
+      #glyQuickOverlay.open{display:flex}
+      #glyQuickCard{width:100%;max-width:440px;background:var(--bg,#f7f3ea);border-radius:24px 24px 0 0;
+        padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px));
+        box-shadow:0 -18px 50px rgba(0,0,0,.3);animation:daySheetUp .35s cubic-bezier(.16,1,.3,1) both}
+      @media(min-width:768px){ #glyQuickOverlay{align-items:center} #glyQuickCard{border-radius:24px;padding-bottom:22px} }
+      body.dark #glyQuickCard{background:#161b12}
       /* ═══ Mobile : lisibilité & harmonie de l'onglet Suivi ═══ */
       @media(max-width:767px){
         /* Héro compact et aéré */
@@ -8111,6 +8191,16 @@ body{
     <!-- Héro de progression -->
     <div id="suiviHero"></div>
 
+    <!-- ══ GROUPE 1 : Gestion du poids ══ -->
+    <div class="sv-group sv-group-poids" id="svGroupPoids">
+      <div class="sv-group-head">
+        <span class="sv-group-ico">⚖️</span>
+        <div>
+          <div class="sv-group-title">Gestion du poids</div>
+          <div class="sv-group-sub">Pesées, statistiques, courbe & historique</div>
+        </div>
+      </div>
+
     <!-- Saisie du poids -->
     <div class="suivi-section">
       <div class="sec-label">⚖️ Enregistrer mon poids</div>
@@ -8155,6 +8245,7 @@ body{
       <div class="sec-label">📋 Historique</div>
       <div id="weightHistory" class="suivi-scroll"></div>
     </div>
+    </div><!-- /sv-group-poids -->
 
     <!-- ─── Suivi Diabète (visible uniquement en mode Diabète) ─── -->
     <style>
@@ -8198,14 +8289,31 @@ body{
       .suivi-acc.acc-open .suivi-acc-body{grid-template-rows:1fr}
       .suivi-acc-inner{overflow:hidden;min-height:0}
       .suivi-acc.acc-open .suivi-acc-inner{overflow:visible}
+      /* Accordéon : tout le Suivi Diabète repliable via son en-tête */
+      .suivi-acc-diab > .sv-group-head{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;margin-bottom:0}
+      .suivi-acc-diab > .sv-group-head::after{content:'▾';margin-left:auto;font-size:15px;color:#a4543c;
+        transition:transform .32s cubic-bezier(.22,1,.36,1);transform:rotate(-90deg);flex:0 0 auto}
+      .suivi-acc-diab.acc-open > .sv-group-head::after{transform:rotate(0deg)}
+      .suivi-acc-diab > .sv-group-head:hover{opacity:.85}
+      .suivi-acc-diab.acc-open > .sv-group-head{margin-bottom:20px}
+      .suivi-acc-diab.acc-open .suivi-acc-body{grid-template-rows:1fr}
+      .suivi-acc-diab.acc-open .suivi-acc-inner{overflow:visible}
+      .suivi-acc-diab:not(.acc-open){padding-bottom:0}
+      .suivi-acc-diab:not(.acc-open) > .sv-group-head{border-bottom:none;padding-bottom:0}
+      body.dark .suivi-acc-diab > .sv-group-head::after{color:#d28264}
     </style>
-    <div class="suivi-section suivi-premium-section" id="diabeteSection" style="display:none" data-testid="diabete-section">
-      <div class="sec-label" style="display:flex;align-items:center;gap:10px">
-        <span>🩸 Tableau de bord Diabète · aujourd'hui</span>
+    <div class="suivi-section suivi-premium-section sv-group sv-group-diab" id="diabeteSection" style="display:none" data-testid="diabete-section">
+      <div class="sv-group-head sv-group-head-diab">
+        <span class="sv-group-ico">🩸</span>
+        <div style="flex:1">
+          <div class="sv-group-title">Suivi Diabète</div>
+          <div class="sv-group-sub">Réservé au mode alimentaire Diabète</div>
+        </div>
         <span class="premium-pill">Premium</span>
       </div>
       <div class="suivi-premium-wrap">
       <div class="suivi-premium-content">
+      <div class="sec-label">🩸 Tableau de bord · aujourd'hui</div>
       <div class="card"><div class="card-body">
         <div id="diabScoreWrap"></div>
         <div id="diabDash" class="diab-dash"></div>
@@ -12849,6 +12957,24 @@ function kpInitSuiviAccordions(){
     sec.appendChild(body);
     label.addEventListener('click', function(){ sec.classList.toggle('acc-open'); });
   });
+  /* Accordéon dédié : tout le Suivi Diabète repliable via son en-tête */
+  var dsec = document.getElementById('diabeteSection');
+  if(dsec && !dsec.getAttribute('data-acc')){
+    dsec.setAttribute('data-acc','1');
+    dsec.classList.add('suivi-acc-diab');
+    var dhead = dsec.querySelector('.sv-group-head');
+    var dwrap = dsec.querySelector('.suivi-premium-wrap');
+    if(dhead && dwrap){
+      var dbody = document.createElement('div');
+      dbody.className = 'suivi-acc-body';
+      var dinner2 = document.createElement('div');
+      dinner2.className = 'suivi-acc-inner';
+      dsec.insertBefore(dbody, dwrap);
+      dinner2.appendChild(dwrap);
+      dbody.appendChild(dinner2);
+      dhead.addEventListener('click', function(){ dsec.classList.toggle('acc-open'); });
+    }
+  }
 }
 window.kpInitSuiviAccordions = kpInitSuiviAccordions;
 
@@ -14760,6 +14886,7 @@ function kpDiabIsActive(){ return !!(profile && profile.dietMode==='diabete'); }
 function kpDiabRender(){
   var sec=document.getElementById('diabeteSection');
   if(!sec) return;
+  try{ kpGlyFabUpdate(); }catch(e){}
   if(!kpDiabIsActive()){ sec.style.display='none'; return; }
   sec.style.display='';
   kpDiabBuildForm();
@@ -14994,6 +15121,52 @@ window.kpDiabSetMood = kpDiabSetMood;
 window.kpDiabSetRange = kpDiabSetRange;
 window.kpDiabDelete = kpDiabDelete;
 
+/* ─── Saisie rapide glycémie : FAB mobile visible uniquement en mode Diabète ─── */
+function kpGlyFabUpdate(){
+  document.body.classList.toggle('gly-fab-on', kpDiabIsActive());
+}
+function kpGlyQuickOpen(){
+  var sel=document.getElementById('glyQuickMoment');
+  if(sel && !sel.childElementCount){
+    sel.innerHTML=KP_GLY_FIELDS.map(function(f){return '<option value="'+f[0]+'">'+f[1]+'</option>';}).join('');
+  }
+  /* Pré-sélection intelligente selon l'heure */
+  var h=new Date().getHours();
+  var guess = h<10?'jeun' : h<12?'postPdj' : h<14?'avDej' : h<17?'postDej' : h<20?'avDin' : h<22?'postDin' : 'coucher';
+  if(sel) sel.value=guess;
+  var inp=document.getElementById('glyQuickVal'); if(inp) inp.value='';
+  document.getElementById('glyQuickOverlay').classList.add('open');
+  setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 280);
+}
+function kpGlyQuickClose(){ document.getElementById('glyQuickOverlay').classList.remove('open'); }
+function kpGlyQuickSave(){
+  var f=(document.getElementById('glyQuickMoment')||{}).value;
+  var v=parseFloat((document.getElementById('glyQuickVal')||{}).value);
+  if(!f || isNaN(v) || v<=0){ if(typeof toast==='function') toast('Saisissez une valeur en mg/dL'); return; }
+  var log=kpDiabLog(), dk=kpDiabTodayKey(), idx=-1;
+  for(var i=log.length-1;i>=0;i--){ if(log[i]&&log[i].date===dk){ idx=i; break; } }
+  if(idx>-1){ log[idx].gly=log[idx].gly||{}; log[idx].gly[f]=v; }
+  else{ var o={}; o[f]=v; log.push({date:dk, at:new Date().toISOString(), gly:o}); }
+  kpDiabSaveLog(log);
+  if(typeof toast==='function') toast('🩸 '+v+' mg/dL enregistré');
+  if(typeof save==='function') save();
+  kpGlyQuickClose();
+  try{ if(typeof currentTab!=='undefined' && currentTab==='suivi') kpDiabRender(); }catch(e){}
+}
+window.kpGlyFabUpdate = kpGlyFabUpdate;
+window.kpGlyQuickOpen = kpGlyQuickOpen;
+window.kpGlyQuickClose = kpGlyQuickClose;
+window.kpGlyQuickSave = kpGlyQuickSave;
+/* Affiche le FAB au chargement si le profil est déjà en mode Diabète + porte FAB/fiche dans <body> (hors conteneurs d'onglets) */
+setTimeout(function(){
+  try{
+    var fab=document.getElementById('glyFab'), ovl=document.getElementById('glyQuickOverlay');
+    if(fab && fab.parentNode!==document.body) document.body.appendChild(fab);
+    if(ovl && ovl.parentNode!==document.body) document.body.appendChild(ovl);
+    kpGlyFabUpdate();
+  }catch(e){}
+}, 1500);
+
 /* ─── Helpers ─── */
 function _kpLoadLog(key){
   try{ var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : []; }catch(e){ return []; }
@@ -15019,6 +15192,12 @@ function kpApplyPremiumGate(){
     if(!el) return;
     el.classList.toggle('locked', !isPremium);
   });
+  /* Le Suivi Diabète n'est JAMAIS affiché hors mode alimentaire Diabète — même en Premium */
+  var diabSec = document.getElementById('diabeteSection');
+  if(diabSec){
+    var diabOn = (typeof kpDiabIsActive === 'function') && kpDiabIsActive();
+    diabSec.style.display = diabOn ? '' : 'none';
+  }
   if(isPremium){
     try{ kpRenderWellnessHistory(); }catch(e){}
     try{ kpRenderMeasuresHistory(); }catch(e){}
@@ -20484,6 +20663,7 @@ authGuest = function(){
           var d = doc.data() || {};
           if(d.trialUsed === true || String(d.source||'').indexOf('trial') === 0) used = true;
         }
+        window._kpTrialUsed = used;
         cta.style.display = used ? 'none' : 'block';
       })
       .catch(function(){ cta.style.display = 'block'; });
@@ -20528,6 +20708,9 @@ authGuest = function(){
       }, {merge:true}).then(function(){
         setMsg('🎉 Essai activé — Premium pendant 7 jours !', true);
         if(typeof toast === 'function') toast('🎉 Essai Premium activé pour 7 jours !');
+        /* Essai strictement unique : mémorise localement + en cache pour la bannière */
+        try{ localStorage.setItem('kp_trial_start_v1', String(Date.now())); }catch(e){}
+        window._kpTrialUsed = true;
         setTimeout(function(){
           kpCheckPremium().then(function(){
             try{ kpRefreshUI(); }catch(e){}
@@ -24189,6 +24372,26 @@ var TRIAL_KEY = 'kp_trial_start_v1';
 var TRIAL_DAYS = 7;
 var TRIAL_DISMISS_KEY = 'kp_trial_dismissed_v1';
 
+/* Vérifie côté Firestore si l'essai gratuit a déjà été consommé (cache en mémoire) */
+function kpCheckTrialUsed(cb){
+  if(window._kpTrialUsed !== undefined){ cb(window._kpTrialUsed); return; }
+  var user = null;
+  try{ user = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : window.currentUser; }catch(e){ user = window.currentUser; }
+  var fs = (typeof getFirestoreDb === 'function') ? getFirestoreDb() : null;
+  if(!user || !user.email || !fs){ cb(false); return; }
+  var coll = (typeof PREMIUM_COLLECTION !== 'undefined') ? PREMIUM_COLLECTION : 'premium_emails';
+  fs.collection(coll).doc(user.email.trim().toLowerCase()).get().then(function(doc){
+    var used = false;
+    if(doc && doc.exists){
+      var d = doc.data() || {};
+      if(d.trialUsed === true || String(d.source||'').indexOf('trial') === 0) used = true;
+    }
+    window._kpTrialUsed = used;
+    cb(used);
+  }).catch(function(){ cb(false); });
+}
+window.kpCheckTrialUsed = kpCheckTrialUsed;
+
 function startPremiumTrial(){
   // Redirige vers le VRAI essai (fenêtre Premium → activation Firestore 7 jours)
   if(typeof openPremiumModal === 'function') openPremiumModal('trial');
@@ -24207,12 +24410,21 @@ function refreshTrialBanner(){
   var startStr;
   try{ startStr = localStorage.getItem(TRIAL_KEY); }catch(e){}
   if(!startStr){
-    // Show "start trial" banner
-    document.getElementById('premiumTrialTitle').textContent = '🎁 Essai Premium · 7 jours offerts';
-    document.getElementById('premiumTrialSub').textContent = 'Sans carte bancaire · Sans engagement';
-    banner.querySelector('.premium-trial-cta').textContent = 'Démarrer';
-    banner.querySelector('.premium-trial-cta').onclick = startPremiumTrial;
-    banner.classList.add('show');
+    // ⚠️ L'essai est STRICTEMENT unique : vérifie côté Firestore avant de proposer les 7 jours
+    kpCheckTrialUsed(function(used){
+      if(used){
+        document.getElementById('premiumTrialTitle').textContent = '✨ Passez en Premium';
+        document.getElementById('premiumTrialSub').textContent = 'Votre essai gratuit a déjà été utilisé';
+        banner.querySelector('.premium-trial-cta').textContent = 'Découvrir';
+        banner.querySelector('.premium-trial-cta').onclick = function(){ if(typeof openPremiumModal==='function') openPremiumModal('expired'); };
+      } else {
+        document.getElementById('premiumTrialTitle').textContent = '🎁 Essai Premium · 7 jours offerts';
+        document.getElementById('premiumTrialSub').textContent = 'Sans carte bancaire · Sans engagement';
+        banner.querySelector('.premium-trial-cta').textContent = 'Démarrer';
+        banner.querySelector('.premium-trial-cta').onclick = startPremiumTrial;
+      }
+      banner.classList.add('show');
+    });
     return;
   }
   var start = parseInt(startStr, 10);
@@ -27261,4 +27473,3 @@ window.KP_RECIPE_DETAILS={"0":{"steps":["Casse les 3 œufs entiers dans un bol, 
 </script>
 </body>
 </html>
-

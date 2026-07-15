@@ -5,9 +5,14 @@ service cloud.firestore {
       allow read: if true;
       allow write: if request.auth != null
                    && request.auth.token.email == 'infos@essencielonaturel.fr';
+      // L'utilisateur ne peut écrire que son propre document, et une fois l'essai
+      // consommé (trialUsed == true), il est IMPOSSIBLE de le remettre à false.
       allow create, update: if request.auth != null
                             && email == request.auth.token.email.lower()
-                            && request.resource.data.owner_uid == request.auth.uid;
+                            && request.resource.data.owner_uid == request.auth.uid
+                            && !(resource != null
+                                 && resource.data.trialUsed == true
+                                 && request.resource.data.trialUsed != true);
     }
     match /premium_codes/{code} {
       allow read: if true;
