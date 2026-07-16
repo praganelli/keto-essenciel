@@ -14846,6 +14846,20 @@ var _diabMood = 0;
 
 function kpDiabLog(){ _kpMigrateLegacyKey(KP_DIAB_KEY); return _kpLoadLog(_kpProfileKey(KP_DIAB_KEY)); }
 function kpDiabSaveLog(log){ localStorage.setItem(_kpProfileKey(KP_DIAB_KEY), JSON.stringify(log.slice(-400))); }
+/* Purge TOTALE des données Diabète (historique glycémies/journées + questionnaire/profil) —
+   appelée automatiquement quand l'utilisateur quitte le mode alimentaire Diabète */
+function kpDiabPurgeData(){
+  try{ localStorage.removeItem(_kpProfileKey(KP_DIAB_KEY)); }catch(e){}
+  try{ localStorage.removeItem(KP_DIAB_KEY); }catch(e){}
+  try{
+    if(typeof profile !== 'undefined' && profile && profile.diabQuiz){
+      delete profile.diabQuiz;
+      if(typeof save === 'function') save();
+      if(typeof syncProfileToCloud === 'function' && typeof currentUser !== 'undefined' && currentUser){ try{ syncProfileToCloud(); }catch(e){} }
+    }
+  }catch(e){}
+}
+window.kpDiabPurgeData = kpDiabPurgeData;
 function kpDiabTodayKey(){ return new Date().toISOString().slice(0,10); }
 function kpDiabToday(){ var t=kpDiabTodayKey(); var log=kpDiabLog(); for(var i=log.length-1;i>=0;i--){ if(log[i]&&log[i].date===t) return log[i]; } return null; }
 function kpDiabGlyValues(e){
@@ -16721,7 +16735,14 @@ authGuest = function(){
   function applyDietMode(modeId){
     var m = DIET_MODES[modeId] || DIET_MODES.standard;
     profile = profile || {};
+    var prevMode = profile.dietMode;
     profile.dietMode = modeId;
+    /* Quitte le mode Diabète → le Suivi Diabète disparaît et TOUT son historique
+       (glycémies, journées, questionnaire/profil) est supprimé définitivement */
+    if(prevMode === 'diabete' && modeId !== 'diabete'){
+      try{ if(typeof kpDiabPurgeData === 'function') kpDiabPurgeData(); }catch(e){}
+      try{ if(typeof toast === 'function') toast('🗑 Suivi Diabète retiré — historique supprimé'); }catch(e){}
+    }
     try{ if(typeof kpDiabRender === 'function') kpDiabRender(); }catch(e){}
     // Recalculer kcal de base à partir du profil (BMR + activité + goal) — STABLE
     // au lieu de partir des targets actuels (qui dérivent à chaque changement de mode)
