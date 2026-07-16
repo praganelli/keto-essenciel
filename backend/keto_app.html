@@ -27805,13 +27805,15 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     {q:"Quel type de diabète avez-vous ?", o:[["Diabète de type 1",2],["Diabète de type 2",1],["Diabète gestationnel",1],["Prédiabète",0],["Je ne sais pas",1]]},
     {q:"Depuis combien de temps êtes-vous diabétique ?", o:[["Moins de 6 mois",0],["6 mois à 2 ans",0],["2 à 5 ans",1],["Plus de 5 ans",1],["Plus de 10 ans",2]]},
     {q:"Quel est votre dernier taux d'HbA1c ?", o:[["Moins de 6 %",0],["Entre 6 et 7 %",1],["Entre 7 et 8 %",2],["Plus de 8 %",3],["Je ne le connais pas",1]]},
-    {q:"Prenez-vous un traitement contre le diabète ?", o:[["Aucun",0],["Comprimés uniquement",1],["Insuline uniquement",2],["Comprimés + insuline",3],["Autre traitement injectable (GLP-1, etc.)",1]]},
+    {q:"Prenez-vous un traitement contre le diabète ?", sub:"Plusieurs réponses possibles", multi:true, none:0,
+     o:[["Aucun",0],["Comprimés uniquement",1],["Insuline uniquement",2],["Comprimés + insuline",3],["Autre traitement injectable (GLP-1, etc.)",1]]},
     {q:"Contrôlez-vous votre glycémie ?", o:[["Plusieurs fois par jour",0],["Une fois par jour",0],["Quelques fois par semaine",1],["Rarement",2],["Jamais",2]]},
-    {q:"Quel est votre objectif principal ?", o:[["Faire baisser ma glycémie",0],["Perdre du poids",0],["Réduire mes médicaments (avec mon médecin)",0],["Mieux manger",0],["Améliorer mon énergie",0]]},
+    {q:"Quel est votre objectif principal ?", sub:"Plusieurs réponses possibles", multi:true,
+     o:[["Faire baisser ma glycémie",0],["Perdre du poids",0],["Réduire mes médicaments (avec mon médecin)",0],["Mieux manger",0],["Améliorer mon énergie",0]]},
     {q:"À quelle fréquence pratiquez-vous une activité physique ?", o:[["Jamais",2],["1 à 2 fois par semaine",1],["3 à 4 fois par semaine",0],["5 fois ou plus par semaine",0]]},
     {q:"Comment qualifieriez-vous votre alimentation actuelle ?", o:[["Très riche en sucres",2],["Équilibrée",1],["Pauvre en glucides",0],["Cétogène",0],["Je ne sais pas",1]]},
     {q:"Avez-vous déjà eu des hypoglycémies ?", o:[["Jamais",0],["Rarement",0],["Parfois",1],["Souvent",2]]},
-    {q:"Avez-vous déjà présenté une ou plusieurs complications liées au diabète ?", sub:"Cochez tout ce qui s'applique", multi:true,
+    {q:"Avez-vous déjà présenté une ou plusieurs complications liées au diabète ?", sub:"Cochez tout ce qui s'applique", multi:true, none:6, comp:true,
      o:[["Hypertension",1],["Cholestérol élevé",1],["Neuropathie",1],["Rétinopathie",1],["Problèmes rénaux",1],["Maladie cardiovasculaire",1],["Aucune",0]]},
     {q:"Comment évaluez-vous votre niveau de stress ?", o:[["Très faible",0],["Faible",0],["Modéré",1],["Élevé",2],["Très élevé",2]]},
     {q:"Comment dormez-vous en général ?", o:[["Très bien",0],["Bien",0],["Moyen",1],["Mal",2],["Très mal",2]]},
@@ -27847,7 +27849,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
       var a = answers[i];
       if(item.multi){
         var pts = 0;
-        (a||[]).forEach(function(oi){ pts += item.o[oi][1]; if(item.o[oi][1]>0) compCount++; });
+        (a||[]).forEach(function(oi){ pts += item.o[oi][1]; if(item.comp && item.o[oi][1]>0) compCount++; });
         score += Math.min(pts, 4);
       } else if(typeof a === 'number'){
         score += item.o[a][1];
@@ -27895,12 +27897,12 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
     var item = DQ[idx];
     if(item.multi){
       var a = answers[idx] = Array.isArray(answers[idx]) ? answers[idx] : [];
-      var noneIdx = item.o.length-1; /* « Aucune » = dernière option, exclusive */
+      var noneIdx = (item.none != null) ? item.none : -1; /* option exclusive (« Aucun/Aucune ») */
       var pos = a.indexOf(oi);
       if(pos > -1){ a.splice(pos,1); }
       else{
-        if(oi === noneIdx){ answers[idx] = [noneIdx]; }
-        else{ var ni = a.indexOf(noneIdx); if(ni>-1) a.splice(ni,1); a.push(oi); }
+        if(noneIdx > -1 && oi === noneIdx){ answers[idx] = [noneIdx]; }
+        else{ if(noneIdx > -1){ var ni = a.indexOf(noneIdx); if(ni>-1) a.splice(ni,1); } a.push(oi); }
       }
       renderQ();
     } else {

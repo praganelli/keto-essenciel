@@ -308,3 +308,7 @@ Bugs signalés :
 - kpDiabAdviceHTML() : carte dorée « 💡 CONSEIL DU JOUR » affichée dans le tableau de bord Diabète (fin de diabScoreWrap) ET dans la carte accès rapide du Plan.
 - Rappel discret (kpRenderDiabQuickCard) : si glycémie attendue non saisie → bandeau ambre « ⏰ Pensez à saisir votre glycémie à jeun du matin » (h≥7 sans jeun ; 12-19h sans avDej ; ≥19h sans avDin).
 - Testé : 5 cas du moteur validés + rappel + rendu sur Plan et dashboard.
+
+## Quiz Diabète : Q4 & Q6 multi-sélection (fork, session courante)
+- Q4 « Prenez-vous un traitement ? » et Q6 « Quel est votre objectif principal ? » → multi:true + sous-titre « Plusieurs réponses possibles ». Option exclusive générique via propriété none:index (Q4 none:0 « Aucun », Q10 none:6 « Aucune »). compCount (règle ≥2 complications → Prioritaire) désormais limité à la question marquée comp:true (Q10) pour ne pas compter les traitements/objectifs.
+- Testé E2E : Q4 2 sélections + exclusivité Aucun, Q6 2 sélections, parcours complet → Profil À Optimiser score 7, complications 0.
