@@ -302,3 +302,9 @@ Bugs signalés :
 - Historique : kpDiabRenderHistory affiche le traitement détaillé par moment (💊 Nom — Matin X mg · Soir Y mg · 💉 Midi Z UI, rétro-compat insulinDose) + bouton « Voir tout l'historique (N) ↓ / Réduire ↑ » (kpDiabHistToggle, window._diabHistAll) au-delà de 7 journées.
 - Accès rapide : carte « 🩸 Suivi Diabète » sur l'écran Plan (#planDiabQuickHost après planPremiumStatusHost, rendue par kpRenderDiabQuickCard dans renderPlan/kpDiabRender/kpGlyQuickSave). Affiche chip profil quiz + dernière glycémie + score/100 + boutons « Tableau de bord → » (kpOpenDiabDashboard : switchTab suivi + acc-open + scroll) et « 🩸 Glycémie » (kpGlyQuickOpen). Visible UNIQUEMENT si kpDiabIsActive().
 - Testé par evaluate : switches, save conditionnel, fusion, auto-réactivation, historique détaillé, carte plan + disparition hors mode diabète.
+
+## 💡 Conseil du jour personnalisé + Rappel glycémie (fork, session courante)
+- kpDiabDailyAdvice() : moteur de conseils basé sur la glycémie, priorités : 1) hypo <70 aujourd'hui → alerte ; 2) série ≥2 jours 100% dans la cible (70-180) → « Félicitations ! Vous êtes dans votre cible depuis N jours » ; 3) jeun en hausse 3 jours consécutifs (>130) → dîner plus tôt + marche ; 4) valeurs du jour élevées (jeun>130 → 2 œufs/avocat au petit-déj ; avDej/avDin>150 → marche ; coucher/nuit>160 → dîner plus léger) ; 5) semaine ≥80% TIR → encouragement ; 6) aucune saisie → invitation ; 7) rotation quotidienne de 6 conseils naturopathiques (seed = jour epoch).
+- kpDiabAdviceHTML() : carte dorée « 💡 CONSEIL DU JOUR » affichée dans le tableau de bord Diabète (fin de diabScoreWrap) ET dans la carte accès rapide du Plan.
+- Rappel discret (kpRenderDiabQuickCard) : si glycémie attendue non saisie → bandeau ambre « ⏰ Pensez à saisir votre glycémie à jeun du matin » (h≥7 sans jeun ; 12-19h sans avDej ; ≥19h sans avDin).
+- Testé : 5 cas du moteur validés + rappel + rendu sur Plan et dashboard.
