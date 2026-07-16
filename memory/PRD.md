@@ -316,3 +316,9 @@ Bugs signalés :
 ## Pré-remplissage Traitement depuis Q4 du quiz (fork, session courante)
 - kpDiabPrefillFromQuiz() (appelée dans kpDiabRender après kpDiabFillForm) : lit profile.diabQuiz.answers[3] (Q4 traitement, tableau multi OU nombre legacy). Comprimés(1)/Comprimés+insuline(3)/GLP-1(4) → switch Médicament ON ; Insuline(2)/(3) → switch Insuline ON ; Aucun(0) → rien. N'active que si le switch n'est pas déjà ON (jamais de désactivation forcée).
 - Testé : [1,2]→2 switches ON+champs visibles ; [0]→OFF ; legacy 3→2 ON.
+
+## Popup de confirmation quitter le mode Diabète (fork, session courante)
+- applyDietMode : si dietMode courant='diabete' et cible≠diabete et !window._kpDiabSwitchOk → kpShowDiabSwitchConfirm(cible) + return (mode inchangé, données intactes).
+- Popup #diabSwitchConfirm (z-index 100001) : « Quitter le mode Diabète ? » + avertissement suppression définitive (glycémies, traitements, journées, questionnaire). Boutons : « Non, je reste en mode Diabète » (kpDiabSwitchCancel → ferme + re-render grille) / « Oui, je continue — supprimer l'historique » (kpDiabSwitchConfirmYes → _kpDiabSwitchOk=true → applyDietMode → purge existante).
+- ⚠️ TOOL GLITCH encore (gros bloc « successful » non persisté + 2643 octets orphelins) → réappliqué via python replace + node --check + fix_tail. RÈGLE : pour tout ajout >20 lignes dans keto.html, préférer python replace et TOUJOURS grep + fix_tail après.
+- Testé E2E : popup, Non (données conservées), Oui (purge + section masquée).

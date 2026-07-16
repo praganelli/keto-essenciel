@@ -14908,6 +14908,43 @@ function kpDiabPurgeData(){
   }catch(e){}
 }
 window.kpDiabPurgeData = kpDiabPurgeData;
+/* ─── Popup de confirmation avant de quitter le mode Diabète (suppression de l'historique) ─── */
+function kpShowDiabSwitchConfirm(targetMode){
+  var old=document.getElementById('diabSwitchConfirm'); if(old) old.remove();
+  var ov=document.createElement('div');
+  ov.id='diabSwitchConfirm';
+  ov.setAttribute('data-testid','diab-switch-confirm');
+  ov.style.cssText='position:fixed;inset:0;z-index:100001;background:rgba(20,26,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.innerHTML='<div style="background:var(--card,#fff);border-radius:20px;max-width:400px;width:100%;padding:28px 24px;text-align:center;box-shadow:0 24px 60px -20px rgba(0,0,0,.4)">'
+    +'<div style="font-size:42px;margin-bottom:12px">⚠️</div>'
+    +'<div style="font-family:\'Fraunces\',Georgia,serif;font-size:21px;font-weight:600;color:var(--text,#1e2a1e);margin-bottom:10px">Quitter le mode Diabète ?</div>'
+    +'<div style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13.5px;line-height:1.6;color:var(--muted,#6b7364);margin-bottom:22px">En changeant de mode alimentaire, <strong style="color:#b03030">tout l\'historique de votre Suivi Diabète sera définitivement supprimé</strong> : glycémies, traitements, journées enregistrées et questionnaire.</div>'
+    +'<div style="display:flex;flex-direction:column;gap:10px">'
+    +'<button data-testid="diab-switch-no" onclick="kpDiabSwitchCancel()" style="width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border2,rgba(0,0,0,.14));background:transparent;color:var(--text,#1e2a1e);font-family:\'Plus Jakarta Sans\',sans-serif;font-size:14px;font-weight:700;cursor:pointer">Non, je reste en mode Diabète</button>'
+    +'<button data-testid="diab-switch-yes" onclick="kpDiabSwitchConfirmYes(\''+targetMode+'\')" style="width:100%;padding:13px;border-radius:12px;border:none;background:#b03030;color:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:14px;font-weight:700;cursor:pointer">Oui, je continue — supprimer l\'historique</button>'
+    +'</div></div>';
+  document.body.appendChild(ov);
+}
+function kpDiabSwitchCancel(){
+  var o=document.getElementById('diabSwitchConfirm'); if(o) o.remove();
+  try{
+    if(typeof renderProfileModesGrid==='function') renderProfileModesGrid();
+    if(typeof updateProfileModeCurrent==='function') updateProfileModeCurrent();
+  }catch(e){}
+}
+function kpDiabSwitchConfirmYes(mode){
+  var o=document.getElementById('diabSwitchConfirm'); if(o) o.remove();
+  window._kpDiabSwitchOk = true;
+  try{ if(typeof applyDietMode==='function') applyDietMode(mode); }
+  finally{ window._kpDiabSwitchOk = false; }
+  try{
+    if(typeof renderProfileModesGrid==='function') renderProfileModesGrid();
+    if(typeof updateProfileModeCurrent==='function') updateProfileModeCurrent();
+  }catch(e){}
+}
+window.kpShowDiabSwitchConfirm = kpShowDiabSwitchConfirm;
+window.kpDiabSwitchCancel = kpDiabSwitchCancel;
+window.kpDiabSwitchConfirmYes = kpDiabSwitchConfirmYes;
 function kpDiabTodayKey(){ return new Date().toISOString().slice(0,10); }
 /* Switches Oui/Non Médicament & Insuline (partie Traitement) */
 window._diabMedOn = false; window._diabInsOn = false;
@@ -16992,6 +17029,10 @@ authGuest = function(){
   function applyDietMode(modeId){
     var m = DIET_MODES[modeId] || DIET_MODES.standard;
     profile = profile || {};
+    /* Quitter le mode Diabète = suppression de l'historique → confirmation obligatoire */
+    if(profile.dietMode === 'diabete' && modeId !== 'diabete' && !window._kpDiabSwitchOk){
+      if(typeof kpShowDiabSwitchConfirm === 'function'){ kpShowDiabSwitchConfirm(modeId); return; }
+    }
     var prevMode = profile.dietMode;
     profile.dietMode = modeId;
     /* Quitte le mode Diabète → le Suivi Diabète disparaît et TOUT son historique
