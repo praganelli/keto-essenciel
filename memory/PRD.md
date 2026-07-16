@@ -328,3 +328,9 @@ Bugs signalés :
 - Curseurs + champ clavier synchronisés (choix : tout sauf doses) : glycémies (40-300, généré dans kpDiabBuildForm : diabGlyS_*), pas (0-20000), eau (0-4 L), sommeil (0-12 h) via kpDiabSlide/kpDiabSlideSync. Sémantique « non saisi » préservée : le curseur ne remplit le champ QUE sur interaction. kpDiabFillForm resynchronise les curseurs. Doses médicament/insuline restent au clavier.
 - 🔧 2 bugs layout corrigés : (1) .diab-wiz-tab flex sans min-width:0 + nowrap → débordement horizontal page ; (2) .suivi-acc-body display:grid sans grid-template-columns:minmax(0,1fr) → la colonne s'élargissait au min-content du track 300% (carte plus large que l'écran, champs numériques hors écran). Fix : minmax(0,1fr) + min-width:0 sur .suivi-acc-inner.
 - Script /app/apply_wizard.py conservé (référence). Testé : E2E evaluate (sync bidirectionnelle, save multi-étapes, refill) + captures visuelles connectées 390px des 3 étapes.
+
+## Popup « Saisie du jour » Diabète (fork, session courante)
+- La carte Saisie du jour du tableau de bord ne contient plus que : bouton « ✍️ Saisie du jour » (kpDiabEntryOpen) + #diabHistory.
+- Le carrousel 3 étapes + curseurs est déplacé dans #diabEntryOverlay (popup fixed z-index 100000, re-parenté sur body à l'ouverture, fermeture par ×, clic fond, ou après enregistrement).
+- kpDiabEntryReset() : vide tous les champs (glycémies, nom/doses méd, insuline, effets, pas, eau, sommeil), curseurs remis aux défauts (gly 110 / pas 6000 / eau 1.5 / sommeil 7), switches sur Non, checkboxes décochées, humeur effacée. Appelé à l'OUVERTURE (toujours des valeurs vierges) et après kpDiabSave (qui ferme aussi le popup). La fusion par jour dans kpDiabSave permet plusieurs saisies/jour.
+- Scripts /app/apply_entry_popup.py (référence). Testé E2E : ouverture à zéro, save (jeun 135/steps 8000), fermeture auto, réouverture à zéro + capture visuelle du popup.
