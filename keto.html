@@ -7950,6 +7950,8 @@ body{
   <div id="tab-plan">
     <!-- 💎 Votre formule actuelle (Plan) -->
     <div id="planPremiumStatusHost" data-testid="plan-premium-status-host" style="margin-bottom:18px"></div>
+    <!-- 🩸 Accès rapide Suivi Diabète (mode Diabète uniquement) -->
+    <div id="planDiabQuickHost" data-testid="plan-diab-quick-host"></div>
     <div class="plan-topbar plan-topbar-full">
       <button class="btn btn-primary" style="flex:1" onclick="generateMenu()">📅 Générer la semaine</button>
       <button class="btn btn-gold" style="flex:1" onclick="kpOpenShoppingCourses()">🛒 Courses</button>
@@ -8358,14 +8360,36 @@ body{
         <div class="diab-grid" id="diabGlyGrid"></div>
         <div class="suivi-field-label" style="font-size:12px;margin:16px 0 4px">💊 Traitement</div>
         <div class="diab-grid">
-          <div style="grid-column:1/-1"><div class="suivi-field-label">💊 Nom du médicament</div><input type="text" id="diabMeds" placeholder="ex : Metformine" class="form-input suivi-input" data-testid="diab-meds"></div>
-          <div><div class="suivi-field-label">💊 Matin (mg)</div><input type="number" id="diabMedsMatin" min="0" step="any" placeholder="ex : 1000" class="form-input suivi-input" data-testid="diab-meds-matin"></div>
-          <div><div class="suivi-field-label">💊 Midi (mg)</div><input type="number" id="diabMedsMidi" min="0" step="any" placeholder="ex : 500" class="form-input suivi-input" data-testid="diab-meds-midi"></div>
-          <div><div class="suivi-field-label">💊 Soir (mg)</div><input type="number" id="diabMedsSoir" min="0" step="any" placeholder="ex : 1000" class="form-input suivi-input" data-testid="diab-meds-soir"></div>
-          <div><div class="suivi-field-label">💉 Insuline · Matin (UI)</div><input type="number" id="diabInsMatin" min="0" step="0.5" placeholder="ex : 12" class="form-input suivi-input" data-testid="diab-ins-matin"></div>
-          <div><div class="suivi-field-label">💉 Insuline · Midi (UI)</div><input type="number" id="diabInsMidi" min="0" step="0.5" placeholder="ex : 8" class="form-input suivi-input" data-testid="diab-ins-midi"></div>
-          <div><div class="suivi-field-label">💉 Insuline · Soir (UI)</div><input type="number" id="diabInsSoir" min="0" step="0.5" placeholder="ex : 10" class="form-input suivi-input" data-testid="diab-ins-soir"></div>
-          <div><div class="suivi-field-label">Effets secondaires</div><input type="text" id="diabSideFx" placeholder="Aucun / décrivez…" class="form-input suivi-input" data-testid="diab-sidefx"></div>
+          <div style="grid-column:1/-1">
+            <div class="suivi-field-label">💊 Médicament ?</div>
+            <div style="display:flex;gap:8px;margin-top:4px">
+              <button type="button" id="diabMedTglNo" class="btn btn-primary" style="flex:1" onclick="kpDiabTgl('med',false)" data-testid="diab-med-no">Non</button>
+              <button type="button" id="diabMedTglYes" class="btn btn-ghost" style="flex:1" onclick="kpDiabTgl('med',true)" data-testid="diab-med-yes">Oui</button>
+            </div>
+          </div>
+          <div id="diabMedFields" style="display:none;grid-column:1/-1">
+            <div style="margin-bottom:10px"><div class="suivi-field-label">Nom du médicament</div><input type="text" id="diabMeds" placeholder="ex : Metformine" class="form-input suivi-input" data-testid="diab-meds"></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <div><div class="suivi-field-label">Matin (mg)</div><input type="number" id="diabMedsMatin" min="0" step="any" placeholder="1000" class="form-input suivi-input" data-testid="diab-meds-matin"></div>
+              <div><div class="suivi-field-label">Midi (mg)</div><input type="number" id="diabMedsMidi" min="0" step="any" placeholder="500" class="form-input suivi-input" data-testid="diab-meds-midi"></div>
+              <div><div class="suivi-field-label">Soir (mg)</div><input type="number" id="diabMedsSoir" min="0" step="any" placeholder="1000" class="form-input suivi-input" data-testid="diab-meds-soir"></div>
+            </div>
+          </div>
+          <div style="grid-column:1/-1">
+            <div class="suivi-field-label">💉 Insuline ?</div>
+            <div style="display:flex;gap:8px;margin-top:4px">
+              <button type="button" id="diabInsTglNo" class="btn btn-primary" style="flex:1" onclick="kpDiabTgl('ins',false)" data-testid="diab-ins-no">Non</button>
+              <button type="button" id="diabInsTglYes" class="btn btn-ghost" style="flex:1" onclick="kpDiabTgl('ins',true)" data-testid="diab-ins-yes">Oui</button>
+            </div>
+          </div>
+          <div id="diabInsFields" style="display:none;grid-column:1/-1">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <div><div class="suivi-field-label">Matin (UI)</div><input type="number" id="diabInsMatin" min="0" step="0.5" placeholder="12" class="form-input suivi-input" data-testid="diab-ins-matin"></div>
+              <div><div class="suivi-field-label">Midi (UI)</div><input type="number" id="diabInsMidi" min="0" step="0.5" placeholder="8" class="form-input suivi-input" data-testid="diab-ins-midi"></div>
+              <div><div class="suivi-field-label">Soir (UI)</div><input type="number" id="diabInsSoir" min="0" step="0.5" placeholder="10" class="form-input suivi-input" data-testid="diab-ins-soir"></div>
+            </div>
+          </div>
+          <div style="grid-column:1/-1"><div class="suivi-field-label">Effets secondaires</div><input type="text" id="diabSideFx" placeholder="Aucun / décrivez…" class="form-input suivi-input" data-testid="diab-sidefx"></div>
         </div>
         <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;cursor:pointer">
           <input type="checkbox" id="diabMissed" data-testid="diab-missed" style="width:17px;height:17px;accent-color:#b05522"> ⚠️ Oubli de traitement aujourd'hui
@@ -11124,7 +11148,7 @@ function initDaySheetSwipe(){
 try{ initDaySheetSwipe(); }catch(e){}
 
 /* ═══════════════════════ RENDER PLAN ═══════════════════════ */
-function renderPlan(){renderWeekGrid();renderDayPanel();if(typeof window.kpRenderPremiumStatusCardInPlan === 'function') window.kpRenderPremiumStatusCardInPlan();if(typeof window.kpRenderLpevSupplements === 'function') window.kpRenderLpevSupplements('lpevSectionPlan');}
+function renderPlan(){renderWeekGrid();renderDayPanel();if(typeof window.kpRenderPremiumStatusCardInPlan === 'function') window.kpRenderPremiumStatusCardInPlan();if(typeof window.kpRenderDiabQuickCard === 'function') window.kpRenderDiabQuickCard();if(typeof window.kpRenderLpevSupplements === 'function') window.kpRenderLpevSupplements('lpevSectionPlan');}
 
 function renderWeekGrid(){
   if(!menu.length){$('weekGrid').innerHTML='';if(currentDayView==='week')$('day-panel').innerHTML=emptyState();return}
@@ -14885,6 +14909,18 @@ function kpDiabPurgeData(){
 }
 window.kpDiabPurgeData = kpDiabPurgeData;
 function kpDiabTodayKey(){ return new Date().toISOString().slice(0,10); }
+/* Switches Oui/Non Médicament & Insuline (partie Traitement) */
+window._diabMedOn = false; window._diabInsOn = false;
+function kpDiabTgl(kind, val){
+  if(kind === 'med') window._diabMedOn = val; else window._diabInsOn = val;
+  var yes = document.getElementById(kind==='med' ? 'diabMedTglYes' : 'diabInsTglYes');
+  var no  = document.getElementById(kind==='med' ? 'diabMedTglNo'  : 'diabInsTglNo');
+  var fld = document.getElementById(kind==='med' ? 'diabMedFields' : 'diabInsFields');
+  if(yes){ yes.classList.toggle('btn-primary', val); yes.classList.toggle('btn-ghost', !val); }
+  if(no){ no.classList.toggle('btn-primary', !val); no.classList.toggle('btn-ghost', val); }
+  if(fld) fld.style.display = val ? 'block' : 'none';
+}
+window.kpDiabTgl = kpDiabTgl;
 function kpDiabToday(){ var t=kpDiabTodayKey(); var log=kpDiabLog(); for(var i=log.length-1;i>=0;i--){ if(log[i]&&log[i].date===t) return log[i]; } return null; }
 function kpDiabGlyValues(e){
   var out=[]; if(!e||!e.gly) return out;
@@ -14985,6 +15021,7 @@ function kpDiabRender(){
   kpDiabFillForm(today);
   kpDiabDrawChart();
   kpDiabRenderHistory();
+  try{ if(typeof kpRenderDiabQuickCard==='function') kpRenderDiabQuickCard(); }catch(e){}
 }
 
 function kpDiabBuildForm(){
@@ -15025,6 +15062,9 @@ function kpDiabFillForm(e){
     var inp=document.getElementById(p[0]);
     if(inp && !inp.value && p[1]!=null) inp.value=p[1];
   });
+  /* Active automatiquement les switches si des données existent déjà */
+  if(e.meds || _md.matin!=null || _md.midi!=null || _md.soir!=null) kpDiabTgl('med', true);
+  if(_ins.matin!=null || _ins.midi!=null || _ins.soir!=null) kpDiabTgl('ins', true);
   var mi=document.getElementById('diabMissed'); if(mi) mi.checked=!!e.missedMeds;
   var co=document.getElementById('diabCarbsOk'); if(co) co.checked=!!e.carbsOk;
   if(e.mood && !_diabMood) kpDiabSetMood(Number(e.mood));
@@ -15150,26 +15190,38 @@ function kpDiabDrawChart(){
     ctx.fillText('mg/dL', W-padR+2, padT-2);
   }
 }
+window._diabHistAll = false;
+function kpDiabHistToggle(){ window._diabHistAll = !window._diabHistAll; kpDiabRenderHistory(); }
+window.kpDiabHistToggle = kpDiabHistToggle;
 function kpDiabRenderHistory(){
   var holder=document.getElementById('diabHistory');
   if(!holder) return;
-  var log=kpDiabLog().slice().reverse().slice(0,7);
-  if(!log.length){ holder.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:12.5px;font-style:italic">Aucune journée enregistrée pour le moment.</div>'; return; }
-  holder.innerHTML = '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px">7 dernières journées</div>'
+  var full=kpDiabLog().slice().reverse();
+  if(!full.length){ holder.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:12.5px;font-style:italic">Aucune journée enregistrée pour le moment.</div>'; return; }
+  var log = window._diabHistAll ? full : full.slice(0,7);
+  var title = window._diabHistAll ? 'Historique complet ('+full.length+' journées)' : '7 dernières journées';
+  var _abbr={matin:'Matin',midi:'Midi',soir:'Soir'};
+  holder.innerHTML = '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px">'+title+'</div>'
     + log.map(function(e){
         var d=new Date(e.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
         var sc=kpDiabScore(e).total;
         var g=kpDiabGlyValues(e);
         var bits=[];
         if(g.length) bits.push('🩸 <strong>'+Math.round(g.reduce(function(s,v){return s+v;},0)/g.length)+'</strong> mg/dL moy');
-        if(e.insulinDose!=null) bits.push('💉 <strong>'+e.insulinDose+'</strong> UI'+(e.insulinTime?' à '+e.insulinTime:''));
+        /* Traitement détaillé par moment */
+        var mBits = e.medsDose ? ['matin','midi','soir'].filter(function(k){return e.medsDose[k]!=null;}).map(function(k){return _abbr[k]+' '+e.medsDose[k]+' mg';}) : [];
+        if(e.meds || mBits.length) bits.push('💊 '+(e.meds||'Médicament')+(mBits.length?' — '+mBits.join(' · '):''));
+        var iBits = e.insulin ? ['matin','midi','soir'].filter(function(k){return e.insulin[k]!=null;}).map(function(k){return _abbr[k]+' '+e.insulin[k]+' UI';}) : [];
+        if(iBits.length) bits.push('💉 '+iBits.join(' · '));
+        else if(e.insulinDose!=null) bits.push('💉 <strong>'+e.insulinDose+'</strong> UI'+(e.insulinTime?' à '+e.insulinTime:''));
         if(e.missedMeds) bits.push('<span style="color:#b05522">⚠️ oubli traitement</span>');
         if(e.sideFx) bits.push('❗ '+e.sideFx);
         var scColor=sc>=70?'var(--em)':(sc>=40?'#b07a22':'#b05522');
         var delBtn='<button class="kp-log-del" data-testid="diab-delete" onclick="kpDiabDelete(\''+e.date+'\')" title="Supprimer cette journée" style="margin-left:10px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:4px 6px;border-radius:6px">🗑</button>';
         return '<div class="kp-log-row" style="display:flex;align-items:center"><div class="kp-log-date">'+d+'</div>'
           + '<div style="flex:1;text-align:right;font-size:11.5px">'+bits.join(' · ')+' · <strong style="color:'+scColor+'">'+sc+'/100</strong></div>'+delBtn+'</div>';
-      }).join('');
+      }).join('')
+    + (full.length>7 ? '<div style="text-align:center;margin-top:10px"><button onclick="kpDiabHistToggle()" data-testid="diab-hist-toggle" style="background:transparent;border:1px solid var(--border2,rgba(0,0,0,.12));border-radius:20px;padding:7px 16px;font-family:Plus Jakarta Sans,sans-serif;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer">'+(window._diabHistAll?'Réduire ↑':'Voir tout l\'historique ('+full.length+') ↓')+'</button></div>' : '');
 }
 function kpDiabDelete(date){
   if(typeof confirm==='function' && !confirm('Supprimer la journée du '+date+' ?')) return;
@@ -15180,6 +15232,52 @@ function kpDiabDelete(date){
   kpDiabRender();
 }
 window.kpDiabRender = kpDiabRender;
+/* ─── Carte d'accès rapide Suivi Diabète sur l'écran Plan (accueil) ───
+   Un diabétique retrouve en 1 coup d'œil : dernière glycémie, score du jour,
+   son profil, + boutons directs vers le tableau de bord et la glycémie express. */
+function kpRenderDiabQuickCard(){
+  var host=document.getElementById('planDiabQuickHost');
+  if(!host) return;
+  if(!(typeof kpDiabIsActive==='function' && kpDiabIsActive())){ host.innerHTML=''; return; }
+  var t=(typeof kpDiabToday==='function')?kpDiabToday():null;
+  var g=t?kpDiabGlyValues(t):[];
+  var lastGly=g.length?g[g.length-1]:null;
+  var sc=t?kpDiabScore(t).total:null;
+  var scColor=sc==null?'var(--muted)':(sc>=70?'#236648':(sc>=40?'#b07a22':'#b05522'));
+  var chip='';
+  try{
+    var dq=profile&&profile.diabQuiz;
+    if(dq&&dq.profil&&window.KP_DIAB_PROFILES&&KP_DIAB_PROFILES[dq.profil]){
+      var P=KP_DIAB_PROFILES[dq.profil];
+      chip='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:14px;background:'+P.bg+';color:'+P.color+'">'+P.emoji+' '+P.name.replace('Profil ','')+'</span>';
+    }
+  }catch(e){}
+  host.innerHTML =
+    '<div data-testid="plan-diab-quick-card" style="background:var(--card,#fff);border:1px solid rgba(164,84,60,.25);border-left:4px solid #a4543c;border-radius:14px;padding:14px 16px;margin-bottom:18px;box-shadow:0 8px 22px -14px rgba(42,29,16,.25)">'
+    + '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">'
+    +   '<span style="font-size:20px">🩸</span>'
+    +   '<strong style="font-family:\'Fraunces\',Georgia,serif;font-size:16px;color:var(--text,#1e2a1e)">Suivi Diabète</strong>'
+    +   chip
+    + '</div>'
+    + '<div style="display:flex;gap:14px;flex-wrap:wrap;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:12.5px;color:var(--muted);margin-bottom:12px">'
+    +   '<span>Dernière glycémie : <strong style="color:var(--text,#1e2a1e)">'+(lastGly!=null?lastGly+' mg/dL':'—')+'</strong></span>'
+    +   '<span>Score du jour : <strong style="color:'+scColor+'">'+(sc!=null?sc+'/100':'—')+'</strong></span>'
+    + '</div>'
+    + '<div style="display:flex;gap:8px">'
+    +   '<button class="btn btn-primary" style="flex:1.3;font-size:12.5px" onclick="kpOpenDiabDashboard()" data-testid="plan-diab-open">Tableau de bord →</button>'
+    +   '<button class="btn btn-ghost" style="flex:1;font-size:12.5px" onclick="kpGlyQuickOpen()" data-testid="plan-diab-gly">🩸 Glycémie</button>'
+    + '</div>'
+    + '</div>';
+}
+window.kpRenderDiabQuickCard = kpRenderDiabQuickCard;
+function kpOpenDiabDashboard(){
+  if(typeof switchTab==='function') switchTab('suivi');
+  setTimeout(function(){
+    var d=document.getElementById('diabeteSection');
+    if(d){ d.classList.add('acc-open'); try{ d.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){ d.scrollIntoView(); } }
+  }, 380);
+}
+window.kpOpenDiabDashboard = kpOpenDiabDashboard;
 window.kpDiabSave = kpDiabSave;
 window.kpDiabSetMood = kpDiabSetMood;
 window.kpDiabSetRange = kpDiabSetRange;
@@ -15247,6 +15345,7 @@ function kpGlyQuickSave(){
   if(typeof toast==='function') toast(bits.join(' · ')+' enregistré');
   if(typeof save==='function') save();
   kpGlyQuickClose();
+  try{ if(typeof kpRenderDiabQuickCard==='function') kpRenderDiabQuickCard(); }catch(e){}
   try{ if(typeof currentTab!=='undefined' && currentTab==='suivi') kpDiabRender(); }catch(e){}
 }
 window.kpGlyFabUpdate = kpGlyFabUpdate;
