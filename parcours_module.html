@@ -1,0 +1,637 @@
+<!-- KP-PARCOURS-START -->
+<script id="kpParcoursModule">
+/* ═══════════ FORMATION DIABÈTE — Onglet « Parcours » ═══════════
+   Remplace l'onglet Compléments quand dietMode === 'diabete'.
+   Module isolé : injecte CSS + DOM + logique sans toucher au reste. */
+(function(){
+'use strict';
+
+/* ───────── DONNÉES : 12 modules ───────── */
+var PC=[
+{t:"Comprendre son diabète",e:"🧠",d:"Comprenez votre corps pour mieux agir au quotidien.",ch:[
+ {t:"Bienvenue dans Keto-Essenciel",mi:"Remplissez votre bilan de départ : poids, tour de taille et dernière glycémie à jeun dans l'onglet Suivi.",p:[
+  ["Présentation du programme","Bienvenue dans votre parcours Keto-Essenciel spécial diabète de type 2 !\nCe programme de 12 modules vous accompagne pas à pas : comprendre votre diabète, découvrir pourquoi l'alimentation cétogène peut aider, apprendre à bien manger, bouger, gérer le stress et suivre vos progrès.\nChaque module contient des chapitres courts (5 à 10 minutes), avec un quiz pour valider vos acquis et gagner des points."],
+  ["Comment utiliser l'application","• L'onglet Plan génère vos menus keto de la semaine, adaptés à votre profil.\n• L'onglet Suivi vous permet de saisir glycémies, traitement, pas, eau et sommeil chaque jour.\n• L'onglet Recettes regroupe plus de 470 recettes pauvres en glucides.\n• Cet onglet Parcours est votre formation : avancez chapitre par chapitre, à votre rythme."],
+  ["Vos objectifs","À la fin de ce parcours, vous saurez :\n• expliquer ce qui se passe dans votre corps quand la glycémie monte ;\n• composer des repas qui stabilisent votre glycémie ;\n• lire vos analyses (HbA1c, lipides…) sans stress ;\n• mettre en place activité physique, sommeil et gestion du stress.\n⚠️ Ce programme ne remplace jamais votre médecin : tout changement de traitement se décide avec lui."]],
+  q:[["Combien de modules contient ce parcours ?",["8 modules","12 modules","20 modules"],1,"Le parcours compte 12 modules, du fonctionnement du diabète jusqu'au suivi de vos progrès."],
+     ["Que devez-vous faire avant de modifier votre traitement ?",["Rien, je décide seul","En parler à mon médecin","Arrêter le traitement d'abord"],1,"Tout changement de traitement doit TOUJOURS être décidé avec votre médecin."]]},
+ {t:"Qu'est-ce que le diabète de type 2 ?",p:[
+  ["Introduction","Recevoir un diagnostic de diabète de type 2 peut être source d'inquiétude. Pourtant, cette maladie évolue souvent progressivement, et de nombreuses personnes parviennent à améliorer leur équilibre glycémique grâce à des changements de mode de vie.\nPour agir, il faut d'abord comprendre trois acteurs : le glucose, l'insuline et vos cellules."],
+  ["Le rôle du glucose","Le glucose est un sucre présent dans le sang. Il provient surtout des glucides que vous mangez : pain, pâtes, riz, sucreries, fruits…\nC'est un carburant : vos muscles et vos organes l'utilisent pour produire de l'énergie. Mais quand il y en a trop dans le sang, trop longtemps, il abîme silencieusement les vaisseaux, les nerfs, les reins et les yeux."],
+  ["Le rôle de l'insuline","L'insuline est une hormone produite par le pancréas. On peut l'imaginer comme une clé qui permet au glucose d'entrer dans les cellules pour y être utilisé comme source d'énergie.\nLorsque les cellules répondent correctement à l'insuline, le glucose quitte le sang et la glycémie revient progressivement à un niveau normal."],
+  ["La résistance à l'insuline","Dans le diabète de type 2, les serrures des cellules se grippent : c'est la résistance à l'insuline.\nLe pancréas compense en produisant de plus en plus d'insuline, jusqu'à s'épuiser. Le glucose s'accumule alors dans le sang : la glycémie reste élevée.\nBonne nouvelle : la résistance à l'insuline peut s'améliorer avec l'alimentation, l'activité physique et le sommeil."]],
+  q:[["Quelle hormone permet au glucose d'entrer dans les cellules ?",["Le glucagon","L'insuline","L'adrénaline"],1,"L'insuline agit comme une clé qui permet au glucose d'entrer dans les cellules."],
+     ["Qu'est-ce que la résistance à l'insuline ?",["Le pancréas ne produit plus rien","Les cellules répondent mal à l'insuline","Le sang manque de glucose"],1,"Les cellules deviennent « sourdes » à l'insuline : le glucose reste dans le sang."],
+     ["D'où provient principalement le glucose sanguin ?",["Des glucides de l'alimentation","Des protéines","De l'eau"],0,"Pain, pâtes, riz, sucreries… les glucides sont la principale source de glucose."]]},
+ {t:"Pourquoi ma glycémie augmente ?",p:[
+  ["Le scénario d'un repas riche en glucides","Imaginez : vous mangez une assiette de pâtes avec du pain.\n1️⃣ Les glucides sont digérés et transformés en glucose.\n2️⃣ Le glucose passe dans le sang : la glycémie monte.\n3️⃣ Le pancréas libère de l'insuline.\n4️⃣ Chez une personne insulino-résistante, les cellules répondent mal : la glycémie reste haute pendant des heures."],
+  ["Un exemple simple","Pensez à un embouteillage : le glucose, ce sont les voitures ; l'insuline, l'agent de circulation ; les cellules, les parkings.\nSi les parkings n'ouvrent pas leurs barrières (résistance à l'insuline), les voitures s'accumulent sur la route (le sang). Plus vous ajoutez de voitures (glucides), plus l'embouteillage dure."],
+  ["Les autres facteurs qui font monter la glycémie","Les glucides ne sont pas seuls responsables :\n• le stress (cortisol) libère du glucose stocké ;\n• une mauvaise nuit de sommeil augmente la résistance à l'insuline dès le lendemain ;\n• la sédentarité : des muscles inactifs consomment très peu de glucose ;\n• certaines infections ou médicaments (cortisone).\nC'est pourquoi ce parcours aborde aussi le sommeil, le stress et l'activité physique."]],
+  q:[["Après un repas riche en glucides, la glycémie…",["Baisse immédiatement","Monte","Ne change pas"],1,"Les glucides sont transformés en glucose qui passe dans le sang : la glycémie monte."],
+     ["Lequel de ces facteurs peut AUSSI faire monter la glycémie ?",["Le stress","Boire de l'eau","Marcher"],0,"Le cortisol, hormone du stress, libère du glucose stocké dans le foie."]]},
+ {t:"Pourquoi le sucre reste dans le sang ?",p:[
+  ["Comprendre l'insuline en profondeur","L'insuline a deux missions : faire entrer le glucose dans les cellules ET stopper la libération du glucose stocké dans le foie.\nQuand l'insuline fonctionne mal, ces deux missions échouent : le glucose du repas reste dans le sang, et le foie continue d'en fabriquer. Résultat : une glycémie élevée même à jeun, au réveil."],
+  ["Comprendre les cellules","Vos cellules musculaires sont les plus grandes consommatrices de glucose. Mais des muscles peu utilisés, saturés de graisse et d'énergie, ferment leurs portes.\nC'est un cercle vicieux : plus la glycémie et l'insuline restent hautes, plus les cellules résistent.\nLa solution consiste à réduire l'arrivée de glucose (moins de glucides) et à augmenter la consommation (bouger) : c'est exactement la stratégie de ce programme."]],
+  q:[["Pourquoi la glycémie peut-elle être haute au réveil, à jeun ?",["Le foie libère du glucose pendant la nuit","On mange en dormant","L'eau se transforme en sucre"],0,"Quand l'insuline fonctionne mal, le foie continue de libérer du glucose, même la nuit."],
+     ["Quel organe consomme le plus de glucose ?",["Les cheveux","Les muscles","Les ongles"],1,"Les muscles sont les plus grands consommateurs de glucose — d'où l'importance de bouger."]]},
+ {t:"Comprendre l'HbA1c",p:[
+  ["Qu'est-ce que l'HbA1c ?","L'hémoglobine glyquée (HbA1c) reflète votre glycémie moyenne des 3 derniers mois.\nLe glucose se colle à l'hémoglobine des globules rouges : plus la glycémie a été haute, plus le pourcentage d'hémoglobine « sucrée » est élevé.\nC'est l'examen de référence pour suivre un diabète, mesuré par une simple prise de sang."],
+  ["Que signifient les chiffres ?","• 6 % ≈ glycémie moyenne 1,26 g/L — objectif souvent visé, proche de la normale.\n• 7 % ≈ 1,54 g/L — cible classique pour beaucoup de patients diabétiques.\n• 8 % ≈ 1,83 g/L — équilibre insuffisant, risque de complications qui augmente.\n• 9 % ≈ 2,12 g/L — situation à corriger rapidement avec votre médecin.\nVotre objectif personnel est fixé par votre médecin selon votre âge et votre situation."],
+  ["Pourquoi c'est important","Chaque point d'HbA1c en moins réduit fortement le risque de complications (yeux, reins, nerfs, cœur).\nDes études montrent qu'une alimentation pauvre en glucides bien menée peut faire baisser l'HbA1c de 1 à 2 points en quelques mois.\n🎯 Notez votre dernière HbA1c dans l'onglet Suivi : ce sera votre point de départ."]],
+  q:[["L'HbA1c reflète la glycémie moyenne sur…",["24 heures","1 semaine","3 mois"],2,"Elle reflète la glycémie moyenne des 3 derniers mois environ."],
+     ["Une HbA1c à 9 % signifie…",["Un excellent équilibre","Un équilibre à corriger rapidement","Une valeur normale"],1,"9 % correspond à une glycémie moyenne très élevée : parlez-en vite à votre médecin."]]}
+]},
+{t:"Pourquoi le Keto ?",e:"🥑",d:"Découvrez pourquoi réduire les glucides change la donne.",ch:[
+ {t:"Pourquoi réduire les glucides ?",p:[
+  ["La logique est simple","Le diabète de type 2 est une intolérance aux glucides : le corps ne sait plus les gérer.\nRéduire fortement les glucides, c'est réduire directement l'arrivée de glucose dans le sang. Moins de glucose → moins de pics de glycémie → moins de besoin en insuline → le pancréas souffle et les cellules redeviennent progressivement sensibles."],
+  ["Ce que ça change au quotidien","En pratique, on remplace pain, pâtes, riz et sucreries par des légumes, des protéines de qualité et de bonnes graisses.\nBeaucoup de personnes constatent en quelques semaines : des glycémies plus stables, moins de fringales, plus d'énergie, et souvent une perte de poids.\n⚠️ Si vous prenez un traitement hypoglycémiant (insuline, sulfamides), la baisse des glucides doit être encadrée par votre médecin pour éviter les hypoglycémies."]],
+  q:[["Réduire les glucides permet avant tout de…",["Réduire l'arrivée de glucose dans le sang","Augmenter la glycémie","Remplacer l'insuline"],0,"Moins de glucides = moins de glucose dans le sang = glycémies plus stables."],
+     ["Si je prends de l'insuline et que je passe au keto…",["Je ne dis rien à personne","J'en parle à mon médecin pour adapter le traitement","J'arrête l'insuline moi-même"],1,"La baisse des glucides peut nécessiter d'ajuster le traitement : toujours avec le médecin."]]},
+ {t:"Qu'est-ce que la cétose ?",p:[
+  ["Un second carburant","Votre corps possède deux carburants : le glucose… et les graisses.\nQuand les glucides deviennent rares (moins de 30-50 g par jour), le foie transforme les graisses en cétones, un carburant propre et efficace que le cerveau, le cœur et les muscles adorent.\nCet état s'appelle la cétose nutritionnelle. C'est un mécanisme naturel, utilisé par l'humanité depuis toujours (jeûne, hiver…)."],
+  ["Cétose ≠ acidocétose","Ne confondez pas :\n• Cétose nutritionnelle : cétones modérées (0,5-3 mmol/L), état normal et recherché.\n• Acidocétose diabétique : urgence médicale rare, surtout dans le diabète de type 1, avec cétones très élevées ET glycémie très haute.\nEn diabète de type 2 traité sans insuline, la cétose nutritionnelle est généralement sûre — votre médecin reste votre référent."],
+  ["Les premiers jours","Pendant 3 à 10 jours, le corps s'adapte : fatigue passagère, maux de tête possibles (« grippe keto »).\nLa parade : boire davantage, saler un peu plus ses plats, dormir suffisamment. Ensuite, l'énergie revient — souvent plus stable qu'avant."]],
+  q:[["Les cétones sont…",["Un poison","Un carburant naturel fabriqué à partir des graisses","Un type de sucre"],1,"Le foie transforme les graisses en cétones, carburant apprécié du cerveau et des muscles."],
+     ["La cétose nutritionnelle est-elle la même chose que l'acidocétose ?",["Oui, c'est identique","Non, l'acidocétose est une urgence rare, différente","La cétose est plus dangereuse"],1,"La cétose nutritionnelle est modérée et normale ; l'acidocétose est une urgence médicale distincte."]]},
+ {t:"Les idées reçues",p:[
+  ["« Le cerveau a besoin de sucre »","Vrai à moitié. Le cerveau a besoin d'un peu de glucose… que le foie sait fabriquer lui-même (néoglucogenèse) à partir des protéines.\nSurtout, le cerveau fonctionne très bien — souvent mieux — avec les cétones, qui couvrent jusqu'à 70 % de ses besoins. Aucune obligation de manger du sucre."],
+  ["« Le gras fait grossir »","Ce qui fait stocker, c'est l'insuline, et c'est le sucre qui la fait grimper.\nLes bonnes graisses (olive, avocat, oléagineux, poissons gras) rassasient durablement et n'élèvent presque pas la glycémie. Dans un cadre pauvre en glucides, le corps apprend à brûler les graisses au lieu de les stocker."],
+  ["« Les œufs donnent du cholestérol »","Les études récentes sont claires : le cholestérol alimentaire influence très peu le cholestérol sanguin (le foie en fabrique 80 %).\nLes œufs sont un aliment complet : protéines parfaites, vitamines, choline. Jusqu'à 2-3 œufs par jour ne posent pas de problème chez la plupart des gens.\nVotre bilan lipidique sera de toute façon suivi (voir Module 7)."]],
+  q:[["Le cerveau peut-il fonctionner sans manger de sucre ?",["Non, jamais","Oui : cétones + glucose fabriqué par le foie","Seulement chez les enfants"],1,"Les cétones couvrent une grande partie des besoins, le foie fabrique le reste du glucose."],
+     ["Qu'est-ce qui favorise le plus le stockage des graisses ?",["L'insuline élevée en permanence","Les légumes verts","L'eau gazeuse"],0,"L'insuline est l'hormone du stockage — et ce sont les glucides qui la font grimper."]]},
+ {t:"Les bénéfices scientifiquement observés",p:[
+  ["Poids et diabète","Les études sur l'alimentation cétogène chez les diabétiques de type 2 montrent :\n• une perte de poids supérieure aux régimes pauvres en graisses ;\n• une baisse de l'HbA1c de 1 à 2 points en moyenne ;\n• une réduction, voire un arrêt, de certains traitements (toujours décidé par le médecin) ;\n• des glycémies beaucoup plus stables au quotidien."],
+  ["Inflammation, triglycérides, foie gras","• Triglycérides : baisse souvent spectaculaire (ils sont fabriqués à partir des sucres !).\n• HDL (« bon cholestérol ») : augmente.\n• Inflammation (CRP) : diminue.\n• Foie gras (stéatose) : le foie se « dégraisse » quand on supprime sucres et fructose.\nCes marqueurs seront détaillés au Module 7 pour que vous sachiez lire vos analyses."]],
+  q:[["Quel effet le keto a-t-il souvent sur les triglycérides ?",["Ils augmentent fortement","Ils baissent nettement","Aucun effet"],1,"Les triglycérides sont fabriqués à partir des sucres : moins de sucre = moins de triglycérides."],
+     ["La baisse d'HbA1c observée avec le keto est en moyenne de…",["0 point","1 à 2 points","10 points"],1,"Les études montrent une baisse moyenne de 1 à 2 points d'HbA1c en quelques mois."]]},
+ {t:"Quand le keto n'est pas indiqué",p:[
+  ["Les situations de prudence","L'alimentation cétogène n'est pas pour tout le monde :\n• Diabète de type 1 : risque d'acidocétose, encadrement médical strict indispensable.\n• Grossesse et allaitement : les besoins sont différents, avis médical obligatoire.\n• Certaines maladies rares du métabolisme (déficits enzymatiques), insuffisance rénale ou hépatique sévère, antécédents de pancréatite."],
+  ["Traitements particuliers","Certains médicaments imposent une adaptation AVANT de réduire les glucides :\n• Insuline et sulfamides : risque d'hypoglycémie → doses à ajuster avec le médecin.\n• Inhibiteurs SGLT2 (gliflozines) : risque rare d'acidocétose « normoglycémique » → en parler impérativement à votre médecin.\n🎯 Règle d'or : informez toujours votre médecin de votre changement d'alimentation. Ce parcours vous aide à préparer cette discussion."]],
+  q:[["Dans quel cas le keto exige-t-il le plus de prudence ?",["Diabète de type 1","Envie de perdre 2 kg","Végétarisme"],0,"Le diabète de type 1 expose à l'acidocétose : encadrement médical strict indispensable."],
+     ["Avec insuline ou sulfamides, réduire les glucides sans adaptation expose à…",["L'hypoglycémie","La prise de poids","Rien du tout"],0,"Le traitement continue de faire baisser la glycémie : sans adaptation, risque d'hypoglycémie."]]}
+]},
+{t:"Bien manger",e:"🥦",d:"Les bons choix au quotidien, du placard à l'assiette.",ch:[
+ {t:"Les aliments à privilégier",p:[
+  ["Vos alliés de tous les jours","• Légumes pauvres en glucides : verts à volonté (épinards, courgettes, brocolis, salades, choux, avocat).\n• Protéines de qualité : œufs, volailles, viandes, poissons (gras notamment : sardine, maquereau, saumon), fruits de mer.\n• Bonnes graisses : huile d'olive, avocat, beurre, oléagineux (amandes, noix), olives.\n• Laitages gras et fermentés : fromages, yaourt grec nature, crème."],
+  ["Comment composer l'assiette","La formule simple de chaque repas :\n1️⃣ Une belle portion de protéines (main entière).\n2️⃣ Des légumes verts pour la moitié de l'assiette.\n3️⃣ Des bonnes graisses pour l'énergie et la satiété (filet d'huile, avocat, fromage).\nCette assiette élève très peu la glycémie et cale pour des heures."]],
+  q:[["Quels légumes privilégier en keto ?",["Pommes de terre et maïs","Légumes verts : brocolis, épinards, courgettes","Aucun légume"],1,"Les légumes verts sont pauvres en glucides et riches en fibres et minéraux."],
+     ["Que doit contenir chaque repas ?",["Uniquement des graisses","Protéines + légumes verts + bonnes graisses","Surtout des céréales"],1,"C'est la formule d'une assiette qui stabilise la glycémie et rassasie durablement."]]},
+ {t:"Les aliments à limiter",p:[
+  ["Les grands responsables","À réduire fortement (car transformés en glucose) :\n• Sucre, sodas, jus de fruits, pâtisseries, bonbons.\n• Féculents : pain, pâtes, riz, pommes de terre, céréales du petit-déjeuner.\n• Légumineuses en grande quantité et fruits très sucrés (banane, raisin, mangue).\n• Produits « allégés en graisses » : souvent bourrés de sucre !"],
+  ["Les pièges cachés","Le sucre se cache partout : sauces industrielles, plats préparés, charcuteries premier prix, vinaigrettes du commerce, yaourts aux fruits (jusqu'à 4 morceaux de sucre chacun !).\nMéfiez-vous aussi des « faux amis » : galettes de riz (index glycémique explosif), miel et sirop d'agave (du sucre, tout simplement), jus de fruits « sans sucres ajoutés » (déjà pleins de sucre naturel)."]],
+  q:[["Un jus de fruit « sans sucres ajoutés »…",["Ne contient pas de sucre","Contient déjà beaucoup de sucre naturel","Fait baisser la glycémie"],1,"Un verre de jus d'orange contient l'équivalent de 4 à 5 morceaux de sucre."],
+     ["Les produits « 0 % de matières grasses » sont…",["Toujours parfaits en keto","Souvent enrichis en sucre","Interdits par la loi"],1,"Pour compenser le goût, les industriels remplacent souvent le gras par du sucre."]]},
+ {t:"Lire les étiquettes",p:[
+  ["Les 3 réflexes","1️⃣ Regardez la ligne « Glucides » pour 100 g : visez moins de 5 g pour les produits du quotidien.\n2️⃣ « dont sucres » : plus c'est bas, mieux c'est.\n3️⃣ La liste d'ingrédients : courte = bon signe. Les ingrédients sont classés par quantité décroissante — si le sucre est dans les 3 premiers, reposez le produit !"],
+  ["Les noms de code du sucre","Le sucre avance masqué sous plus de 50 noms : sirop de glucose-fructose, dextrose, maltodextrine, saccharose, sirop de maïs, jus de canne évaporé, malt d'orge…\nRègle simple : les mots en « -ose » et les « sirops » = sucre.\n🎯 Mission pratique : au prochain passage en cuisine, vérifiez l'étiquette de votre sauce tomate ou vinaigrette."]],
+  q:[["Pour 100 g, un produit keto du quotidien devrait contenir…",["Moins de 5 g de glucides","30 g de glucides","70 g de glucides"],0,"Moins de 5 g/100 g : un bon repère pour les produits consommés régulièrement."],
+     ["« Sirop de glucose-fructose » dans une liste d'ingrédients, c'est…",["Une fibre","Du sucre déguisé","Une vitamine"],1,"Les mots en « -ose » et les « sirops » désignent presque toujours du sucre."]]},
+ {t:"Faire ses courses",p:[
+  ["La stratégie du magasin","Faites le tour du magasin par les rayons frais : légumes, viandes, poissons, œufs, fromages. Évitez au maximum les rayons centraux (biscuits, céréales, sodas).\nNe faites jamais les courses le ventre vide : la faim fait acheter du sucre.\nUtilisez la liste de courses générée par l'application (onglet Plan → Courses) : elle correspond exactement à vos menus de la semaine."],
+  ["Le panier type Keto-Essenciel","• Frais : œufs, poulet, bœuf, saumon, sardines, crème entière, beurre, fromages.\n• Légumes : courgettes, brocolis, épinards, salades, avocats, choux-fleurs, champignons.\n• Épicerie : huile d'olive, olives, amandes, noix, thon, chocolat noir 85 %+, farine d'amande.\n• Boissons : eau, eau gazeuse, café, thé.\nAvec ce panier, impossible de se tromper."]],
+  q:[["Où trouve-t-on l'essentiel des courses keto ?",["Rayons frais : légumes, viandes, poissons, œufs","Rayon biscuits","Rayon sodas"],0,"Le tour du magasin par les rayons frais couvre 90 % du panier keto."],
+     ["Pourquoi éviter les courses le ventre vide ?",["On marche trop vite","La faim pousse vers les produits sucrés","C'est interdit"],1,"La faim augmente les achats impulsifs de produits sucrés et transformés."]]},
+ {t:"Organiser ses repas",p:[
+  ["La routine gagnante","• Planifiez la semaine en 5 minutes avec le générateur de menus (onglet Plan).\n• Cuisinez en double : le dîner d'aujourd'hui devient le déjeuner de demain.\n• Gardez des solutions de secours : œufs durs, sardines, fromage, avocat, jambon de qualité — un repas keto prêt en 3 minutes.\n• Au restaurant : viande ou poisson + légumes, sauce au beurre, et « sans le pain, merci »."],
+  ["Le rythme des repas","Écoutez votre faim réelle : en keto, elle diminue naturellement. Beaucoup passent à 2 repas par jour sans effort — c'est excellent pour la glycémie.\nÉvitez le grignotage permanent : chaque prise alimentaire sollicite l'insuline. Si besoin d'une collation : poignée d'amandes, morceau de fromage ou carré de chocolat noir 85 %."]],
+  q:[["Quelle est la meilleure « solution de secours » keto ?",["Un sandwich","Œufs durs + fromage + avocat","Des biscuits"],1,"Des protéines et bonnes graisses prêtes en 3 minutes, sans impact glycémique."],
+     ["Pourquoi limiter le grignotage ?",["Chaque prise alimentaire sollicite l'insuline","Ça use les dents","C'est mal vu"],0,"Espacer les repas laisse l'insuline redescendre — essentiel contre la résistance à l'insuline."]]}
+]},
+{t:"Les menus",e:"📅",d:"Maîtrisez le générateur de menus de l'application.",ch:[
+ {t:"Comment fonctionne le générateur",p:[
+  ["Un menu sur mesure","Le générateur (onglet Plan) crée votre semaine complète : petit-déjeuner, déjeuner et dîner, en respectant vos macros personnelles calculées d'après votre profil (poids, taille, activité, objectif).\nEn mode Diabète, il sélectionne uniquement des recettes très pauvres en glucides pour protéger votre glycémie.\nAppuyez sur « Générer la semaine » et tout est prêt : menus + liste de courses."],
+  ["Vos macros expliquées","Chaque jour affiche 4 chiffres :\n• kcal : votre énergie totale.\n• Lipides (g) : votre carburant principal en keto (~70 % des calories).\n• Protéines (g) : pour préserver vos muscles.\n• Glucides (g) : la limite à respecter (souvent 20-30 g/jour).\nPas besoin de calculer : l'application équilibre tout automatiquement."]],
+  q:[["En mode Diabète, le générateur choisit…",["Des recettes très pauvres en glucides","Des desserts sucrés","Des plats de pâtes"],0,"Le mode Diabète filtre les recettes pour protéger votre glycémie."],
+     ["En keto, le carburant principal (~70 % des calories) provient…",["Des lipides","Des glucides","De l'alcool"],0,"Les lipides deviennent la source d'énergie principale, à la place des glucides."]]},
+ {t:"Adapter ses menus",p:[
+  ["Votre menu, vos règles","Un plat ne vous plaît pas ? Le bouton « Changer » sur chaque repas propose une alternative équivalente en macros.\nVous pouvez aussi exclure des aliments (allergies, dégoûts) dans les réglages : ils n'apparaîtront plus jamais.\nBesoin de plus ou moins de calories ? Ajustez votre objectif dans l'onglet Profil, puis regénérez la semaine."],
+  ["Adapter au quotidien réel","Repas à l'extérieur prévu mardi midi ? Ignorez simplement ce créneau et reprenez le plan au repas suivant : aucune culpabilité.\nVous avez mangé le dîner de jeudi mercredi ? Aucun problème, l'ordre des repas keto est interchangeable.\nLe menu est un guide, pas une prison : l'important est de rester pauvre en glucides."]],
+  q:[["Que fait le bouton « Changer » sur un repas ?",["Supprime la journée","Propose une recette alternative équivalente","Commande une pizza"],1,"Il remplace le plat par une alternative aux macros similaires."],
+     ["Peut-on inverser deux repas de la semaine ?",["Non, jamais","Oui, les repas keto sont interchangeables","Seulement le dimanche"],1,"Le menu est un guide souple : l'essentiel est de rester pauvre en glucides."]]},
+ {t:"Remplacer un aliment",p:[
+  ["Les équivalences keto","Envie de vos anciens plats ? Tout se remplace :\n• Pâtes → courgettes en spaghettis, konjac.\n• Riz → chou-fleur mixé en « riz », brocoli.\n• Purée → purée de chou-fleur au beurre.\n• Pain → pain keto à la farine d'amande (Module recettes).\n• Sucre → érythritol ou stévia.\n• Farine de blé → farine d'amande ou de coco."],
+  ["La règle des échanges","Remplacez toujours un aliment par un équivalent de la même famille : une protéine par une protéine (poulet ↔ poisson), un légume par un légume (brocoli ↔ courgette), une graisse par une graisse (beurre ↔ huile d'olive).\nAinsi, les macros du repas restent stables et votre glycémie aussi."]],
+  q:[["Par quoi remplacer le riz en keto ?",["Par des pommes de terre","Par du « riz » de chou-fleur","Par du pain blanc"],1,"Le chou-fleur mixé donne une excellente alternative au riz, quasi sans glucides."],
+     ["Pour garder des macros stables, on remplace un aliment par…",["N'importe quoi","Un équivalent de la même famille","Un dessert"],1,"Protéine ↔ protéine, légume ↔ légume, graisse ↔ graisse : l'équilibre est préservé."]]},
+ {t:"Le calcul des glucides",p:[
+  ["Glucides nets vs totaux","Sur les étiquettes européennes, les fibres sont déjà exclues de la ligne « Glucides ». Ce chiffre correspond donc aux glucides nets — ceux qui élèvent la glycémie.\nEn keto diabète, on vise généralement 20 à 30 g de glucides nets par jour. L'application compte pour vous et affiche le total du jour sur chaque menu."],
+  ["Où partent vos 25 g quotidiens ?","Exemple de journée à ~25 g :\n• Petit-déj : omelette fromage-épinards ≈ 3 g.\n• Déjeuner : poulet rôti + brocolis au beurre ≈ 8 g.\n• Dîner : saumon + salade d'avocat ≈ 7 g.\n• Collation : 20 amandes + 2 carrés chocolat 85 % ≈ 6 g.\nVous mangez copieusement… pour l'équivalent glycémique d'une demi-tranche de pain !"]],
+  q:[["En keto diabète, on vise environ…",["20 à 30 g de glucides nets/jour","150 g/jour","300 g/jour"],0,"20-30 g nets par jour : le seuil qui permet la cétose et des glycémies stables."],
+     ["Sur une étiquette européenne, la ligne « Glucides »…",["Inclut les fibres","Exclut déjà les fibres (glucides nets)","N'existe pas"],1,"En Europe, les fibres sont comptées à part : la ligne Glucides ≈ glucides nets."]]}
+]},
+{t:"Les recettes",e:"🍳",d:"Toutes les clés pour cuisiner keto avec plaisir.",ch:[
+ {t:"Le petit-déjeuner",p:[
+  ["Rompre avec le petit-déj sucré","Céréales, tartines-confiture, jus d'orange : le petit-déjeuner classique est une bombe glycémique qui déclenche fringales et coup de barre de 11 h.\nLe petit-déjeuner keto est salé et protéiné : œufs sous toutes leurs formes, avocat, saumon fumé, fromage, jambon de qualité. Résultat : satiété jusqu'au déjeuner et glycémie plate."],
+  ["Les stars du matin","• Omelette fromage-ciboulette (5 min).\n• Œufs brouillés crémeux à l'avocat.\n• Yaourt grec entier + amandes + quelques framboises.\n• Crêpes keto à la farine d'amande (le week-end).\n• Café gras (beurre + MCT) pour les matins pressés.\nEt si vous n'avez pas faim le matin ? Écoutez-vous : sauter le petit-déj est parfaitement compatible avec le keto."]],
+  q:[["Le petit-déjeuner keto idéal est…",["Sucré : céréales et jus","Salé et protéiné : œufs, avocat, fromage","Inexistant obligatoirement"],1,"Protéines et bonnes graisses le matin = satiété durable et glycémie stable."],
+     ["Sauter le petit-déjeuner quand on n'a pas faim…",["Est dangereux en keto","Est parfaitement acceptable","Fait monter la glycémie"],1,"En keto, la faim diminue : écouter son corps est une excellente stratégie."]]},
+ {t:"Le déjeuner",p:[
+  ["Le midi sans somnolence","Un déjeuner riche en glucides provoque le fameux « coup de pompe » de 14 h (pic puis chute de glycémie).\nLe déjeuner keto — protéine + légumes + bonnes graisses — fournit une énergie stable tout l'après-midi.\nAu bureau : salade composée (poulet, avocat, œuf, fromage, huile d'olive), reste du dîner de la veille, ou boîte de sardines + crudités."],
+  ["Idées de la bibliothèque","Plus de 470 recettes vous attendent dans l'onglet Recettes, avec filtres « ≤ 5 g de glucides », « ≤ 15 min » ou « Facile » :\n• Espadon grillé chimichurri.\n• Poulet crème-champignons.\n• Bavette beurre maître d'hôtel + haricots verts.\n• Salade César keto (sans croûtons, avec parmesan).\nChaque fiche affiche macros, étapes détaillées et astuce de chef."]],
+  q:[["D'où vient le « coup de pompe » de 14 h ?",["Du pic puis de la chute de glycémie après un repas glucidique","Du manque de sucre","De la météo"],0,"Le pic d'insuline qui suit un repas riche en glucides provoque une chute d'énergie."],
+     ["Quel filtre de la bibliothèque aide à protéger la glycémie ?",["≤ 5 g de glucides","Recettes les plus sucrées","Sans protéines"],0,"Le filtre « ≤ 5 g de glucides » sélectionne les recettes les plus sûres pour la glycémie."]]},
+ {t:"Le dîner",p:[
+  ["Le repas qui prépare la nuit","Le dîner influence directement votre glycémie à jeun du lendemain matin.\nLes bons réflexes :\n• Dîner tôt si possible (2-3 h avant le coucher).\n• Léger en glucides, comme toujours, et sans excès de protéines tardives.\n• Une marche de 10 minutes après le dîner fait des merveilles sur la glycémie nocturne."],
+  ["Des dîners simples et efficaces","• Saumon vapeur, crème à l'aneth + courgettes.\n• Omelette champignons-comté + salade verte.\n• Soupe crémeuse de brocoli au cheddar.\n• Poulet rôti + purée de chou-fleur au beurre.\nAstuce batch cooking : doublez les quantités, le déjeuner de demain est déjà prêt."]],
+  q:[["Quel geste simple améliore la glycémie nocturne après le dîner ?",["Une marche de 10 minutes","Un dessert sucré","Se coucher immédiatement"],0,"10 minutes de marche aident les muscles à consommer le glucose du repas."],
+     ["Le dîner influence surtout…",["La glycémie à jeun du lendemain","La couleur des yeux","Rien du tout"],0,"Un dîner tardif ou chargé se lit souvent sur la glycémie du réveil."]]},
+ {t:"Les desserts",p:[
+  ["Se faire plaisir sans sucre","Oui, on peut être diabétique, keto ET gourmand :\n• Mousse au chocolat avocat-cacao.\n• Crème mascarpone vanille-noix.\n• Panna cotta coco.\n• Fondant chocolat à la farine d'amande.\nLe secret : farine d'amande ou de coco, chocolat noir 85 %+, et édulcorants sans impact glycémique."],
+  ["Les édulcorants à connaître","• Érythritol : 0 calorie, 0 impact glycémique, se comporte comme le sucre en pâtisserie. Le meilleur choix.\n• Stévia : naturelle, très concentrée, parfaite pour les boissons.\n• À éviter : maltitol (élève bel et bien la glycémie !), sirop d'agave, miel, sucre de coco.\nLe dessert reste un plaisir occasionnel : la gourmandise se rééduque, et c'est tant mieux."]],
+  q:[["Quel édulcorant n'a aucun impact glycémique ?",["L'érythritol","Le maltitol","Le miel"],0,"L'érythritol n'élève pas la glycémie — le maltitol, si, malgré sa réputation !"],
+     ["Quelle farine utilise-t-on pour les desserts keto ?",["Farine de blé","Farine d'amande ou de coco","Fécule de pomme de terre"],1,"Farines d'amande et de coco : pauvres en glucides, riches en goût."]]},
+ {t:"Les snacks",p:[
+  ["Les encas malins","Une vraie petite faim entre les repas ? Choisissez un snack qui n'élève pas la glycémie :\n• Poignée d'amandes ou de noix (30 g).\n• Morceau de fromage.\n• Œuf dur.\n• Olives, tranches de saucisson de qualité.\n• Bâtonnets de concombre + guacamole.\n• 2 carrés de chocolat noir 85 %+."],
+  ["Faim réelle ou envie ?","Avant de grignoter, posez-vous la question : est-ce de la faim (progressive, dans le ventre) ou une envie (soudaine, émotionnelle, souvent sucrée) ?\nUn grand verre d'eau et 5 minutes d'attente font souvent disparaître les fausses faims.\nEt rappelez-vous : chaque grignotage sollicite l'insuline. Moins on grignote, mieux le corps se régule."]],
+  q:[["Quel est le meilleur snack keto ?",["Barre de céréales","Poignée d'amandes ou fromage","Chips + soda"],1,"Amandes, fromage, œuf dur : satiété sans impact glycémique."],
+     ["Comment distinguer faim réelle et envie ?",["La faim réelle est progressive, l'envie est soudaine","C'est impossible","La faim vient toujours à 16 h"],0,"Un verre d'eau et 5 minutes d'attente démasquent les fausses faims."]]},
+ {t:"Le batch cooking",p:[
+  ["2 heures qui sauvent la semaine","Le batch cooking = préparer en une session (souvent le dimanche) la base des repas de la semaine.\nLe programme type :\n1️⃣ Rôtir 2 poulets ou une grosse pièce de viande.\n2️⃣ Cuire une fournée d'œufs durs.\n3️⃣ Rôtir 2 plaques de légumes (brocolis, courgettes, choux-fleurs).\n4️⃣ Préparer une sauce maison (mayonnaise, vinaigrette, pesto)."],
+  ["Conservation et assemblage","• Réfrigérateur : 3-4 jours dans des boîtes hermétiques.\n• Congélateur : portions individuelles pour les semaines chargées.\nEnsuite, chaque repas s'assemble en 5 minutes : une protéine + un légume + une sauce.\nLe batch cooking est la meilleure assurance anti-« je n'ai rien, je commande une pizza »."]],
+  q:[["Le batch cooking consiste à…",["Manger en batch de 10","Préparer la base des repas en une session","Acheter des plats préparés"],1,"2 heures le dimanche = des repas keto prêts en 5 minutes toute la semaine."],
+     ["Combien de temps se conservent les préparations au réfrigérateur ?",["3-4 jours","3 semaines","6 mois"],0,"3 à 4 jours en boîtes hermétiques ; au-delà, direction le congélateur."]]}
+]},
+{t:"Perte de poids",e:"⚖️",d:"Comprendre son corps pour mincir durablement.",ch:[
+ {t:"Pourquoi on grossit ?",p:[
+  ["L'insuline, hormone du stockage","On ne grossit pas seulement parce qu'on « mange trop » : on grossit parce que le corps stocke.\nEt le chef d'orchestre du stockage, c'est l'insuline. Tant qu'elle est élevée (repas glucidiques répétés, grignotage), le corps stocke et ne déstocke pas — même en mangeant « peu ».\nRéduire les glucides fait baisser l'insuline : le corps peut enfin puiser dans ses réserves."],
+  ["Le cercle vicieux sucre-fringale","Repas sucré → pic de glycémie → pic d'insuline → chute de glycémie → fringale → nouveau repas sucré…\nCe manège épuise le pancréas et fait grossir. Le keto casse ce cercle : glycémie plate = plus de fringales = contrôle naturel de l'appétit, sans volonté surhumaine."]],
+  q:[["Quelle hormone commande le stockage des graisses ?",["L'insuline","La mélatonine","L'adrénaline"],0,"Tant que l'insuline est haute, le corps stocke et ne déstocke pas."],
+     ["Comment le keto casse-t-il le cercle des fringales ?",["En stabilisant la glycémie","En interdisant de manger","Par magie"],0,"Glycémie plate = plus de pics ni de chutes = plus de fringales."]]},
+ {t:"La graisse viscérale",p:[
+  ["L'ennemie invisible","Il existe deux graisses : la sous-cutanée (sous la peau, peu dangereuse) et la viscérale (autour des organes, dans le ventre).\nLa graisse viscérale est métaboliquement active : elle libère des substances inflammatoires qui aggravent la résistance à l'insuline. C'est elle qui fait le lit du diabète de type 2.\nBonne nouvelle : c'est aussi la première à fondre en keto."],
+  ["Le tour de taille, votre meilleur indicateur","Mieux que la balance : le mètre ruban.\nRepères de risque : plus de 94 cm chez l'homme, plus de 80 cm chez la femme.\nMesurez votre tour de taille chaque semaine (au niveau du nombril, ventre relâché) et notez-le dans l'onglet Suivi. Le voir diminuer = la graisse viscérale fond = votre diabète s'améliore."]],
+  q:[["Quelle graisse aggrave le plus la résistance à l'insuline ?",["La graisse sous-cutanée","La graisse viscérale (autour des organes)","La graisse des cuisses"],1,"La graisse viscérale libère des substances inflammatoires qui aggravent le diabète."],
+     ["Quel outil suit le mieux la graisse viscérale ?",["Le mètre ruban (tour de taille)","Le thermomètre","Le miroir uniquement"],0,"Le tour de taille est le meilleur reflet de la graisse abdominale profonde."]]},
+ {t:"Les plateaux",p:[
+  ["Le plateau est normal","Après quelques semaines de perte, la balance se fige : c'est le plateau. C'est un phénomène normal — le corps s'adapte, se recompose (muscle +, graisse −), retient parfois de l'eau.\nUn plateau n'est PAS un échec : si le tour de taille diminue ou si les vêtements flottent, vous progressez encore."],
+  ["Les leviers anti-plateau","Si le plateau dure plus de 3-4 semaines :\n• Traquez les glucides cachés (sauces, « produits keto » industriels).\n• Réduisez les excès de produits laitiers et d'oléagineux (faciles à surconsommer).\n• Espacez les repas (2 repas/jour, pas de grignotage).\n• Bougez plus : marche quotidienne + renforcement musculaire.\n• Dormez ! Le manque de sommeil bloque la perte de poids."]],
+  q:[["Un plateau de poids signifie…",["Que tout est perdu","Une adaptation normale du corps","Qu'il faut manger plus de sucre"],1,"Le corps s'adapte et se recompose : le plateau fait partie du voyage."],
+     ["Quel levier aide à relancer la perte de poids ?",["Espacer les repas et arrêter le grignotage","Grignoter davantage","Supprimer le sommeil"],0,"Moins de prises alimentaires = insuline plus basse = déstockage facilité."]]},
+ {t:"Le métabolisme",p:[
+  ["Pourquoi les régimes classiques échouent","Les régimes hypocaloriques classiques affament le corps : il se défend en ralentissant le métabolisme (moins d'énergie brûlée au repos) et en augmentant la faim. D'où l'effet yo-yo.\nLe keto fonctionne différemment : on mange à satiété, le corps carbure aux graisses (les vôtres incluses !), le métabolisme est préservé et la faim diminue naturellement."],
+  ["Protéger son métabolisme","• Mangez suffisamment de protéines (elles protègent le muscle, qui brûle des calories même au repos).\n• Ne descendez pas trop bas en calories trop longtemps.\n• Faites du renforcement musculaire (Module 8) : chaque kilo de muscle gagné augmente vos dépenses au repos.\n• Dormez 7-8 h : le métabolisme se régule la nuit."]],
+  q:[["Pourquoi les régimes très restrictifs provoquent-ils l'effet yo-yo ?",["Le métabolisme ralentit et la faim augmente","Ils marchent trop bien","La balance se casse"],0,"Le corps se défend contre la famine : moins de dépenses, plus de faim → reprise."],
+     ["Qu'est-ce qui protège le métabolisme ?",["Le muscle et les protéines","Le sucre","Les sodas light"],0,"Le muscle brûle des calories même au repos : protéines + renforcement le préservent."]]},
+ {t:"La gestion des écarts",p:[
+  ["L'écart n'est pas une catastrophe","Un repas de fête, une part de gâteau d'anniversaire : ça arrive, et ce n'est pas grave.\nLa règle des 3 R :\n1️⃣ Ne pas Ruminer : la culpabilité pousse à enchaîner les écarts.\n2️⃣ Reprendre immédiatement le cap au repas suivant (pas « lundi prochain »).\n3️⃣ Rebooster : une marche, un grand verre d'eau, un bon dîner keto."],
+  ["Anticiper les occasions","• Avant un repas de fête : mangez normalement avant (arriver affamé = catastrophe assurée).\n• Sur place : privilégiez viandes, poissons, fromages, légumes ; limitez pain et desserts ; l'eau gazeuse est votre alliée.\n• Après : surveillez votre glycémie, elle vous dira tout — et reprenez simplement vos habitudes.\nUn écart sur 20 repas ne change rien. C'est la routine qui fait le résultat."]],
+  q:[["Après un écart, la meilleure attitude est…",["Culpabiliser toute la semaine","Reprendre le cap dès le repas suivant","Abandonner le keto"],1,"Un écart isolé ne change rien : c'est la régularité qui compte."],
+     ["Avant un repas de fête, il vaut mieux…",["Arriver affamé","Manger normalement avant","Jeûner 3 jours"],1,"Arriver affamé garantit les excès : mangez normalement avant l'événement."]]}
+]},
+{t:"Comprendre ses analyses",e:"🔬",d:"Lisez vos prises de sang comme un pro.",ch:[
+ {t:"HbA1c et glycémie",p:[
+  ["Les deux mesures du sucre","• Glycémie à jeun : photo instantanée. Normale < 1,00 g/L ; prédiabète 1,00-1,25 ; diabète ≥ 1,26 g/L (à deux reprises).\n• HbA1c : le film des 3 derniers mois (voir Module 1). C'est elle qui guide votre médecin.\nEn suivant les deux dans l'onglet Suivi, vous verrez vos progrès noir sur blanc : la glycémie réagit en jours, l'HbA1c en mois."],
+  ["Interpréter vos progrès","Une HbA1c qui passe de 8 % à 7 % = une glycémie moyenne qui a baissé de ~0,3 g/L = un risque de complications nettement réduit. Chaque dixième compte !\nAstuce : demandez toujours une copie de vos analyses et notez les valeurs clés. Vous êtes l'acteur principal de votre suivi."]],
+  q:[["Un diabète est défini par une glycémie à jeun ≥…",["0,80 g/L","1,26 g/L","3 g/L"],1,"≥ 1,26 g/L à deux reprises : c'est le seuil diagnostique du diabète."],
+     ["L'HbA1c réagit aux changements en…",["Quelques heures","Quelques mois","10 ans"],1,"Elle reflète 3 mois de glycémies : soyez patient, elle suivra vos efforts."]]},
+ {t:"Le bilan lipidique : triglycérides, HDL, LDL",p:[
+  ["Triglycérides et HDL, vos vrais indicateurs","• Triglycérides : graisses circulantes fabriquées surtout… à partir des sucres. Objectif < 1,50 g/L. Le keto les fait souvent chuter rapidement.\n• HDL (« bon cholestérol ») : nettoie les artères. Plus il est haut, mieux c'est (> 0,40 g/L homme, > 0,50 femme). Il monte avec le keto et l'exercice.\n• Le rapport triglycérides/HDL est un excellent marqueur de résistance à l'insuline : visez < 2."],
+  ["Le LDL, à nuancer","Le LDL (« mauvais cholestérol ») peut augmenter légèrement en keto chez certaines personnes. Ce chiffre seul ne suffit pas : ce qui compte, c'est le tableau complet (triglycérides bas + HDL haut = particules LDL grosses et peu dangereuses).\nDiscutez-en avec votre médecin, qui jugera selon votre risque cardiovasculaire global. Ne modifiez jamais un traitement hypolipémiant seul."]],
+  q:[["Les triglycérides sont surtout fabriqués à partir…",["Des sucres","Du gras de l'avocat","De l'eau"],0,"C'est pourquoi ils chutent souvent spectaculairement en alimentation pauvre en glucides."],
+     ["Quel rapport reflète bien la résistance à l'insuline ?",["Triglycérides / HDL","Poids / taille des pieds","LDL / âge"],0,"Un rapport triglycérides/HDL < 2 est un excellent signe métabolique."]]},
+ {t:"Insuline et HOMA",p:[
+  ["L'insulinémie à jeun","Mesurer l'insuline à jeun révèle ce que la glycémie cache : un pancréas qui surproduit pour compenser la résistance.\nUne glycémie normale AVEC une insuline élevée = résistance à l'insuline déjà installée, des années avant le diabète.\nValeur souhaitable : généralement < 10 µUI/mL à jeun (repères variables selon les laboratoires)."],
+  ["L'indice HOMA","Le HOMA-IR combine glycémie et insuline à jeun pour chiffrer la résistance à l'insuline :\nHOMA = (glycémie [mmol/L] × insuline [µUI/mL]) / 22,5.\n• < 2 : sensibilité correcte.\n• 2 à 3 : résistance débutante.\n• > 3 : résistance installée.\nC'est un excellent marqueur de suivi : il s'améliore souvent en quelques mois de keto."]],
+  q:[["Une insuline à jeun élevée avec une glycémie normale signifie…",["Tout va bien","Une résistance à l'insuline déjà installée","Un excès de sport"],1,"Le pancréas surproduit pour compenser : c'est le stade silencieux avant le diabète."],
+     ["Un HOMA-IR > 3 indique…",["Une résistance à l'insuline installée","Une hydratation parfaite","Un manque de sel"],0,"Au-delà de 3, la résistance à l'insuline est franche — et réversible avec le mode de vie."]]},
+ {t:"CRP et inflammation",p:[
+  ["L'inflammation chronique","La CRP (protéine C-réactive) mesure l'inflammation. La version « ultrasensible » (CRP-us) détecte l'inflammation chronique de bas grade — celle qui accompagne surpoids, diabète et risque cardiovasculaire.\nRepères CRP-us : < 1 mg/L excellent ; 1-3 moyen ; > 3 risque augmenté."],
+  ["Comment la faire baisser","L'inflammation chronique diminue avec :\n• la baisse du sucre et des produits ultra-transformés ;\n• la perte de graisse viscérale ;\n• les oméga-3 (poissons gras 2-3 fois/semaine) ;\n• le sommeil et la gestion du stress ;\n• l'activité physique régulière (modérée).\nAutrement dit : tout ce parcours travaille pour votre CRP."]],
+  q:[["Que mesure la CRP ultrasensible ?",["L'inflammation chronique de bas grade","La quantité de fer","Le taux de vitamine C"],0,"La CRP-us révèle l'inflammation silencieuse liée au surpoids et au diabète."],
+     ["Qu'est-ce qui fait baisser l'inflammation chronique ?",["Moins de sucre, plus d'oméga-3, sommeil et activité","Plus de sodas","Veiller toute la nuit"],0,"Alimentation, sommeil, mouvement : les piliers anti-inflammatoires."]]},
+ {t:"Foie et reins : ASAT, ALAT, créatinine",p:[
+  ["Les enzymes du foie","ASAT, ALAT et GGT sont les enzymes hépatiques. Élevées, elles signalent souvent un foie gras (stéatose) — présent chez la majorité des diabétiques de type 2.\nLa cause n°1 : le sucre et surtout le fructose (sodas, jus), que le foie transforme en graisse.\nEn keto, les enzymes hépatiques s'améliorent souvent en 2 à 6 mois : le foie se dégraisse."],
+  ["La créatinine et les reins","La créatinine évalue la fonction rénale (avec le DFG, débit de filtration). Le diabète mal équilibré est la première cause d'insuffisance rénale : ce suivi est crucial.\nÀ savoir : une alimentation riche en protéines n'abîme PAS des reins sains, mais en cas de maladie rénale existante, l'apport en protéines doit être ajusté avec le médecin.\nSurveillez aussi la microalbuminurie (urines) : elle détecte très tôt une souffrance rénale."]],
+  q:[["Quelle est la cause n°1 du foie gras ?",["Le sucre et le fructose","Les épinards","L'eau minérale"],0,"Le foie transforme l'excès de sucre — surtout le fructose — en graisse."],
+     ["Pourquoi surveiller la créatinine quand on est diabétique ?",["Le diabète est la 1ère cause d'insuffisance rénale","Pour connaître son groupe sanguin","Par curiosité"],0,"Le suivi rénal (créatinine, DFG, microalbuminurie) est essentiel dans le diabète."]]}
+]},
+{t:"Activité physique",e:"🏃",d:"Bouger : le médicament gratuit le plus puissant.",ch:[
+ {t:"Pourquoi bouger",p:[
+  ["Le muscle, éponge à glucose","Quand un muscle travaille, il aspire le glucose du sang — même sans insuline ! C'est le seul moment où vos cellules ouvrent leurs portes sans clé.\nRésultat immédiat : 15 minutes d'activité peuvent faire baisser la glycémie de 0,2 à 0,5 g/L.\nRésultat durable : des muscles entraînés restent sensibles à l'insuline 24 à 48 h après l'effort."],
+  ["Pas besoin d'être un athlète","L'objectif n'est pas le marathon : c'est la régularité.\n• 30 minutes de marche par jour réduisent déjà l'HbA1c.\n• Fractionnez si besoin : 3 × 10 minutes comptent autant.\n• Le meilleur sport est celui que vous ferez encore dans 6 mois.\n⚠️ Si vous êtes sous insuline ou sulfamides : gardez de quoi vous resucrer sur vous et parlez de votre programme à votre médecin."]],
+  q:[["Que fait un muscle qui travaille ?",["Il aspire le glucose du sang, même sans insuline","Il fabrique du sucre","Rien"],0,"L'exercice ouvre les portes des cellules sans avoir besoin de la clé insuline."],
+     ["Combien de temps dure l'effet sensibilisant de l'exercice ?",["5 minutes","24 à 48 heures","1 an"],1,"Un muscle entraîné reste plus sensible à l'insuline 1 à 2 jours : d'où la régularité."]]},
+ {t:"La marche",p:[
+  ["L'arme secrète des glycémies","La marche est le traitement le plus sous-estimé du diabète :\n• 10 minutes de marche APRÈS chaque repas réduisent le pic de glycémie de 20 à 30 %.\n• C'est le moment le plus rentable : le glucose du repas part directement dans les muscles.\nCommencez dès aujourd'hui : le tour du pâté de maisons après le dîner."],
+  ["Progresser en douceur","• Semaine 1-2 : 10 min après le repas principal.\n• Semaine 3-4 : 10 min après 2 repas, ou 20 min d'affilée.\n• Objectif : 7 000 à 10 000 pas par jour (suivez-les dans l'onglet Suivi !).\nAstuces : descendre un arrêt plus tôt, garer la voiture plus loin, téléphoner en marchant, prendre les escaliers. Tout compte."]],
+  q:[["Quel est le meilleur moment pour marcher ?",["Juste après les repas","Jamais","Uniquement à minuit"],0,"10 minutes après le repas réduisent le pic glycémique de 20 à 30 %."],
+     ["Quel objectif de pas quotidien viser ?",["500 pas","7 000 à 10 000 pas","50 000 pas"],1,"7 000-10 000 pas/jour : un objectif réaliste aux bénéfices prouvés."]]},
+ {t:"Le renforcement musculaire",p:[
+  ["Plus de muscle = moins de diabète","Le muscle est votre plus grand réservoir à glucose. Plus vous en avez, plus votre corps absorbe le sucre facilement — même au repos.\nAprès 40 ans, on perd naturellement du muscle chaque année : le renforcement n'est pas une option, c'est une assurance santé.\n2 séances de 20-30 minutes par semaine suffisent pour des résultats mesurables."],
+  ["Par où commencer","Programme débutant à la maison, sans matériel :\n• Squats sur chaise (s'asseoir-se lever) : 3 × 10.\n• Pompes contre un mur : 3 × 10.\n• Ponts fessiers allongé : 3 × 12.\n• Montées de genoux debout : 3 × 20.\nReposez-vous 1 minute entre les séries. L'onglet Muscu de l'application vous propose des programmes détaillés par niveau."]],
+  q:[["Pourquoi le muscle aide-t-il contre le diabète ?",["C'est le plus grand réservoir à glucose du corps","Il pèse lourd","Il n'aide pas"],0,"Plus de masse musculaire = plus de capacité à absorber le glucose sanguin."],
+     ["Combien de séances de renforcement par semaine suffisent ?",["2 séances de 20-30 min","7 séances de 2 h","Aucune"],0,"Deux séances hebdomadaires produisent déjà des effets mesurables sur la glycémie."]]},
+ {t:"Le gainage",p:[
+  ["Un tronc solide","Le gainage renforce les muscles profonds du tronc : abdominaux, dos, lombaires.\nBénéfices : meilleure posture, moins de mal de dos, ventre plus plat, et une base solide pour toutes les autres activités.\nBonus : les grands groupes musculaires sollicités consomment du glucose, comme tout effort musculaire."],
+  ["Les exercices de base","• Planche sur les avant-bras : tenez 20 secondes, dos droit (ni creusé ni bombé). Progressez vers 60 s.\n• Planche latérale : 15 s de chaque côté.\n• Superman allongé sur le ventre : levez bras et jambes 3 × 10.\nSi la planche est trop dure : commencez sur les genoux. La qualité (alignement) prime toujours sur la durée."]],
+  q:[["Le gainage renforce principalement…",["Les muscles profonds du tronc","Les cheveux","Les ongles"],0,"Abdos profonds, dos, lombaires : la base d'un corps fonctionnel."],
+     ["En planche, que faut-il privilégier ?",["La durée à tout prix","La qualité de l'alignement","Regarder la télé"],1,"Un dos bien aligné 20 secondes vaut mieux qu'une minute en mauvaise posture."]]},
+ {t:"Les étirements",p:[
+  ["Souplesse et récupération","Les étirements entretiennent la mobilité, diminuent les tensions et favorisent la récupération et la détente (utile aussi pour le stress — Module 9 !).\nLe meilleur moment : après l'effort ou le soir, quand les muscles sont chauds. Jamais d'étirement violent à froid."],
+  ["La routine de 5 minutes","À faire chaque soir :\n• Nuque : inclinez doucement la tête de chaque côté, 20 s.\n• Épaules : roulez-les lentement 10 fois.\n• Dos : assis, tournez doucement le buste de chaque côté, 20 s.\n• Ischio-jambiers : debout, penchez-vous vers l'avant jambes légèrement fléchies, 30 s.\n• Respirez profondément pendant chaque étirement — cette routine prépare aussi un meilleur sommeil."]],
+  q:[["Quel est le meilleur moment pour s'étirer ?",["À froid, brutalement","Après l'effort ou le soir, muscles chauds","Jamais"],1,"Muscles chauds + gestes doux = étirements efficaces et sans risque."],
+     ["Que faut-il faire pendant un étirement ?",["Bloquer sa respiration","Respirer profondément","Sautiller"],1,"La respiration profonde amplifie la détente musculaire et nerveuse."]]}
+]},
+{t:"Stress et sommeil",e:"😴",d:"Deux leviers invisibles qui pilotent votre glycémie.",ch:[
+ {t:"Pourquoi le cortisol augmente la glycémie",p:[
+  ["L'hormone du stress","Face à un danger, le corps libère du cortisol, qui ordonne au foie de déverser du glucose dans le sang : c'est le carburant pour « fuir ou combattre ».\nProblème : nos stress modernes (travail, écrans, soucis) sont permanents… mais on ne fuit ni ne combat. Le glucose libéré reste dans le sang.\nUn stress chronique peut élever la glycémie autant qu'un repas sucré — sans rien manger !"],
+  ["Le stress se gère comme un nutriment","Vous surveillez vos glucides ? Surveillez aussi votre dose de stress quotidienne.\nSignes de cortisol chroniquement élevé : glycémie à jeun haute inexpliquée, ventre qui résiste, sommeil léger, envies de sucre le soir, irritabilité.\nLes chapitres suivants vous donnent des outils concrets, simples et prouvés : respiration, relaxation, cohérence cardiaque."]],
+  q:[["Que fait le cortisol sur la glycémie ?",["Il la fait monter (le foie libère du glucose)","Il la fait disparaître","Rien"],0,"Le cortisol prépare le corps à l'action en libérant du glucose — même sans manger."],
+     ["Un stress chronique peut-il élever la glycémie à jeun ?",["Oui","Non, impossible","Seulement le week-end"],0,"Le stress permanent maintient le cortisol haut : glycémies à jeun inexpliquées en vue."]]},
+ {t:"La respiration",p:[
+  ["Le frein de secours du système nerveux","La respiration est le seul levier direct et immédiat sur votre système nerveux : expirer lentement active le mode « repos-digestion » et fait chuter le cortisol en quelques minutes.\nC'est gratuit, invisible, et utilisable partout : avant une réunion, dans les bouchons, avant une prise de sang."],
+  ["La technique 4-6","La règle d'or : expirer plus longtemps qu'inspirer.\n1️⃣ Inspirez par le nez pendant 4 secondes, en gonflant le ventre.\n2️⃣ Expirez lentement par la bouche pendant 6 secondes.\n3️⃣ Répétez pendant 2 à 5 minutes.\nÀ pratiquer 2-3 fois par jour et à chaque montée de stress. Effet calmant garanti dès la première minute."]],
+  q:[["Quel est le principe clé de la respiration anti-stress ?",["Expirer plus longtemps qu'inspirer","Retenir son souffle 2 minutes","Respirer très vite"],0,"L'expiration lente active le système nerveux du calme et fait chuter le cortisol."],
+     ["Combien de temps faut-il pour ressentir l'effet ?",["Quelques minutes","3 semaines","1 an"],0,"La respiration agit immédiatement : c'est le frein de secours du stress."]]},
+ {t:"La relaxation",p:[
+  ["Déconnecter pour mieux réguler","La relaxation profonde (détente musculaire, méditation, body-scan) baisse durablement le cortisol de fond, la tension artérielle… et améliore les glycémies.\n10 minutes par jour suffisent. Ce n'est pas du temps perdu : c'est un soin, au même titre que vos médicaments et vos repas."],
+  ["La détente musculaire progressive","Méthode simple, allongé ou assis :\n1️⃣ Contractez fort les poings 5 secondes… relâchez 15 secondes. Sentez la différence.\n2️⃣ Remontez : avant-bras, épaules, visage, puis descendez : ventre, cuisses, mollets, pieds.\n3️⃣ Terminez par 5 respirations 4-6.\nÀ faire le soir : elle prépare magnifiquement le sommeil. Des applications gratuites peuvent vous guider au début."]],
+  q:[["Combien de temps de relaxation quotidienne suffit ?",["10 minutes","4 heures","Aucune relaxation ne sert"],0,"10 minutes par jour baissent durablement le cortisol de fond."],
+     ["La détente musculaire progressive consiste à…",["Contracter puis relâcher chaque groupe musculaire","Courir un sprint","Boire un café"],0,"Le contraste contraction-relâchement apprend au corps à lâcher les tensions."]]},
+ {t:"La cohérence cardiaque",p:[
+  ["Le 3-6-5","La cohérence cardiaque est une technique validée scientifiquement qui synchronise cœur et respiration :\n• 3 fois par jour,\n• 6 respirations par minute (inspirez 5 s, expirez 5 s),\n• pendant 5 minutes.\nEffets mesurés : baisse du cortisol pendant 4 à 6 heures, meilleure variabilité cardiaque, glycémies plus stables chez les diabétiques."],
+  ["En pratique","Asseyez-vous confortablement, dos droit.\nInspirez 5 secondes par le nez, expirez 5 secondes par la bouche, sans forcer.\nComptez dans votre tête ou aidez-vous d'une application gratuite (guides visuels).\nMoments idéaux : au réveil (avant le café !), avant le déjeuner, vers 17-18 h. Programmez 3 rappels sur votre téléphone : la régularité fait tout."]],
+  q:[["La règle de la cohérence cardiaque est…",["3 fois/jour, 6 respirations/min, 5 minutes","1 fois/mois, 1 minute","10 heures d'affilée"],0,"Le fameux 3-6-5 : simple, gratuit, aux effets mesurés sur le cortisol."],
+     ["Combien de temps dure l'effet d'une séance ?",["4 à 6 heures","30 secondes","1 semaine"],0,"Une séance de 5 minutes apaise le système nerveux pour plusieurs heures."]]},
+ {t:"La routine du soir",p:[
+  ["Le sommeil, régulateur de glycémie","Une seule mauvaise nuit (< 6 h) augmente la résistance à l'insuline de 20 à 30 % dès le lendemain ! Le manque de sommeil augmente aussi la ghréline (hormone de la faim) et les envies de sucre.\nDormir 7 à 8 heures n'est pas un luxe : c'est un traitement du diabète à part entière."],
+  ["Construire sa routine","La dernière heure avant le coucher :\n• Écrans en mode nuit, puis extinction 30 min avant (la lumière bleue bloque la mélatonine).\n• Chambre fraîche (18-19 °C), sombre et calme.\n• Pas de repas lourd ni d'alcool tardif ; tisane si envie.\n• 5 minutes d'étirements doux + respiration 4-6 ou relaxation.\n• Couchez-vous et levez-vous à heures régulières, même le week-end.\nNotez votre sommeil dans l'onglet Suivi : vous verrez le lien avec vos glycémies du matin."]],
+  q:[["Que provoque une nuit de moins de 6 heures ?",["+20-30 % de résistance à l'insuline le lendemain","Rien du tout","Une meilleure glycémie"],0,"Le manque de sommeil se lit directement sur la glycémie du lendemain."],
+     ["Pourquoi éteindre les écrans avant le coucher ?",["La lumière bleue bloque la mélatonine","Pour économiser la batterie","Par superstition"],0,"La mélatonine, hormone du sommeil, est inhibée par la lumière bleue des écrans."]]}
+]},
+{t:"Les compléments alimentaires",e:"💊",d:"Ce qui peut aider — et ce qu'il faut savoir avant.",ch:[
+ {t:"Magnésium et Oméga 3",p:[
+  ["Le magnésium","La majorité des diabétiques de type 2 manquent de magnésium — or il participe directement à l'action de l'insuline.\nSignes possibles de manque : crampes, paupière qui saute, fatigue, sommeil léger.\nSources alimentaires d'abord : amandes, épinards, chocolat noir, eaux riches en magnésium. En complément : formes bisglycinate ou citrate (300-400 mg/j), mieux tolérées.\n⚠️ Prudence en cas d'insuffisance rénale : avis médical."],
+  ["Les oméga-3","EPA et DHA (poissons gras) sont anti-inflammatoires et font baisser les triglycérides.\nPriorité à l'assiette : sardines, maquereaux, saumon 2-3 fois par semaine.\nEn complément : 1 à 2 g d'EPA+DHA par jour, avec un repas gras.\n⚠️ À signaler au médecin si vous prenez des anticoagulants."]],
+  q:[["Pourquoi le magnésium intéresse-t-il les diabétiques ?",["Il participe à l'action de l'insuline","Il colore la peau","Il remplace le sport"],0,"Le manque de magnésium, fréquent chez les diabétiques, aggrave la résistance à l'insuline."],
+     ["Quelle est la meilleure source d'oméga-3 ?",["Les poissons gras (sardine, maquereau, saumon)","Les bonbons","Le pain blanc"],0,"2 à 3 portions de poissons gras par semaine couvrent l'essentiel des besoins."]]},
+ {t:"Vitamine D et Chrome",p:[
+  ["La vitamine D","Un déficit en vitamine D est associé à une moins bonne sensibilité à l'insuline — et 80 % des Français sont en dessous des valeurs optimales en hiver.\nFaites doser votre 25-OH-vitamine D (objectif souvent cité : 40-60 ng/mL).\nSupplémentation courante : 1000 à 4000 UI/jour avec un repas gras, selon le dosage sanguin et l'avis du médecin. Le soleil reste la meilleure source (15-20 min/jour, bras découverts)."],
+  ["Le chrome","Le chrome est un oligo-élément qui participe au métabolisme du glucose. Certaines études montrent une amélioration modeste de la glycémie chez les personnes carencées (200-1000 µg/j, picolinate de chrome).\nLes effets restent modestes et inconstants : le chrome ne remplacera jamais la baisse des glucides. Sources alimentaires : brocoli, viandes, œufs."]],
+  q:[["Que faut-il faire avant de se supplémenter en vitamine D ?",["Un dosage sanguin (25-OH-D)","Rien","Arrêter ses médicaments"],0,"Le dosage permet d'adapter la dose — et de vérifier les progrès."],
+     ["Le chrome peut-il remplacer la réduction des glucides ?",["Oui totalement","Non, ses effets sont modestes","Oui, à forte dose"],1,"Aucun complément ne remplace l'alimentation : le chrome est un appoint, au mieux."]]},
+ {t:"Berbérine, cannelle et acide alpha-lipoïque",p:[
+  ["La berbérine","La berbérine est le complément le plus étudié sur la glycémie : plusieurs essais montrent des baisses d'HbA1c comparables à certains médicaments (500 mg × 2-3/jour).\n⚠️ Justement parce qu'elle est puissante : risque d'hypoglycémie si elle s'ajoute à un traitement, et interactions médicamenteuses possibles. À ne JAMAIS commencer sans en parler à votre médecin ou pharmacien."],
+  ["Cannelle et acide alpha-lipoïque","• Cannelle (de Ceylan de préférence) : 1 à 3 g/jour peuvent réduire légèrement la glycémie à jeun. Facile : dans le yaourt grec, le café, les desserts keto.\n• Acide alpha-lipoïque (ALA) : antioxydant utilisé notamment dans les neuropathies diabétiques (600 mg/j dans les études). Peut potentialiser les hypoglycémiants.\nEncore une fois : informez toujours votre médecin de ce que vous prenez."]],
+  q:[["Pourquoi la berbérine impose-t-elle un avis médical ?",["Elle est puissante : risque d'hypoglycémie et d'interactions","Elle ne fait rien","Elle est illégale"],0,"Son efficacité réelle impose la prudence quand elle s'ajoute à un traitement."],
+     ["Quelle cannelle privilégier ?",["Cannelle de Ceylan","Cannelle en bonbons","Aucune"],0,"La cannelle de Ceylan contient moins de coumarine que la cannelle casse."]]},
+ {t:"Précautions et conditions d'usage",p:[
+  ["Les compléments ne remplacent JAMAIS un traitement","Règle absolue : aucun complément alimentaire ne remplace un traitement médical prescrit, ni les fondamentaux (alimentation, mouvement, sommeil).\nLes compléments peuvent être envisagés :\n• en cas de carence documentée (dosage sanguin) ;\n• en appoint d'une hygiène de vie déjà en place ;\n• avec l'accord de votre médecin ou pharmacien, surtout si vous prenez des médicaments."],
+  ["Les bons réflexes","• Un seul nouveau complément à la fois : vous saurez ce qui agit (ou pas).\n• Choisissez des marques transparentes (dosages précis, formes citées dans les études).\n• Notez vos glycémies avant/après : c'est votre meilleur juge.\n• Méfiez-vous des promesses miracles (« guérit le diabète ») : elles sont toujours fausses.\n• Signalez TOUT à votre médecin : certains compléments interagissent avec les traitements."]],
+  q:[["Un complément alimentaire peut-il remplacer un traitement prescrit ?",["Jamais","Toujours","Le week-end seulement"],0,"Les compléments sont, au mieux, un appoint — jamais un substitut au traitement."],
+     ["Pourquoi introduire un seul complément à la fois ?",["Pour identifier ce qui agit réellement","Pour dépenser moins","Par tradition"],0,"Un changement à la fois + suivi des glycémies = évaluation fiable."]]}
+]},
+{t:"Les traitements",e:"🩺",d:"Comprendre vos médicaments pour mieux dialoguer avec votre médecin.",ch:[
+ {t:"La metformine",p:[
+  ["Comment elle fonctionne","La metformine (Glucophage®, Stagid®…) est le traitement de première ligne du diabète de type 2 depuis des décennies.\nElle agit principalement en freinant la production de glucose par le foie et en améliorant légèrement la sensibilité à l'insuline. Elle ne fait PAS produire d'insuline : seule, elle ne provoque donc pas d'hypoglycémie."],
+  ["Ce qu'il faut savoir","• Effets secondaires fréquents au début : troubles digestifs (souvent transitoires ; les formes à libération prolongée aident).\n• Elle peut diminuer l'absorption de la vitamine B12 sur le long terme (dosage utile).\n• Elle se marie très bien avec l'alimentation pauvre en glucides.\nSi vos glycémies s'améliorent nettement, votre médecin pourra envisager d'adapter la dose — lui seul."]],
+  q:[["Comment agit principalement la metformine ?",["Elle freine la production de glucose par le foie","Elle remplace les repas","Elle injecte de l'insuline"],0,"Elle réduit la fabrication hépatique de glucose et améliore la sensibilité à l'insuline."],
+     ["La metformine seule provoque-t-elle des hypoglycémies ?",["Non, car elle ne fait pas produire d'insuline","Oui, toujours","Uniquement la nuit"],0,"Sans stimulation de l'insuline, pas d'hypoglycémie avec la metformine seule."]]},
+ {t:"L'insuline",p:[
+  ["Pourquoi de l'insuline dans le type 2 ?","Après des années de surmenage, le pancréas peut s'épuiser : l'insuline injectée vient alors compléter ou remplacer la production naturelle.\nIl en existe plusieurs types : lente (basale, 1-2 injections/jour) et rapide (au moment des repas). Votre schéma est personnalisé par votre diabétologue."],
+  ["Insuline et keto : vigilance maximale","Réduire fortement les glucides diminue les besoins en insuline — c'est le but ! Mais si les doses ne sont pas adaptées, c'est l'hypoglycémie.\nRègles de sécurité :\n• Prévenez votre médecin AVANT de changer d'alimentation.\n• Surveillez vos glycémies plus souvent au début (l'application est là pour ça).\n• Ayez toujours de quoi vous resucrer sur vous.\n• Apprenez les signes d'hypo : tremblements, sueurs, fringale, confusion → resucrage immédiat."]],
+  q:[["Pourquoi les doses d'insuline doivent-elles être revues en keto ?",["Les besoins diminuent : risque d'hypoglycémie sinon","Elles doublent","Aucun rapport"],0,"Moins de glucides = moins de besoins : le médecin ajuste pour éviter les hypos."],
+     ["Quels sont les signes d'une hypoglycémie ?",["Tremblements, sueurs, fringale, confusion","Envie de dormir 5 min","Cheveux qui frisent"],0,"Ces signes imposent un resucrage immédiat — gardez toujours de quoi sur vous."]]},
+ {t:"Les GLP-1",p:[
+  ["Les analogues du GLP-1","Sémaglutide (Ozempic®), dulaglutide (Trulicity®), liraglutide (Victoza®)… Ces injections imitent une hormone intestinale, le GLP-1 :\n• elles stimulent l'insuline uniquement quand la glycémie est haute ;\n• elles ralentissent la vidange de l'estomac ;\n• elles coupent l'appétit au niveau du cerveau.\nRésultat : baisse de l'HbA1c et perte de poids souvent significative."],
+  ["En pratique","• Effets secondaires fréquents : nausées, troubles digestifs (surtout au début, d'où l'augmentation progressive des doses).\n• Ils se combinent bien avec une alimentation pauvre en glucides — l'appétit déjà réduit facilite les portions raisonnables.\n• Attention à préserver la masse musculaire pendant la perte de poids : protéines suffisantes + renforcement (Module 8).\nL'arrêt se discute toujours avec le médecin (reprise d'appétit fréquente à l'arrêt)."]],
+  q:[["Comment agissent les analogues du GLP-1 ?",["Insuline si glycémie haute + satiété + vidange gastrique ralentie","Ils ajoutent du sucre","Ils remplacent le sport"],0,"Triple action : insuline intelligente, estomac ralenti, appétit réduit."],
+     ["Que faut-il préserver pendant la perte de poids sous GLP-1 ?",["La masse musculaire (protéines + renforcement)","Les fringales","Le grignotage"],0,"Protéines suffisantes et renforcement évitent de perdre du muscle avec la graisse."]]},
+ {t:"Les inhibiteurs SGLT2",p:[
+  ["Faire fuir le sucre par les urines","Les gliflozines — empagliflozine (Jardiance®), dapagliflozine (Forxiga®) — bloquent la réabsorption du glucose par les reins : l'excès de sucre est éliminé dans les urines.\nBénéfices démontrés au-delà de la glycémie : protection du cœur et des reins, légère perte de poids et baisse de la tension."],
+  ["Précautions spécifiques","• Risque d'infections urinaires et génitales (le sucre dans les urines nourrit les microbes) : hygiène et hydratation.\n• ⚠️ IMPORTANT avec le keto : les SGLT2 augmentent le risque rare d'acidocétose « à glycémie normale ». L'association keto + SGLT2 impose l'avis de votre médecin — c'est LE point à aborder avant de réduire fortement les glucides.\n• Signes d'alerte : nausées, douleurs abdominales, respiration rapide → consultez en urgence."]],
+  q:[["Comment agissent les inhibiteurs SGLT2 ?",["Ils font éliminer le glucose dans les urines","Ils bloquent la respiration","Ils ajoutent de l'insuline"],0,"Les reins n'ont plus le droit de réabsorber le glucose : il part dans les urines."],
+     ["Pourquoi le duo SGLT2 + keto impose-t-il un avis médical ?",["Risque rare d'acidocétose à glycémie normale","Ça coûte cher","Aucune raison"],0,"C'est LE point de vigilance à discuter avec le médecin avant de réduire les glucides."]]},
+ {t:"Ne jamais arrêter seul un traitement",p:[
+  ["La règle d'or absolue","Vos glycémies s'améliorent ? Formidable — c'est le but ! Mais arrêter ou réduire un traitement vous-même est dangereux :\n• effet rebond possible sur les glycémies ;\n• certains traitements protègent AUSSI le cœur et les reins, indépendamment du sucre ;\n• seule une vision d'ensemble (analyses, antécédents) permet de décider."],
+  ["Comment en parler à votre médecin","Préparez votre consultation :\n1️⃣ Apportez vos relevés de glycémies (l'historique de l'application).\n2️⃣ Expliquez votre changement d'alimentation, chiffres à l'appui.\n3️⃣ Posez la question : « Mes doses sont-elles toujours adaptées ? »\nLes médecins DÉprescrivent volontiers quand les résultats sont là. Votre rôle : fournir des données fiables. Le sien : décider en sécurité. C'est un travail d'équipe."]],
+  q:[["Vos glycémies s'améliorent nettement. Que faites-vous ?",["J'arrête mes médicaments moi-même","J'apporte mes relevés au médecin pour qu'il adapte","Je ne dis rien à personne"],1,"Le médecin déprescrit volontiers face à de bons chiffres — mais lui seul décide."],
+     ["Pourquoi certains traitements ne se jugent-ils pas qu'au sucre ?",["Ils protègent aussi le cœur et les reins","Ils changent de couleur","Ils sont gratuits"],0,"SGLT2 et GLP-1 notamment ont des bénéfices cardio-rénaux propres."]]}
+]},
+{t:"Le suivi",e:"📈",d:"Mesurer, ajuster, durer : la boucle du succès.",ch:[
+ {t:"Poids et tour de taille",p:[
+  ["Bien se peser","• 1 fois par semaine suffit (le poids fluctue de ±1-2 kg naturellement : eau, digestion…).\n• Toujours dans les mêmes conditions : le matin, à jeun, après être passé aux toilettes.\n• Regardez la TENDANCE sur 4 semaines, jamais le chiffre du jour.\nEnregistrez chaque pesée dans l'onglet Suivi : la courbe parle mieux que la mémoire."],
+  ["Le tour de taille, chaque semaine","Le mètre ruban révèle ce que la balance cache : la fonte de la graisse viscérale (Module 6).\nMesurez au niveau du nombril, debout, ventre relâché, à la fin d'une expiration normale.\nObjectifs de santé : < 94 cm (homme), < 80 cm (femme). Même 2 cm de perdus = un vrai progrès métabolique, quel que soit le poids."]],
+  q:[["À quelle fréquence se peser ?",["Une fois par semaine, dans les mêmes conditions","5 fois par jour","Jamais"],0,"La tendance hebdomadaire est fiable ; le chiffre quotidien, trompeur."],
+     ["Que révèle le tour de taille que la balance ne voit pas ?",["La fonte de la graisse viscérale","L'humeur","La pointure"],0,"Le ventre peut fondre à poids stable : le mètre ruban le détecte."]]},
+ {t:"La glycémie au quotidien",p:[
+  ["Quand mesurer","Les moments les plus instructifs :\n• Le matin à jeun : reflète le travail nocturne du foie.\n• Avant les repas (déjeuner, dîner) : votre niveau de base.\n• Au coucher : sécurité pour la nuit.\nEn phase de changement alimentaire, mesurez davantage : chaque mesure est une information. En régime de croisière, 1-2 mesures/jour peuvent suffire (selon votre traitement et l'avis médical)."],
+  ["Utiliser l'application","La saisie du jour (onglet Suivi → « ✍️ Saisie du jour ») enregistre glycémies, traitement, pas, eau, sommeil en 1 minute.\nVos cibles usuelles (à personnaliser avec le médecin) : 70-130 mg/dL à jeun, < 180 en post-repas.\nLe score quotidien et le « Conseil du jour » vous guident. En cas d'hypo (< 70) : resucrage immédiat, puis notez l'épisode pour en parler au médecin."]],
+  q:[["Quelle mesure reflète le travail nocturne du foie ?",["La glycémie à jeun du matin","La glycémie de 15 h","Le poids"],0,"La glycémie au réveil raconte la nuit : foie, dîner de la veille, sommeil."],
+     ["Que faire en cas de glycémie < 70 mg/dL ?",["Se resucrer immédiatement","Attendre demain","Faire un footing"],0,"Hypo = resucrage immédiat, puis notez l'épisode pour votre médecin."]]},
+ {t:"L'HbA1c dans le temps",p:[
+  ["Votre boussole trimestrielle","L'HbA1c se mesure tous les 3 mois (le temps de renouvellement des globules rouges).\nC'est LE marqueur qui valide vos efforts : glycémies quotidiennes = tactique ; HbA1c = stratégie.\nNotez chaque résultat et sa date : viser −0,5 à −1 point par trimestre est réaliste avec ce programme."],
+  ["Interpréter l'évolution","• Elle baisse : vos changements fonctionnent — continuez, et voyez avec le médecin si le traitement doit être allégé.\n• Elle stagne au-dessus de l'objectif : cherchez les fuites (glucides cachés, sommeil, stress, activité) et revoyez les Modules 3, 8 et 9.\n• Elle monte : consultez sans tarder pour comprendre (infection, traitement, période difficile ?).\nRappel : l'objectif personnalisé est fixé par votre médecin (souvent ≤ 7 %, parfois moins strict)."]],
+  q:[["À quel rythme mesure-t-on l'HbA1c ?",["Tous les 3 mois","Tous les jours","Tous les 10 ans"],0,"Le renouvellement des globules rouges impose ce rythme trimestriel."],
+     ["Une baisse réaliste d'HbA1c par trimestre est de…",["0,5 à 1 point","5 points","0 point, c'est impossible"],0,"−0,5 à −1 point par trimestre : ambitieux mais atteignable avec ce programme."]]},
+ {t:"Se fixer des objectifs",p:[
+  ["Des objectifs SMART","Un bon objectif est Spécifique, Mesurable, Atteignable, Réaliste et Temporel.\n❌ « Je veux aller mieux » → invérifiable.\n✅ « Je marche 10 minutes après le dîner, 5 soirs par semaine, pendant 1 mois. »\n✅ « Glycémie à jeun < 1,30 g/L en moyenne ce mois-ci. »\nUn seul objectif à la fois : la surcharge tue la motivation."],
+  ["Objectifs de processus > objectifs de résultat","Vous ne contrôlez pas directement votre poids ni votre HbA1c — vous contrôlez vos ACTIONS.\nFixez donc des objectifs de processus : « cuisiner keto 6 jours/7 », « me coucher avant 23 h », « 8 000 pas/jour ».\nLes résultats (poids, HbA1c) suivent automatiquement les processus tenus. Célébrez chaque semaine où le processus est respecté, indépendamment de la balance."]],
+  q:[["Quel est le meilleur objectif ?",["« Aller mieux »","« Marcher 10 min après le dîner, 5 soirs/semaine »","« Être parfait »"],1,"Spécifique, mesurable, temporel : un objectif SMART se vérifie et se tient."],
+     ["Pourquoi préférer les objectifs de processus ?",["On contrôle ses actions, pas directement ses résultats","C'est plus vague","Pour éviter tout effort"],0,"Les actions tenues produisent les résultats : concentrez-vous sur ce que vous contrôlez."]]},
+ {t:"Garder la motivation",p:[
+  ["La motivation suit l'action","Grande vérité : on n'attend pas la motivation pour agir — c'est l'action qui crée la motivation.\nVos alliés :\n• Les petites victoires : chaque glycémie stable, chaque cm de tour de taille, chaque chapitre terminé ici même.\n• La règle des 2 minutes : quand tout pèse, faites juste 2 minutes (mettre ses chaussures, couper un légume). Le reste suit souvent.\n• Ne jamais rater deux fois de suite : un écart est un accident, deux, c'est une nouvelle habitude."],
+  ["Votre pourquoi","Écrivez quelque part votre raison profonde : voir grandir vos petits-enfants, voyager léger, ne plus craindre les résultats d'analyses, retrouver de l'énergie…\nRelisez-la dans les moments difficiles.\n🎉 Félicitations : vous êtes arrivé au bout du parcours Keto-Essenciel ! Vous avez maintenant toutes les clés. Continuez à saisir vos journées, générez vos menus, bougez, dormez — et savourez chaque progrès. Nous sommes fiers de vous."]],
+  q:[["Qu'est-ce qui crée la motivation ?",["L'action et les petites victoires","L'attente passive","La chance"],0,"L'action précède la motivation : commencez petit, la motivation suivra."],
+     ["Que dit la règle « jamais deux fois de suite » ?",["Un écart est un accident, deux deviennent une habitude","Il faut tout rater deux fois","Rien d'important"],0,"Reprendre immédiatement après un écart empêche la rechute durable."]]}
+]}
+];
+
+/* ───────── ÉTAT & PERSISTANCE ───────── */
+var PTS_PER_CH = 50;
+function pcTotalCh(){ var n=0; PC.forEach(function(m){ n+=m.ch.length; }); return n; }
+function pcState(){
+  if(typeof profile==='undefined'||!profile) return {done:{},pts:0};
+  if(!profile.diabParcours) profile.diabParcours={done:{},pts:0};
+  if(!profile.diabParcours.done) profile.diabParcours.done={};
+  return profile.diabParcours;
+}
+function pcPersist(){
+  try{ if(typeof save==='function') save(); }catch(e){}
+  try{ if(typeof syncProfileToCloud==='function' && typeof currentUser!=='undefined' && currentUser) syncProfileToCloud(); }catch(e){}
+}
+function pcIsDone(mi,ci){ return !!pcState().done[mi+'-'+ci]; }
+function pcModDoneCount(mi){ var n=0; PC[mi].ch.forEach(function(_,ci){ if(pcIsDone(mi,ci)) n++; }); return n; }
+function pcModPct(mi){ return Math.round(pcModDoneCount(mi)/PC[mi].ch.length*100); }
+function pcModUnlocked(mi){ if(mi===0) return true; return pcModPct(mi-1)===100; }
+function pcChUnlocked(mi,ci){ if(!pcModUnlocked(mi)) return false; if(ci===0) return true; return pcIsDone(mi,ci-1); }
+function pcDoneTotal(){ var n=0; PC.forEach(function(m,mi){ n+=pcModDoneCount(mi); }); return n; }
+function pcCurrentModule(){ for(var i=0;i<PC.length;i++){ if(pcModPct(i)<100) return i; } return PC.length-1; }
+
+/* ───────── CSS ───────── */
+var css=''+
+'#tab-parcours{padding-bottom:110px}'+
+'#tab-parcours .container{max-width:760px;margin:0 auto;padding:18px 16px}'+
+'.pc-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.85}'+
+'.pc-h1{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:26px;font-weight:600;color:var(--text,#233029);margin:2px 0 4px}'+
+'.pc-sub{font-size:13px;color:var(--muted,#6b746c)}'+
+'.pc-stats{display:flex;gap:10px;margin:14px 0 18px}'+
+'.pc-stat{flex:1;background:var(--card,#fff);border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:12px 10px;text-align:center;box-shadow:0 2px 10px rgba(30,50,40,.05)}'+
+'.pc-stat b{display:block;font-size:19px;color:#0f6b5c;font-family:Fraunces,Georgia,serif}'+
+'.pc-stat span{font-size:10.5px;color:var(--muted,#6b746c);font-weight:600;letter-spacing:.03em;text-transform:uppercase}'+
+'.pc-hero{background:linear-gradient(135deg,#0e6b5b,#0a4f44);border-radius:22px;padding:18px;color:#fff;display:flex;align-items:center;gap:14px;box-shadow:0 10px 26px rgba(10,79,68,.28);cursor:pointer;margin-bottom:14px}'+
+'.pc-hero .pc-eyebrow{color:#bfe6d8}'+
+'.pc-hero h3{font-family:Fraunces,Georgia,serif;font-size:20px;font-weight:600;margin:3px 0 4px;color:#fff}'+
+'.pc-hero p{font-size:12.5px;color:#d7ece4;margin:0;line-height:1.45}'+
+'.pc-ring{width:66px;height:66px;border-radius:50%;flex:0 0 66px;display:flex;align-items:center;justify-content:center;position:relative}'+
+'.pc-ring .pc-ring-in{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13.5px;color:#fff}'+
+'.pc-mods{display:flex;flex-direction:column;gap:10px}'+
+'.pc-mod{background:var(--card,#fff);border:1px solid rgba(0,0,0,.06);border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:13px;cursor:pointer;box-shadow:0 2px 10px rgba(30,50,40,.05);transition:transform .15s ease}'+
+'.pc-mod:active{transform:scale(.985)}'+
+'.pc-mod.pc-locked{opacity:.55;cursor:default}'+
+'.pc-mod-emoji{width:44px;height:44px;border-radius:13px;background:#eef5f0;display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 44px}'+
+'.pc-mod-body{flex:1;min-width:0}'+
+'.pc-mod-body .pc-eyebrow{color:#0f6b5c}'+
+'.pc-mod-body h4{font-size:14.5px;font-weight:700;color:var(--text,#233029);margin:1px 0 6px;line-height:1.25}'+
+'.pc-bar{height:6px;border-radius:99px;background:rgba(15,107,92,.12);overflow:hidden}'+
+'.pc-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#22a06b,#0f6b5c);transition:width .4s ease}'+
+'.pc-mod-pct{font-size:12px;font-weight:800;color:#0f6b5c;flex:0 0 auto}'+
+'.pc-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#0f6b5c;cursor:pointer;padding:6px 0;margin-bottom:8px}'+
+'.pc-chlist{display:flex;flex-direction:column;gap:9px;margin-top:14px}'+
+'.pc-chip{background:var(--card,#fff);border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 2px 8px rgba(30,50,40,.04)}'+
+'.pc-chip.pc-locked{opacity:.5;cursor:default}'+
+'.pc-chnum{width:34px;height:34px;border-radius:50%;background:#eef5f0;color:#0f6b5c;font-weight:800;font-size:13.5px;display:flex;align-items:center;justify-content:center;flex:0 0 34px}'+
+'.pc-chnum.pc-ok{background:#0f6b5c;color:#fff}'+
+'.pc-chip-t{flex:1;min-width:0}'+
+'.pc-chip-t .pc-eyebrow{color:#8a958c;font-size:9.5px}'+
+'.pc-chip-t b{display:block;font-size:13.5px;color:var(--text,#233029);line-height:1.3}'+
+'.pc-chip-r{font-size:16px;flex:0 0 auto}'+
+'.pc-card{background:var(--card,#fff);border:1px solid rgba(0,0,0,.06);border-radius:20px;padding:20px 18px;box-shadow:0 4px 16px rgba(30,50,40,.06)}'+
+'.pc-page-h{font-family:Fraunces,Georgia,serif;font-size:19px;font-weight:600;color:#0f6b5c;margin:0 0 10px}'+
+'.pc-page-b{font-size:14.5px;line-height:1.65;color:var(--text,#2b352e);white-space:pre-line}'+
+'.pc-mission{margin-top:16px;background:#e9f4ee;border:1px solid rgba(15,107,92,.18);border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.5;color:#14523f}'+
+'.pc-mission b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;color:#0f6b5c}'+
+'.pc-foot{margin-top:16px}'+
+'.pc-foot-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted,#6b746c);font-weight:600;margin-bottom:7px}'+
+'.pc-nav{display:flex;gap:10px;margin-top:12px}'+
+'.pc-btn{flex:1;border:none;border-radius:14px;padding:14px 12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.01em!important;text-transform:none!important}'+
+'.pc-btn-main{background:#0f6b5c;color:#fff;box-shadow:0 6px 16px rgba(15,107,92,.3)}'+
+'.pc-btn-ghost{background:transparent;color:#0f6b5c;border:1.5px solid rgba(15,107,92,.35)}'+
+'.pc-btn:disabled{opacity:.45;cursor:default}'+
+'.pc-quiz-q{font-size:16.5px;font-weight:700;color:var(--text,#233029);line-height:1.4;margin:12px 0 16px}'+
+'.pc-opt{display:flex;align-items:center;gap:12px;background:var(--card,#fff);border:1.5px solid rgba(0,0,0,.1);border-radius:14px;padding:13px 14px;margin-bottom:9px;cursor:pointer;font-size:14px;color:var(--text,#2b352e)}'+
+'.pc-opt-l{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex:0 0 28px;color:var(--muted,#666)}'+
+'.pc-opt.pc-good{border-color:#1d8a5f;background:#e9f6ef}'+
+'.pc-opt.pc-good .pc-opt-l{background:#1d8a5f;border-color:#1d8a5f;color:#fff}'+
+'.pc-opt.pc-bad{border-color:#c0564a;background:#fbeeec}'+
+'.pc-opt.pc-bad .pc-opt-l{background:#c0564a;border-color:#c0564a;color:#fff}'+
+'.pc-exp{border-radius:14px;padding:13px 14px;font-size:13px;line-height:1.5;margin-top:4px}'+
+'.pc-exp.pc-exp-good{background:#e9f6ef;color:#14523f;border:1px solid rgba(29,138,95,.25)}'+
+'.pc-exp.pc-exp-bad{background:#fbeeec;color:#7d2d1f;border:1px solid rgba(192,86,74,.25)}'+
+'.pc-congrats{background:linear-gradient(160deg,#0e6b5b,#083c34);border-radius:24px;padding:34px 20px;text-align:center;color:#fff;box-shadow:0 14px 32px rgba(8,60,52,.35)}'+
+'.pc-congrats .pc-medal{font-size:58px;line-height:1;margin-bottom:12px}'+
+'.pc-congrats h3{font-family:Fraunces,Georgia,serif;font-size:25px;font-weight:600;margin:0 0 6px;color:#fff}'+
+'.pc-congrats p{font-size:13.5px;color:#cfe8de;margin:0 0 18px}'+
+'.pc-cstats{display:flex;gap:10px;margin-bottom:18px}'+
+'.pc-cstat{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:12px 8px}'+
+'.pc-cstat b{display:block;font-size:18px;font-family:Fraunces,Georgia,serif}'+
+'.pc-cstat span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#bfe0d5;font-weight:700}'+
+'.pc-cprog{text-align:left;margin-bottom:18px}'+
+'.pc-cprog .pc-foot-meta{color:#cfe8de}'+
+'.pc-cprog .pc-bar{background:rgba(255,255,255,.18)}'+
+'.pc-cprog .pc-bar i{background:linear-gradient(90deg,#9fe3c2,#4fc48f)}'+
+'body.dark #tab-parcours .pc-card,body.dark #tab-parcours .pc-mod,body.dark #tab-parcours .pc-chip,body.dark #tab-parcours .pc-stat,body.dark #tab-parcours .pc-opt{background:#1d241f;border-color:rgba(255,255,255,.08)}'+
+'body.dark #tab-parcours .pc-h1,body.dark #tab-parcours .pc-mod-body h4,body.dark #tab-parcours .pc-chip-t b,body.dark #tab-parcours .pc-page-b,body.dark #tab-parcours .pc-quiz-q,body.dark #tab-parcours .pc-opt{color:#dfe6e0}'+
+'body.dark #tab-parcours .pc-mod-emoji,body.dark #tab-parcours .pc-chnum{background:rgba(255,255,255,.08)}'+
+'@media(min-width:900px){#tab-parcours .container{max-width:860px;padding-top:28px}}';
+var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+
+/* ───────── DOM : onglet + bouton nav ───────── */
+var tab=document.createElement('div');
+tab.id='tab-parcours'; tab.style.display='none'; tab.setAttribute('data-testid','tab-parcours');
+tab.innerHTML='<div class="container" id="pcRoot"></div>';
+var lpev=document.getElementById('tab-lpev');
+if(lpev&&lpev.parentNode) lpev.parentNode.insertBefore(tab,lpev.nextSibling); else document.body.appendChild(tab);
+
+var ntLpev=document.getElementById('nt-lpev');
+var btn=document.createElement('button');
+btn.className='bnav-tab'; btn.id='nt-parcours'; btn.setAttribute('data-testid','bnav-parcours');
+btn.setAttribute('onclick',"switchTab('parcours')");
+btn.innerHTML='<span class="bnav-icon">🎓</span><span class="bnav-label">Parcours</span>';
+btn.style.setProperty('display','none','important');
+if(ntLpev&&ntLpev.parentNode) ntLpev.parentNode.insertBefore(btn,ntLpev.nextSibling);
+
+/* Visibilité : Parcours remplace Compléments en mode diabète */
+function pcNavSync(){
+  var diab=false;
+  try{ diab=(typeof kpDiabIsActive==='function') ? kpDiabIsActive() : (typeof profile!=='undefined'&&profile&&profile.dietMode==='diabete'); }catch(e){}
+  var b=document.getElementById('nt-parcours'), l=document.getElementById('nt-lpev'), card=document.getElementById('lpevPlanCard');
+  if(b) b.style.setProperty('display', diab?'flex':'none','important');
+  if(l) l.style.setProperty('display', diab?'none':'','important');
+  if(diab&&l) l.style.setProperty('display','none','important');
+  if(diab&&card) card.style.setProperty('display','none','important');
+  if(!diab){
+    if(l) l.style.removeProperty('display');
+    var t=document.getElementById('tab-parcours');
+    if(t&&t.style.display!=='none'&&typeof currentTab!=='undefined'&&currentTab==='parcours'){ try{ switchTab('plan'); }catch(e){} }
+  }
+}
+setInterval(pcNavSync,1500); setTimeout(pcNavSync,600);
+
+/* ───────── switchTab wrapper ───────── */
+var _origSwitch=window.switchTab;
+window.switchTab=function(t){
+  _origSwitch(t);
+  var el=document.getElementById('tab-parcours'), nb=document.getElementById('nt-parcours');
+  if(t==='parcours'){
+    if(el){ el.style.display='block'; el.classList.remove('tab-slide'); void el.offsetWidth; el.classList.add('tab-slide'); }
+    if(nb) nb.classList.add('active');
+    kpPcRender();
+  } else {
+    if(el) el.style.display='none';
+    if(nb) nb.classList.remove('active');
+  }
+};
+
+/* ───────── VUES ───────── */
+var V={view:'home',m:0,c:0,page:0,qi:0,qsel:-1,qok:0,alreadyDone:false};
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function root(){ return document.getElementById('pcRoot'); }
+
+window.kpPcRender=function(){
+  var r=root(); if(!r) return;
+  if(V.view==='module') return pcRenderModule(r);
+  if(V.view==='chapter') return pcRenderChapter(r);
+  if(V.view==='quiz') return pcRenderQuiz(r);
+  if(V.view==='congrats') return pcRenderCongrats(r);
+  pcRenderHome(r);
+};
+
+function pcRenderHome(r){
+  var s=pcState(), tot=pcTotalCh(), done=pcDoneTotal(), cur=pcCurrentModule();
+  var h='<div class="pc-eyebrow" style="color:#0f6b5c">Formation Diabète</div>'+
+    '<div class="pc-h1">Mon parcours</div>'+
+    '<div class="pc-sub">12 modules pour reprendre la main sur votre santé, chapitre par chapitre.</div>'+
+    '<div class="pc-stats">'+
+    '<div class="pc-stat"><b>'+(s.pts||0)+'</b><span>⭐ Points</span></div>'+
+    '<div class="pc-stat"><b>'+done+' / '+tot+'</b><span>📗 Chapitres</span></div>'+
+    '<div class="pc-stat"><b>'+Math.round(done/tot*100)+'%</b><span>🎯 Parcours</span></div>'+
+    '</div>';
+  var m=PC[cur], pct=pcModPct(cur);
+  h+='<div class="pc-hero" data-testid="pc-hero" onclick="kpPcOpenModule('+cur+')">'+
+    '<div style="flex:1;min-width:0"><div class="pc-eyebrow">Module '+(cur+1)+(pct>0&&pct<100?' — en cours':'')+'</div>'+
+    '<h3>'+esc(m.t)+'</h3><p>'+esc(m.d)+'</p></div>'+
+    '<div class="pc-ring" style="background:conic-gradient(#7ee0b4 '+(pct*3.6)+'deg,rgba(255,255,255,.15) 0deg)"><div class="pc-ring-in">'+pct+'%</div></div>'+
+    '</div>';
+  h+='<div class="pc-mods">';
+  PC.forEach(function(mod,mi){
+    if(mi===cur) return;
+    var unlocked=pcModUnlocked(mi), p=pcModPct(mi);
+    h+='<div class="pc-mod'+(unlocked?'':' pc-locked')+'" data-testid="pc-mod-'+mi+'" '+(unlocked?('onclick="kpPcOpenModule('+mi+')"'):'')+'>'+
+      '<div class="pc-mod-emoji">'+(unlocked?mod.e:'🔒')+'</div>'+
+      '<div class="pc-mod-body"><div class="pc-eyebrow">Module '+(mi+1)+' · '+mod.ch.length+' chapitres</div>'+
+      '<h4>'+esc(mod.t)+'</h4><div class="pc-bar"><i style="width:'+p+'%"></i></div></div>'+
+      '<div class="pc-mod-pct">'+(p===100?'✓':(unlocked?p+'%':''))+'</div></div>';
+  });
+  h+='</div>';
+  r.innerHTML=h;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function pcRenderModule(r){
+  var mi=V.m, m=PC[mi], pct=pcModPct(mi);
+  var h='<div class="pc-back" data-testid="pc-back-home" onclick="kpPcHome()">← Mon parcours</div>'+
+    '<div class="pc-hero" style="cursor:default">'+
+    '<div style="flex:1;min-width:0"><div class="pc-eyebrow">Module '+(mi+1)+'</div>'+
+    '<h3>'+esc(m.t)+'</h3><p>'+esc(m.d)+'</p></div>'+
+    '<div class="pc-ring" style="background:conic-gradient(#7ee0b4 '+(pct*3.6)+'deg,rgba(255,255,255,.15) 0deg)"><div class="pc-ring-in">'+pct+'%</div></div>'+
+    '</div><div class="pc-chlist">';
+  m.ch.forEach(function(c,ci){
+    var done=pcIsDone(mi,ci), un=pcChUnlocked(mi,ci);
+    h+='<div class="pc-chip'+(un?'':' pc-locked')+'" data-testid="pc-ch-'+mi+'-'+ci+'" '+(un?('onclick="kpPcOpenChapter('+mi+','+ci+')"'):'')+'>'+
+      '<div class="pc-chnum'+(done?' pc-ok':'')+'">'+(done?'✓':(ci+1))+'</div>'+
+      '<div class="pc-chip-t"><div class="pc-eyebrow">Chapitre '+(ci+1)+' · '+c.p.length+' pages · quiz</div><b>'+esc(c.t)+'</b></div>'+
+      '<div class="pc-chip-r">'+(un?'›':'🔒')+'</div></div>';
+  });
+  h+='</div>';
+  r.innerHTML=h;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function pcRenderChapter(r){
+  var m=PC[V.m], c=m.ch[V.c], pg=c.p[V.page], n=c.p.length, last=(V.page===n-1);
+  var h='<div class="pc-back" onclick="kpPcOpenModule('+V.m+')">← '+esc(m.t)+'</div>'+
+    '<div class="pc-eyebrow" style="color:#0f6b5c">Module '+(V.m+1)+' · Chapitre '+(V.c+1)+'</div>'+
+    '<div class="pc-h1" style="font-size:21px">'+esc(c.t)+'</div>'+
+    '<div class="pc-card" style="margin-top:12px">'+
+    '<div class="pc-page-h">'+esc(pg[0])+'</div>'+
+    '<div class="pc-page-b">'+esc(pg[1])+'</div>'+
+    (last&&c.mi?('<div class="pc-mission"><b>🎯 Mission du jour</b>'+esc(c.mi)+'</div>'):'')+
+    '</div>'+
+    '<div class="pc-foot"><div class="pc-foot-meta"><span>'+(V.page+1)+' / '+n+'</span><span>~'+(n*2)+' min de lecture</span></div>'+
+    '<div class="pc-bar"><i style="width:'+Math.round((V.page+1)/n*100)+'%"></i></div>'+
+    '<div class="pc-nav">'+
+    '<button class="pc-btn pc-btn-ghost" data-testid="pc-prev" onclick="kpPcPage(-1)" '+(V.page===0?'disabled':'')+'>‹ Précédent</button>'+
+    (last?'<button class="pc-btn pc-btn-main" data-testid="pc-start-quiz" onclick="kpPcStartQuiz()">Faire le quiz ✓</button>'
+         :'<button class="pc-btn pc-btn-main" data-testid="pc-next" onclick="kpPcPage(1)">Suivant ›</button>')+
+    '</div></div>';
+  r.innerHTML=h;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function pcRenderQuiz(r){
+  var c=PC[V.m].ch[V.c], q=c.q[V.qi], n=c.q.length, answered=(V.qsel>=0);
+  var h='<div class="pc-back" onclick="kpPcOpenChapter('+V.m+','+V.c+')">← Retour au chapitre</div>'+
+    '<div class="pc-eyebrow" style="color:#0f6b5c">Quiz — Chapitre '+(V.c+1)+'</div>'+
+    '<div class="pc-foot-meta" style="margin-top:8px"><span>Question '+(V.qi+1)+' sur '+n+'</span><span>'+V.qok+' ✓</span></div>'+
+    '<div class="pc-bar"><i style="width:'+Math.round(V.qi/n*100)+'%"></i></div>'+
+    '<div class="pc-quiz-q">'+esc(q[0])+'</div>';
+  q[1].forEach(function(opt,i){
+    var cls='';
+    if(answered){ if(i===q[2]) cls=' pc-good'; else if(i===V.qsel) cls=' pc-bad'; }
+    h+='<div class="pc-opt'+cls+'" data-testid="pc-opt-'+i+'" '+(answered?'':('onclick="kpPcAnswer('+i+')"'))+'>'+
+      '<div class="pc-opt-l">'+String.fromCharCode(65+i)+'</div><div>'+esc(opt)+'</div></div>';
+  });
+  if(answered){
+    var good=(V.qsel===q[2]);
+    h+='<div class="pc-exp '+(good?'pc-exp-good':'pc-exp-bad')+'"><b>'+(good?'✅ Bonne réponse !':'❌ Pas tout à fait…')+'</b><br>'+esc(q[3])+'</div>'+
+      '<div class="pc-nav"><button class="pc-btn pc-btn-main" data-testid="pc-next-q" onclick="kpPcNextQ()">'+(V.qi===n-1?'Voir le résultat 🏅':'Question suivante ›')+'</button></div>';
+  }
+  r.innerHTML=h;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function pcRenderCongrats(r){
+  var m=PC[V.m], c=m.ch[V.c], n=c.q.length, score=Math.round(V.qok/n*100), pct=pcModPct(V.m);
+  var lastCh=(V.c===m.ch.length-1), lastMod=(V.m===PC.length-1);
+  var h='<div class="pc-congrats" data-testid="pc-congrats"><div class="pc-medal">🏅</div>'+
+    '<h3>Félicitations !</h3><p>Vous avez terminé le chapitre '+(V.c+1)+' — '+esc(c.t)+'</p>'+
+    '<div class="pc-cstats">'+
+    '<div class="pc-cstat"><b>'+score+'%</b><span>Score quiz</span></div>'+
+    '<div class="pc-cstat"><b>'+(V.alreadyDone?'—':'+'+PTS_PER_CH)+'</b><span>Points gagnés</span></div>'+
+    '<div class="pc-cstat"><b>'+pcState().pts+'</b><span>Total points</span></div>'+
+    '</div>'+
+    '<div class="pc-cprog"><div class="pc-foot-meta"><span>Progression du module</span><span>'+pct+'%</span></div>'+
+    '<div class="pc-bar"><i style="width:'+pct+'%"></i></div></div>'+
+    '<button class="pc-btn pc-btn-main" style="width:100%;background:#fff;color:#0b4a3f" data-testid="pc-continue" onclick="kpPcContinue()">'+
+    (lastCh?(lastMod?'Terminer le parcours 🎉':'Module suivant ›'):'Chapitre suivant ›')+'</button>'+
+    '<div style="margin-top:12px;font-size:13px;color:#bfe0d5;cursor:pointer;font-weight:600" onclick="kpPcHome()">Retour au parcours</div>'+
+    '</div>';
+  r.innerHTML=h;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+/* ───────── ACTIONS ───────── */
+window.kpPcHome=function(){ V.view='home'; kpPcRender(); };
+window.kpPcOpenModule=function(mi){ if(!pcModUnlocked(mi)){ try{ toast('🔒 Terminez d\'abord le module précédent'); }catch(e){} return; } V.view='module'; V.m=mi; kpPcRender(); };
+window.kpPcOpenChapter=function(mi,ci){ if(!pcChUnlocked(mi,ci)){ try{ toast('🔒 Terminez d\'abord le chapitre précédent'); }catch(e){} return; } V.view='chapter'; V.m=mi; V.c=ci; V.page=0; kpPcRender(); };
+window.kpPcPage=function(d){ var n=PC[V.m].ch[V.c].p.length; V.page=Math.max(0,Math.min(n-1,V.page+d)); kpPcRender(); };
+window.kpPcStartQuiz=function(){ V.view='quiz'; V.qi=0; V.qsel=-1; V.qok=0; kpPcRender(); };
+window.kpPcAnswer=function(i){ if(V.qsel>=0) return; V.qsel=i; if(i===PC[V.m].ch[V.c].q[V.qi][2]) V.qok++; kpPcRender(); };
+window.kpPcNextQ=function(){
+  var n=PC[V.m].ch[V.c].q.length;
+  if(V.qi<n-1){ V.qi++; V.qsel=-1; kpPcRender(); return; }
+  var s=pcState(), key=V.m+'-'+V.c;
+  V.alreadyDone=!!s.done[key];
+  if(!V.alreadyDone){ s.done[key]={s:Math.round(V.qok/n*100),ts:Date.now()}; s.pts=(s.pts||0)+PTS_PER_CH; pcPersist(); }
+  V.view='congrats'; kpPcRender();
+};
+window.kpPcContinue=function(){
+  var m=PC[V.m];
+  if(V.c<m.ch.length-1){ kpPcOpenChapter(V.m,V.c+1); return; }
+  if(V.m<PC.length-1){ kpPcOpenModule(V.m+1); return; }
+  kpPcHome();
+};
+})();
+</script>
+<!-- KP-PARCOURS-END -->
