@@ -312,3 +312,7 @@ Bugs signalés :
 ## Quiz Diabète : Q4 & Q6 multi-sélection (fork, session courante)
 - Q4 « Prenez-vous un traitement ? » et Q6 « Quel est votre objectif principal ? » → multi:true + sous-titre « Plusieurs réponses possibles ». Option exclusive générique via propriété none:index (Q4 none:0 « Aucun », Q10 none:6 « Aucune »). compCount (règle ≥2 complications → Prioritaire) désormais limité à la question marquée comp:true (Q10) pour ne pas compter les traitements/objectifs.
 - Testé E2E : Q4 2 sélections + exclusivité Aucun, Q6 2 sélections, parcours complet → Profil À Optimiser score 7, complications 0.
+
+## Pré-remplissage Traitement depuis Q4 du quiz (fork, session courante)
+- kpDiabPrefillFromQuiz() (appelée dans kpDiabRender après kpDiabFillForm) : lit profile.diabQuiz.answers[3] (Q4 traitement, tableau multi OU nombre legacy). Comprimés(1)/Comprimés+insuline(3)/GLP-1(4) → switch Médicament ON ; Insuline(2)/(3) → switch Insuline ON ; Aucun(0) → rien. N'active que si le switch n'est pas déjà ON (jamais de désactivation forcée).
+- Testé : [1,2]→2 switches ON+champs visibles ; [0]→OFF ; legacy 3→2 ON.

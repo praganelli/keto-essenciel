@@ -14921,6 +14921,18 @@ function kpDiabTgl(kind, val){
   if(fld) fld.style.display = val ? 'block' : 'none';
 }
 window.kpDiabTgl = kpDiabTgl;
+/* Pré-remplissage des switches Traitement d'après la Q4 du Questionnaire Diabète
+   (0=Aucun, 1=Comprimés, 2=Insuline, 3=Comprimés+insuline, 4=Autre injectable GLP-1) */
+function kpDiabPrefillFromQuiz(){
+  var dq = (typeof profile !== 'undefined' && profile && profile.diabQuiz) || null;
+  if(!dq || !dq.answers) return;
+  var a = dq.answers[3];
+  if(a == null) return;
+  var t = Array.isArray(a) ? a : [a];
+  if(!window._diabMedOn && (t.indexOf(1)>-1 || t.indexOf(3)>-1 || t.indexOf(4)>-1)) kpDiabTgl('med', true);
+  if(!window._diabInsOn && (t.indexOf(2)>-1 || t.indexOf(3)>-1)) kpDiabTgl('ins', true);
+}
+window.kpDiabPrefillFromQuiz = kpDiabPrefillFromQuiz;
 function kpDiabToday(){ var t=kpDiabTodayKey(); var log=kpDiabLog(); for(var i=log.length-1;i>=0;i--){ if(log[i]&&log[i].date===t) return log[i]; } return null; }
 function kpDiabGlyValues(e){
   var out=[]; if(!e||!e.gly) return out;
@@ -15086,6 +15098,7 @@ function kpDiabRender(){
     + tile(today&&today.sleep?today.sleep:null,'h','Sommeil','😴')
     + tile(today&&today.mood?KP_MOODS[Number(today.mood)-1]:null,'','Humeur','💭');
   kpDiabFillForm(today);
+  try{ kpDiabPrefillFromQuiz(); }catch(e){}
   kpDiabDrawChart();
   kpDiabRenderHistory();
   try{ if(typeof kpRenderDiabQuickCard==='function') kpRenderDiabQuickCard(); }catch(e){}
