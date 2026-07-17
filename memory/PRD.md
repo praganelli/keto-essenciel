@@ -358,3 +358,10 @@ Bugs signalés :
 - Frontend : pcRenderChapter affiche <img class="pc-illus"> sur la PAGE 1 de chaque chapitre (onerror → masquée si absente).
 - Icône onglet Parcours : 🎓 remplacé par la structure standard bnav-icon (bnav-emoji + bnav-svg toque de diplômé fill=currentColor) → gris #8f978c inactif / blanc actif comme les autres onglets. Vérifié : svg display block, emoji none.
 - Testé : image m0c1 chargée (naturalWidth>0) dans chapitre 2, capture visuelle OK, spot-check qualité 4 images OK.
+
+## Module 4 refait avec contenu utilisateur + images par page (fork, juin 2026)
+- Module 4 renommé « Les menus personnalisés » (🥑). Chapitre 1 entièrement réécrit avec le contenu intégral fourni par l'utilisateur : 8 pages (objectifs, pourquoi personnalisé, calcul profil, objectifs, macronutriments, Marc & Sophie, hydratation, erreurs/conseils/à retenir), mission du jour (générer son 1er menu), quiz 5 questions (Q2 à 4 options « Toutes ces réponses », Q4 « Les deux réponses sont exactes »).
+- NOUVEAU format de page : [titre, corps, imgName?] — pcRenderChapter affiche l'image de la page si pg[2] défini, sinon l'illustration du chapitre (mXcY) sur la page 1 uniquement. Temps de lecture affiché = ~n×1,2 min.
+- 5 nouvelles illustrations générées (EXTRAS dans gen_parcours_img.py) : m3c0b (profil âge/taille/poids/activité), m3c0c (4 objectifs), m3c0d (assiette 3 macros), m3c0e (Marc & Sophie), m3c0f (hydratation). Total pc_img = 64 images.
+- ⚠️ L'utilisateur va probablement fournir les chapitres suivants du Module 4 un par un (ch.2 annoncé : « Personnaliser ses menus ») — appliquer le même traitement (pages riches + images EXTRAS m3c1b… + quiz fourni). Chapitres 2-4 actuels (Adapter/Remplacer/Calcul glucides) conservés en attendant.
+- Testé E2E : 8 pages OK, m3c0b chargée page 3, mission + quiz OK, Q2 4 options, module hero renommé.

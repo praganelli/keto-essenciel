@@ -95,9 +95,17 @@ SUBJECTS = {
  (11,4): "a joyful person raising arms on top of a small hill at sunrise, a golden trophy and confetti, celebration",
 }
 
-async def gen_one(client, sem, key, subject):
-    mi, ci = key
-    fname = f"m{mi}c{ci}.jpg"
+# Images supplémentaires (pages internes de chapitres) : nom de fichier -> sujet
+EXTRAS = {
+ "m3c0b": "a friendly person silhouette in the center surrounded by floating soft icons: a small birthday cake, a vertical height ruler, a bathroom scale and a pair of walking shoes, personal profile setup concept",
+ "m3c0c": "a wooden signpost with four gentle curved paths leading to: a slimmer happy silhouette, a balanced scale in equilibrium, a calm smiling blood drop, and a glowing full energy battery",
+ "m3c0d": "a large dinner plate seen from above divided into three zones: golden olive oil avocado salmon and nuts, a piece of meat with eggs and tofu, and fresh green leafy vegetables, harmony and balance",
+ "m3c0e": "two different people standing side by side: a tall larger older man and a smaller athletic sporty woman, each with a different sized plate of healthy food floating in front of them, comparison concept",
+ "m3c0f": "a happy person drinking a big glass of fresh water, water droplets and tiny sparkling mineral crystals floating around, light fresh hydration mood",
+}
+
+async def gen_one(client, sem, fname, subject):
+    fname = fname + ".jpg"
     path = os.path.join(OUT, fname)
     if os.path.exists(path):
         print(f"SKIP {fname} (existe)", flush=True)
@@ -135,11 +143,12 @@ async def main():
     only = None
     if len(sys.argv) > 2 and sys.argv[1] == '--only':
         only = set(sys.argv[2].split(','))
-    items = [(k, v) for k, v in SUBJECTS.items()
-             if only is None or f"m{k[0]}c{k[1]}" in only]
+    pairs = [(f"m{k[0]}c{k[1]}", v) for k, v in SUBJECTS.items()]
+    pairs += list(EXTRAS.items())
+    items = [(n, s) for n, s in pairs if only is None or n in only]
     sem = asyncio.Semaphore(1)
     async with httpx.AsyncClient(timeout=240) as client:
-        res = await asyncio.gather(*[gen_one(client, sem, k, v) for k, v in items])
+        res = await asyncio.gather(*[gen_one(client, sem, n, s) for n, s in items])
     ok = sum(1 for x in res if x)
     print(f"TERMINÉ : {ok}/{len(items)} images", flush=True)
 
