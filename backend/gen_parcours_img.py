@@ -107,6 +107,12 @@ EXTRAS = {
  "m4c0c": "an open refrigerator drawer scene with fresh broccoli, zucchini, spinach, peppers, mushrooms on one side and chicken, salmon, eggs, cheese on the other side",
  "m4c0d": "essential kitchen tools neatly arranged: a frying pan, a chef knife, a wooden cutting board, a saucepan, a baking dish, a small kitchen scale and glass storage boxes",
  "m4c0e": "four cooking methods in a gentle grid: a sizzling frying pan, a warm oven with a tray, an air fryer, and a simmering pot with steam, cozy kitchen mood",
+ "m4c1b": "a croissant, white bread, sugary cereal bowl and orange juice glass on a table, with a rising then crashing wavy curve floating above them, a tired sleepy person slumped nearby",
+ "m4c1c": "three gentle pillars or podiums: one holding eggs cheese and smoked salmon, one holding an avocado butter and olive oil bottle, one holding tomatoes cucumber and spinach leaves",
+ "m4c1d": "a beautiful breakfast spread seen from above: a plate with fried eggs avocado and cherry tomatoes, a nordic plate with smoked salmon and cream cheese, and a small glass of greek yogurt with chia seeds and berries",
+ "m4c1e": "a steaming coffee cup, a teapot with a cup of tea and a large glass of water glowing warmly, while a soda can and orange juice box sit far away faded in the background",
+ "m4c2b": "a dinner plate seen from above divided in three parts: half filled with colorful low-carb vegetables, a quarter with grilled chicken and fish, a quarter with avocado slices olive oil and cheese",
+ "m4c2d": "a vibrant keto plate with three distinct colors: green broccoli and salad, red bell peppers and tomatoes, white cauliflower with grilled fish, artistic and appetizing composition",
 }
 
 async def gen_one(client, sem, fname, subject):

@@ -371,3 +371,9 @@ Bugs signalés :
 - Images : anciens m4c0..m4c5 RENOMMÉS m4c1..m4c6 (décalage) ; 5 nouvelles générées : m4c0 (cuisine organisée, défaut page 1), m4c0b (placard huiles+épices), m4c0c (frigo légumes/protéines), m4c0d (ustensiles), m4c0e (4 modes de cuisson). Total pc_img = 69.
 - Annoncé par l'utilisateur : progression 10 % → le module 5 comptera à terme ~10 chapitres ; prochain contenu attendu : « Les petits-déjeuners keto qui rassasient durablement » (remplacera l'actuel ch.2). Badge « Ma cuisine est prête » mentionné en page 8 (pas de système de badges dédié pour l'instant).
 - Testé E2E : 7 chips, titre module OK, ch.1 8 pages, m4c0 + m4c0b chargées.
+
+## Module 5 — chapitres 2 & 3 refaits avec contenu utilisateur (fork, juin 2026)
+- Ch.2 « Le petit-déjeuner keto : bien démarrer sa journée » : 8 pages (intro, objectifs+obligatoire?, pb petits-déj classiques, 3 piliers, 5 exemples, café/boissons, rassasiement+erreurs+conseils, recettes+à retenir+badge « Le matin en toute sérénité ») + mission (tester 2 petits-déj + observations) + quiz 5 q. Images : m4c1 (défaut) + 4 nouvelles m4c1b (petit-déj sucré/pic), m4c1c (3 piliers), m4c1d (assiettes), m4c1e (boissons).
+- Ch.3 « Déjeuners et dîners : construire une assiette keto équilibrée » REMPLACE les 2 anciens chapitres « Le déjeuner » et « Le dîner » (fusion, module passe à 6 chapitres : Bases, Petit-déj, Déj&Dîners, Desserts, Snacks, Batch). 5 pages + mission (méthode de l'assiette) + quiz 5 q + badge « J'équilibre mon assiette ». Images : renames m4c3(saumon)→m4c2c (exemples), m4c4→m4c3 (desserts), m4c5→m4c4 (snacks), m4c6→m4c5 (batch) ; 2 nouvelles : m4c2b (assiette méthode 3 zones), m4c2d (assiette 3 couleurs).
+- Prochain contenu annoncé : « Les collations : en avez-vous vraiment besoin ? » (remplacera l'actuel ch.5 Snacks → attention aux renames m4c4).
+- Testé E2E : ch2 8 pages + m4c1c OK, ch3 5 pages + m4c2b/m4c2c OK, 6 chips.
