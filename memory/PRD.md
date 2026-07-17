@@ -377,3 +377,9 @@ Bugs signalés :
 - Ch.3 « Déjeuners et dîners : construire une assiette keto équilibrée » REMPLACE les 2 anciens chapitres « Le déjeuner » et « Le dîner » (fusion, module passe à 6 chapitres : Bases, Petit-déj, Déj&Dîners, Desserts, Snacks, Batch). 5 pages + mission (méthode de l'assiette) + quiz 5 q + badge « J'équilibre mon assiette ». Images : renames m4c3(saumon)→m4c2c (exemples), m4c4→m4c3 (desserts), m4c5→m4c4 (snacks), m4c6→m4c5 (batch) ; 2 nouvelles : m4c2b (assiette méthode 3 zones), m4c2d (assiette 3 couleurs).
 - Prochain contenu annoncé : « Les collations : en avez-vous vraiment besoin ? » (remplacera l'actuel ch.5 Snacks → attention aux renames m4c4).
 - Testé E2E : ch2 8 pages + m4c1c OK, ch3 5 pages + m4c2b/m4c2c OK, 6 chips.
+
+## Module 5 — chapitres 4 & 5 refaits (fork, juin 2026)
+- Ch.4 « Les collations : en avez-vous vraiment besoin ? » REMPLACE l'ancien « Les snacks » et est placé en position 4 (avant Desserts). 5 pages + mission (échelle de faim 1-10 + verre d'eau) + quiz 5 q + badge « Je maîtrise mes collations ». Images : swap m4c3(mousse)↔m4c4(planche snacks) → m4c3=planche snacks (défaut ch4), m4c4=mousse (défaut ch5) ; 3 nouvelles : m4c3b (frigo réflexion), m4c3c (collations simples), m4c3d (verre d'eau + horloge).
+- Ch.5 « Se faire plaisir : desserts et gourmandises keto » REMPLACE l'ancien « Les desserts ». 5 pages + mission (tester une recette de dessert + observations) + quiz 5 q + badge « Je me fais plaisir avec équilibre ». 3 nouvelles images : m4c4b (ingrédients pâtisserie keto), m4c4c (desserts variés), m4c4d (thé + carré chocolat noir).
+- Ordre M5 (6 chapitres) : Bases, Petit-déj, Déj&Dîners, Collations, Desserts, Batch cooking. Prochain contenu annoncé : « Batch cooking : cuisiner une fois pour plusieurs repas » (remplacera ch.6, défaut m4c5 déjà correct).
+- Testé E2E : ch4 (m4c3, m4c3c) et ch5 (m4c4, m4c4c) OK, 6 chips, titres corrects.

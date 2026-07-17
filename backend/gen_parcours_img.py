@@ -113,6 +113,12 @@ EXTRAS = {
  "m4c1e": "a steaming coffee cup, a teapot with a cup of tea and a large glass of water glowing warmly, while a soda can and orange juice box sit far away faded in the background",
  "m4c2b": "a dinner plate seen from above divided in three parts: half filled with colorful low-carb vegetables, a quarter with grilled chicken and fish, a quarter with avocado slices olive oil and cheese",
  "m4c2d": "a vibrant keto plate with three distinct colors: green broccoli and salad, red bell peppers and tomatoes, white cauliflower with grilled fish, artistic and appetizing composition",
+ "m4c3b": "a thoughtful person pausing in front of an open refrigerator at evening, one hand on chin, a soft thought bubble with a question mark above their head",
+ "m4c3c": "simple keto snacks neatly arranged on a small board: a boiled egg cut in half, cheese cubes, cucumber and celery sticks with cream cheese dip, avocado slices, olives and sardines",
+ "m4c3d": "a large glass of fresh water in the foreground with a small clock beside it, faded processed snack bars and cookies pushed far in the blurry background",
+ "m4c4b": "keto baking ingredients arranged on a kitchen counter: eggs, butter, a jug of cream, mascarpone jar, shredded coconut bowl, almond flour sack, dark chocolate bar and a few raspberries",
+ "m4c4c": "an elegant spread of keto desserts: a chocolate mousse in a glass, almond muffins, greek yogurt with red berries, a vanilla coconut cream and a mini cheesecake",
+ "m4c4d": "a warm cup of fragrant tea with steam and a single square of dark chocolate on a small plate, cozy comforting evening mood",
 }
 
 async def gen_one(client, sem, fname, subject):
