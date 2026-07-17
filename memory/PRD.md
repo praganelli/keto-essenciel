@@ -397,3 +397,12 @@ Bugs signalés :
 - 4 nouvelles images : m4c9 (cuisinier autonome, défaut), m4c9b (3 étapes), m4c9c (substitutions chou-fleur/courgettes/pizza keto), m4c9d (curiosité marché/herbes). Total pc_img ≈ 94.
 - Annoncé : l'utilisateur va probablement refaire le « Module 6 – Activité physique et mode de vie » (actuellement M8 Activité physique + M9 Stress/sommeil dans la structure — clarifier avec lui si le futur contenu M6 remplace l'actuel M6 Perte de poids ou s'insère autrement).
 - Testé E2E : ch10 5 pages + m4c9 OK, quiz « Question 1 sur 10 », congrats 100 % + « Module suivant › ».
+
+## Module 6 réorganisé + chapitres 1-3 refaits (fork, juin 2026)
+- RÉORDONNANCEMENT : le module « Activité physique » (ex-index 7) devient le Module 6 (index 5), renommé « Bouger, récupérer et retrouver son énergie » 🏃. « Perte de poids » passe index 6, « Comprendre ses analyses » index 7. Script /app/reorder_m6.py utilisé. Images pivotées : anciens m7cX→m5cX, m5cX→m6cX, m6cX→m7cX ; ancien m7c0 (muscle porte glucose) → m5c0b.
+- Ch.1 « Pourquoi bouger quand on est diabétique ? » : 5 pages + quiz 5 q + badge « Je me remets en mouvement ». Images : m5c0 (à régénérer), m5c0b ✓, m5c0c ✓, m5c0d ✓.
+- Ch.2 « Quelle activité physique choisir ? » (remplace « La marche ») : 5 pages + quiz 5 q + badge « Je trouve mon activité ». Images m5c1 ✓ (défaut) ; m5c1b/c/d EN ATTENTE.
+- Ch.3 « Les muscles : vos meilleurs alliés contre le diabète » (remplace « Le renforcement musculaire ») : 5 pages + quiz 5 q + badge « Je renforce mon corps ». Images m5c2 ✓ (défaut) ; m5c2b/c/d EN ATTENTE.
+- Quiz final Module 5 (20 questions, seuil 80 %) implémenté : carte 🎓 en bas du module (déverrouillée à 100 %), écrans réussite (badge 🧑‍🍳 Chef Keto-Essenciel + compétences, +100 pts) / échec (retry). Champ fq/bd/sk sur le module. Testé E2E (échec 20×0 → retry ; 20/20 → Module validé).
+- ⚠️ BLOCAGE : clé OpenAI « Billing hard limit has been reached » → 7 images en attente : m5c0, m5c1b, m5c1c, m5c1d, m5c2b, m5c2c, m5c2d. Relancer : cd /app/backend && python3 gen_parcours_img.py --only m5c0,m5c1b,m5c1c,m5c1d,m5c2b,m5c2c,m5c2d une fois la facturation augmentée. Le SUBJECTS du script a été remappé aux nouveaux index (5↔activité, 6↔poids, 7↔analyses).
+- Ch.4 attendu : « Le sommeil : un pilier essentiel de votre santé métabolique » (remplacera sans doute « Le gainage »).
