@@ -365,3 +365,9 @@ Bugs signalés :
 - 5 nouvelles illustrations générées (EXTRAS dans gen_parcours_img.py) : m3c0b (profil âge/taille/poids/activité), m3c0c (4 objectifs), m3c0d (assiette 3 macros), m3c0e (Marc & Sophie), m3c0f (hydratation). Total pc_img = 64 images.
 - ⚠️ L'utilisateur va probablement fournir les chapitres suivants du Module 4 un par un (ch.2 annoncé : « Personnaliser ses menus ») — appliquer le même traitement (pages riches + images EXTRAS m3c1b… + quiz fourni). Chapitres 2-4 actuels (Adapter/Remplacer/Calcul glucides) conservés en attendant.
 - Testé E2E : 8 pages OK, m3c0b chargée page 3, mission + quiz OK, Q2 4 options, module hero renommé.
+
+## Module 5 refait : nouveau chapitre 1 « Les bases d'une cuisine keto réussie » (fork, juin 2026)
+- Module 5 renommé « Cuisiner Keto au quotidien » (🍳). NOUVEAU chapitre 1 inséré en tête (contenu intégral utilisateur) : 8 pages (bienvenue, objectifs+organisation, placard/matières grasses/aromates, légumes+protéines, ustensiles, modes de cuisson+hydratation, erreurs+conseils, à retenir+badge) + mission (vérifier placards) + quiz 5 questions. Les 6 anciens chapitres deviennent ch.2-7 (Petit-déj → Batch cooking).
+- Images : anciens m4c0..m4c5 RENOMMÉS m4c1..m4c6 (décalage) ; 5 nouvelles générées : m4c0 (cuisine organisée, défaut page 1), m4c0b (placard huiles+épices), m4c0c (frigo légumes/protéines), m4c0d (ustensiles), m4c0e (4 modes de cuisson). Total pc_img = 69.
+- Annoncé par l'utilisateur : progression 10 % → le module 5 comptera à terme ~10 chapitres ; prochain contenu attendu : « Les petits-déjeuners keto qui rassasient durablement » (remplacera l'actuel ch.2). Badge « Ma cuisine est prête » mentionné en page 8 (pas de système de badges dédié pour l'instant).
+- Testé E2E : 7 chips, titre module OK, ch.1 8 pages, m4c0 + m4c0b chargées.

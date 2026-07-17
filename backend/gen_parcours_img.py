@@ -102,6 +102,11 @@ EXTRAS = {
  "m3c0d": "a large dinner plate seen from above divided into three zones: golden olive oil avocado salmon and nuts, a piece of meat with eggs and tofu, and fresh green leafy vegetables, harmony and balance",
  "m3c0e": "two different people standing side by side: a tall larger older man and a smaller athletic sporty woman, each with a different sized plate of healthy food floating in front of them, comparison concept",
  "m3c0f": "a happy person drinking a big glass of fresh water, water droplets and tiny sparkling mineral crystals floating around, light fresh hydration mood",
+ "m4c0": "a bright welcoming home kitchen with neatly organized fresh keto ingredients on the counter: olive oil bottle, eggs, avocado, vegetables, cheese, a pan hanging, cozy and tidy",
+ "m4c0b": "an open pantry cupboard with olive oil, butter, ghee jar, avocado oil and a colorful row of small spice jars with herbs, cozy organized shelves",
+ "m4c0c": "an open refrigerator drawer scene with fresh broccoli, zucchini, spinach, peppers, mushrooms on one side and chicken, salmon, eggs, cheese on the other side",
+ "m4c0d": "essential kitchen tools neatly arranged: a frying pan, a chef knife, a wooden cutting board, a saucepan, a baking dish, a small kitchen scale and glass storage boxes",
+ "m4c0e": "four cooking methods in a gentle grid: a sizzling frying pan, a warm oven with a tray, an air fryer, and a simmering pot with steam, cozy kitchen mood",
 }
 
 async def gen_one(client, sem, fname, subject):
