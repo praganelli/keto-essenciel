@@ -134,6 +134,10 @@ EXTRAS = {
  "m4c8b": "a split scene: a rushed stressed person running with a clock, versus a calm person walking steadily on stepping stones, with a plate of grilled chicken and eggs glowing nearby",
  "m4c8c": "a colorful portion of green vegetables glowing warmly next to faded packaged snack bars and cookies pushed to the side, whole foods winning concept",
  "m4c8d": "a person drinking a big glass of water with a small droplet trail, and behind them a fallen plate being gently picked back up, resilience and fresh restart mood",
+ "m4c9": "a confident happy home cook wearing an apron in a bright kitchen, freely composing a plate with grilled chicken, green vegetables and avocado, no cookbook, creative freedom mood",
+ "m4c9b": "three numbered-free steps shown as a gentle visual flow: a raw chicken fillet and eggs, then fresh green vegetables being added to a plate, then a drizzle of olive oil and avocado finishing the dish",
+ "m4c9c": "cooking swaps illustration: grated cauliflower in a bowl next to rice fading away, zucchini spirals next to fading pasta, and a keto pizza with a golden almond crust",
+ "m4c9d": "a curious cook joyfully smelling fresh herbs at a market stall with colorful new vegetables and spice jars around, discovery and pleasure mood",
 }
 
 async def gen_one(client, sem, fname, subject):

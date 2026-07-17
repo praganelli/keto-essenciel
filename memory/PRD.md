@@ -391,3 +391,9 @@ Bugs signalés :
 - Ch.9 « Les erreurs les plus fréquentes… et comment les éviter » (NOUVEAU) : 5 pages (6 erreurs + conseils) + quiz 5 q + badge « Je progresse avec confiance ». Images m4c8 + m4c8b/c/d.
 - Module 5 = 9 chapitres. Prochain contenu annoncé (ch.10 final, progression 100 %) : « Devenir autonome en cuisine et construire ses propres repas keto ».
 - Total images pc_img ≈ 90. Testé E2E : 9 chips, ch7/8/9 p1 images OK.
+
+## Module 5 — chapitre 10 final « Devenir autonome en cuisine » (fork, juin 2026)
+- Ch.10 ajouté (module 5 = 10 chapitres, 100 %) : 5 pages (intro, règle des 3 étapes, adapter une recette + confiance, continuez à apprendre + astuce, à retenir + récap module) + mission finale (repas sans recette + photo) + QUIZ DOUBLE de 10 questions (5 chapitre + 5 quiz final du module, préfixées « Quiz final — ») + badge 🧑‍🍳 « Chef Keto-Essenciel ».
+- 4 nouvelles images : m4c9 (cuisinier autonome, défaut), m4c9b (3 étapes), m4c9c (substitutions chou-fleur/courgettes/pizza keto), m4c9d (curiosité marché/herbes). Total pc_img ≈ 94.
+- Annoncé : l'utilisateur va probablement refaire le « Module 6 – Activité physique et mode de vie » (actuellement M8 Activité physique + M9 Stress/sommeil dans la structure — clarifier avec lui si le futur contenu M6 remplace l'actuel M6 Perte de poids ou s'insère autrement).
+- Testé E2E : ch10 5 pages + m4c9 OK, quiz « Question 1 sur 10 », congrats 100 % + « Module suivant › ».
