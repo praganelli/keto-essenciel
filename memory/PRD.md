@@ -383,3 +383,11 @@ Bugs signalés :
 - Ch.5 « Se faire plaisir : desserts et gourmandises keto » REMPLACE l'ancien « Les desserts ». 5 pages + mission (tester une recette de dessert + observations) + quiz 5 q + badge « Je me fais plaisir avec équilibre ». 3 nouvelles images : m4c4b (ingrédients pâtisserie keto), m4c4c (desserts variés), m4c4d (thé + carré chocolat noir).
 - Ordre M5 (6 chapitres) : Bases, Petit-déj, Déj&Dîners, Collations, Desserts, Batch cooking. Prochain contenu annoncé : « Batch cooking : cuisiner une fois pour plusieurs repas » (remplacera ch.6, défaut m4c5 déjà correct).
 - Testé E2E : ch4 (m4c3, m4c3c) et ch5 (m4c4, m4c4c) OK, 6 chips, titres corrects.
+
+## Module 5 — chapitres 6, 7, 8, 9 refaits/ajoutés (fork, juin 2026)
+- Ch.6 « Le Batch Cooking : cuisiner une fois, manger plusieurs fois » (remplace l'ancien batch) : 5 pages + quiz 5 q + badge « J'organise ma semaine ». Images m4c5 (défaut) + m4c5b/c/d.
+- Ch.7 « Manger keto avec un petit budget » (NOUVEAU) : 5 pages + quiz 5 q + badge « Je mange mieux sans dépenser plus ». Images m4c6 + m4c6b/c/d (nouvelles).
+- Ch.8 « Manger au restaurant, en vacances ou chez des proches » (NOUVEAU) : 5 pages + quiz 5 q + badge « Je reste serein en toutes circonstances ». Images m4c7 + m4c7b/c/d.
+- Ch.9 « Les erreurs les plus fréquentes… et comment les éviter » (NOUVEAU) : 5 pages (6 erreurs + conseils) + quiz 5 q + badge « Je progresse avec confiance ». Images m4c8 + m4c8b/c/d.
+- Module 5 = 9 chapitres. Prochain contenu annoncé (ch.10 final, progression 100 %) : « Devenir autonome en cuisine et construire ses propres repas keto ».
+- Total images pc_img ≈ 90. Testé E2E : 9 chips, ch7/8/9 p1 images OK.

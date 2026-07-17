@@ -119,6 +119,21 @@ EXTRAS = {
  "m4c4b": "keto baking ingredients arranged on a kitchen counter: eggs, butter, a jug of cream, mascarpone jar, shredded coconut bowl, almond flour sack, dark chocolate bar and a few raspberries",
  "m4c4c": "an elegant spread of keto desserts: a chocolate mousse in a glass, almond muffins, greek yogurt with red berries, a vanilla coconut cream and a mini cheesecake",
  "m4c4d": "a warm cup of fragrant tea with steam and a single square of dark chocolate on a small plate, cozy comforting evening mood",
+ "m4c5b": "a calm sunday kitchen prep scene: a weekly menu planner sheet, a shopping list, a clean counter and a stack of empty glass containers ready to be filled",
+ "m4c5c": "batch cooked food portions on a counter: grilled chicken pieces, a tray of roasted broccoli zucchini and peppers, a bowl of boiled eggs and a jar of homemade vinaigrette",
+ "m4c5d": "an open refrigerator with neatly stacked labeled glass containers of prepared meals, small date labels, and a freezer drawer with individual portions",
+ "m4c6": "a wallet and a few coins next to a generous basket of affordable keto foods: eggs, canned sardines, chicken legs, cheese and seasonal vegetables, smart budget mood",
+ "m4c6b": "budget-friendly whole foods on a market stall: a tray of eggs, chicken legs, ground meat, canned sardines, cheese wedge, seasonal green vegetables and a bag of frozen vegetables",
+ "m4c6c": "a person comparing prices in a grocery aisle holding a shopping list, a small price tag per kilo visible as a blank tag, cart with simple whole foods",
+ "m4c6d": "a homemade simple keto meal glowing warmly on one side, and on the other side faded expensive packaged products with blank flashy labels, comparison concept",
+ "m4c7": "a happy couple dining at a cozy restaurant table with grilled fish, green salad and sparkling water, warm evening ambiance, waiter in the background",
+ "m4c7b": "a joyful multigenerational family sharing a convivial meal around a big table, one plate in focus with grilled meat and colorful vegetables, warm celebration mood",
+ "m4c7c": "a travel scene: an open cooler bag with boiled eggs, cheese portions, olives, vegetable sticks and a canned sardine tin, a road and suitcase in the background",
+ "m4c7d": "a relaxed person at home browsing a restaurant menu on a smartphone, small dish icons floating above the screen, calm anticipation mood",
+ "m4c8": "a person calmly walking on a winding path with small gentle obstacles, stepping over them confidently, a bright horizon ahead, learning journey concept",
+ "m4c8b": "a split scene: a rushed stressed person running with a clock, versus a calm person walking steadily on stepping stones, with a plate of grilled chicken and eggs glowing nearby",
+ "m4c8c": "a colorful portion of green vegetables glowing warmly next to faded packaged snack bars and cookies pushed to the side, whole foods winning concept",
+ "m4c8d": "a person drinking a big glass of water with a small droplet trail, and behind them a fallen plate being gently picked back up, resilience and fresh restart mood",
 }
 
 async def gen_one(client, sem, fname, subject):
