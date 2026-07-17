@@ -449,3 +449,18 @@ Bugs signalés :
 - pcModLabel : intro→« Module 0 », bonus→« Module bonus », sinon « Module »+mi (index = numéro affiché). Sous-titre home : « Du module 0 de bienvenue au module bonus : 14 modules… ».
 - Images : 20 prompts mwc0…mwc4d ajoutés aux EXTRAS de gen_parcours_img.py (96 subjects, 247 extras). ⚠️ Billing OpenAI TOUJOURS bloqué (retesté après recharge crédits Emergent — la clé OpenAI de l'utilisateur reste en hard limit). Relance : cd /app/backend && python3 gen_parcours_img.py
 - Testé E2E (guest+diabete, 390px) : Module 0 en tête (0 %), 17/106 chapitres après migration, ch1 Bienvenue OK, module 4 en cours accessible, quiz final Module 0 visible à 100 %. node --check OK, sync keto_app.html + restart.
+
+## Modules 11 & 12 — refonte complète (fork, juin 2026)
+- Module 11 (index 11, ip:"m10") « Les traitements » 🩺 REFAIT via /app/apply_m11.py : 10 chapitres (Comprendre les traitements, Metformine, Sulfamides/glinides, Gliflozines SGLT2, GLP-1, Gliptines DPP-4, Insuline, Hypoglycémie/règle des 15, Traitements+mode de vie/rémission, Devenir acteur) × 5 pages + mission + quiz 5 q + badge, QUIZ FINAL 20 q, bd:"🩺 Je comprends mes traitements". Ton prudent : « jamais de modification sans avis médical » répété partout.
+- Module 12 (index 12, ip:"m11") « Le suivi » 📈 REFAIT via /app/apply_m12.py : 10 chapitres (Pourquoi se suivre, Poids/tour de taille, Autosurveillance glycémique, Capteurs CGM/temps dans la cible, RDV médicaux de l'année, Énergie/sommeil/moral, Carnet de bord, Lire ses courbes, Boucle d'ajustement, Célébrer/durer) × 5 pages + mission + quiz 5 q + badge, QUIZ FINAL 20 q, bd:"📈 Maître de mon suivi". Parcours = 14 modules / 116 chapitres.
+- Images réaffectées (pc_img) : M11 → m10c0(metformine)→m10c1, m10c1(insuline)→m10c6, m10c2(GLP-1)→m10c4, m10c3(SGLT2) inchangé, m10c4(médecin)→m10c9 ; M12 → m11c0(balance)→m11c1, m11c1(lecteur)→m11c2, m11c2(calendrier HbA1c)→m11c4, m11c3(cible)→m11c8, m11c4(célébration)→m11c9.
+- gen_parcours_img.py : SUBJECTS (10,0)-(10,9) et (11,0)-(11,9) complétés + 60 EXTRAS m10c0b…m11c9d. Total : 106 subjects, 307 extras. ⚠️ Billing OpenAI toujours bloqué → ~250 images en attente. Relance : cd /app/backend && python3 gen_parcours_img.py
+- Testé E2E (guest+diabete, 390px) : M11 ch1 OK, M12 liste complète 10 chapitres + quiz final 20 q, M12 ch3 avec image réaffectée (lecteur glycémie) OK. node --check OK, sync keto_app.html + restart.
+- TOUS les modules du Parcours sont désormais au format refondu (M0 : 5 ch, M1-M5 anciens formats conservés, M6-M12 : 10 ch, Bonus : 12 ch).
+
+## Module 1 « Comprendre son diabète » 🩸 refait + validation crash (fork, juin 2026)
+- Module 1 (index 1, ip:"m0") REFAIT via /app/apply_m1.py : 10 chapitres × 5 pages + mission + quiz 5 q + badge, QUIZ FINAL 20 q. Parcours = 14 modules / 121 chapitres / 135 badges (121 ch + 14 modules).
+- CRASH `TypeError: … reading 'done'` NON REPRODUIT après sync : la structure PC complète a été validée en node (14 modules, 121 chapitres, 0 problème, rendus home/badges/modules/chapitres OK). Le crash venait d'un état intermédiaire cassé du fichier servi.
+- SYNC : /app/keto.html (source de vérité) copié vers /app/backend/keto_app.html (le backend sert UNIQUEMENT keto_app.html via /api/app — TOUJOURS copier après modification).
+- Testé E2E (compte demo.keto.qa2026@gmail.com, 390px) : login OK, Parcours home (200 pts, 29/121 ch, badges 32/135), Module 1 ouvert avec 10 chapitres (50 %), ch1 « Qu'est-ce que le diabète ? » rendu avec image, écran 🏅 Mes badges OK (32/135, 24 %). ZÉRO erreur JS console/pageerror.
+- ⚠️ Billing OpenAI toujours bloqué pour les images (backlog inchangé).
