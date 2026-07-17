@@ -353,6 +353,14 @@ async def download_promo_pack():
         filename="keto-visuels-promo.zip",
     )
 
+@api_router.get("/pc-img/{name}")
+async def get_parcours_image(name: str):
+    safe = os.path.basename(name)
+    path = ROOT_DIR / "pc_img" / safe
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="not found")
+    return FileResponse(path, media_type="image/jpeg", headers={"Cache-Control": "public, max-age=86400"})
+
 @api_router.get("/promo/{name}")
 async def get_promo_image(name: str):
     safe = os.path.basename(name)

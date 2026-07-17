@@ -351,3 +351,10 @@ Bugs signalés :
 - Progression sauvegardée dans profile.diabParcours {done:{'mi-ci':{s,ts}}, pts} → save() (localStorage) + syncProfileToCloud() (Firestore users/{uid}/ketoProfile/data) — +50 pts une seule fois par chapitre.
 - Remplacement Compléments : pcNavSync (interval 1,5 s) → si kpDiabIsActive() : #nt-parcours visible, #nt-lpev + #lpevPlanCard masqués (setProperty !important pour contrer le CSS !important existant) ; sinon inverse + retour auto sur Plan si on quitte le mode diabète pendant que Parcours est ouvert.
 - Testé E2E (compte démo, viewport 390px) : nav flex/none OK, home (héro + 11 cartes + stats 0/59), verrouillage chapitre 3 bloqué, lecture 3 pages, quiz 2/2, congrats +50 pts, done['0-0'] persisté, chapitre 2 déverrouillé. fix_tail OK (aucun octet orphelin), backend synchronisé.
+
+## Illustrations IA des chapitres Parcours + icône nav (fork, juin 2026)
+- 59 illustrations générées (gpt-image-1.5, clé OpenAI backend, quality medium, style flat pastel SANS texte pour éviter les fautes IA) via /app/backend/gen_parcours_img.py (idempotent, --only mXcY possible, concurrence 1 + sleep 15s pour respecter le rate limit 5 img/min). Fichiers : /app/backend/pc_img/m{module}c{chapitre}.jpg (640px JPEG ~20-30 Ko).
+- Servies par GET /api/pc-img/{name} (FileResponse, cache 24h) dans server.py.
+- Frontend : pcRenderChapter affiche <img class="pc-illus"> sur la PAGE 1 de chaque chapitre (onerror → masquée si absente).
+- Icône onglet Parcours : 🎓 remplacé par la structure standard bnav-icon (bnav-emoji + bnav-svg toque de diplômé fill=currentColor) → gris #8f978c inactif / blanc actif comme les autres onglets. Vérifié : svg display block, emoji none.
+- Testé : image m0c1 chargée (naturalWidth>0) dans chapitre 2, capture visuelle OK, spot-check qualité 4 images OK.
