@@ -67,7 +67,7 @@ SUBJECTS = {
  # M8 — Activité physique
  (5,1): "a happy person walking briskly in a park after a meal, sun setting, footsteps trail behind",
  (5,2): "a person doing squats at home in the living room using a chair, water bottle and yoga mat nearby",
- (5,3): "a person holding a solid forearm plank position on a mat, straight aligned body, focused and calm",
+ (5,3): "a person sleeping peacefully in a cozy bed under a soft blanket, crescent moon and stars through the window, gentle floating sparkles, calm restorative night mood",
  (5,4): "a relaxed person stretching gently in the evening, soft lamp light, calm cozy room",
  # M9 — Stress et sommeil
  (8,0): "a stressed person at a desk with storm cloud above, a gland releasing dots that raise a small liquid gauge",
@@ -146,6 +146,9 @@ EXTRAS = {
  "m5c2b": "a friendly strong muscle character catching small glucose dots with open arms, surrounded by soft icons of a bone, a balance scale and shopping bags being carried easily",
  "m5c2c": "a cozy living room home workout: a person rising from a chair, another doing push-ups against a wall, a green elastic band and two water bottles used as dumbbells on the floor",
  "m5c2d": "a weekly calendar with two highlighted training days and rest days between them, a person gently warming up their shoulders beside it, calm and safe mood",
+ "m5c3b": "a peaceful sleeping person with soft glowing icons floating above the bed: a gently repairing heart, a calm smiling blood drop, a recharging battery and a small clock showing a full night, restful mood",
+ "m5c3c": "a calm evening bedroom scene: a phone placed face down on a nightstand, an open book, a cup of herbal tea, a dim warm lamp and a crescent moon through a slightly open window",
+ "m5c3d": "a cozy three-step evening ritual connected by a soft dotted path towards a bed: a steaming herbal infusion cup, an open book with reading glasses, and a person breathing deeply with closed eyes",
 }
 
 async def gen_one(client, sem, fname, subject):

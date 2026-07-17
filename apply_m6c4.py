@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+# Remplace le chapitre 4 du Module 6 ("Le gainage") par "Le sommeil : votre meilleur allié invisible"
+import io, sys
+
+PATH = '/app/keto.html'
+src = io.open(PATH, encoding='utf-8').read()
+
+OLD = ''' {t:"Le gainage",p:[
+  ["Un tronc solide","Le gainage renforce les muscles profonds du tronc : abdominaux, dos, lombaires.\\nBénéfices : meilleure posture, moins de mal de dos, ventre plus plat, et une base solide pour toutes les autres activités.\\nBonus : les grands groupes musculaires sollicités consomment du glucose, comme tout effort musculaire."],
+  ["Les exercices de base","• Planche sur les avant-bras : tenez 20 secondes, dos droit (ni creusé ni bombé). Progressez vers 60 s.\\n• Planche latérale : 15 s de chaque côté.\\n• Superman allongé sur le ventre : levez bras et jambes 3 × 10.\\nSi la planche est trop dure : commencez sur les genoux. La qualité (alignement) prime toujours sur la durée."]],
+  q:[["Le gainage renforce principalement…",["Les muscles profonds du tronc","Les cheveux","Les ongles"],0,"Abdos profonds, dos, lombaires : la base d'un corps fonctionnel."],
+     ["En planche, que faut-il privilégier ?",["La durée à tout prix","La qualité de l'alignement","Regarder la télé"],1,"Un dos bien aligné 20 secondes vaut mieux qu'une minute en mauvaise posture."]]},'''
+
+NEW = ''' {t:"Le sommeil : votre meilleur allié invisible",mi:"Ce soir, choisissez une seule nouvelle habitude : 🌙 éteindre les écrans 30 minutes avant le coucher, 📖 lire quelques pages d'un livre, 🧘 pratiquer 5 minutes de respiration, ou 🌡️ vérifier que votre chambre est calme, sombre et fraîche. Demain matin, notez comment vous vous sentez au réveil.",p:[
+  ["👋 Introduction","Dormir est bien plus qu'un simple moment de repos.\\nPendant votre sommeil, votre organisme récupère, répare les tissus, régule de nombreuses hormones et prépare votre corps pour la journée suivante.\\nUn sommeil de qualité contribue à votre énergie, à votre humeur et à une meilleure gestion de votre diabète.\\nPrendre soin de son sommeil, c'est donc prendre soin de sa santé.\\n\\n⏱ Temps de lecture : 5 minutes.\\n\\n🎯 À la fin de ce chapitre, vous serez capable de :\\n✅ comprendre pourquoi le sommeil est essentiel ;\\n✅ identifier les habitudes qui favorisent un sommeil réparateur ;\\n✅ mettre en place une routine du soir simple et efficace."],
+  ["😴 Pourquoi le sommeil est-il si important ?","Un sommeil de qualité peut contribuer à :\\n❤️ soutenir un bon équilibre métabolique ;\\n📉 favoriser une meilleure régulation de la glycémie ;\\n🍽️ limiter les sensations de faim et certaines envies de sucre ;\\n😊 améliorer l'humeur et la concentration ;\\n💪 favoriser la récupération physique après une activité.\\nÀ l'inverse, des nuits répétées de mauvaise qualité peuvent rendre plus difficile l'adoption de bonnes habitudes de vie.\\n\\n⏰ De combien d'heures de sommeil avons-nous besoin ? Les besoins varient d'une personne à l'autre. Pour la plupart des adultes, 7 à 9 heures de sommeil par nuit constituent une bonne référence.\\nL'important n'est pas seulement la durée, mais aussi la qualité du sommeil et le fait de se réveiller reposé.","m5c3b"],
+  ["🌙 Les bonnes habitudes du soir","Quelques gestes simples peuvent favoriser l'endormissement :\\n📱 évitez les écrans dans l'heure qui précède le coucher si possible ;\\n☕ limitez le café, le thé ou les boissons énergisantes en fin de journée ;\\n🌡️ dormez dans une chambre calme, sombre et fraîche ;\\n📖 privilégiez une activité relaxante avant de dormir : lecture, respiration, musique douce ou méditation ;\\n🕒 essayez de vous coucher à des horaires réguliers.\\n\\n💤 Si vous vous réveillez la nuit — il est normal de se réveiller brièvement au cours de la nuit. Si vous ne parvenez pas à vous rendormir :\\n✔ évitez de regarder l'heure en permanence ;\\n✔ respirez lentement ;\\n✔ si l'éveil se prolonge, levez-vous quelques minutes pour une activité calme, puis retournez vous coucher lorsque le sommeil revient.","m5c3c"],
+  ["⚠️ Quand demander de l'aide ?","Parlez-en à votre médecin si vous :\\n• ronflez fortement avec des pauses respiratoires observées par votre entourage ;\\n• vous sentez très fatigué malgré des nuits complètes ;\\n• souffrez d'insomnie persistante ;\\n• avez des mouvements involontaires importants des jambes la nuit.\\nCes symptômes peuvent nécessiter une évaluation médicale.\\n\\n💡 Astuce Keto-Essenciel : créez votre rituel du coucher. Par exemple :\\n🌿 une infusion sans sucre ;\\n📖 dix minutes de lecture ;\\n🧘 trois minutes de respiration profonde.\\nEn répétant ces gestes chaque soir, votre cerveau associera progressivement cette routine au moment du sommeil.","m5c3d"],
+  ["📝 À retenir","📝 À retenir :\\n✔ le sommeil est un pilier de votre santé ;\\n✔ un sommeil de qualité peut faciliter la gestion de votre diabète ;\\n✔ une routine régulière favorise un meilleur endormissement ;\\n✔ n'hésitez pas à consulter si vos troubles du sommeil persistent.\\n\\n🏅 Badge à débloquer en validant le quiz : « Je prends soin de mon sommeil »"]],
+  q:[["Le sommeil joue-t-il un rôle dans la santé métabolique ?",["Non","Oui"],1,"Pendant la nuit, l'organisme récupère et régule de nombreuses hormones — dont celles qui influencent la glycémie."],
+     ["Combien d'heures de sommeil sont généralement recommandées pour un adulte ?",["4 à 5 heures","Environ 7 à 9 heures"],1,"7 à 9 heures par nuit : la référence pour la plupart des adultes."],
+     ["Quelle habitude peut favoriser un meilleur sommeil ?",["Utiliser son téléphone jusqu'au moment de dormir","Mettre en place une routine calme avant le coucher"],1,"Une routine relaxante répétée chaque soir prépare le cerveau au sommeil."],
+     ["Que faire si les troubles du sommeil persistent ?",["Les ignorer","En parler à un professionnel de santé"],1,"Insomnie persistante, ronflements avec pauses respiratoires : une évaluation médicale peut être nécessaire."],
+     ["Quel bénéfice peut apporter un sommeil de qualité ?",["Une meilleure récupération et une meilleure gestion de la glycémie","Aucun effet sur la santé","La première réponse est correcte"],2,"Récupération, énergie, humeur et régulation de la glycémie : le sommeil agit sur tout."]]},'''
+
+if OLD not in src:
+    print('ERREUR: bloc "Le gainage" introuvable'); sys.exit(1)
+if src.count(OLD) != 1:
+    print('ERREUR: bloc non unique'); sys.exit(1)
+src = src.replace(OLD, NEW)
+io.open(PATH, 'w', encoding='utf-8').write(src)
+print('OK: chapitre 4 Module 6 remplacé par "Le sommeil"')

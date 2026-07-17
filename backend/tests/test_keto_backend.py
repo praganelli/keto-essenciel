@@ -10,7 +10,7 @@ import time
 import pytest
 import requests
 
-BASE_URL = os.environ.get('EXPO_BACKEND_URL', 'https://body-metrics-bug.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('EXPO_BACKEND_URL', 'https://keto-content-hub-1.preview.emergentagent.com').rstrip('/')
 
 
 @pytest.fixture
