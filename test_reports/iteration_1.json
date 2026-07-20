@@ -1,5 +1,5 @@
 {
-  "summary": "Verified MAIN BUG FIX: After an existing user logs out and logs back in, the app opens directly on the Plan tab and the obWelcomeScreen picker ('Créer un nouveau profil' / 'Choisir un profil existant' / 'Récupérer depuis le cloud') does NOT appear. Also verified REGRESSION: a fresh guest (Continuer sans compte) with no profile still sees the welcome picker with all 3 options. Both scenarios pass. Tests run against https://keto-content-hub-1.preview.emergentagent.com/api/app (the keto.html app served by FastAPI).",
+  "summary": "Verified MAIN BUG FIX: After an existing user logs out and logs back in, the app opens directly on the Plan tab and the obWelcomeScreen picker ('Créer un nouveau profil' / 'Choisir un profil existant' / 'Récupérer depuis le cloud') does NOT appear. Also verified REGRESSION: a fresh guest (Continuer sans compte) with no profile still sees the welcome picker with all 3 options. Both scenarios pass. Tests run against https://keto-parcours-dev.preview.emergentagent.com/api/app (the keto.html app served by FastAPI).",
   "backend_issues": { "critical": [], "minor": [] },
   "frontend_issues": {
     "ui_bugs": [

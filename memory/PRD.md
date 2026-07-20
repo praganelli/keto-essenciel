@@ -411,7 +411,7 @@ Bugs signalés :
 - Ch.4 « Le gainage » REMPLACÉ par « Le sommeil : votre meilleur allié invisible » (contenu intégral utilisateur) : 5 pages (intro+objectifs, pourquoi le sommeil+7-9h, bonnes habitudes du soir+réveils nocturnes, quand demander de l'aide+astuce rituel du coucher, à retenir) + mission (choisir 1 nouvelle habitude ce soir) + quiz 5 q (Q5 à 3 options « La première réponse est correcte ») + badge « Je prends soin de mon sommeil ». Script /app/apply_m6c4.py (python replace, anti tool-glitch).
 - Images : SUBJECTS (5,3) remappé sommeil + EXTRAS m5c3b (bienfaits+horloge), m5c3c (chambre du soir), m5c3d (rituel 3 étapes) ajoutés dans gen_parcours_img.py. Ancien m5c3.jpg (planche/gainage) SUPPRIMÉ.
 - ⚠️ BLOCAGE PERSISTANT : clé OpenAI utilisateur toujours « Billing hard limit has been reached » (retesté 2x cette session) → 11 images en attente : m5c0, m5c1b/c/d, m5c2b/c/d, m5c3, m5c3b/c/d. Relancer quand facturation OK : cd /app/backend && python3 gen_parcours_img.py --only m5c3,m5c3b,m5c3c,m5c3d,m5c0,m5c1b,m5c1c,m5c1d,m5c2b,m5c2c,m5c2d
-- ⚠️ FORK : URL preview de ce pod = https://keto-content-hub-1.preview.emergentagent.com (l'ancienne body-metrics-bug pointe vers un vieux backend).
+- ⚠️ FORK : URL preview de ce pod = https://keto-parcours-dev.preview.emergentagent.com (l'ancienne body-metrics-bug pointe vers un vieux backend).
 - Testé E2E (guest + dietMode diabete forcé, 390px) : titre, 5 pages, images m5c3b/c/d référencées (masquées via onerror tant que non générées), mission p5, badge, quiz Q1 sommeil OK. fix_tail OK, node --check OK, sync backend/keto_app.html + restart.
 - Prochain chapitre annoncé par le flux : « Le stress : comprendre son impact et apprendre à le gérer » (remplacera sans doute l'actuel ch.5 « Les étirements »).
 

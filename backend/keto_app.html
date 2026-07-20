@@ -14193,7 +14193,7 @@ function authOnSuccess(user, isNewUser){
 }
 
 /* ── Resend signup notification ── */
-var KP_API_BASE = 'https://keto-content-hub-1.preview.emergentagent.com';
+var KP_API_BASE = 'https://keto-parcours-dev.preview.emergentagent.com';
 function notifyAdminSignup(user, name){
   var endpoint = KP_API_BASE + '/api/notify-signup';
   try {
@@ -14287,7 +14287,7 @@ window.kpRewardParrainViaFunction = kpRewardParrainViaFunction;
 function kpNotifyServer(user, kind, extra){
   try{
     if(!user || typeof user.getIdToken !== 'function') return;
-    var base = (location.hostname.indexOf('emergentagent.com') >= 0) ? '/api' : 'https://keto-content-hub-1.preview.emergentagent.com/api';
+    var base = (location.hostname.indexOf('emergentagent.com') >= 0) ? '/api' : 'https://keto-parcours-dev.preview.emergentagent.com/api';
     user.getIdToken().then(function(t){
       fetch(base + '/notify', {
         method:'POST',
@@ -21648,7 +21648,7 @@ authGuest = function(){
   };
   function kpCcUser(){ var u=(typeof currentUser!=='undefined'&&currentUser)?currentUser:(window.currentUser||null); return u; }
   // Base API du générateur : relatif sur Emergent, absolu ailleurs (Netlify) — CORS autorisé côté backend
-  var KP_CONTENT_BASE = (location.hostname.indexOf('emergentagent.com') >= 0) ? '/api' : 'https://keto-content-hub-1.preview.emergentagent.com/api';
+  var KP_CONTENT_BASE = (location.hostname.indexOf('emergentagent.com') >= 0) ? '/api' : 'https://keto-parcours-dev.preview.emergentagent.com/api';
   function kpContentApi(path){ return KP_CONTENT_BASE + path; }
 
   /* ═══ Tous les inscrits (Firebase Auth via backend) ═══ */

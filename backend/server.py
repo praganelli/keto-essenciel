@@ -132,7 +132,7 @@ def notify_admin_new_subscriber(email: str, source: str = ''):
     resend.Emails.send(params)
 
 
-KP_APP_URL = os.environ.get('KP_APP_URL', 'https://keto-content-hub-1.preview.emergentagent.com/api/app')
+KP_APP_URL = os.environ.get('KP_APP_URL', 'https://keto-parcours-dev.preview.emergentagent.com/api/app')
 
 
 def send_trial_ended_email(to_email: str):

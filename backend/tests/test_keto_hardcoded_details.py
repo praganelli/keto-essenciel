@@ -15,7 +15,7 @@ BASE_URL = os.environ.get(
     "EXPO_BACKEND_URL",
     os.environ.get(
         "EXPO_PUBLIC_BACKEND_URL",
-        "https://keto-content-hub-1.preview.emergentagent.com",
+        "https://keto-parcours-dev.preview.emergentagent.com",
     ),
 ).rstrip("/")
 
