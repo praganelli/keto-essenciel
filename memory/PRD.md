@@ -524,3 +524,8 @@ Bugs signalés :
 - LOGO : les logos in-app (splash/header, +landing/popup par copie JS) remplacés par le détourage PROPRE de l'œuvre ORIGINALE via rembg (session isnet-general-use — modèle /root/.u2net) au lieu de la reproduction Nano Banana (proportions altérées) : /tmp/logo_o.webp 800px & logo_o_small.webp 460px. Icônes PWA GCS régénérées avec l'emblème original.
 - Déformation header : cause = .khh-titlewrap .khh-logo-h{flex:0 0 100%} étirait l'image (box 300x58 vs ratio 3.108) → fix object-fit:contain + object-position:left center. Validé testing_agent iteration_12 (5/6) + iteration_13 (PASS ciblé).
 - GOOGLE AUTH : erreur auth/unauthorized-domain = domaine absent des Authorized domains Firebase (action UTILISATEUR : Console Firebase → Authentication → Settings → Domaines autorisés → ajouter keto-parcours-dev.preview.emergentagent.com + domaine de prod). Ajout du message d'erreur explicite avec location.hostname dans authTranslateError.
+
+## Logo flat « Keto-Essenciel » pleine largeur (fork, juillet 2026)
+- Nouveau logo horizontal flat (emblème K-avocat cercle + wordmark + SIMPLE•NATUREL•ESSENTIEL, fourni sur fond blanc) détouré par seuil (fond blanc pur), remplace les base64 splash (.splash-logo-img 900px) et header (.khh-logo-h 520px). Landing + popup copient le header (JS).
+- Pleine largeur téléphone : .khh-logo-h{width:100%;height:auto} + .khh-left{flex:1} (le logo occupe toute la largeur moins la cloche) ; splash width:min(88vw,520px). Ratio vérifié 4.095≈4.094 (aucune déformation).
+- Icônes PWA GCS régénérées avec le nouvel emblème.
