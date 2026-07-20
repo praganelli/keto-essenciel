@@ -542,3 +542,10 @@ Bugs signalés :
 - FIX FUITE EXCLUSIONS (racine trouvée) : les fuites venaient de kpQualityFix (contrôle qualité post-génération) qui échangeait des recettes SANS respecter `excluded` : kpqSwapIn (utilisé par fix poissons gras/œufs/protéines/plaisir/14 jours) + kpqSetSide (couleurs légumes). Fixes : (1) kpqSwapIn ignore les candidats kpRecipeHasExcluded ; (2) kpqSetSide filtre kpVegSideBanned ; (3) kpPickVegSide filtre kpVegSideBanned (nouveau helper) ; (4) kpRecipeHasExcluded dé-pluralise chaque mot (/s\b/g) + inclut r.name. VALIDÉ runtime : 5 générations × 7 jours × 9 slots + 8 swaps = 0 fuite (exclusions test Champignons/Avocat/Saumon).
 - ⚠️ RAPPEL CRITIQUE : le fichier SERVI est /app/backend/keto_app.html (GET /api/app) — toujours `cp /app/keto.html /app/backend/keto_app.html` après édition.
 - Reste à vérifier (P1) : exportPDF()/printShopping() depuis la feuille Accès rapide.
+
+## Ajustements accueil v2 (fork, juillet 2026 — suite)
+- Carte « Générer ma semaine » : illustration agenda+avocat du mockup intégrée (crop mockup 15_41 + rembg isnet → webp base64 KPD_GEN_IMG ~15Ko, image gauche 122px / texte droite, bouton blanc dessous).
+- Anneau « Progression aujourd'hui » = % de repas effectués dans la journée (petit-déj≥10h, déj≥14h, dîner≥21h ; doneDays[jour]=100% « journée complétée ✓ ») ; statut « X repas sur Y effectués » ; barre = même % ; ligne « Xg restants » conservée (glucides).
+- « Prochain repas » renommé « Repas du jour » ; tuiles repas réduites (photo 84px, paddings serrés, hauteur ~102px vs ~136px).
+- Mobile : .recipe-of-day (Recette du jour) et .wfl-progress (« Semaine en cours /7 jours réalisés ») masqués via media query kpHomeModule.
+- ⚠️ CONFIRMÉ ENCORE : les search_replace PARALLÈLES sur keto.html se perdent silencieusement — TOUJOURS séquentiel sur ce fichier.
