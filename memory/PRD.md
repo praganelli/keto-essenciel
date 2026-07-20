@@ -549,3 +549,7 @@ Bugs signalés :
 - « Prochain repas » renommé « Repas du jour » ; tuiles repas réduites (photo 84px, paddings serrés, hauteur ~102px vs ~136px).
 - Mobile : .recipe-of-day (Recette du jour) et .wfl-progress (« Semaine en cours /7 jours réalisés ») masqués via media query kpHomeModule.
 - ⚠️ CONFIRMÉ ENCORE : les search_replace PARALLÈLES sur keto.html se perdent silencieusement — TOUJOURS séquentiel sur ce fichier.
+
+## Fix texte brut en bas de page + feature « ✓ repas pris » (fork, juillet 2026)
+- BUG (préexistant, présent aussi dans le commit HEAD) : la fin du fichier était DUPLIQUÉE — après le 1er `</script></body></html>` suivant window.KP_RECIPE_DETAILS, 486 octets de JSON orphelin + un 2e `</script></body></html>` → le JSON s'affichait en texte brut en bas de page (balance script 22/23). FIX : troncature après la 1re fin valide ; vérifié : 22/22 scripts, JSON 474 recettes intact, plus aucun texte.
+- FEATURE « repas pris » : global `mealsEaten={}` (clé 'dayIdx-b|l|d'), persisté dans keto-v9 (save/load), reset à chaque generateMenu. Bouton ✓ rond en haut à droite de chaque carte « Repas du jour » (kpd-meal-chk, stopPropagation, toggle kpToggleMealEaten) ; carte cochée = fond vert clair (.eaten). L'anneau « Progression aujourd'hui » = repas cochés / repas prévus (plus de logique horaire) ; statut « X repas sur Y pris » ; doneDays[jour] = 100%.
