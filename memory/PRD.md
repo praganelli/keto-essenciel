@@ -495,3 +495,8 @@ Bugs signalés :
 - NAV MOBILE 5 items : Plan, Recettes, [+ FAB vert surélevé #bnavPlus], Suivi, Profil. nt-lpev/nt-muscle masqués ≤980px ; pcNavSync patché (nt-parcours seulement desktop). FAB → kpQuickOpen().
 - FEUILLE « Accès rapides » (#kpQuickSheet, slide-up + backdrop, z-index 9410 > bannière essai 9000, swipe-down + backdrop + poignée pour fermer) : mode diabète → Diabète (kpDiabEntryOpen), Muscu, Formation (switchTab parcours) ; sinon → Muscu, Compléments, Courses (kpOpenShoppingCourses).
 - Vérifié screenshots 390px : header, dashboard complet, nav avec +, feuille ouverte, login v2 ; desktop 1440 : dash/header/plus cachés (display none), layout inchangé. 0 erreur JS.
+
+## Login v3 : logo sans carte blanche + fond formes organiques SVG (fork, juillet 2026)
+- Carte blanche derrière le logo SUPPRIMÉE (l'utilisateur n'aimait pas) → logo posé directement sur le fond, drop-shadow léger, légèrement agrandi (base clamp 210-300px / mobile min(56vw,21.5dvh,290px)).
+- Fond .auth-card = SVG data-uri (viewBox 390x844, slice) : fond #faf8f0 + forme crème haut (#f2f2e3), blob rond mi-droite (#e9eed8), petit blob mi-gauche, 2 ellipses vert pâle coins bas (#e6ecd2/#e2e9ca) — fidèle au mockup. Radial-gradients remplacés.
+- Vérifié : mobile 390 overflow=0, desktop split intact.

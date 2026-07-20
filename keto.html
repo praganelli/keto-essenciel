@@ -6957,16 +6957,10 @@ body{
 <style id="kplAuthStyles">
 /* ═══ CONNEXION v3 — mockup "Bienvenue !" ═══ */
 #authScreen .auth-tabs{display:none !important}
-#authScreen{ background:#f8f7f1 !important; }
+#authScreen{ background:#faf8f0 !important; }
 #authScreen::after{ background:none !important; }
 #authScreen .auth-card{
-  background:
-    radial-gradient(58% 22% at 50% -6%, rgba(226,222,201,.55) 0%, transparent 70%),
-    radial-gradient(34% 13% at 104% 42%, rgba(198,214,166,.42) 0%, transparent 72%),
-    radial-gradient(30% 11% at -6% 58%, rgba(205,219,176,.35) 0%, transparent 72%),
-    radial-gradient(42% 14% at -8% 104%, rgba(190,208,156,.55) 0%, transparent 74%),
-    radial-gradient(46% 15% at 108% 103%, rgba(190,208,156,.5) 0%, transparent 74%),
-    #f8f7f1 !important;
+  background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20390%20844%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%3Crect%20width%3D%22390%22%20height%3D%22844%22%20fill%3D%22%23faf8f0%22%2F%3E%3Cpath%20d%3D%22M0%200%20H390%20V236%20Q322%20300%20218%20288%20Q96%20274%2044%20322%20Q12%20350%200%20344%20Z%22%20fill%3D%22%23f2f2e3%22%2F%3E%3Ccircle%20cx%3D%22404%22%20cy%3D%22392%22%20r%3D%2298%22%20fill%3D%22%23e9eed8%22%2F%3E%3Ccircle%20cx%3D%22-26%22%20cy%3D%22475%22%20r%3D%2272%22%20fill%3D%22%23eef1de%22%2F%3E%3Cellipse%20cx%3D%2242%22%20cy%3D%22856%22%20rx%3D%22165%22%20ry%3D%22115%22%20fill%3D%22%23e6ecd2%22%2F%3E%3Cellipse%20cx%3D%22362%22%20cy%3D%22868%22%20rx%3D%22175%22%20ry%3D%22125%22%20fill%3D%22%23e2e9ca%22%2F%3E%3C%2Fsvg%3E") center/cover no-repeat #faf8f0 !important;
 }
 @media (max-width:980px){
   #authScreen .auth-card{ min-height:100dvh; }
@@ -6982,7 +6976,7 @@ body{
 /* Logo */
 #authScreen .auth-card .auth-logo{ text-align:center !important; margin-top:calc(30px + env(safe-area-inset-top)) !important; margin-bottom:6px !important; position:relative; }
 #authScreen .auth-logo::after{ content:none !important; display:none !important; }
-.kpl-logo{ width:clamp(210px, 52vw, 285px); max-width:100%; height:auto; display:block; margin:0 auto; background:#fff; padding:14px 22px 11px; border-radius:26px; border:1px solid rgba(94,124,97,.12); box-shadow:0 18px 40px -22px rgba(46,74,34,.4), 0 2px 8px -4px rgba(46,74,34,.12); box-sizing:border-box; }
+.kpl-logo{ width:clamp(210px, 54vw, 300px); max-width:100%; height:auto; display:block; margin:0 auto; filter:drop-shadow(0 10px 24px rgba(46,74,34,.16)); }
 @media (min-width:981px){
   #authScreen .auth-card .auth-logo{ margin-top:3vh !important; }
   .kpl-logo{ width:225px; }
@@ -7082,7 +7076,7 @@ body{
 @media (max-width:980px){
   /* ── Mise à l'échelle fluide (dvh) : tout tient sur l'écran de n'importe quel mobile ── */
   #authScreen .auth-card .auth-logo{ margin-top:calc(clamp(4px, 1.4dvh, 20px) + env(safe-area-inset-top)) !important; margin-bottom:clamp(0px, .4dvh, 6px) !important; }
-  .kpl-logo{ width:min(50vw, 20dvh, 265px); }
+  .kpl-logo{ width:min(56vw, 21.5dvh, 290px); }
   .kpl-welcome{ margin:clamp(4px, 1dvh, 10px) 0 clamp(7px, 1.5dvh, 15px); }
   .kpl-title{ font-size:clamp(18px, 2.5dvh, 22px); margin-bottom:clamp(3px, .6dvh, 6px); }
   .kpl-title-leaf{ font-size:clamp(13px, 1.9dvh, 17px); }
