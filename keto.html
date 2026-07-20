@@ -8003,6 +8003,20 @@ document.addEventListener('DOMContentLoaded',function(){
   try{ var t=document.querySelector('.khh-logo-h'); var d=document.getElementById('kpwHeroLogo'); if(t&&d) d.src=t.src; }catch(e){}
 });
 </script>
+<div id="kpWhatsNew" data-testid="kp-whatsnew" aria-hidden="true">
+  <div class="kpwn-card">
+    <img class="kpwn-logo" id="kpwnLogo" alt="Keto-Essenciel" draggable="false">
+    <div class="kpwn-title">Nouveautés v2.0 ✨</div>
+    <ul class="kpwn-list">
+      <li>🏠 Nouvel écran d'accueil : Résumé, Objectif et Repas du jour</li>
+      <li>➕ Bouton central « + » : vos accès rapides en un geste</li>
+      <li>🌿 Nouvelle identité : logo, connexion et démarrage repensés</li>
+      <li>📱 Affichage plein écran automatique sur mobile</li>
+    </ul>
+    <button type="button" class="kpwn-cta" onclick="kpWhatsNewClose()" data-testid="kp-whatsnew-close">Découvrir →</button>
+  </div>
+</div>
+
 <div id="kpQuickBackdrop" onclick="kpQuickClose()" data-testid="kp-quick-backdrop"></div>
 <div id="kpQuickSheet" role="dialog" aria-label="Accès rapides" data-testid="kp-quick-sheet">
   <div class="kpq-handle" onclick="kpQuickClose()"></div>
@@ -23603,7 +23617,7 @@ authGuest = function(){
     iosCap.name = 'apple-mobile-web-app-capable'; iosCap.content = 'yes';
     document.head.appendChild(iosCap);
     var iosStyle = document.createElement('meta');
-    iosStyle.name = 'apple-mobile-web-app-status-bar-style'; iosStyle.content = 'default';
+    iosStyle.name = 'apple-mobile-web-app-status-bar-style'; iosStyle.content = 'black-translucent';
     document.head.appendChild(iosStyle);
 
     // Service Worker désactivé : l'enregistrement via blob: est rejeté par
@@ -28340,6 +28354,24 @@ body.kp-quick-open #kpQuickSheet{ transform:translateY(0); }
 .kpq-tile:active{ transform:scale(.95); }
 .kpq-tile-ico{ font-size:27px; display:block; margin-bottom:8px; }
 .kpq-tile-lab{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:700; color:#2c342c; display:block; }
+/* ── Popup « Nouveautés v2.0 » ── */
+#kpWhatsNew{ position:fixed; inset:0; z-index:9430; background:rgba(20,28,18,.5); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center; padding:24px;
+  opacity:0; pointer-events:none; transition:opacity .3s ease; }
+#kpWhatsNew.open{ opacity:1; pointer-events:auto; }
+.kpwn-card{ background:#faf8f0; border-radius:26px; padding:26px 22px 22px; max-width:400px; width:100%;
+  box-shadow:0 30px 70px -30px rgba(20,28,18,.6); text-align:center;
+  transform:translateY(16px) scale(.97); transition:transform .35s cubic-bezier(.16,1,.3,1); }
+#kpWhatsNew.open .kpwn-card{ transform:translateY(0) scale(1); }
+.kpwn-logo{ width:min(64%,230px); height:auto; margin:0 auto 10px; display:block; }
+.kpwn-title{ font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:#2f6b2b; margin-bottom:14px; letter-spacing:-.02em; }
+.kpwn-list{ list-style:none; margin:0 0 18px; padding:0; text-align:left; }
+.kpwn-list li{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:600; color:#3a423a; line-height:1.45;
+  padding:8px 10px; background:#fff; border:1px solid rgba(30,42,30,.05); border-radius:12px; margin-bottom:7px; }
+.kpwn-cta{ width:100%; border:none; cursor:pointer; background:linear-gradient(135deg,#5b8a40,#436c2c); color:#fff;
+  border-radius:99px; padding:14px; font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:700;
+  box-shadow:0 12px 24px -12px rgba(67,108,44,.55); }
+.kpwn-cta:active{ transform:scale(.97); }
 </style>
 <script id="kpHomeModule">
 (function(){
@@ -28494,6 +28526,50 @@ if(typeof window.save==='function'){
   var _kpdSave=window.save;
   window.save=function(){ var r=_kpdSave.apply(this,arguments); kpdQueue(); return r; };
 }
+/* ── Plein écran automatique sur mobile (Android : Fullscreen API au 1er geste ; iOS : PWA + viewport-fit) ── */
+(function(){
+  var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');
+  var standalone = false;
+  try{ standalone = window.matchMedia('(display-mode: standalone)').matches || !!navigator.standalone; }catch(e){}
+  if(isMobile && !standalone){
+    var done=false;
+    var goFS=function(){
+      if(done) return; done=true;
+      try{
+        var el=document.documentElement;
+        var fn=el.requestFullscreen||el.webkitRequestFullscreen;
+        if(fn){ var p=fn.call(el,{navigationUI:'hide'}); if(p&&p.catch) p.catch(function(){}); }
+      }catch(e){}
+      document.removeEventListener('touchend',goFS);
+      document.removeEventListener('click',goFS);
+    };
+    document.addEventListener('touchend',goFS,{passive:true});
+    document.addEventListener('click',goFS,{passive:true});
+  }
+})();
+
+/* ── Popup « Nouveautés v2.0 » (une seule fois) ── */
+function kpWhatsNewMaybe(){
+  try{
+    if(localStorage.getItem('kp_whatsnew_v2')) return;
+    var s=document.getElementById('authScreen');
+    var w=document.getElementById('kpWelcomeScreen');
+    var authHidden = s && (s.classList.contains('hide') || getComputedStyle(s).display==='none');
+    var welcomeHidden = !w || getComputedStyle(w).display==='none';
+    if(!authHidden || !welcomeHidden){ setTimeout(kpWhatsNewMaybe, 4000); return; }
+    var l=document.getElementById('kpwnLogo'), t=document.querySelector('.khh-logo-h');
+    if(l && t && !l.src) l.src=t.src;
+    var ov=document.getElementById('kpWhatsNew');
+    if(ov){ ov.classList.add('open'); ov.setAttribute('aria-hidden','false'); }
+  }catch(e){}
+}
+window.kpWhatsNewClose=function(){
+  try{ localStorage.setItem('kp_whatsnew_v2','1'); }catch(e){}
+  var ov=document.getElementById('kpWhatsNew');
+  if(ov){ ov.classList.remove('open'); ov.setAttribute('aria-hidden','true'); }
+};
+setTimeout(kpWhatsNewMaybe, 3000);
+
 function boot(){ try{ kpRenderDashboard(); }catch(e){} }
 if(document.readyState==='complete'||document.readyState==='interactive'){ setTimeout(boot,900); }
 else document.addEventListener('DOMContentLoaded',function(){ setTimeout(boot,900); });
