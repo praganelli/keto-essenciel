@@ -1,0 +1,40 @@
+{
+  "summary": "Logo non-deformation testing on mobile 390x844 for /api/app. 5/6 checks PASS. CRITICAL BUG STILL PRESENT on mobile header (.khh-logo-h): the logo is stretched horizontally (~66%), ratio_diff=2.06 (far above the 0.05 tolerance). Root cause is a CSS rule that overrides the intrinsic sizing: '.khh-titlewrap .khh-logo-h { flex: 0 0 100%; }' forces the <img> to 300px wide while height stays fixed at 58px, giving css ratio 5.17 vs natural ratio 3.108. The default object-fit:fill then stretches the pixels. All other logos are correct: landing #kpwHeroLogo (ratio_diff=9.2e-5), splash .splash-logo-img (ratio_diff=2.1e-4, width_vw=78.04 ~ at cap), login .kpl-logo VERTICAL preserved (natural 640x489, ratio 1.309 — no regression), and popup #kpwnLogo (once opened, src is copied from header and rendered with correct ratio_diff=1.2e-4 because the popup CSS does NOT apply the flex override). 0 page JS errors, 0 console errors relevant to app (one unrelated Firestore offline warning from container network).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": ".khh-logo-h (mobile header horizontal logo)",
+        "issue": "Logo est DEFORME dans le header mobile. Mesures Playwright sur onglet 'plan' 390x844: naturalWidth=460, naturalHeight=148 (ratio 3.108), css width=300px, height=58px (ratio 5.172), ratio_diff=2.064 (>> 0.05). CSS en cause: '.khh-titlewrap .khh-logo-h { flex: 0 0 100%; }' surcharge 'width: auto' -> largeur fixée à 100% du parent (300px) tandis que height:58px reste => stretch horizontal ~66%. Le object-fit par defaut (fill) applique alors le stretch aux pixels. Reference: /app/backend/keto_app.html regle CSS '.khh-titlewrap .khh-logo-h'.",
+        "testID": ".khh-logo-h",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Header mobile (onglet Plan/Recettes/etc)",
+        "issues": [
+          "Le logo horizontal 'Keto-Essenciel' apparait visiblement etire horizontalement (le lettrage est allonge par rapport a la version splash / landing / login). C'est exactement le bug utilisateur 'mon logo est deforme'."
+        ]
+      }
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/tmp/header_zoom.png", "/tmp/splash.png", "/tmp/login.png", "/tmp/plan_tab.png", "/tmp/whatsnew_manual.png"],
+  "action_items": [
+    "FIX (dans /app/keto.html puis copier vers /app/backend/keto_app.html + `sudo supervisorctl restart backend`): supprimer OU corriger la regle '.khh-titlewrap .khh-logo-h { flex: 0 0 100%; }'. Options: (a) supprimer 'flex: 0 0 100%' (laisser width:auto agir), OU (b) ajouter 'width: auto !important; object-fit: contain;' sur .khh-logo-h, OU (c) remplacer par 'flex: 0 0 auto; max-width: 100%;'. Cela laissera le ratio naturel (3.108) preserve.",
+    "Apres le fix, revalider avec Playwright que ratio_diff(.khh-logo-h) < 0.05 et que la hauteur ~58px est conservee."
+  ],
+  "critical_code_review_comments": [
+    "La regle '.khh-titlewrap .khh-logo-h { flex: 0 0 100%; }' semble avoir ete pensee pour un container flex-column ou 100% = largeur naturelle du contenu, mais applique a une <img> avec height fixe elle force un stretch. Toujours combiner width fluide avec 'object-fit: contain' ou 'height:auto' sur des <img> pour eviter ce piege.",
+    "Le popup 'nouveautes' (#kpWhatsNew) copie le src via JS uniquement a l'ouverture. Tant que le popup n'est pas encore affiche, #kpwnLogo.src est vide (naturalWidth=0). Ce n'est pas un bug (comportement lazy) mais si le popup ne s'ouvre jamais (kp_whatsnew_v2=1), l'image reste vide. Note pour information."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "83% (5/6 - header logo deforme)"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Le bug utilisateur 'logo deforme' n'est PAS corrige. Detoure PNG/webp OK, ratio naturel OK sur landing/splash/login/whatsnew — SEUL le header mobile stretch le logo via la regle CSS flex:0 0 100% sur .khh-titlewrap .khh-logo-h dans /app/backend/keto_app.html. Playwright reproduit systematiquement (390x844, guest, tab plan). Apres correction CSS, revalider header (ratio_diff < 0.05).",
+  "rca_of_issue": "RCA: dans /app/backend/keto_app.html, .khh-logo-h a `height:58px; width:auto` (correct), MAIS une regle plus specifique `.khh-titlewrap .khh-logo-h { flex: 0 0 100%; }` force l'element flex-item a occuper 100% de la ligne (flex-basis 100% => largeur calculee 300px sur un ecran 390px moins padding). Avec `width:auto` + `flex-basis:100%`, le calcul flex l'emporte et l'<img> est layoute a 300x58. Le rendu image utilise l'object-fit par defaut ('fill'), stretchant les pixels de 460x148 vers 300x58 (ratio 3.108 -> 5.172). Reproduction: Playwright 390x844 -> /api/app -> kpWelcomeEnter('login') -> authGuest() -> switchTab('plan') -> mesurer .khh-logo-h. MITIGATION: retirer `flex: 0 0 100%` OU passer a `flex: 0 0 auto` + `max-width:100%` OU forcer `object-fit: contain` sur .khh-logo-h."
+}
