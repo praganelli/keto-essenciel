@@ -477,3 +477,8 @@ Bugs signalés :
 - Voile crème dégradé sur .auth-card (rgba .90→.48 haut→bas) → formulaire lisible, feuillage/avocats visibles surtout en bas (comme le mockup). 2 brins de feuillage SVG décoratifs (.kpl-sprig-1 côté droit, .kpl-sprig-2 bas-droit, position:fixed, pointer-events:none). Script /app/apply_login_bg.py.
 - BUGFIX préexistant : kpWelcomeEnter('signup') ciblait `.auth-tab[data-tab="register"]` (sélecteur inexistant) → n'ouvrait jamais l'inscription. Corrigé : appel direct authSwitchTab('register'). Le CTA « Commencer gratuitement » de la landing ouvre bien l'inscription.
 - Vérifié (390px + 1440px, 0 erreur JS) : login + inscription avec fond visible, desktop split conservé.
+
+## Correctif fond écran de connexion + suppression pastille Français (fork, juillet 2026)
+- L'utilisateur voulait le fond INTÉRIEUR de l'écran du mockup (crème + formes organiques vert pâle), pas la photo bokeh. Photo base64 retirée → #authScreen crème #f8f7f1 + 5 radial-gradients vert sauge (haut subtil, mi-droite, mi-gauche, 2 coins bas) sur .auth-card. Brins SVG .kpl-sprig conservés (fidèles au mockup).
+- Pastille « 🌐 Français » SUPPRIMÉE (markup + CSS .kpl-lang).
+- Lien de téléchargement permanent (secours, indépendant du pod) : https://storage.googleapis.com/testprojet-721cb-recipes/app/keto-essenciel.html — resynchronisé à chaque livraison (script upload GCS). /api/download vérifié 13/13 pytest + download navigateur réel (testing_agent iteration_11).
