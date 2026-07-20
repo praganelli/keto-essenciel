@@ -11394,12 +11394,12 @@ function renderWeekGrid(){
   var focusIdx = (typeof activeDay !== 'undefined' && activeDay >= 0 && activeDay < menu.length) ? activeDay : 0;
   var focus = dayData(focusIdx);
 
-  function mealLine(r, slot, label){
+  function mealLine(r, slot, ico, label){
     if(!r) return '';
-    return '<div class="wfl-meal" onclick="event.stopPropagation();selectDay('+focusIdx+');setTimeout(function(){var el=document.querySelector(\'[data-slot=\\\''+slot+'\\\']\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'center\'});},200)">'
-      + '<span class="wfl-meal-slot">'+label+'</span>'
-      + '<span class="wfl-meal-name">'+r.name+'</span>'
-      + '<span class="wfl-meal-kcal">'+r.kcal+'<small>kcal</small></span>'
+    return '<div class="kpday-meal" onclick="event.stopPropagation();selectDay('+focusIdx+');setTimeout(function(){var el=document.querySelector(\'[data-slot=\\\''+slot+'\\\']\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'center\'});},200)">'
+      + '<span class="kpday-meal-ico">'+ico+'</span>'
+      + '<div class="kpday-meal-mid"><span class="kpday-meal-slot">'+label+'</span><span class="kpday-meal-name">'+r.name+'</span></div>'
+      + '<span class="kpday-meal-kcal">'+r.kcal+'<small> kcal</small></span>'
       + '</div>';
   }
 
@@ -11408,25 +11408,24 @@ function renderWeekGrid(){
   var isToday = (focusIdx === TODAY_IDX);
   var heroTag = heroDone ? '✓ Journée réalisée' : (isToday ? '📍 Aujourd’hui' : 'Menu du jour');
   var heroHtml = ''
-    + '<div class="wfl-hero '+(heroDone?'done':'')+'" data-testid="wfl-hero" onclick="selectDay('+focusIdx+')">'
-    +   '<div class="wfl-hero-overlay" aria-hidden="true"></div>'
-    +   '<div class="wfl-hero-content">'
-    +     '<div class="wfl-hero-eyebrow">'
-    +       '<span class="wfl-hero-emoji">'+focus.hero+'</span>'
-    +       '<span class="wfl-hero-tag">'+heroTag+'</span>'
+    + '<div class="kpday '+(heroDone?'done':'')+'" data-testid="wfl-hero" onclick="selectDay('+focusIdx+')">'
+    +   '<div class="kpday-head">'
+    +     '<div class="kpday-head-l">'
+    +       '<span class="kpday-tag">'+heroTag+'</span>'
+    +       '<div class="kpday-title">'+DAYS[focusIdx]+'</div>'
+    +       '<div class="kpday-sub">Jour '+(focusIdx+1)+' / 7</div>'
     +     '</div>'
-    +     '<div class="wfl-hero-title"><em>'+DAYS[focusIdx]+'</em></div>'
-    +     '<div class="wfl-hero-sub">Jour '+(focusIdx+1)+' / 7 · '+focus.kcal+' kcal · '+focus.fat+'g L · '+focus.prot+'g P · '+focus.carb+'g G</div>'
-    +     '<div class="wfl-hero-meals">'
-    +       mealLine(focus.bf, 'breakfast', 'Matin')
-    +       mealLine(focus.lu, 'lunch', 'Midi')
-    +       mealLine(focus.di, 'dinner', 'Soir')
-    +       (!focus.bf && !focus.lu && !focus.di ? '<div class="wfl-meal-empty">Aucun repas programmé</div>' : '')
+    +     '<div class="kpday-head-r">'
+    +       '<div class="kpday-kcal">'+focus.kcal+'<small> kcal</small></div>'
+    +       '<div class="kpday-macros"><span>'+focus.fat+'g L</span><span>'+focus.prot+'g P</span><span>'+focus.carb+'g G</span></div>'
     +     '</div>'
-    +     '<div class="wfl-hero-cta">'
-    +       '<span class="wfl-hero-cta-label">'+(heroDone?'Revoir le détail':'Ouvrir le menu du jour')+'</span>'
-    +       '<span class="wfl-hero-cta-arrow">→</span>'
-    +     '</div>'
+    +   '</div>'
+    +   '<div class="kpday-body">'
+    +     mealLine(focus.bf, 'breakfast', '☕️', 'Matin')
+    +     mealLine(focus.lu, 'lunch', '☀️', 'Midi')
+    +     mealLine(focus.di, 'dinner', '🌙', 'Soir')
+    +     (!focus.bf && !focus.lu && !focus.di ? '<div class="kpday-empty">Aucun repas programmé</div>' : '')
+    +     '<div class="kpday-cta">'+(heroDone?'Revoir le détail':'Ouvrir le menu du jour')+' <span>→</span></div>'
     +   '</div>'
     + '</div>';
 
@@ -28420,6 +28419,31 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 .kpd-tip-body{ flex:1; min-width:0; }
 .kpd-tip-title{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:800; color:#2c342c; }
 .kpd-tip-txt{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:500; color:#4a524a; line-height:1.45; margin-top:2px; }
+/* ── Carte « Menu du jour » (hero refondu) ── */
+.kpday{ background:#fff; border:1px solid rgba(30,42,30,.05); border-radius:22px; overflow:hidden; margin-bottom:24px; cursor:pointer; box-shadow:0 16px 36px -22px rgba(30,42,30,.35); transition:transform .2s ease; }
+.kpday:active{ transform:scale(.985); }
+.kpday-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:16px 18px 15px; background:linear-gradient(135deg,#3c6030,#2c4a22); }
+.kpday.done .kpday-head{ background:linear-gradient(135deg,#a07a1e,#6f5414); }
+.kpday-tag{ display:inline-block; font-family:'Plus Jakarta Sans',sans-serif; font-size:9.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#eaf3da; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22); padding:4px 10px; border-radius:99px; }
+.kpday-title{ font-family:'Plus Jakarta Sans',sans-serif; font-size:27px; font-weight:800; color:#fff; letter-spacing:-.02em; margin-top:8px; line-height:1; }
+.kpday-sub{ font-family:'Plus Jakarta Sans',sans-serif; font-size:11.5px; font-weight:600; color:rgba(255,255,255,.75); margin-top:5px; }
+.kpday-head-r{ text-align:right; flex:0 0 auto; padding-top:2px; }
+.kpday-kcal{ font-family:'Plus Jakarta Sans',sans-serif; font-size:23px; font-weight:800; color:#fff; line-height:1; }
+.kpday-kcal small{ font-size:11px; font-weight:700; color:rgba(255,255,255,.75); }
+.kpday-macros{ display:flex; gap:5px; margin-top:9px; justify-content:flex-end; }
+.kpday-macros span{ font-family:'Plus Jakarta Sans',sans-serif; font-size:9.5px; font-weight:700; color:#eaf3da; background:rgba(255,255,255,.14); border-radius:99px; padding:3px 7px; white-space:nowrap; }
+.kpday-body{ padding:12px; }
+.kpday-meal{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:12px; background:#f7f6f0; border:1px solid rgba(30,42,30,.04); margin-bottom:7px; }
+.kpday-meal:active{ transform:scale(.99); }
+.kpday-meal-ico{ width:34px; height:34px; border-radius:10px; background:#eef2e2; display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; }
+.kpday-meal-mid{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.kpday-meal-slot{ font-family:'Plus Jakarta Sans',sans-serif; font-size:9px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:#8a927f; }
+.kpday-meal-name{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:700; color:#232b22; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+.kpday-meal-kcal{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:800; color:#3f7d3a; flex:0 0 auto; }
+.kpday-meal-kcal small{ font-size:9px; font-weight:700; color:#8a927f; }
+.kpday-empty{ text-align:center; padding:14px; font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; color:#8a927f; }
+.kpday-cta{ display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px; padding:13px; border-radius:99px; background:linear-gradient(135deg,#4a7c3f,#2c4a22); color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:800; box-shadow:0 10px 22px -10px rgba(44,74,34,.5); }
+.kpday.done .kpday-cta{ background:linear-gradient(135deg,#b98a24,#8a6a1d); box-shadow:0 10px 22px -10px rgba(160,122,30,.5); }
 /* ── FAB "+" barre mobile ── */
 .bnav-plus{ display:none; }
 @media(max-width:980px){
@@ -28687,12 +28711,6 @@ window.kpRenderDashboard=function(){
       pushSlot('dinner','Dîner · Plat',2);
       if(courses.dessert&&d.dinnerDessert!=null) pushSlot('dinnerDessert','Dîner · Dessert',2);
     }
-    /* Le prochain repas (selon l'heure) passe en premier */
-    var h=new Date().getHours();
-    var nowP=h<11?0:(h<15?1:2);
-    var up=cards.filter(function(c){return c.p>=nowP;});
-    var done=cards.filter(function(c){return c.p<nowP;});
-    cards=up.concat(done);
   }catch(e){}
   var htmls=cards.map(function(c){return c.html;});
   var dots=htmls.length>1?'<div class="kpd-dots" id="kpdDots">'+htmls.map(function(_,i){return '<span class="kpd-dot'+(i===0?' on':'')+'"></span>';}).join('')+'</div>':'';

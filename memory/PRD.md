@@ -553,3 +553,7 @@ Bugs signalés :
 ## Fix texte brut en bas de page + feature « ✓ repas pris » (fork, juillet 2026)
 - BUG (préexistant, présent aussi dans le commit HEAD) : la fin du fichier était DUPLIQUÉE — après le 1er `</script></body></html>` suivant window.KP_RECIPE_DETAILS, 486 octets de JSON orphelin + un 2e `</script></body></html>` → le JSON s'affichait en texte brut en bas de page (balance script 22/23). FIX : troncature après la 1re fin valide ; vérifié : 22/22 scripts, JSON 474 recettes intact, plus aucun texte.
 - FEATURE « repas pris » : global `mealsEaten={}` (clé 'dayIdx-b|l|d'), persisté dans keto-v9 (save/load), reset à chaque generateMenu. Bouton ✓ rond en haut à droite de chaque carte « Repas du jour » (kpd-meal-chk, stopPropagation, toggle kpToggleMealEaten) ; carte cochée = fond vert clair (.eaten). L'anneau « Progression aujourd'hui » = repas cochés / repas prévus (plus de logique horaire) ; statut « X repas sur Y pris » ; doneDays[jour] = 100%.
+
+## Ordre repas + refonte carte « Menu du jour » (fork, juillet 2026)
+- « Repas du jour » : ordre fixe petit-déj → déjeuner → dîner (rotation horaire supprimée dans kpRenderDashboard).
+- Carte hero jour (renderWeekFlow ~11397) refondue : anciennes classes .wfl-hero-* remplacées par .kpday-* (CSS dans kpHomeModule). Structure : header gradient vert (tag 📍 Aujourd'hui, jour, Jour X/7, kcal + pills macros à droite) + corps blanc (lignes repas ☕️/☀️/🌙 avec label slot + nom + kcal) + bouton pill vert « Ouvrir le menu du jour → ». État done = header/CTA doré. data-testid="wfl-hero" conservé.
