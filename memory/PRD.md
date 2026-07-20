@@ -482,3 +482,7 @@ Bugs signalés :
 - L'utilisateur voulait le fond INTÉRIEUR de l'écran du mockup (crème + formes organiques vert pâle), pas la photo bokeh. Photo base64 retirée → #authScreen crème #f8f7f1 + 5 radial-gradients vert sauge (haut subtil, mi-droite, mi-gauche, 2 coins bas) sur .auth-card. Brins SVG .kpl-sprig conservés (fidèles au mockup).
 - Pastille « 🌐 Français » SUPPRIMÉE (markup + CSS .kpl-lang).
 - Lien de téléchargement permanent (secours, indépendant du pod) : https://storage.googleapis.com/testprojet-721cb-recipes/app/keto-essenciel.html — resynchronisé à chaque livraison (script upload GCS). /api/download vérifié 13/13 pytest + download navigateur réel (testing_agent iteration_11).
+
+## Connexion : mise à l'échelle fluide — tout tient sur n'importe quel mobile (fork, juillet 2026)
+- Toutes les dimensions/espacements de l'écran de connexion mobile passés en clamp(min, Xdvh, max) : logo min(50vw,20dvh,265px), titre, sous-titre, champs, boutons, divider, carte inscription, footer, paddings carte. Bloc @media(max-width:980px) dans #kplAuthStyles.
+- Vérifié overflow=0 (scrollHeight == viewport) sur 360×640, 375×667, 390×844, 430×932 — logo → footer entièrement visibles sans scroll.
