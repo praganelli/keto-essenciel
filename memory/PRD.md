@@ -518,3 +518,4 @@ Bugs signalés :
 - Accueil mobile : les 3 boutons (Courses/Menu/Liste) sous « ✨ Générer ma semaine » SUPPRIMÉS (.plan-gen-actions retiré du markup). La topbar desktop (8078) reste intacte.
 - « Progression de la semaine » (#kpWeekPulse) déplacée SOUS la salutation « Bonjour {prénom}… » sur mobile : kpPlacePulse() dans kpRenderDashboard (détache le pulse avant innerHTML, réinsère après .kpd-greet si ≤980px, sinon le remet en enfant direct de tab-plan après kpDashHost) + listener matchMedia change. Vérifié : ordre mobile [greet, kpWeekPulse, résumé, objectif, repas] ; desktop pulse hors dashboard et visible.
 - Logo header mobile agrandi et embelli : .khh-logo-h 58px + drop-shadow. Login intouché (exigence).
+- Badge « v2.0 » (pastille verte .khh-ver) ajouté dans le header accueil mobile à côté du statut GRATUITE/PREMIUM (titlewrap passé en ligne, logo pleine largeur au-dessus).
