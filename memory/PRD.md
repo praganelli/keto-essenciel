@@ -519,3 +519,8 @@ Bugs signalés :
 - « Progression de la semaine » (#kpWeekPulse) déplacée SOUS la salutation « Bonjour {prénom}… » sur mobile : kpPlacePulse() dans kpRenderDashboard (détache le pulse avant innerHTML, réinsère après .kpd-greet si ≤980px, sinon le remet en enfant direct de tab-plan après kpDashHost) + listener matchMedia change. Vérifié : ordre mobile [greet, kpWeekPulse, résumé, objectif, repas] ; desktop pulse hors dashboard et visible.
 - Logo header mobile agrandi et embelli : .khh-logo-h 58px + drop-shadow. Login intouché (exigence).
 - Badge « v2.0 » (pastille verte .khh-ver) ajouté dans le header accueil mobile à côté du statut GRATUITE/PREMIUM (titlewrap passé en ligne, logo pleine largeur au-dessus).
+
+## Fix logo déformé + erreur Google auth/unauthorized-domain (fork, juillet 2026)
+- LOGO : les logos in-app (splash/header, +landing/popup par copie JS) remplacés par le détourage PROPRE de l'œuvre ORIGINALE via rembg (session isnet-general-use — modèle /root/.u2net) au lieu de la reproduction Nano Banana (proportions altérées) : /tmp/logo_o.webp 800px & logo_o_small.webp 460px. Icônes PWA GCS régénérées avec l'emblème original.
+- Déformation header : cause = .khh-titlewrap .khh-logo-h{flex:0 0 100%} étirait l'image (box 300x58 vs ratio 3.108) → fix object-fit:contain + object-position:left center. Validé testing_agent iteration_12 (5/6) + iteration_13 (PASS ciblé).
+- GOOGLE AUTH : erreur auth/unauthorized-domain = domaine absent des Authorized domains Firebase (action UTILISATEUR : Console Firebase → Authentication → Settings → Domaines autorisés → ajouter keto-parcours-dev.preview.emergentagent.com + domaine de prod). Ajout du message d'erreur explicite avec location.hostname dans authTranslateError.
