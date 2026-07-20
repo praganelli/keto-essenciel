@@ -1,0 +1,33 @@
+{
+  "summary": "Backend + browser-download testing for keto HTML delivery. All 13 pytest cases PASS (100%) and Playwright confirms both /api/download and the GCS fallback trigger real browser download events, save valid HTML (~3.79 MB, starts with <!DOCTYPE html>, contains 'kpl-logo', ends with </html>, not truncated). /api/app renders the landing screen ('Le keto par un naturopathe') with 0 JS page errors under an iPhone Safari user-agent. The user-reported 'lien ne fonctionne pas' cannot be reproduced server-side; both links are healthy. Likely user-side cause: iOS Safari click on the link may have been intercepted (long-press vs tap, in-app WebView e.g. Instagram/Facebook browser that blocks .html downloads, or transient cold pod). No code change made.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_keto_download.py",
+    "/app/test_reports/pytest/keto_download_results.xml"
+  ],
+  "action_items": [
+    "No backend fix required — /api/download returns 200, Content-Disposition attachment; filename=\"index.html\", ~3.79 MB, valid HTML (starts <!DOCTYPE html>, ends </html>, contains 'kpl-logo').",
+    "GCS permanent fallback https://storage.googleapis.com/testprojet-721cb-recipes/app/keto-essenciel.html also confirmed working with attachment disposition and valid HTML body.",
+    "Given both links are healthy, main agent should investigate USER-SIDE issues: (1) in-app WebViews (Instagram/Facebook/TikTok internal browser) often block or silently fail .html file downloads on iOS — recommend telling the user to open the link in Safari itself; (2) iOS Safari sometimes shows a 'Do you want to download index.html?' modal that is easy to miss; (3) once downloaded, iOS saves to Files > Downloads (not visible directly) — a short instruction sheet next to the download button may help; (4) a cold-start pod delay (10-30s) on first hit could look like a broken link — consider adding a lightweight keep-warm ping."
+  ],
+  "critical_code_review_comments": [
+    "server.py:318-322 /api/download reuses _serve_html_with_base which injects a <base> tag; downloaded file therefore differs from GCS by ~600 bytes (expected). Not a bug.",
+    "HEAD /api/download returns 405 (FastAPI GET-only). Some link-preview crawlers use HEAD — harmless, no fix required."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Public endpoints /api/download and /api/app on https://keto-parcours-dev.preview.emergentagent.com are healthy. GCS fallback URL also healthy. Test file: /app/backend/tests/test_keto_download.py — 13 tests, all green in ~10s. Playwright download event confirmed with iPhone UA. If user still reports failure, focus on user-agent / in-app browser scenario, not server code.",
+  "rca_of_issue": "ROOT CAUSE: Not a server bug. Objective measurements: /api/download → HTTP 200, Content-Disposition: attachment; filename=\"index.html\", Content-Type text/html, 3,796,244 bytes, body starts with '<!DOCTYPE html>' and ends with '</html>\\n', contains 'kpl-logo' marker. Same guarantees for GCS fallback (3,795,652 bytes). Playwright with an iPhone 17 Safari UA successfully receives a native download event and saves a complete HTML file. The reported failure is therefore either (a) the link was opened inside a third-party app's in-app WebView (Instagram/FB/TikTok) which routinely blocks .html downloads on iOS, or (b) the user tapped and dismissed the iOS 'Download' confirmation modal, or (c) a first-request cold-start delay on the preview pod. MITIGATION for main agent: (1) instruct user to open the link in Safari (not the in-app browser), (2) surface the GCS permanent link as an obvious secondary CTA, (3) add a small 'Après le téléchargement, ouvrez le fichier dans Fichiers > Téléchargements' hint."
+}
