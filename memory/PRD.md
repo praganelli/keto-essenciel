@@ -529,3 +529,8 @@ Bugs signalés :
 - Nouveau logo horizontal flat (emblème K-avocat cercle + wordmark + SIMPLE•NATUREL•ESSENTIEL, fourni sur fond blanc) détouré par seuil (fond blanc pur), remplace les base64 splash (.splash-logo-img 900px) et header (.khh-logo-h 520px). Landing + popup copient le header (JS).
 - Pleine largeur téléphone : .khh-logo-h{width:100%;height:auto} + .khh-left{flex:1} (le logo occupe toute la largeur moins la cloche) ; splash width:min(88vw,520px). Ratio vérifié 4.095≈4.094 (aucune déformation).
 - Icônes PWA GCS régénérées avec le nouvel emblème.
+
+## Sticker essai au-dessus du dock + retrait toggle thème + roue paramètres (fork, juillet 2026)
+- Sticker « Essai Premium » (#premiumTrialBanner) repositionné dynamiquement AU-DESSUS des icônes flottantes du côté droit : kpTrialBannerPlace() (bottom = innerHeight - dockTop + 12, dock #kpQuickDock), appelé aux 2 show + resize + interval 1.5s. Vérifié : banner.bottom 608 ≤ dock.top 620.
+- Icône mode sombre/clair (#themeToggle) masquée (display:none inline, préférence thème conservée) + FAQ « Comment activer le mode sombre ? » retirée de l'Aide.
+- Header : cloche remplacée par roue de PARAMÈTRES (svg engrenage, data-testid kp-home-settings, toujours openPrefs()), point vert retiré.

@@ -7313,7 +7313,7 @@ body{
 </div>
 <!-- ═══ end splash ═══ -->
 <!-- Theme toggle -->
-<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Mode sombre/clair">🌙</button>
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Mode sombre/clair" style="display:none">🌙</button>
 
 <div class="orb-wrap"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
 
@@ -8034,9 +8034,8 @@ document.addEventListener('DOMContentLoaded',function(){
           <span class="khh-ver">v2.0</span>
         </div>
       </div>
-      <button type="button" class="khh-bell" onclick="openPrefs()" aria-label="Rappels &amp; notifications" data-testid="kp-home-bell">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6Z"/><path d="M10.3 19a2 2 0 0 0 3.4 0"/></svg>
-        <span class="khh-bell-dot"></span>
+      <button type="button" class="khh-bell" onclick="openPrefs()" aria-label="Paramètres" data-testid="kp-home-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.09a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.09a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
       </button>
     </div>
     <div class="eyebrow"><span class="pulse"></span> Le keto par un naturopathe</div>
@@ -9004,7 +9003,6 @@ document.addEventListener('DOMContentLoaded',function(){
         </div>
         <div class="help-section-body">
           <details class="help-q"><summary>Quels modes alimentaires sont disponibles ?</summary><div class="help-a">Keto Standard (gratuit), Keto Végétarien, Carnivore, Méditerranéen, Épilepsie (ratio 4:1), Lazy Keto, Dirty Keto, Keto Med IF, etc. Tous les modes sauf Standard nécessitent l'abonnement Premium.</div></details>
-          <details class="help-q"><summary>Comment activer le mode sombre ?</summary><div class="help-a">Cliquez sur l'icône 🌙/☀️ en haut à droite de l'écran. L'app bascule automatiquement entre clair et sombre. Votre préférence est mémorisée.</div></details>
           <details class="help-q"><summary>Comment activer les notifications de repas ?</summary><div class="help-a">Dans <strong>Réglages → Notifications</strong>, activez les rappels et choisissez les heures pour chaque repas. Votre navigateur vous demandera l'autorisation, indispensable pour recevoir les notifications.</div></details>
           <details class="help-q"><summary>Comment exclure certains aliments ?</summary><div class="help-a">Dans <strong>Réglages → Aliments à exclure</strong>, cliquez sur les aliments que vous ne voulez plus voir apparaître. Le générateur les ignorera lors des futures créations de menus.</div></details>
         </div>
@@ -25066,6 +25064,7 @@ function refreshTrialBanner(){
         banner.querySelector('.premium-trial-cta').onclick = startPremiumTrial;
       }
       banner.classList.add('show');
+      setTimeout(kpTrialBannerPlace, 50);
     });
     return;
   }
@@ -25085,6 +25084,7 @@ function refreshTrialBanner(){
     banner.querySelector('.premium-trial-cta').onclick = function(){ if(typeof openPremiumModal==='function') openPremiumModal('trial'); };
   }
   banner.classList.add('show');
+  setTimeout(kpTrialBannerPlace, 50);
 }
 function dismissTrialBanner(){
   try{ localStorage.setItem(TRIAL_DISMISS_KEY, '1'); }catch(e){}
@@ -25094,6 +25094,21 @@ function dismissTrialBanner(){
 window.dismissTrialBanner = dismissTrialBanner;
 window.startPremiumTrial = startPremiumTrial;
 window.refreshTrialBanner = refreshTrialBanner;
+/* Positionne le sticker AU-DESSUS des icônes flottantes du côté droit (dock aide/courses/flèches) */
+function kpTrialBannerPlace(){
+  try{
+    var b = document.getElementById('premiumTrialBanner'); if(!b || !b.classList.contains('show')) return;
+    var d = document.getElementById('kpQuickDock');
+    if(d){
+      var r = d.getBoundingClientRect();
+      if(r.height > 0){ b.style.bottom = Math.round(window.innerHeight - r.top + 12) + 'px'; return; }
+    }
+    b.style.bottom = '';
+  }catch(e){}
+}
+window.kpTrialBannerPlace = kpTrialBannerPlace;
+window.addEventListener('resize', kpTrialBannerPlace);
+setInterval(kpTrialBannerPlace, 1500);
 setTimeout(refreshTrialBanner, 3000);
 
 /* ─── Parrainage / code de référence ─── */
