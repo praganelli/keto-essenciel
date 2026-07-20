@@ -500,3 +500,10 @@ Bugs signalés :
 - Carte blanche derrière le logo SUPPRIMÉE (l'utilisateur n'aimait pas) → logo posé directement sur le fond, drop-shadow léger, légèrement agrandi (base clamp 210-300px / mobile min(56vw,21.5dvh,290px)).
 - Fond .auth-card = SVG data-uri (viewBox 390x844, slice) : fond #faf8f0 + forme crème haut (#f2f2e3), blob rond mi-droite (#e9eed8), petit blob mi-gauche, 2 ellipses vert pâle coins bas (#e6ecd2/#e2e9ca) — fidèle au mockup. Radial-gradients remplacés.
 - Vérifié : mobile 390 overflow=0, desktop split intact.
+
+## v2.0 : nouveau logo horizontal in-app + splash clair + composition repas + icônes PWA (fork, juillet 2026)
+- NOUVEAU LOGO HORIZONTAL (fourni par l'utilisateur, fond olive détouré via Nano Banana « reproduce on pure white » puis blanc→transparent) appliqué PARTOUT DANS L'APP sauf login (qui garde le logo vertical) : splash (.splash-logo-img, base64 webp 760px), header mobile (.khh-logo-h 440px remplace emblème+texte), landing hero (#kpwHeroLogo, src copié du header via JS). Script /app/apply_v2.py (24 remplacements).
+- SPLASH v2 : fond identité claire (même SVG blobs que login), grille off, glow sage, anneaux sage, pastille version claire, barre progression claire + centrage corrigé (left:0;right:0;margin:auto — le transform était écrasé par l'animation splash-name-in, bug préexistant).
+- VERSION 2.0 : splash pill, réglages (v2.0), badge sidebar bb-ver.
+- PWA : vraies icônes (emblème avocat sur fond crème + blobs) hébergées GCS public : app/icon-192.png, app/icon-512.png, app/apple-touch-icon.png ; manifest → PNG GCS, background #faf8f0, theme #4e7a36 ; <head> : link icon 192 + apple-touch-icon 180.
+- DASHBOARD « Repas du jour » : COMPOSITION COMPLÈTE — cartes par service (Petit-déj, Déjeuner · Entrée/Plat/Dessert, Dîner · idem) selon getCourses() + slots non nuls ; RAFRAÎCHISSEMENT IMMÉDIAT : wrap window.save() (debounce 350ms) → tout changement (swap repas, régénération, profil) met à jour le dashboard ; scrollLeft du carrousel préservé. Testé : swap bfast + save() → carte mise à jour <1s (True), 0 erreur JS.
