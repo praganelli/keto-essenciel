@@ -10476,6 +10476,23 @@ var DAY_EMOJI=["🟢","🔵","🟣","🟠","🔴","⭐","🌟"];
 var ALL_PROTS=["Saumon","Poulet","Boeuf","Steak","Crevettes","Dinde","Porc"];
 var ALL_VEGS=["Courgettes","Brocolis","Épinards","Haricots verts","Aubergines","Champignons","Poivrons","Concombre"];
 var ALL_FATS=["Avocat","Huile d'olive","Beurre","Crème","Fromage","Jaune d'œuf","Huile de coco"];
+/* ─ Ingrédients à éviter : une recette est bannie si un de ses ingrédients correspond ─ */
+function kpNormIng(s){ return (s||'').toLowerCase().replace(/œ/g,'oe').normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+var KP_NUTS_KEYS=['amande','noix','noisette','pecan','cajou','pistache','macadamia'];
+function kpRecipeHasExcluded(r){
+  if(typeof excluded==='undefined'||!excluded||!excluded.length||!r) return false;
+  var ings=(r.ingredients||[]).map(function(i){ return kpNormIng(i&&i.name); });
+  for(var k=0;k<excluded.length;k++){
+    var ex=excluded[k];
+    if(ex==='Fruits à coque'){
+      if(ings.some(function(n){ return KP_NUTS_KEYS.some(function(w){ return n.indexOf(w)>-1; }); })) return true;
+    } else {
+      var key=kpNormIng(ex).replace(/s$/,'');
+      if(ings.some(function(n){ return n.indexOf(key)>-1; })) return true;
+    }
+  }
+  return false;
+}
 var CUISSONS=["grillé","poêlé","au four","vapeur"];
 var EMOJI={"Saumon":"🐟","Poulet":"🍗","Boeuf":"🥩","Steak":"🥩","Crevettes":"🦐","Dinde":"🦃","Porc":"🐷","Courgettes":"🥒","Brocolis":"🥦","Épinards":"🥬","Haricots verts":"🫘","Aubergines":"🍆","Champignons":"🍄","Poivrons":"🫑","Concombre":"🥒","Avocat":"🥑","Huile d'olive":"🫒","Beurre":"🧈","Crème":"🥛","Fromage":"🧀","Jaune d'œuf":"🥚","Huile de coco":"🥥","Fruits à coque":"🥜"};
 var QTY={"Saumon":"180g","Poulet":"200g","Boeuf":"180g","Steak":"200g","Crevettes":"200g","Dinde":"200g","Porc":"180g","Courgettes":"1 moy.","Brocolis":"150g","Épinards":"100g","Haricots verts":"150g","Aubergines":"½","Champignons":"120g","Poivrons":"1","Concombre":"½","Avocat":"1","Huile d'olive":"2 cs","Beurre":"20g","Crème":"3 cs","Fromage":"40g","Jaune d'œuf":"2","Huile de coco":"1 cs"};
@@ -11154,10 +11171,20 @@ function kpRecipeHasVeg(r){
 function kpVegSidesDisabled(){
   return !!(profile && profile.dietMode==='carnivore');
 }
+function kpVegSideBanned(v){
+  if(typeof excluded==='undefined'||!excluded||!excluded.length||!v) return false;
+  var txt=kpNormIng((v.shop||'')+' '+(v.name||'')).replace(/s\b/g,'');
+  return excluded.some(function(ex){
+    if(ex==='Fruits à coque') return KP_NUTS_KEYS.some(function(w){ return txt.indexOf(w)>-1; });
+    return txt.indexOf(kpNormIng(ex).replace(/s\b/g,''))>-1;
+  });
+}
 function kpPickVegSide(used){
   used = used || [];
-  var pool = KETO_VEG_SIDES.filter(function(v){ return used.indexOf(v.name)===-1; });
-  if(!pool.length){ used.length=0; pool = KETO_VEG_SIDES; }
+  var base = KETO_VEG_SIDES.filter(function(v){ return !kpVegSideBanned(v); });
+  if(!base.length) base = KETO_VEG_SIDES;
+  var pool = base.filter(function(v){ return used.indexOf(v.name)===-1; });
+  if(!pool.length){ used.length=0; pool = base; }
   var v = pool[Math.floor(Math.random()*pool.length)];
   used.push(v.name);
   return {name:v.name, emoji:v.emoji, qty:v.qty, shop:v.shop, color:v.color||''};
@@ -11168,12 +11195,11 @@ function swapMeal(di,slot){
   if(!pool || !pool.length) return;
   var key = (slot==='breakfast') ? 'bfast' : slot;   // le petit-déjeuner est stocké dans d.bfast
   var poolLen=pool.length;
-  var o=d[key], att=0;
-  do{
-    d[key]=Math.floor(Math.random()*poolLen);
-    att++;
-    if(att>50) break;
-  }while(d[key]===o);
+  var o=d[key];
+  // candidats ≠ actuel et sans ingrédient exclu
+  var idxs=[]; for(var ci=0;ci<poolLen;ci++){ if(ci!==o && !kpRecipeHasExcluded(pool[ci])) idxs.push(ci); }
+  if(!idxs.length){ for(var cj=0;cj<poolLen;cj++){ if(cj!==o) idxs.push(cj); } }
+  if(idxs.length) d[key]=idxs[Math.floor(Math.random()*idxs.length)];
   // Recalcule le légume d'accompagnement pour déjeuner/dîner
   if(slot==='lunch' || slot==='dinner'){
     var nr = pool[d[key]];
@@ -13546,8 +13572,12 @@ function generateMenu(){
 
   function pickRecipe(pool, targetK, usedIds){
     if(!pool || !pool.length) return null;
-    var candidates = pool.filter(function(r){ return usedIds.indexOf(r.id) === -1; });
-    if(candidates.length === 0){ candidates = pool.slice(); usedIds.length = 0; }
+    var candidates = pool.filter(function(r){ return usedIds.indexOf(r.id) === -1 && !kpRecipeHasExcluded(r); });
+    if(candidates.length === 0){
+      candidates = pool.filter(function(r){ return !kpRecipeHasExcluded(r); });
+      usedIds.length = 0;
+    }
+    if(candidates.length === 0){ candidates = pool.slice(); } // tout est exclu → on garde le pool complet
     var scored = candidates.map(function(r){ return {r:r, s:recipeScore(r,Math.max(targetK,120))}; });
     scored.sort(function(a,b){return b.s - a.s;});
     // Variété : on pioche AU HASARD parmi les meilleurs candidats (≈ 60% les mieux notés,
@@ -17502,6 +17532,7 @@ authGuest = function(){
       var r=pool[i];
       if(!r || usedIds[r.id] || prevIds.indexOf(r.id)>-1) continue;
       if(kpNoNuts() && kpqHasNuts(kpqTxt(r))) continue;
+      if(typeof kpRecipeHasExcluded==='function' && kpRecipeHasExcluded(r)) continue;
       if(qMode!=='standard' && !filterRecipesForMode([r],qMode).length) continue;
       if(predicate(r)) cands.push(i);
     }
@@ -17694,7 +17725,7 @@ authGuest = function(){
         if(have.length<5 && missing.length){
           var vegOff=(typeof kpVegSidesDisabled==='function' && kpVegSidesDisabled());
           function kpqSetSide(d,k,target){
-            var opts=KETO_VEG_SIDES.filter(function(v){return v.color===target;});
+            var opts=KETO_VEG_SIDES.filter(function(v){return v.color===target && !(typeof kpVegSideBanned==='function' && kpVegSideBanned(v));});
             if(!opts.length) return false;
             var v=opts[Math.floor(Math.random()*opts.length)];
             d[k]={name:v.name,emoji:v.emoji,qty:v.qty,shop:v.shop,color:v.color};
@@ -18038,15 +18069,10 @@ authGuest = function(){
 
   /* ───────── 7. UI — Section modes + favoris dans Paramètres ───────── */
   function buildModesSection(){
-    var html = '<div class="prefs-label" style="margin-top:18px">📄 Exports PDF</div>'
-      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-        + '<button onclick="exportMenuPDF()" style="padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#1a5c38,#3a9966);color:#fff;font-family:var(--font-body),sans-serif;font-size:13px;font-weight:600;cursor:pointer">📅 Menu hebdo</button>'
-        + '<button onclick="exportShoppingPDF()" style="padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#b07a22,#e8b84b);color:#fff;font-family:var(--font-body),sans-serif;font-size:13px;font-weight:600;cursor:pointer">🛒 Liste de courses</button>'
-      + '</div>';
-
+    /* Boutons « Menu hebdo » / « Liste de courses » retirés des Paramètres (demande utilisateur)
+       — les impressions restent accessibles via le bouton + (Accès rapides). */
     var wrap = document.createElement('div');
     wrap.id = 'modesPackSection';
-    wrap.innerHTML = html;
     return wrap;
   }
 
@@ -28315,36 +28341,77 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 }
 /* ── Dashboard (mobile) ── */
 #kpDashHost{ display:none; }
-@media(max-width:980px){ #kpDashHost{ display:block; margin-bottom:16px; } }
-.kpd-greet{ display:flex; align-items:center; justify-content:space-between; gap:6px; margin:4px 0 14px; }
-.kpd-greet h2{ font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; color:#232b22; margin:0 0 6px; letter-spacing:-.02em; }
-.kpd-greet p{ font-family:'Plus Jakarta Sans',sans-serif; font-size:14.5px; font-weight:500; line-height:1.4; color:#5c645a; margin:0; max-width:225px; }
+@media(max-width:980px){ #kpDashHost{ display:block; margin-bottom:16px; } .plan-gen-hero{ display:none !important; } }
+.kpd-greet{ display:flex; align-items:flex-start; justify-content:space-between; gap:6px; margin:4px 0 16px; }
+.kpd-greet h2{ font-family:'Plus Jakarta Sans',sans-serif; font-size:28px; font-weight:800; color:#232b22; margin:6px 0 8px; letter-spacing:-.02em; }
+.kpd-greet p{ font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:500; line-height:1.45; color:#5c645a; margin:0; max-width:225px; }
 .kpd-avo{ width:132px; height:auto; flex:0 0 auto; margin-right:-14px; filter:drop-shadow(0 10px 18px rgba(30,42,30,.18)); }
 .kpd-card{ background:#fff; border:1px solid rgba(30,42,30,.05); border-radius:20px; padding:16px; margin-bottom:14px; box-shadow:0 12px 30px -22px rgba(30,42,30,.3); }
 .kpd-card-title{ font-family:'Plus Jakarta Sans',sans-serif; font-size:16.5px; font-weight:700; color:#232b22; }
-.kpd-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:14px; }
-.kpd-stat{ text-align:center; min-width:0; }
-.kpd-stat-ico{ width:46px; height:46px; margin:0 auto 8px; border-radius:50%; background:#fff; border:1px solid rgba(30,42,30,.08); box-shadow:0 6px 14px -8px rgba(30,42,30,.25); display:flex; align-items:center; justify-content:center; font-size:20px; }
-.kpd-stat-val{ font-family:'Plus Jakarta Sans',sans-serif; font-size:17px; font-weight:800; color:#232b22; line-height:1.1; }
-.kpd-stat-val small{ display:block; font-size:10px; font-weight:700; color:#6b7266; }
-.kpd-stat-lab{ font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:#6b7266; margin-top:3px; }
-.kpd-goal{ display:flex; align-items:center; gap:14px; justify-content:space-between; }
-.kpd-goal p{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:500; line-height:1.45; color:#5c645a; margin:8px 0 0; max-width:200px; }
-.kpd-ring{ position:relative; width:88px; height:88px; border-radius:50%; flex:0 0 auto; background:conic-gradient(#5b8a40 calc(var(--pct)*1%), #e7ecdd 0); display:flex; align-items:center; justify-content:center; }
-.kpd-ring span{ width:66px; height:66px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:18px; font-weight:800; color:#232b22; }
+/* ── Progression aujourd'hui ── */
+.kpd-prog{ cursor:pointer; }
+.kpd-prog-head{ display:flex; align-items:center; justify-content:space-between; }
+.kpd-chev{ font-size:22px; color:#9aa294; font-weight:600; line-height:1; }
+.kpd-prog-body{ display:flex; align-items:center; gap:16px; margin-top:12px; }
+.kpd-ring{ position:relative; width:96px; height:96px; border-radius:50%; flex:0 0 auto; background:conic-gradient(#5b8a40 calc(var(--pct)*1%), #e7ecdd 0); display:flex; align-items:center; justify-content:center; }
+.kpd-ring span{ width:72px; height:72px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:19px; font-weight:800; color:#232b22; }
+.kpd-prog-info{ flex:1; min-width:0; }
+.kpd-prog-lab{ font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; color:#232b22; }
+.kpd-prog-status{ font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; color:#4a7c3f; margin:2px 0 9px; }
+.kpd-prog-status.warn{ color:#b3762a; }
+.kpd-bar{ height:8px; border-radius:99px; background:#e7ecdd; overflow:hidden; }
+.kpd-bar i{ display:block; height:100%; border-radius:99px; background:#5b8a40; transition:width .4s ease; }
+.kpd-prog-rem{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:500; color:#5c645a; margin-top:9px; }
+.kpd-prog-rem strong{ color:#3f7d3a; font-weight:800; }
+/* ── 4 tuiles stats ── */
+.kpd-tiles{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+.kpd-tile{ background:#fff; border:1px solid rgba(30,42,30,.05); border-radius:16px; padding:13px 4px 11px; text-align:center; min-width:0; box-shadow:0 10px 24px -20px rgba(30,42,30,.3); }
+.kpd-tile-ico{ font-size:22px; display:block; margin-bottom:6px; }
+.kpd-tile-lab{ font-family:'Plus Jakarta Sans',sans-serif; font-size:10.5px; font-weight:600; color:#6b7266; }
+.kpd-tile-val{ font-family:'Plus Jakarta Sans',sans-serif; font-size:16.5px; font-weight:800; color:#232b22; margin-top:2px; line-height:1.1; }
+.kpd-tile-val small{ font-size:10px; font-weight:700; color:#6b7266; margin-left:1px; }
+/* ── Carte verte « Générer ma semaine » ── */
+.kpd-gen{ background:linear-gradient(135deg,#3c6030,#2c4a22); border-radius:22px; padding:20px 18px 18px; margin-bottom:14px; box-shadow:0 18px 38px -20px rgba(44,74,34,.55); }
+.kpd-gen-eyebrow{ font-family:'Plus Jakarta Sans',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:#cfe3b8; }
+.kpd-gen h3{ font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; color:#fff; margin:6px 0; letter-spacing:-.02em; }
+.kpd-gen p{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:500; line-height:1.5; color:rgba(255,255,255,.85); margin:0 0 14px; }
+.kpd-gen-btn{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; background:#fff; color:#2c4a22; border:none; border-radius:99px; padding:14px; font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:800; cursor:pointer; box-shadow:0 8px 18px -8px rgba(0,0,0,.3); }
+.kpd-gen-btn:active{ transform:scale(.97); }
+/* ── Prochain repas ── */
 .kpd-meals-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
 .kpd-seeall{ background:none; border:none; font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:700; color:#3f7d3a; cursor:pointer; padding:4px; }
 .kpd-meals-scroll{ display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; margin:0 -4px; padding:0 4px 2px; scrollbar-width:none; }
 .kpd-meals-scroll::-webkit-scrollbar{ display:none; }
-.kpd-meal{ flex:0 0 88%; scroll-snap-align:start; display:flex; gap:12px; align-items:center; background:#fbfaf6; border:1px solid rgba(30,42,30,.05); border-radius:16px; padding:10px; cursor:pointer; }
-.kpd-meal-photo{ width:96px; height:96px; border-radius:12px; object-fit:cover; flex:0 0 auto; background:#eef0e4; display:flex; align-items:center; justify-content:center; font-size:36px; }
-.kpd-meal-body{ min-width:0; }
-.kpd-meal-name{ font-family:'Plus Jakarta Sans',sans-serif; font-size:14.5px; font-weight:700; line-height:1.3; color:#232b22; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.kpd-meal-badge{ display:inline-block; margin-top:6px; font-family:'Plus Jakarta Sans',sans-serif; font-size:10.5px; font-weight:700; color:#3c5a2c; background:#e9efdb; border-radius:8px; padding:3px 9px; }
-.kpd-meal-meta{ display:flex; gap:12px; margin-top:7px; font-family:'Plus Jakarta Sans',sans-serif; font-size:11.5px; font-weight:600; color:#6b7266; }
+.kpd-meal{ flex:0 0 92%; scroll-snap-align:start; display:flex; gap:12px; background:#fbfaf6; border:1px solid rgba(30,42,30,.05); border-radius:16px; padding:10px; cursor:pointer; }
+.kpd-meal-photo{ width:112px; height:auto; min-height:112px; border-radius:12px; object-fit:cover; flex:0 0 auto; background:#eef0e4; display:flex; align-items:center; justify-content:center; font-size:40px; }
+.kpd-meal-body{ min-width:0; display:flex; flex-direction:column; flex:1; padding:2px 2px 2px 0; }
+.kpd-meal-name{ font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:800; line-height:1.3; color:#232b22; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.kpd-meal-badge{ display:inline-block; align-self:flex-start; margin-top:5px; font-family:'Plus Jakarta Sans',sans-serif; font-size:10.5px; font-weight:700; color:#3c5a2c; background:#e9efdb; border-radius:8px; padding:3px 9px; }
+.kpd-meal-meta{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.kpd-meal-pill{ font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:700; color:#4a524a; background:#f1ede0; border-radius:99px; padding:4px 9px; white-space:nowrap; }
+.kpd-meal-link{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:800; color:#3f7d3a; margin-top:auto; padding-top:8px; text-align:right; }
 .kpd-dots{ display:flex; gap:5px; justify-content:center; margin-top:10px; }
 .kpd-dot{ width:6px; height:6px; border-radius:50%; background:#d8ddcc; transition:background .2s; }
 .kpd-dot.on{ background:#5b8a40; }
+/* ── Cartes modes alimentaires ── */
+.kpd-sec{ font-family:'Plus Jakarta Sans',sans-serif; font-size:16.5px; font-weight:700; color:#232b22; margin:2px 0 10px; }
+.kpd-modes{ display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -4px 14px; padding:2px 4px 6px; scrollbar-width:none; }
+.kpd-modes::-webkit-scrollbar{ display:none; }
+.kpd-mode{ position:relative; flex:0 0 152px; background:#fff; border:1px solid rgba(30,42,30,.05); border-radius:18px; padding:14px 12px 12px; box-shadow:0 10px 24px -20px rgba(30,42,30,.3); cursor:pointer; text-align:left; }
+.kpd-mode:active{ transform:scale(.97); }
+.kpd-mode.active{ border-color:#5b8a40; box-shadow:0 0 0 2px rgba(91,138,64,.22); }
+.kpd-mode-ico{ width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:9px; background:var(--tint,#eef2e2); }
+.kpd-mode-name{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:800; color:#232b22; line-height:1.25; }
+.kpd-mode-sub{ font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:#6b7266; margin-top:4px; line-height:1.35; }
+.kpd-mode-arrow{ display:flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:var(--tint,#eef2e2); font-size:13px; font-weight:800; color:#2c4a22; margin-top:10px; }
+.kpd-mode-badge{ position:absolute; top:10px; right:10px; font-size:13px; }
+.kpd-mode-badge.on{ width:20px; height:20px; border-radius:50%; background:#5b8a40; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; }
+/* ── Astuce du jour ── */
+.kpd-tip{ display:flex; align-items:center; gap:12px; background:#eef2e2; border:1px solid rgba(30,42,30,.06); border-radius:18px; padding:14px; margin-bottom:14px; cursor:pointer; }
+.kpd-tip-ico{ width:44px; height:44px; border-radius:50%; background:#dbe7c4; display:flex; align-items:center; justify-content:center; font-size:20px; flex:0 0 auto; }
+.kpd-tip-body{ flex:1; min-width:0; }
+.kpd-tip-title{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:800; color:#2c342c; }
+.kpd-tip-txt{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:500; color:#4a524a; line-height:1.45; margin-top:2px; }
 /* ── FAB "+" barre mobile ── */
 .bnav-plus{ display:none; }
 @media(max-width:980px){
@@ -28443,7 +28510,7 @@ window.kpSyncHomeStatus=function(){
   s.classList.toggle('is-premium',isP);
 };
 
-/* ── Dashboard « Résumé / Objectif / Repas du jour » ── */
+/* ── Dashboard « Progression / Stats / Générer / Prochain repas / Modes / Astuce » ── */
 function mealCard(r,badge){
   var key=r.cat+'-'+r.id;
   var ph=(typeof KP_RECIPE_PHOTOS!=='undefined'&&KP_RECIPE_PHOTOS.has(key))
@@ -28452,17 +28519,83 @@ function mealCard(r,badge){
   return '<div class="kpd-meal" onclick="openRecipe('+r.id+')" data-testid="kpd-meal-'+r.id+'">'+ph
     +'<div class="kpd-meal-body"><div class="kpd-meal-name">'+r.name+'</div>'
     +'<span class="kpd-meal-badge">'+badge+'</span>'
-    +'<div class="kpd-meal-meta"><span>🌿 '+(r.carb!=null?r.carb:'–')+'g net</span><span>🔥 '+(r.kcal!=null?r.kcal:'–')+' kcal</span></div>'
+    +'<div class="kpd-meal-meta"><span class="kpd-meal-pill">🔥 '+(r.kcal!=null?r.kcal:'–')+' kcal</span><span class="kpd-meal-pill">🌿 '+(r.carb!=null?r.carb:'–')+'g net</span></div>'
+    +'<div class="kpd-meal-link">Voir la recette →</div>'
     +'</div></div>';
 }
+/* ── Astuce du jour (rotation quotidienne, tap = suivante) ── */
+var KPD_TIPS=[
+  'Boire un grand verre d\'eau avant le repas améliore souvent la satiété.',
+  'Commencez chaque repas par les légumes : la montée du glucose est ralentie.',
+  '10 minutes de marche après le repas réduisent le pic glycémique de 20 à 30 %.',
+  'En keto, pensez électrolytes : sodium, magnésium et potassium chaque jour.',
+  'Dormez 7 à 9 h : le manque de sommeil augmente les fringales de sucre.',
+  'Préparez vos repas à l\'avance le dimanche pour tenir toute la semaine.',
+  'Assaisonnez à l\'huile d\'olive à cru pour booster vos lipides de qualité.',
+  'Le café gras (beurre ou MCT) peut prolonger votre satiété jusqu\'au déjeuner.'
+];
+var _kpdTipOff=0;
+function kpdTipIdx(){ return (Math.floor(Date.now()/86400000)+_kpdTipOff)%KPD_TIPS.length; }
+function kpHomeTipHTML(){
+  return '<div class="kpd-tip" data-testid="kpd-tip" onclick="kpHomeTipNext()">'
+    +'<span class="kpd-tip-ico">💡</span>'
+    +'<div class="kpd-tip-body"><div class="kpd-tip-title">Astuce du jour</div>'
+    +'<div class="kpd-tip-txt" id="kpdTipTxt">'+KPD_TIPS[kpdTipIdx()]+'</div></div>'
+    +'<span class="kpd-chev">›</span></div>';
+}
+window.kpHomeTipNext=function(){ _kpdTipOff++; var el=$id('kpdTipTxt'); if(el) el.textContent=KPD_TIPS[kpdTipIdx()]; };
+/* ── Cartes modes alimentaires + univers ── */
+function kpHomeModesHTML(){
+  if(typeof DIET_MODES==='undefined') return '';
+  var current=(typeof profile!=='undefined'&&profile&&profile.dietMode)||'standard';
+  var isPrem=false; try{ isPrem=(typeof window.isPremium==='function')?window.isPremium():false; }catch(e){}
+  var TINT={standard:'#eef2e2',perte_rapide:'#fdf3e2',diabete:'#fdeaea',epilepsie:'#f1eafa',carnivore:'#fbe9e0',vegetarien:'#e6f4ef',sans_lactose:'#eaf1f5'};
+  var items=Object.keys(DIET_MODES).filter(function(k){return k!=='vegan';}).map(function(id){
+    var m=DIET_MODES[id];
+    var on=(id==='vegetarien')?(current==='vegetarien'||current==='vegan'):(id===current);
+    var locked=(id!=='standard')&&!isPrem;
+    var label=m.label, emoji=m.emoji;
+    if(id==='vegetarien'&&current==='vegan'){ label='Keto Végétalien'; emoji='🌱'; }
+    var sub=Math.round(m.fat*100)+'% L · '+Math.round(m.prot*100)+'% P · '+Math.round(m.carb*100)+'% G';
+    var click=locked?"openPremiumModal&&openPremiumModal('modes')":(id==='vegetarien'?"openVeggieSubmodeModal()":"kpHomeSetMode('"+id+"')");
+    var badge=locked?'<span class="kpd-mode-badge">🔒</span>':(on?'<span class="kpd-mode-badge on">✓</span>':'');
+    return '<div class="kpd-mode'+(on?' active':'')+'" data-testid="kpd-mode-'+id+'" onclick="'+click+'" style="--tint:'+(TINT[id]||'#eef2e2')+'">'+badge
+      +'<span class="kpd-mode-ico">'+emoji+'</span>'
+      +'<div class="kpd-mode-name">'+label+'</div>'
+      +'<div class="kpd-mode-sub">'+sub+'</div>'
+      +'<span class="kpd-mode-arrow">→</span></div>';
+  });
+  function extra(emoji,tint,name,sub,click,tid){
+    return '<div class="kpd-mode" data-testid="'+tid+'" onclick="'+click+'" style="--tint:'+tint+'">'
+      +'<span class="kpd-mode-ico">'+emoji+'</span><div class="kpd-mode-name">'+name+'</div>'
+      +'<div class="kpd-mode-sub">'+sub+'</div><span class="kpd-mode-arrow">→</span></div>';
+  }
+  var diab=false; try{ diab=(typeof kpDiabIsActive==='function')?kpDiabIsActive():false; }catch(e){}
+  items.push(extra('💪','#e8f0fb','Mode Musculation','Macros, protéines, progression',"switchTab('muscle')",'kpd-mode-muscle'));
+  if(diab) items.push(extra('🎓','#f1eafa','Formations','Cours vidéo et accompagnement',"switchTab('parcours')",'kpd-mode-parcours'));
+  else items.push(extra('💊','#fdf3e2','Compléments','Sélection naturo ciblée',"switchTab('lpev')",'kpd-mode-lpev'));
+  return '<div class="kpd-sec">Modes alimentaires</div><div class="kpd-modes" data-testid="kpd-modes">'+items.join('')+'</div>';
+}
+window.kpHomeSetMode=function(id){
+  try{ applyDietMode(id); }catch(e){}
+  try{ if(typeof renderProfileModesGrid==='function') renderProfileModesGrid(); }catch(e){}
+  try{ kpRenderDashboard(); }catch(e){}
+};
 window.kpRenderDashboard=function(){
   var host=$id('kpDashHost'); if(!host) return;
   try{ var _p=document.getElementById('kpWeekPulse'); if(_p&&host.contains(_p)){ var _t=document.getElementById('tab-plan'); if(_t) _t.appendChild(_p); } }catch(e){}
   try{ kpSyncHomeStatus(); }catch(e){}
   var fn=(typeof profile!=='undefined'&&profile&&profile.firstname)?' '+profile.firstname:'';
-  var greet='<div class="kpd-greet"><div class="kpd-greet-txt"><h2>Bonjour'+fn+' ! 👋</h2><p>Prêt à atteindre vos objectifs en pleine santé ?</p></div><img class="kpd-avo" src="'+KPD_AVO+'" alt="" draggable="false"></div>';
+  var greet='<div class="kpd-greet"><div class="kpd-greet-txt"><h2>Bonjour'+fn+' 👋</h2><p>Votre santé avance,<br>un repas à la fois.</p></div><img class="kpd-avo" src="'+KPD_AVO+'" alt="" draggable="false"></div>';
+  var gen='<div class="kpd-gen" data-testid="kpd-gen">'
+    +'<div class="kpd-gen-eyebrow">✨ Planifier ma semaine</div>'
+    +'<h3>Générer ma semaine</h3>'
+    +'<p>Planifiez 7 jours de repas adaptés à vos objectifs et préférences.</p>'
+    +'<button type="button" class="kpd-gen-btn" data-testid="kpd-gen-btn" onclick="generateMenu()">Générer ma semaine <span>→</span></button></div>';
+  var modes=kpHomeModesHTML();
+  var tip=kpHomeTipHTML();
   if(typeof menu==='undefined'||!menu||!menu.length){
-    host.innerHTML=greet;
+    host.innerHTML=greet+gen+modes+tip;
     kpPlacePulse();
     return;
   }
@@ -28485,37 +28618,55 @@ window.kpRenderDashboard=function(){
   var fatScore=Math.max(0,100-Math.abs(fp-72)*3);
   var kcalScore=Math.max(0,100-Math.round(Math.abs(total-kcalT)/Math.max(kcalT,1)*100));
   var obj=Math.round(carbScore*.5+fatScore*.25+kcalScore*.25);
-  var resume='<div class="kpd-card" data-testid="kpd-resume"><div class="kpd-card-title">Résumé du jour</div><div class="kpd-stats">'
-    +'<div class="kpd-stat"><div class="kpd-stat-ico">🌿</div><div class="kpd-stat-val"><small>Net</small>'+carbG+'g</div><div class="kpd-stat-lab">Glucides nets</div></div>'
-    +'<div class="kpd-stat"><div class="kpd-stat-ico">💧</div><div class="kpd-stat-val">'+fp+'%</div><div class="kpd-stat-lab">Lipides</div></div>'
-    +'<div class="kpd-stat"><div class="kpd-stat-ico">🔥</div><div class="kpd-stat-val">'+total+'<small>kcal</small></div><div class="kpd-stat-lab">Énergie</div></div>'
-    +'<div class="kpd-stat"><div class="kpd-stat-ico">🎯</div><div class="kpd-stat-val">'+obj+'%</div><div class="kpd-stat-lab">Objectif</div></div>'
-    +'</div></div>';
-  var goal='<div class="kpd-card kpd-goal" data-testid="kpd-goal"><div><div class="kpd-card-title">Objectif du jour</div>'
-    +'<p>Rester en dessous de '+carbT+'g de glucides nets</p></div>'
-    +'<div class="kpd-ring" style="--pct:'+pctBudget+'"><span>'+pctBudget+'%</span></div></div>';
+  var remain=carbT-carbG;
+  var over=remain<0;
+  var status = over ? 'budget dépassé' : (pctBudget>=100 ? 'objectif atteint' : (pctBudget>=70 ? 'presque atteint' : 'en bonne voie'));
+  var remTxt = over
+    ? '<strong>'+Math.abs(remain)+' g</strong> au-dessus de l\'objectif du jour'
+    : '<strong>'+remain+' g</strong> restants avant l\'objectif';
+  var prog='<div class="kpd-card kpd-prog" data-testid="kpd-prog" onclick="setDayView(\'day\')">'
+    +'<div class="kpd-prog-head"><span class="kpd-card-title">Progression aujourd\'hui</span><span class="kpd-chev">›</span></div>'
+    +'<div class="kpd-prog-body">'
+    +'<div class="kpd-ring" style="--pct:'+pctBudget+'"><span>'+pctBudget+'%</span></div>'
+    +'<div class="kpd-prog-info"><div class="kpd-prog-lab">Objectif du jour</div>'
+    +'<div class="kpd-prog-status'+(over?' warn':'')+'">'+status+'</div>'
+    +'<div class="kpd-bar"><i style="width:'+pctBudget+'%"></i></div>'
+    +'<div class="kpd-prog-rem">'+remTxt+'</div></div></div></div>';
+  var tiles='<div class="kpd-tiles" data-testid="kpd-tiles">'
+    +'<div class="kpd-tile"><span class="kpd-tile-ico">🥑</span><div class="kpd-tile-lab">Glucides nets</div><div class="kpd-tile-val">'+carbG+'<small>g</small></div></div>'
+    +'<div class="kpd-tile"><span class="kpd-tile-ico">💧</span><div class="kpd-tile-lab">Lipides</div><div class="kpd-tile-val">'+fp+'<small>%</small></div></div>'
+    +'<div class="kpd-tile"><span class="kpd-tile-ico">🔥</span><div class="kpd-tile-lab">Calories</div><div class="kpd-tile-val">'+total+'<small>kcal</small></div></div>'
+    +'<div class="kpd-tile"><span class="kpd-tile-ico">🎯</span><div class="kpd-tile-lab">Objectif</div><div class="kpd-tile-val">'+obj+'<small>%</small></div></div>'
+    +'</div>';
   var cards=[];
   try{
     var courses=(typeof getCourses==='function')?getCourses():{starter:true,dessert:true};
-    function pushSlot(slot,badge){ var r=recipeAtSlot(d,slot); if(r) cards.push(mealCard(r,badge)); }
-    if(meals.breakfast&&d.bfast!=null&&BFAST_RECIPES[d.bfast]) cards.push(mealCard(BFAST_RECIPES[d.bfast],'Petit-déj'));
+    function pushSlot(slot,badge,p){ var r=recipeAtSlot(d,slot); if(r) cards.push({p:p,html:mealCard(r,badge)}); }
+    if(meals.breakfast&&d.bfast!=null&&BFAST_RECIPES[d.bfast]) cards.push({p:0,html:mealCard(BFAST_RECIPES[d.bfast],'Petit-déj')});
     if(meals.lunch){
-      if(courses.starter&&d.lunchStarter!=null) pushSlot('lunchStarter','Déjeuner · Entrée');
-      pushSlot('lunch','Déjeuner · Plat');
-      if(courses.dessert&&d.lunchDessert!=null) pushSlot('lunchDessert','Déjeuner · Dessert');
+      if(courses.starter&&d.lunchStarter!=null) pushSlot('lunchStarter','Déjeuner · Entrée',1);
+      pushSlot('lunch','Déjeuner · Plat',1);
+      if(courses.dessert&&d.lunchDessert!=null) pushSlot('lunchDessert','Déjeuner · Dessert',1);
     }
     if(meals.dinner){
-      if(courses.starter&&d.dinnerStarter!=null) pushSlot('dinnerStarter','Dîner · Entrée');
-      pushSlot('dinner','Dîner · Plat');
-      if(courses.dessert&&d.dinnerDessert!=null) pushSlot('dinnerDessert','Dîner · Dessert');
+      if(courses.starter&&d.dinnerStarter!=null) pushSlot('dinnerStarter','Dîner · Entrée',2);
+      pushSlot('dinner','Dîner · Plat',2);
+      if(courses.dessert&&d.dinnerDessert!=null) pushSlot('dinnerDessert','Dîner · Dessert',2);
     }
+    /* Le prochain repas (selon l'heure) passe en premier */
+    var h=new Date().getHours();
+    var nowP=h<11?0:(h<15?1:2);
+    var up=cards.filter(function(c){return c.p>=nowP;});
+    var done=cards.filter(function(c){return c.p<nowP;});
+    cards=up.concat(done);
   }catch(e){}
-  var dots=cards.length>1?'<div class="kpd-dots" id="kpdDots">'+cards.map(function(_,i){return '<span class="kpd-dot'+(i===0?' on':'')+'"></span>';}).join('')+'</div>':'';
-  var mealsCard=cards.length?('<div class="kpd-card" data-testid="kpd-meals"><div class="kpd-meals-head"><span class="kpd-card-title">Repas du jour</span>'
+  var htmls=cards.map(function(c){return c.html;});
+  var dots=htmls.length>1?'<div class="kpd-dots" id="kpdDots">'+htmls.map(function(_,i){return '<span class="kpd-dot'+(i===0?' on':'')+'"></span>';}).join('')+'</div>':'';
+  var mealsCard=htmls.length?('<div class="kpd-card" data-testid="kpd-meals"><div class="kpd-meals-head"><span class="kpd-card-title">Prochain repas</span>'
     +'<button type="button" class="kpd-seeall" onclick="setDayView(\'day\')" data-testid="kpd-seeall">Voir tout ›</button></div>'
-    +'<div class="kpd-meals-scroll" id="kpdScroll">'+cards.join('')+'</div>'+dots+'</div>'):'';
+    +'<div class="kpd-meals-scroll" id="kpdScroll">'+htmls.join('')+'</div>'+dots+'</div>'):'';
   var _prevSc=$id('kpdScroll'); var _prevLeft=_prevSc?_prevSc.scrollLeft:0;
-  host.innerHTML=greet+resume+goal+mealsCard;
+  host.innerHTML=greet+prog+tiles+gen+mealsCard+modes+tip;
   kpPlacePulse();
   var sc=$id('kpdScroll'), dt=$id('kpdDots');
   if(sc&&_prevLeft) sc.scrollLeft=_prevLeft;
