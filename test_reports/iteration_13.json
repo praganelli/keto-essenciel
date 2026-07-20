@@ -1,0 +1,22 @@
+{
+  "summary": "Retest ciblé du bug 'logo déformé' dans /api/app (keto_app.html) après correctif CSS. MOBILE 390x844, flux invité: kpWelcomeEnter('login') -> authGuest() -> overlays fermés (localStorage kp_whatsnew_v2='1') -> switchTab('plan') -> inspection .khh-titlewrap .khh-logo-h. Résultat: PASS. getComputedStyle(img).objectFit === 'contain', objectPosition === '0% 50%' (left center), flexBasis === '100%' conservé pour le retour à la ligne. Image visible (box 300x58, natural 460x148, ratio 3.108 preservé visuellement grâce à contain). Screenshot du header confirme le logo 'Keto-Essenciel' correctement rendu sans étirement.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/tmp/plan_header.png"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Fix CSS confirmé à /app/backend/keto_app.html:28290: '.khh-titlewrap .khh-logo-h{ flex:0 0 100%; object-fit:contain; object-position:left center; }'. Solution correcte: le flex:0 0 100% force le wrap sur nouvelle ligne, et object-fit:contain empêche la déformation malgré la boîte pleine largeur."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100% (1/1 check re-tested)"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Bug 'logo header déformé' résolu et vérifié. Les 5 autres checks de iteration_12 restent PASS (non re-testés selon consigne). Endpoint testé: GET /api/app rendu HTML standalone.",
+  "rca_of_issue": "RCA: .khh-titlewrap avait flex-wrap:wrap avec le logo en flex:0 0 100% pour occuper toute la ligne (permettant au titre de wrapper en dessous). Sans object-fit, l'image <img> était étirée à 100% de largeur du parent, déformant le ratio (300px de large vs. natural 460x148). Fix: ajout de object-fit:contain + object-position:left center, qui préserve le ratio visuel de l'image tout en gardant la boîte pleine largeur pour le comportement flex-wrap. Vérifié via getComputedStyle."
+}
