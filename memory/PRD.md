@@ -464,3 +464,16 @@ Bugs signalés :
 - SYNC : /app/keto.html (source de vérité) copié vers /app/backend/keto_app.html (le backend sert UNIQUEMENT keto_app.html via /api/app — TOUJOURS copier après modification).
 - Testé E2E (compte demo.keto.qa2026@gmail.com, 390px) : login OK, Parcours home (200 pts, 29/121 ch, badges 32/135), Module 1 ouvert avec 10 chapitres (50 %), ch1 « Qu'est-ce que le diabète ? » rendu avec image, écran 🏅 Mes badges OK (32/135, 24 %). ZÉRO erreur JS console/pageerror.
 - ⚠️ Billing OpenAI toujours bloqué pour les images (backlog inchangé).
+
+## Refonte écran de connexion — mockup « Bienvenue ! » + nouveau logo (fork, juillet 2026)
+- Nouveau logo officiel keto-Essenciel (avocat + K + goutte, « SIMPLE · NATUREL · ESSENTIEL ») fourni par l'utilisateur : fond blanc rendu transparent (PIL), recadré, WebP 640px (~64KB) embarqué en base64 (.kpl-logo). Remplace l'ancien SVG avocat + wordmark.
+- Écran de connexion refait à l'identique du mockup : pastille « 🌐 Français » (décorative, position:fixed haut-droite), logo, « Bienvenue ! 🌿 » + sous-titre, carte blanche avec champs e-mail (icône enveloppe) / mot de passe (cadenas + œil afficher/masquer kpTogglePwd), « Se souvenir de moi » (checkbox → persistance Firebase LOCAL/SESSION dans authLogin) + « Mot de passe oublié ? », bouton vert « Se connecter → » (id btnLogin conservé), divider « ou », bouton blanc « Continuer avec Google » (authGoogle existant), carte verte « Vous n'avez pas encore de compte ? S'inscrire (Gratuit) → » (bascule authSwitchTab('register')), « 🛡 Vos données sont sécurisées ». Lien invité + footer contact conservés discrets.
+- Onglets login/inscription masqués (.auth-tabs display:none) ; formulaire d'inscription inchangé + lien « ← J'ai déjà un compte » en tête (kpl-back-login). Overlay reset mot de passe passé en modal clair plein écran (position:fixed).
+- Script /app/apply_login.py (8 remplacements). Styles dans <style id="kplAuthStyles"> après authScreen. Fond crème #f7f5ec + blobs verts radiaux sur .auth-card. Desktop : split photo/carte conservé, tout tient sans scroll.
+- Vérifié E2E (390px + 1440px, 0 erreur JS) : rendu conforme mockup, œil OK, bascule inscription/retour OK, reset OK, LOGIN RÉEL OK avec nouveau compte démo demo.keto.qa2026b@gmail.com (l'ancien demo.keto.qa2026@ n'existe plus côté Firebase — recréé + test_credentials.md à jour).
+
+## Fond feuillage + avocats sur l'écran de connexion (fork, juillet 2026)
+- Fond photo « bokeh feuillage vert + avocats coupés sur table bois/lin sauge » généré via Nano Banana (clé Emergent, script /app/scripts/gen_login_bg.py), 720px WebP ~25KB embarqué base64 en background de #authScreen (center/cover, sans `fixed` pour iOS).
+- Voile crème dégradé sur .auth-card (rgba .90→.48 haut→bas) → formulaire lisible, feuillage/avocats visibles surtout en bas (comme le mockup). 2 brins de feuillage SVG décoratifs (.kpl-sprig-1 côté droit, .kpl-sprig-2 bas-droit, position:fixed, pointer-events:none). Script /app/apply_login_bg.py.
+- BUGFIX préexistant : kpWelcomeEnter('signup') ciblait `.auth-tab[data-tab="register"]` (sélecteur inexistant) → n'ouvrait jamais l'inscription. Corrigé : appel direct authSwitchTab('register'). Le CTA « Commencer gratuitement » de la landing ouvre bien l'inscription.
+- Vérifié (390px + 1440px, 0 erreur JS) : login + inscription avec fond visible, desktop split conservé.
