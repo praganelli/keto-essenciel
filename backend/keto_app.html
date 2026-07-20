@@ -8088,11 +8088,6 @@ document.addEventListener('DOMContentLoaded',function(){
         <div class="plan-gen-sub" id="planGenSub">🥑 Personnalisé selon votre profil keto</div>
       </div>
       <button class="plan-gen-main" onclick="generateMenu()" data-testid="plan-gen-main">✨ Générer ma semaine</button>
-      <div class="plan-gen-actions">
-        <button class="plan-gen-act" onclick="kpOpenShoppingCourses()"><span class="pga-ico">🛒</span><span>Courses</span></button>
-        <button class="plan-gen-act" onclick="exportPDF()"><span class="pga-ico">🖨</span><span>Menu</span></button>
-        <button class="plan-gen-act" onclick="printShopping()"><span class="pga-ico">🖨</span><span>Liste</span></button>
-      </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
       <div class="view-toggle">
@@ -28283,7 +28278,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 /* ═══ ACCUEIL v2 — header + dashboard + FAB (mockup) ═══ */
 #kpHomeHeader{ display:none; align-items:center; justify-content:space-between; gap:10px; padding:2px 2px 0; }
 .khh-left{ display:flex; align-items:center; gap:11px; min-width:0; }
-.khh-logo-h{ height:48px; width:auto; display:block; margin-left:-4px; }
+.khh-logo-h{ height:58px; width:auto; display:block; margin-left:-6px; filter:drop-shadow(0 3px 8px rgba(46,74,34,.16)); }
 .khh-titlewrap{ display:flex; flex-direction:column; align-items:flex-start; }
 .khh-title{ font-family:'Plus Jakarta Sans',sans-serif; font-size:21.5px; font-weight:800; color:#2f6b2b; letter-spacing:-.02em; line-height:1.05; }
 .khh-title em{ font-style:normal; color:#71a441; }
@@ -28392,6 +28387,8 @@ window.kpQuickOpen=function(){
     tiles.push({e:'💊',l:'Compléments',k:'lpev'});
     tiles.push({e:'🛒',l:'Courses',k:'courses'});
   }
+  tiles.push({e:'🖨️',l:'Imprimer le menu',k:'printmenu'});
+  tiles.push({e:'🧾',l:'Imprimer les courses',k:'printlist'});
   g.innerHTML=tiles.map(function(t){
     return '<button type="button" class="kpq-tile" data-testid="kpq-'+t.k+'" onclick="kpQuickGo(\''+t.k+'\')"><span class="kpq-tile-ico">'+t.e+'</span><span class="kpq-tile-lab">'+t.l+'</span></button>';
   }).join('');
@@ -28404,6 +28401,8 @@ window.kpQuickGo=function(k){
     try{
       if(k==='diab'){ if(typeof kpDiabEntryOpen==='function') kpDiabEntryOpen(); return; }
       if(k==='courses'){ if(typeof kpOpenShoppingCourses==='function') kpOpenShoppingCourses(); return; }
+      if(k==='printmenu'){ if(typeof exportPDF==='function') exportPDF(); return; }
+      if(k==='printlist'){ if(typeof printShopping==='function') printShopping(); return; }
       switchTab(k);
     }catch(e){}
   },130);
@@ -28437,11 +28436,13 @@ function mealCard(r,badge){
 }
 window.kpRenderDashboard=function(){
   var host=$id('kpDashHost'); if(!host) return;
+  try{ var _p=document.getElementById('kpWeekPulse'); if(_p&&host.contains(_p)){ var _t=document.getElementById('tab-plan'); if(_t) _t.appendChild(_p); } }catch(e){}
   try{ kpSyncHomeStatus(); }catch(e){}
   var fn=(typeof profile!=='undefined'&&profile&&profile.firstname)?' '+profile.firstname:'';
   var greet='<div class="kpd-greet"><div class="kpd-greet-txt"><h2>Bonjour'+fn+' ! 👋</h2><p>Prêt à atteindre vos objectifs en pleine santé ?</p></div><img class="kpd-avo" src="'+KPD_AVO+'" alt="" draggable="false"></div>';
   if(typeof menu==='undefined'||!menu||!menu.length){
     host.innerHTML=greet;
+    kpPlacePulse();
     return;
   }
   var di=(typeof TODAY_IDX!=='undefined')?TODAY_IDX:0;
@@ -28494,6 +28495,7 @@ window.kpRenderDashboard=function(){
     +'<div class="kpd-meals-scroll" id="kpdScroll">'+cards.join('')+'</div>'+dots+'</div>'):'';
   var _prevSc=$id('kpdScroll'); var _prevLeft=_prevSc?_prevSc.scrollLeft:0;
   host.innerHTML=greet+resume+goal+mealsCard;
+  kpPlacePulse();
   var sc=$id('kpdScroll'), dt=$id('kpdDots');
   if(sc&&_prevLeft) sc.scrollLeft=_prevLeft;
   if(sc&&dt){
@@ -28569,6 +28571,20 @@ window.kpWhatsNewClose=function(){
   if(ov){ ov.classList.remove('open'); ov.setAttribute('aria-hidden','true'); }
 };
 setTimeout(kpWhatsNewMaybe, 3000);
+
+/* ── Progression de la semaine : placée sous la salutation (mobile) ── */
+function kpPlacePulse(){
+  try{
+    var pulse=document.getElementById('kpWeekPulse'); if(!pulse) return;
+    var host=$id('kpDashHost'); var tab=document.getElementById('tab-plan'); if(!tab) return;
+    var mobile=window.matchMedia('(max-width:980px)').matches;
+    var greet=host?host.querySelector('.kpd-greet'):null;
+    if(mobile && greet){ greet.insertAdjacentElement('afterend', pulse); pulse.style.marginBottom='14px'; }
+    else if(host && host.contains(pulse)){ tab.insertBefore(pulse, host.nextSibling); pulse.style.removeProperty('margin-bottom'); }
+  }catch(e){}
+}
+window.kpPlacePulse=kpPlacePulse;
+try{ window.matchMedia('(max-width:980px)').addEventListener('change', function(){ kpPlacePulse(); }); }catch(e){}
 
 function boot(){ try{ kpRenderDashboard(); }catch(e){} }
 if(document.readyState==='complete'||document.readyState==='interactive'){ setTimeout(boot,900); }
