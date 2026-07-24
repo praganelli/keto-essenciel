@@ -9085,11 +9085,11 @@ document.addEventListener('DOMContentLoaded',function(){
     </div>
     <div class="bnav-section" aria-hidden="true">Menu</div>
     <button class="bnav-tab active" id="nt-plan" onclick="switchTab('plan')">
-      <span class="bnav-icon"><span class="bnav-emoji">📅</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg></span>
+      <span class="bnav-icon"><span class="bnav-emoji">📅</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
       <span class="bnav-label">Plan</span>
     </button>
     <button class="bnav-tab" id="nt-library" onclick="switchTab('library')">
-      <span class="bnav-icon"><span class="bnav-emoji">📚</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg></span>
+      <span class="bnav-icon"><span class="bnav-emoji">📚</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-1.5-1.3-3.5-2-6-2-1.05 0-2.05.13-3 .4V19.4c.95-.27 1.95-.4 3-.4 2.5 0 4.5.7 6 2 1.5-1.3 3.5-2 6-2 1.05 0 2.05.13 3 .4V4.4c-.95-.27-1.95-.4-3-.4-2.5 0-4.5.7-6 2z"/><path d="M12 6v15"/></svg></span>
       <span class="bnav-label">Recettes</span>
     </button>
     <button class="bnav-plus" id="bnavPlus" type="button" onclick="kpQuickOpen()" aria-label="Accès rapides" data-testid="bnav-plus">
@@ -9100,11 +9100,11 @@ document.addEventListener('DOMContentLoaded',function(){
       <span class="bnav-fab-lbl">Générer</span>
     </button>
     <button class="bnav-tab" id="nt-suivi" onclick="switchTab('suivi')">
-      <span class="bnav-icon"><span class="bnav-emoji">📊</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 9.2h3V19H5zM10.6 5h3v14h-3zm5.6 8H19v6h-3z"/></svg></span>
+      <span class="bnav-icon"><span class="bnav-emoji">📊</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h3.5l2.5 6L13 5l3 10 1.8-4H21"/></svg></span>
       <span class="bnav-label">Suivi</span>
     </button>
     <button class="bnav-tab" id="nt-profile" onclick="switchTab('profile')">
-      <span class="bnav-icon"><span class="bnav-emoji">👤</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+      <span class="bnav-icon"><span class="bnav-emoji">👤</span><svg class="bnav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.4c.8-3.6 3.9-5.4 7.5-5.4s6.7 1.8 7.5 5.4"/></svg></span>
       <span class="bnav-label">Profil</span>
     </button>
     <button class="bnav-tab bnav-lpev-tab" id="nt-lpev" onclick="switchTab('lpev')" data-testid="bnav-lpev">
@@ -28470,6 +28470,76 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 #day-panel .mag-section-label{ font-family:'Plus Jakarta Sans',sans-serif !important; font-size:17px !important; font-weight:800 !important; color:#232b22 !important; }
 #day-panel .mag-section-label em{ font-style:normal !important; color:#3f7d3a !important; }
 #day-panel .mag-section-meta{ font-family:'Plus Jakarta Sans',sans-serif !important; }
+/* ── Avatar profil (accueil) ── */
+.kpd-greet-l{ display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+.kpd-ava{ position:relative; width:56px; height:56px; border-radius:50%; border:2.5px solid #5b8a40; padding:2px; background:#fff; cursor:pointer; flex:0 0 auto; box-shadow:0 8px 18px -8px rgba(44,74,34,.4); }
+.kpd-ava img{ width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; }
+.kpd-ava.empty{ border-style:dashed; border-color:#9db487; background:#eef2e2; }
+.kpd-ava-init{ width:100%; height:100%; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:#4a7c3f; }
+.kpd-ava-edit{ position:absolute; bottom:-3px; right:-4px; width:21px; height:21px; border-radius:50%; background:#5b8a40; color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center; border:2px solid #fff; }
+.kpd-greet h2{ font-size:24px; }
+.kpd-greet p{ font-size:13.5px; }
+.kpd-avo{ width:108px; }
+/* ── Résumé nutritionnel ── */
+.kpn-eyebrow{ font-family:'Plus Jakarta Sans',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:#8a927f; margin:6px 0 2px; }
+.kpn-title{ font-family:var(--font-display,Georgia),serif; font-size:24px; font-weight:700; color:#232b22; letter-spacing:-.02em; margin:0 0 10px; }
+.kpn-head{ display:flex; align-items:center; gap:8px; margin:6px 0 10px; }
+.kpn-head .kpn-title{ flex:1; margin:0; }
+.kpn-score{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:800; color:#8a6a1d; background:#f7edd2; border-radius:99px; padding:5px 11px; white-space:nowrap; }
+.kpn-medal{ font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:800; color:#8a6a1d; background:#fdf6e3; border:1px solid #eadfbc; border-radius:99px; padding:5px 10px; }
+.kpn-card{ padding:18px 16px; }
+.kpn-top{ display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+.kpn-ring{ position:relative; width:104px; height:104px; border-radius:50%; flex:0 0 auto; background:conic-gradient(#5b8a40 calc(var(--pct)*1%), #edf0e4 0); display:flex; align-items:center; justify-content:center; }
+.kpn-ring-in{ width:84px; height:84px; border-radius:50%; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+.kpn-ring-in b{ font-family:var(--font-display,Georgia),serif; font-size:22px; font-weight:700; color:#232b22; line-height:1; }
+.kpn-ring-in small{ font-family:'Plus Jakarta Sans',sans-serif; font-size:9px; font-weight:600; color:#6b7266; margin-top:2px; }
+.kpn-ring-in span{ font-family:'Plus Jakarta Sans',sans-serif; font-size:9px; font-weight:600; color:#9aa294; margin-top:1px; }
+.kpn-rep{ flex:1; min-width:0; }
+.kpn-rep-title{ font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; color:#232b22; margin-bottom:8px; }
+.kpn-rep-bar{ display:flex; height:26px; border-radius:99px; overflow:hidden; background:#edf0e4; }
+.kpn-seg{ display:flex; align-items:center; justify-content:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:11.5px; font-weight:800; color:#fff; min-width:0; transition:width .4s ease; }
+.kpn-rep-legend{ display:flex; justify-content:space-between; gap:6px; margin-top:8px; }
+.kpn-rep-legend span{ display:inline-flex; align-items:center; gap:5px; font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:600; color:#5c645a; }
+.kpn-rep-legend i{ width:8px; height:8px; border-radius:50%; }
+.kpn-rows{ display:flex; flex-direction:column; gap:12px; border-bottom:1px solid #eef0e6; padding-bottom:16px; margin-bottom:14px; }
+.kpn-row-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.kpn-row-lab{ font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; color:#232b22; }
+.kpn-row-val{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:600; color:#9aa294; }
+.kpn-row-val b{ color:#232b22; font-weight:800; }
+.kpn-row-bar{ height:7px; border-radius:99px; background:#edf0e4; overflow:hidden; }
+.kpn-row-bar i{ display:block; height:100%; border-radius:99px; transition:width .4s ease; }
+.kpn-foot{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.kpn-foot-it{ display:flex; flex-direction:column; align-items:center; gap:2px; text-align:center; }
+.kpn-foot-ico{ font-size:18px; margin-bottom:2px; }
+.kpn-foot-it b{ font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:800; color:#232b22; }
+.kpn-foot-it small{ font-family:'Plus Jakarta Sans',sans-serif; font-size:10.5px; font-weight:600; color:#6b7266; }
+/* ── Hydratation ── */
+.kph-card{ padding:18px 16px; }
+.kph-top{ display:flex; align-items:center; gap:11px; margin-bottom:12px; }
+.kph-ico{ width:44px; height:44px; border-radius:50%; background:#e3f0f7; display:flex; align-items:center; justify-content:center; font-size:19px; flex:0 0 auto; }
+.kph-hint{ flex:1; font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:600; color:#6b7266; }
+.kph-val{ font-family:'Plus Jakarta Sans',sans-serif; text-align:right; font-size:14px; font-weight:700; color:#3f7d3a; }
+.kph-val b{ font-family:var(--font-display,Georgia),serif; font-size:26px; font-weight:700; }
+.kph-val small{ display:block; font-size:11px; font-weight:600; color:#9aa294; }
+.kph-bar{ height:8px; border-radius:99px; background:#edf0e4; overflow:hidden; margin-bottom:14px; }
+.kph-bar i{ display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#79bcd8,#4d9cc4); transition:width .35s ease; }
+.kph-glasses{ display:flex; align-items:center; gap:8px; }
+.kph-glass{ flex:1; height:46px; border:2px solid #d8ddcc; border-radius:5px 5px 9px 9px; background:#fff; cursor:pointer; padding:0; clip-path:polygon(6% 0,94% 0,84% 100%,16% 100%); transition:background .2s ease, border-color .2s ease; }
+.kph-glass.full{ background:linear-gradient(180deg,#bfe0ef 8%,#8cc6e2); border-color:#79bcd8; }
+.kph-add{ width:46px; height:46px; border-radius:50%; border:none; background:linear-gradient(135deg,#6a9a4e,#3c6030); color:#fff; font-size:22px; font-weight:800; cursor:pointer; flex:0 0 auto; box-shadow:0 8px 18px -8px rgba(44,74,34,.55); }
+.kph-add:active{ transform:scale(.94); }
+.kph-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:600; color:#5c645a; }
+.kph-rest{ color:#4d9cc4; font-weight:800; }
+/* ── Navigation basse : style moderne (icônes fines + libellés) ── */
+@media (max-width:1023px){
+  .bnav-tab{ flex-direction:column !important; gap:3px !important; padding:6px 10px !important; border-radius:14px !important; }
+  .bnav-tab:not(.active) .bnav-label{ display:inline !important; }
+  .bnav-label{ display:inline !important; font-family:'Plus Jakarta Sans',sans-serif !important; font-size:10.5px !important; font-weight:600 !important; color:#8f978c !important; letter-spacing:.01em !important; }
+  .bnav-tab.active{ background:transparent !important; box-shadow:none !important; animation:none !important; padding:6px 10px !important; }
+  .bnav-tab.active .bnav-icon{ color:#2f5b26 !important; }
+  .bnav-tab.active .bnav-label{ color:#2f5b26 !important; font-weight:800 !important; font-size:10.5px !important; }
+  .bnav-svg{ width:23px !important; height:23px !important; }
+}
 /* ── FAB "+" barre mobile ── */
 .bnav-plus{ display:none; }
 @media(max-width:980px){
@@ -28652,12 +28722,68 @@ window.kpHomeSetMode=function(id){
   try{ if(typeof renderProfileModesGrid==='function') renderProfileModesGrid(); }catch(e){}
   try{ kpRenderDashboard(); }catch(e){}
 };
+/* ── Hydratation (verres d'eau, par jour) ── */
+var KPH_GLASS=0.33, KPH_GOAL=2.0, KPH_MAX=6;
+function kpHydroKey(){ var dt=new Date(); return dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate(); }
+function kpHydroGet(){ try{ var o=JSON.parse(localStorage.getItem('kp_hydro_v1')||'{}'); return o[kpHydroKey()]||0; }catch(e){ return 0; } }
+window.kpHydroSet=function(n){
+  n=Math.max(0,Math.min(12,n));
+  try{ var o=JSON.parse(localStorage.getItem('kp_hydro_v1')||'{}'); o[kpHydroKey()]=n; localStorage.setItem('kp_hydro_v1',JSON.stringify(o)); }catch(e){}
+  try{ kpRenderDashboard(); }catch(e){}
+};
+window.kpHydroTap=function(i){ var c=kpHydroGet(); kpHydroSet(c===i+1 ? i : i+1); };
+function kpHydroHTML(){
+  var n=kpHydroGet();
+  var litres=Math.round(n*KPH_GLASS*10)/10;
+  var pct=Math.min(100,Math.round(litres/KPH_GOAL*100));
+  var rest=Math.max(0,KPH_MAX-n);
+  var glasses='';
+  for(var i=0;i<KPH_MAX;i++){
+    glasses+='<button type="button" class="kph-glass'+(i<n?' full':'')+'" data-testid="kph-glass-'+i+'" aria-label="Verre '+(i+1)+'" onclick="kpHydroTap('+i+')"></button>';
+  }
+  return '<div class="kpn-eyebrow">Bien-être</div>'
+    +'<div class="kpn-title">Hydratation</div>'
+    +'<div class="kpd-card kph-card" data-testid="kph-card">'
+    +'<div class="kph-top"><span class="kph-ico">💧</span><span class="kph-hint">Touchez un verre pour ajuster</span>'
+    +'<div class="kph-val"><b>'+String(litres).replace('.',',')+'</b> L<small>/ 2,0 L</small></div></div>'
+    +'<div class="kph-bar"><i style="width:'+pct+'%"></i></div>'
+    +'<div class="kph-glasses">'+glasses+'<button type="button" class="kph-add" data-testid="kph-add" aria-label="Ajouter un verre" onclick="kpHydroSet(kpHydroGet()+1)">+</button></div>'
+    +'<div class="kph-foot"><span>'+n+' / '+KPH_MAX+' verres</span><span class="kph-rest">'+(rest>0?rest+' verre'+(rest>1?'s':'')+' restant'+(rest>1?'s':''):'objectif atteint 🎉')+'</span></div>'
+    +'</div>';
+}
+/* ── Photo de profil (avatar accueil) ── */
+function kpAvatarGet(){ try{ return localStorage.getItem('kp_avatar_v1')||''; }catch(e){ return ''; } }
+window.kpAvatarPick=function(){
+  var inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=function(){
+    var f=inp.files&&inp.files[0]; if(!f) return;
+    var rd=new FileReader();
+    rd.onload=function(){
+      var img=new Image();
+      img.onload=function(){
+        var s=Math.min(img.width,img.height);
+        var c=document.createElement('canvas'); c.width=200; c.height=200;
+        c.getContext('2d').drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,200,200);
+        try{ localStorage.setItem('kp_avatar_v1', c.toDataURL('image/jpeg',.82)); }catch(e){}
+        try{ kpRenderDashboard(); }catch(e){}
+        try{ toast('📸 Photo de profil mise à jour !'); }catch(e){}
+      };
+      img.src=rd.result;
+    };
+    rd.readAsDataURL(f);
+  };
+  inp.click();
+};
 window.kpRenderDashboard=function(){
   var host=$id('kpDashHost'); if(!host) return;
   try{ var _p=document.getElementById('kpWeekPulse'); if(_p&&host.contains(_p)){ var _t=document.getElementById('tab-plan'); if(_t) _t.appendChild(_p); } }catch(e){}
   try{ kpSyncHomeStatus(); }catch(e){}
   var fn=(typeof profile!=='undefined'&&profile&&profile.firstname)?' '+profile.firstname:'';
-  var greet='<div class="kpd-greet"><div class="kpd-greet-txt"><h2>Bonjour'+fn+' 👋</h2><p>Votre santé avance,<br>un repas à la fois.</p></div><img class="kpd-avo" src="'+KPD_AVO+'" alt="" draggable="false"></div>';
+  var _av=kpAvatarGet();
+  var avatar='<button type="button" class="kpd-ava'+(_av?'':' empty')+'" data-testid="kpd-avatar" onclick="kpAvatarPick()" aria-label="Photo de profil">'
+    +(_av?'<img src="'+_av+'" alt="">':'<span class="kpd-ava-init">'+(fn?fn.trim().charAt(0).toUpperCase():'🥑')+'</span>')
+    +'<span class="kpd-ava-edit">📷</span></button>';
+  var greet='<div class="kpd-greet"><div class="kpd-greet-l">'+avatar+'<div class="kpd-greet-txt"><h2>Bonjour'+fn+' 👋</h2><p>Votre santé avance,<br>un repas à la fois.</p></div></div><img class="kpd-avo" src="'+KPD_AVO+'" alt="" draggable="false"></div>';
   var gen='<div class="kpd-gen" data-testid="kpd-gen">'
     +'<div class="kpd-gen-row">'
     +'<img class="kpd-gen-img" src="'+KPD_GEN_IMG+'" alt="" draggable="false">'
@@ -28670,7 +28796,7 @@ window.kpRenderDashboard=function(){
   var modes=kpHomeModesHTML();
   var tip=kpHomeTipHTML();
   if(typeof menu==='undefined'||!menu||!menu.length){
-    host.innerHTML=greet+gen+modes+tip;
+    host.innerHTML=greet+gen+kpHydroHTML()+modes+tip;
     kpPlacePulse();
     return;
   }
@@ -28722,6 +28848,55 @@ window.kpRenderDashboard=function(){
     +'<div class="kpd-tile"><span class="kpd-tile-ico">🔥</span><div class="kpd-tile-lab">Calories</div><div class="kpd-tile-val">'+total+'<small>kcal</small></div></div>'
     +'<div class="kpd-tile"><span class="kpd-tile-ico">🎯</span><div class="kpd-tile-lab">Objectif</div><div class="kpd-tile-val">'+obj+'<small>%</small></div></div>'
     +'</div>';
+  /* ── Résumé nutritionnel (repas cochés ✓) ── */
+  var eat={fat:0,prot:0,carb:0};
+  var vegG=0;
+  try{
+    if(mealsEaten[di+'-b']&&meals.breakfast&&d.bfast!=null) addRecipeMacros(BFAST_RECIPES[d.bfast],eat);
+    if(mealsEaten[di+'-l']&&meals.lunch){ addRecipeMacros(recipeAtSlot(d,'lunchStarter'),eat); addRecipeMacros(recipeAtSlot(d,'lunch'),eat); addRecipeMacros(recipeAtSlot(d,'lunchDessert'),eat); if(d.lunchVeg) vegG+=150; }
+    if(mealsEaten[di+'-d']&&meals.dinner){ addRecipeMacros(recipeAtSlot(d,'dinnerStarter'),eat); addRecipeMacros(recipeAtSlot(d,'dinner'),eat); addRecipeMacros(recipeAtSlot(d,'dinnerDessert'),eat); if(d.dinnerVeg) vegG+=150; }
+  }catch(e){}
+  var eatFatK=eat.fat*9, eatProtK=eat.prot*4, eatCarbK=eat.carb*4;
+  var eatK=Math.round(eatFatK+eatProtK+eatCarbK);
+  var protT=(typeof targets!=='undefined'&&targets&&targets.prot)?targets.prot:130;
+  var fatT=(typeof targets!=='undefined'&&targets&&targets.fat)?targets.fat:150;
+  var kcalRest=Math.max(0,kcalT-eatK);
+  var ringPct=Math.min(100,kcalT>0?Math.round(eatK/kcalT*100):0);
+  var fibres=Math.round(vegG*0.03+eat.carb*0.4);
+  var eauL=Math.round(kpHydroGet()*KPH_GLASS*10)/10;
+  var medal=obj>=90?'Or':(obj>=75?'Argent':(obj>=60?'Bronze':'—'));
+  function kpnSeg(k,color){
+    if(eatK<=0) return '';
+    var p=Math.round(k/eatK*100);
+    return '<span class="kpn-seg" style="width:'+p+'%;background:'+color+'">'+(p>=16?p+'%':'')+'</span>';
+  }
+  var repBar=eatK>0
+    ? kpnSeg(eatFatK,'#e8a659')+kpnSeg(eatProtK,'#8fae62')+kpnSeg(eatCarbK,'#79bcd8')
+    : '<span class="kpn-seg" style="width:100%;background:#79bcd8">0%</span>';
+  function kpnRow(lab,val,tgt,color){
+    var p=tgt>0?Math.min(100,Math.round(val/tgt*100)):0;
+    return '<div class="kpn-row"><div class="kpn-row-top"><span class="kpn-row-lab">'+lab+'</span><span class="kpn-row-val"><b>'+Math.round(val)+'g</b> / '+Math.round(tgt)+'g</span></div>'
+      +'<div class="kpn-row-bar"><i style="width:'+p+'%;background:'+color+'"></i></div></div>';
+  }
+  var nutri='<div class="kpn-head"><span class="kpn-title">Résumé nutritionnel</span>'
+    +'<span class="kpn-score" data-testid="kpn-score">🏅 '+obj+'/100</span><span class="kpn-medal">'+medal+'</span></div>'
+    +'<div class="kpd-card kpn-card" data-testid="kpn-card">'
+    +'<div class="kpn-top">'
+    +'<div class="kpn-ring" style="--pct:'+ringPct+'"><div class="kpn-ring-in"><b>'+kcalRest+'</b><small>kcal restantes</small><span>'+eatK+'/'+kcalT+'</span></div></div>'
+    +'<div class="kpn-rep"><div class="kpn-rep-title">Répartition kcal</div>'
+    +'<div class="kpn-rep-bar">'+repBar+'</div>'
+    +'<div class="kpn-rep-legend"><span><i style="background:#e8a659"></i>Lipides</span><span><i style="background:#8fae62"></i>Prot.</span><span><i style="background:#79bcd8"></i>Gluc.</span></div>'
+    +'</div></div>'
+    +'<div class="kpn-rows">'
+    +kpnRow('Glucides nets',eat.carb,carbT,'#79bcd8')
+    +kpnRow('Protéines',eat.prot,protT,'#8fae62')
+    +kpnRow('Lipides',eat.fat,fatT,'#e8a659')
+    +'</div>'
+    +'<div class="kpn-foot">'
+    +'<div class="kpn-foot-it"><span class="kpn-foot-ico">🌿</span><b>'+fibres+'g</b><small>Fibres</small></div>'
+    +'<div class="kpn-foot-it"><span class="kpn-foot-ico">💧</span><b>'+String(eauL).replace('.',',')+'L</b><small>Eau · 2,0L</small></div>'
+    +'<div class="kpn-foot-it"><span class="kpn-foot-ico">🥗</span><b>'+vegG+'g</b><small>Légumes</small></div>'
+    +'</div></div>';
   var cards=[];
   try{
     var courses=(typeof getCourses==='function')?getCourses():{starter:true,dessert:true};
@@ -28744,7 +28919,7 @@ window.kpRenderDashboard=function(){
     +'<button type="button" class="kpd-seeall" onclick="setDayView(\'day\')" data-testid="kpd-seeall">Voir tout ›</button></div>'
     +'<div class="kpd-meals-scroll" id="kpdScroll">'+htmls.join('')+'</div>'+dots+'</div>'):'';
   var _prevSc=$id('kpdScroll'); var _prevLeft=_prevSc?_prevSc.scrollLeft:0;
-  host.innerHTML=greet+prog+tiles+gen+mealsCard+modes+tip;
+  host.innerHTML=greet+prog+tiles+gen+mealsCard+nutri+kpHydroHTML()+modes+tip;
   kpPlacePulse();
   var sc=$id('kpdScroll'), dt=$id('kpdDots');
   if(sc&&_prevLeft) sc.scrollLeft=_prevLeft;
