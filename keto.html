@@ -23,6 +23,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="https://storage.googleapis.com/testprojet-721cb-recipes/app/apple-touch-icon.png">
 <link rel="dns-prefetch" href="https://securetoken.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Firebase SDK (compat mode) — chargement synchrone, requis avant les scripts inline -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -28530,6 +28531,148 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 .kph-add:active{ transform:scale(.94); }
 .kph-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:600; color:#5c645a; }
 .kph-rest{ color:#4d9cc4; font-weight:800; }
+/* ── Feuille « Mon plan » (semaine complète) ── */
+#kpPlanOverlay{ position:fixed; inset:0; background:rgba(20,30,18,.5); backdrop-filter:blur(4px); opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:890; }
+#kpPlanOverlay.open{ opacity:1; pointer-events:auto; }
+#kpPlanSheet{ position:fixed; left:0; right:0; bottom:0; height:93%; background:#f6f5ef; border-radius:26px 26px 0 0; z-index:900; transform:translateY(103%); transition:transform .38s cubic-bezier(.32,.72,.25,1); display:flex; flex-direction:column; box-shadow:0 -18px 50px rgba(20,30,18,.35); }
+#kpPlanSheet.open{ transform:translateY(0); }
+.kps-handle{ width:44px; height:5px; border-radius:99px; background:#d5dacb; margin:10px auto 4px; flex:0 0 auto; cursor:pointer; }
+#kpPlanBody{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 14px calc(30px + env(safe-area-inset-bottom)); }
+.kps-hero{ position:relative; border-radius:20px; padding:52px 18px 18px; background:linear-gradient(135deg,#3c6030,#2c4a22); margin-bottom:12px; overflow:hidden; }
+.kps-close{ position:absolute; top:12px; right:12px; width:32px; height:32px; border-radius:50%; border:none; background:rgba(255,255,255,.2); color:#fff; font-size:14px; font-weight:800; cursor:pointer; backdrop-filter:blur(4px); }
+.kps-hero-t{ font-family:'Plus Jakarta Sans',sans-serif; font-size:32px; font-weight:800; color:#fff; letter-spacing:-.02em; line-height:1; }
+.kps-hero-s{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:600; color:rgba(255,255,255,.85); margin-top:6px; }
+.kps-card{ background:#fff; border:1px solid rgba(30,42,30,.05); border-radius:20px; padding:16px; margin-bottom:12px; box-shadow:0 12px 30px -24px rgba(30,42,30,.35); }
+.kps-score{ display:flex; align-items:center; gap:16px; }
+.kps-score-ring{ position:relative; width:76px; height:76px; border-radius:50%; flex:0 0 auto; background:conic-gradient(#2f5b26 calc(var(--pct)*1%), #e7ecdd 0); display:flex; align-items:center; justify-content:center; }
+.kps-score-ring span{ width:58px; height:58px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:21px; font-weight:800; color:#232b22; }
+.kps-score-top{ font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:700; color:#232b22; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.kps-medal{ font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:800; color:#8a6a1d; background:#fdf3d8; border-radius:99px; padding:4px 9px; }
+.kps-score-sub{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:600; color:#6b7266; margin-top:5px; }
+.kps-sec-t{ font-family:'Plus Jakarta Sans',sans-serif; font-size:15.5px; font-weight:700; color:#232b22; margin-bottom:12px; }
+.kps-week{ display:flex; justify-content:space-between; gap:4px; }
+.kps-wday{ width:38px; height:38px; border-radius:50%; background:#f0f1ea; display:flex; align-items:center; justify-content:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:700; color:#6b7266; cursor:pointer; }
+.kps-wday.today{ background:#fff; border:2px solid #cda640; color:#8a6a1d; }
+.kps-wday.done{ background:#5b8a40; color:#fff; }
+.kps-actions{ display:flex; gap:10px; margin-bottom:12px; }
+.kps-courses{ flex:1; padding:14px; border-radius:99px; border:1px solid rgba(30,42,30,.07); background:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:800; color:#232b22; cursor:pointer; box-shadow:0 10px 24px -20px rgba(30,42,30,.35); }
+.kps-regen{ flex:1; padding:14px; border-radius:99px; border:none; background:linear-gradient(135deg,#4a7c3f,#2c4a22); color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:800; cursor:pointer; box-shadow:0 12px 26px -12px rgba(44,74,34,.55); }
+.kps-chips{ display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -14px 14px; padding:2px 14px 4px; scrollbar-width:none; }
+.kps-chips::-webkit-scrollbar{ display:none; }
+.kps-chip{ flex:0 0 auto; min-width:64px; padding:10px 12px; border-radius:16px; border:1px solid rgba(30,42,30,.06); background:#fff; text-align:center; cursor:pointer; box-shadow:0 8px 20px -18px rgba(30,42,30,.4); }
+.kps-chip b{ display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:800; color:#232b22; }
+.kps-chip small{ display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:10.5px; font-weight:600; color:#8a927f; margin-top:2px; }
+.kps-chip.active{ background:linear-gradient(135deg,#4a7c3f,#2c4a22); border-color:transparent; }
+.kps-chip.active b, .kps-chip.active small{ color:#fff; }
+.kps-dayhead{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:2px 2px 12px; scroll-margin-top:12px; }
+.kps-dayname{ font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; color:#232b22; letter-spacing:-.02em; }
+.kps-daysub{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:600; color:#6b7266; margin-top:2px; }
+.kps-daybar{ display:flex; align-items:center; gap:8px; }
+.kps-daybar-i{ width:64px; height:7px; border-radius:99px; background:#e7ecdd; overflow:hidden; }
+.kps-daybar-i i{ display:block; height:100%; border-radius:99px; background:#5b8a40; }
+.kps-daybar span{ font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:800; color:#3f7d3a; }
+.kps-meal{ background:#fff; border:1px solid rgba(30,42,30,.05); border-radius:22px; overflow:hidden; margin-bottom:16px; box-shadow:0 14px 34px -24px rgba(30,42,30,.4); }
+.kps-meal.eaten{ border-color:rgba(91,138,64,.4); }
+.kps-photo{ width:100%; height:170px; object-fit:cover; display:block; }
+.kps-photo-fb{ display:flex; align-items:center; justify-content:center; font-size:56px; background:linear-gradient(135deg,#eef2e2,#dfe8cd); height:150px; }
+.kps-meal-in{ padding:15px 15px 14px; }
+.kps-label{ font-family:'Plus Jakarta Sans',sans-serif; font-size:10.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:#5b8a40; }
+.kps-name{ font-family:'Plus Jakarta Sans',sans-serif; font-size:19px; font-weight:800; color:#232b22; line-height:1.25; margin:6px 0 8px; letter-spacing:-.01em; }
+.kps-macros{ display:flex; gap:12px; flex-wrap:wrap; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:800; margin-bottom:12px; }
+.kps-mk{ color:#b9822e; } .kps-mp{ color:#5f8a3c; } .kps-ml{ color:#c8842a; } .kps-mg{ color:#4d9cc4; }
+.kps-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; background:#f7f6f0; border-radius:13px; padding:10px 13px; margin-bottom:8px; }
+.kps-row-lab{ font-family:'Plus Jakarta Sans',sans-serif; font-size:9.5px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:#8a9a70; }
+.kps-row-name{ font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; color:#232b22; margin-top:2px; }
+.kps-row-kcal{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:700; color:#6b7266; white-space:nowrap; }
+.kps-tags{ display:flex; gap:8px; margin:10px 0 12px; }
+.kps-tag{ font-family:'Plus Jakarta Sans',sans-serif; font-size:11.5px; font-weight:700; color:#6b7266; background:#f1ede0; border-radius:99px; padding:5px 11px; }
+.kps-btns{ display:flex; gap:9px; }
+.kps-btn-recipe{ flex:1.2; padding:13px; border-radius:14px; border:none; background:#e9efdb; color:#2f5b26; font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:800; cursor:pointer; }
+.kps-btn-swap{ flex:1.2; padding:13px; border-radius:14px; border:1px solid rgba(30,42,30,.08); background:#f7f6f0; color:#232b22; font-family:'Plus Jakarta Sans',sans-serif; font-size:13.5px; font-weight:800; cursor:pointer; }
+.kps-btn-chk{ flex:0 0 50px; border-radius:14px; border:1px solid rgba(30,42,30,.08); background:#f7f6f0; color:#9aa294; font-size:16px; font-weight:800; cursor:pointer; }
+.kps-btn-chk.on{ background:#5b8a40; border-color:#5b8a40; color:#fff; }
+.kps-empty{ text-align:center; padding:70px 20px; font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:600; color:#5c645a; }
+.kps-empty .kps-regen{ margin-top:10px; padding:14px 24px; }
+/* ═══ DESIGN PREMIUM « LUX » : glassmorphism · blanc lumineux · accent Bleu Ciel ═══ */
+@media(max-width:980px){
+  body{ background:
+    radial-gradient(60% 38% at 12% 0%, rgba(63,169,245,.12), transparent 62%),
+    radial-gradient(50% 34% at 100% 18%, rgba(63,169,245,.08), transparent 60%),
+    radial-gradient(45% 30% at 0% 60%, rgba(63,169,245,.06), transparent 60%),
+    #f4f7fb !important; }
+}
+#kpDashHost, #kpDashHost *{ font-family:'Inter','Plus Jakarta Sans',sans-serif; }
+#kpDashHost{ letter-spacing:-.01em; }
+/* Cartes en verre */
+.kpd-card, .kph-card, .kpn-card{ background:rgba(255,255,255,.6); backdrop-filter:blur(22px) saturate(1.5); -webkit-backdrop-filter:blur(22px) saturate(1.5); border:1px solid rgba(255,255,255,.9); border-radius:26px; box-shadow:0 24px 50px -32px rgba(120,145,175,.5); margin-bottom:18px; }
+.kpd-greet{ margin:8px 0 22px; }
+.kpd-greet h2{ color:#182130; font-weight:800; }
+.kpd-greet p{ color:#6b7a8f; }
+.kpd-ava{ border-color:#3fa9f5; box-shadow:0 10px 22px -10px rgba(63,169,245,.55); }
+.kpd-ava.empty{ border-color:#9cc9ec; background:#eaf4fc; }
+.kpd-ava-init{ color:#2b8fd9; }
+.kpd-ava-edit{ background:#3fa9f5; }
+/* Carte « Générer ma semaine » : verre + CTA bleu ciel */
+.kpd-gen{ background:rgba(255,255,255,.6); backdrop-filter:blur(22px) saturate(1.5); -webkit-backdrop-filter:blur(22px) saturate(1.5); border:1px solid rgba(255,255,255,.9); border-radius:26px; box-shadow:0 24px 50px -32px rgba(120,145,175,.5); margin-bottom:18px; }
+.kpd-gen-eyebrow{ color:#2b8fd9; }
+.kpd-gen h3{ color:#182130; }
+.kpd-gen p{ color:#6b7a8f; }
+.kpd-gen-btn{ background:linear-gradient(135deg,#54b4f7,#2b8fd9); color:#fff; box-shadow:0 14px 28px -12px rgba(43,143,217,.6); }
+/* Repas du jour */
+.kpd-card-title{ color:#182130; font-weight:700; }
+.kpd-seeall{ color:#2b8fd9; }
+.kpd-meal{ background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.95); border-radius:18px; box-shadow:0 12px 26px -22px rgba(120,145,175,.5); }
+.kpd-meal.eaten{ border-color:rgba(63,169,245,.55); background:rgba(234,244,252,.7); }
+.kpd-meal-badge{ color:#2b8fd9; background:#e3f1fc; }
+.kpd-meal-pill{ color:#5c6b7f; background:rgba(240,245,250,.9); border:1px solid rgba(255,255,255,.9); }
+.kpd-meal-link{ color:#2b8fd9; }
+.kpd-meal-chk{ border-color:#c9d6e4; }
+.kpd-meal-chk.on{ background:#3fa9f5; border-color:#3fa9f5; }
+.kpd-dot.on{ background:#3fa9f5; }
+/* Résumé nutritionnel */
+.kpn-eyebrow{ color:#8fa0b5; }
+.kpn-title{ font-family:'Inter','Plus Jakarta Sans',sans-serif; font-weight:800; color:#182130; font-size:21px; letter-spacing:-.02em; }
+.kpn-score{ color:#2b8fd9; background:#e3f1fc; }
+.kpn-medal{ color:#2b8fd9; background:rgba(255,255,255,.7); border-color:#cbe4f8; }
+.kpn-ring{ background:conic-gradient(#3fa9f5 calc(var(--pct)*1%), #e5edf5 0); }
+.kpn-ring-in{ background:rgba(255,255,255,.95); }
+.kpn-ring-in b{ font-family:'Inter',sans-serif; font-weight:800; color:#182130; }
+.kpn-rep-title, .kpn-row-lab{ color:#182130; }
+.kpn-rep-bar{ background:#e9eff6; }
+.kpn-row-bar{ background:#e9eff6; }
+.kpn-rows{ border-bottom-color:rgba(190,205,222,.35); }
+.kpn-row-val{ color:#8fa0b5; } .kpn-row-val b{ color:#182130; }
+.kpn-foot-it b{ color:#182130; } .kpn-foot-it small{ color:#8fa0b5; }
+/* Hydratation */
+.kph-ico{ background:#e3f1fc; }
+.kph-hint{ color:#6b7a8f; }
+.kph-val{ color:#2b8fd9; }
+.kph-val b{ font-family:'Inter',sans-serif; font-weight:800; }
+.kph-bar{ background:#e9eff6; }
+.kph-bar i{ background:linear-gradient(90deg,#7cc3f2,#3fa9f5); }
+.kph-glass{ border-color:#cfdbe8; background:rgba(255,255,255,.7); }
+.kph-glass.full{ background:linear-gradient(180deg,#c9e6f9 8%,#7cc3f2); border-color:#3fa9f5; }
+.kph-add{ background:linear-gradient(135deg,#54b4f7,#2b8fd9); box-shadow:0 12px 24px -10px rgba(43,143,217,.6); }
+.kph-foot{ color:#6b7a8f; }
+.kph-rest{ color:#2b8fd9; }
+/* Modes & astuce */
+.kpd-sec{ color:#182130; }
+.kpd-mode{ background:rgba(255,255,255,.6); backdrop-filter:blur(18px) saturate(1.4); -webkit-backdrop-filter:blur(18px) saturate(1.4); border:1px solid rgba(255,255,255,.9); border-radius:18px; box-shadow:0 14px 30px -24px rgba(120,145,175,.55); }
+.kpd-mode.active{ border-color:#3fa9f5; box-shadow:0 0 0 2px rgba(63,169,245,.28); }
+.kpd-mode-name{ color:#182130; }
+.kpd-mode-sub{ color:#8fa0b5; }
+.kpd-mode-badge.on{ background:#3fa9f5; }
+.kpd-tip{ background:rgba(255,255,255,.55); backdrop-filter:blur(18px) saturate(1.4); -webkit-backdrop-filter:blur(18px) saturate(1.4); border:1px solid rgba(255,255,255,.9); border-radius:20px; }
+.kpd-tip-ico{ background:#e3f1fc; }
+.kpd-tip-title{ color:#182130; }
+.kpd-tip-txt{ color:#6b7a8f; }
+.kpd-chev{ color:#b3c1d1; }
+/* Navigation basse : accent bleu */
+@media (max-width:1023px){
+  .bnav-tab.active .bnav-icon{ color:#2b8fd9 !important; }
+  .bnav-tab.active .bnav-label{ color:#2b8fd9 !important; }
+  .bnav-plus{ background:linear-gradient(135deg,#54b4f7,#2b8fd9) !important; box-shadow:0 12px 26px -10px rgba(43,143,217,.65) !important; }
+}
 /* ── Navigation basse : style moderne (icônes fines + libellés) ── */
 @media (max-width:1023px){
   .bnav-tab{ flex-direction:column !important; gap:3px !important; padding:6px 10px !important; border-radius:14px !important; }
@@ -28774,6 +28917,158 @@ window.kpAvatarPick=function(){
   };
   inp.click();
 };
+/* ── Feuille « Mon plan » : plan complet de la semaine ── */
+var kpPlanDay=0;
+var KPS_SHORT=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+var KPS_INIT=['L','Ma','Me','J','V','S','D'];
+function kpsEnsure(){
+  if(document.getElementById('kpPlanSheet')) return;
+  var ov=document.createElement('div'); ov.id='kpPlanOverlay'; ov.onclick=function(){ window.kpPlanSheetClose(); };
+  var sh=document.createElement('div'); sh.id='kpPlanSheet';
+  sh.innerHTML='<div class="kps-handle" onclick="kpPlanSheetClose()"></div><div id="kpPlanBody"></div>';
+  document.body.appendChild(ov); document.body.appendChild(sh);
+}
+window.kpPlanSheetOpen=function(){
+  kpsEnsure();
+  kpPlanDay=(typeof TODAY_IDX!=='undefined')?TODAY_IDX:0;
+  kpPlanRender();
+  requestAnimationFrame(function(){
+    document.getElementById('kpPlanOverlay').classList.add('open');
+    document.getElementById('kpPlanSheet').classList.add('open');
+    document.body.style.overflow='hidden';
+  });
+};
+window.kpPlanSheetClose=function(){
+  var ov=document.getElementById('kpPlanOverlay'), sh=document.getElementById('kpPlanSheet');
+  if(ov) ov.classList.remove('open');
+  if(sh) sh.classList.remove('open');
+  document.body.style.overflow='';
+};
+window.kpPlanSelDay=function(i){
+  kpPlanDay=i; kpPlanRender();
+  var t=document.getElementById('kpsDayTitle'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+};
+window.kpPlanSwap=function(di,slot){ try{ swapMeal(di,slot); }catch(e){} kpPlanRender(); try{ kpRenderDashboard(); }catch(e){} };
+window.kpPlanRegen=function(){ try{ generateMenu(); }catch(e){} kpPlanDay=(typeof TODAY_IDX!=='undefined')?TODAY_IDX:0; kpPlanRender(); };
+window.kpPlanCourses=function(){ kpPlanSheetClose(); setTimeout(function(){ var el=document.getElementById('shopping-wrap'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },380); };
+window.kpMealEatenDay=function(di,grp){
+  var k=di+'-'+grp;
+  if(mealsEaten[k]){ delete mealsEaten[k]; } else { mealsEaten[k]=true; }
+  try{ save(); }catch(e){}
+  kpPlanRender();
+  try{ kpRenderDashboard(); }catch(e){}
+};
+function kpsDayCounts(di){
+  var meals=(typeof profile!=='undefined'&&profile&&profile.meals)||{breakfast:true,lunch:true,dinner:true};
+  var d=menu[di]||{};
+  var planned=[];
+  if(meals.breakfast&&d.bfast!=null) planned.push('b');
+  if(meals.lunch&&d.lunch!=null) planned.push('l');
+  if(meals.dinner&&d.dinner!=null) planned.push('d');
+  var eaten=planned.filter(function(p){ return !!mealsEaten[di+'-'+p]; }).length;
+  return {planned:planned.length, eaten:eaten};
+}
+function kpsPhotoUrl(r){
+  if(!r) return '';
+  var key=r.cat+'-'+r.id;
+  if(typeof KP_RECIPE_PHOTOS!=='undefined'&&KP_RECIPE_PHOTOS.has(key)) return KP_RECIPE_PHOTO_BASE+'/'+key+'.jpg';
+  return '';
+}
+function kpsMealCard(di,grp){
+  var d=menu[di];
+  var meals=(typeof profile!=='undefined'&&profile&&profile.meals)||{breakfast:true,lunch:true,dinner:true};
+  var courses=(typeof getCourses==='function')?getCourses():{starter:true,dessert:true};
+  var label, slotName, main, recs=[], rows=[];
+  if(grp==='b'){
+    if(!meals.breakfast||d.bfast==null) return '';
+    main=BFAST_RECIPES[d.bfast]; if(!main) return '';
+    label='Petit-déjeuner'; slotName='breakfast';
+    recs=[main];
+    rows.push(['Plat principal', main.name, main.kcal]);
+  }else{
+    var pre=grp==='l'?'lunch':'dinner';
+    if(!(grp==='l'?meals.lunch:meals.dinner)||d[pre]==null) return '';
+    main=MAIN_RECIPES[d[pre]]; if(!main) return '';
+    label=grp==='l'?'Déjeuner':'Dîner'; slotName=pre;
+    var st=(courses.starter&&d[pre+'Starter']!=null)?STARTER_RECIPES[d[pre+'Starter']]:null;
+    var ds=(courses.dessert&&d[pre+'Dessert']!=null)?DESSERT_RECIPES[d[pre+'Dessert']]:null;
+    recs=[st,main,ds].filter(Boolean);
+    if(st) rows.push(['Entrée', st.name, st.kcal]);
+    rows.push(['Plat principal', main.name, main.kcal]);
+    if(d[pre+'Veg']) rows.push(['Légumes', d[pre+'Veg'].name, null]);
+    if(ds) rows.push(['Dessert', ds.name, ds.kcal]);
+  }
+  var m={fat:0,prot:0,carb:0};
+  recs.forEach(function(r){ try{ addRecipeMacros(r,m); }catch(e){} });
+  var kcal=recs.reduce(function(a,r){ return a+(r.kcal||0); },0);
+  var eaten=!!mealsEaten[di+'-'+grp];
+  var pu=kpsPhotoUrl(main);
+  var photo=pu?'<img class="kps-photo" src="'+pu+'" alt="" loading="lazy">':'<div class="kps-photo kps-photo-fb">'+(main.emoji||'🥑')+'</div>';
+  var rowsHtml=rows.map(function(rw){
+    return '<div class="kps-row"><div><div class="kps-row-lab">'+rw[0]+'</div><div class="kps-row-name">'+rw[1]+'</div></div>'+(rw[2]!=null?'<span class="kps-row-kcal">'+rw[2]+' kcal</span>':'')+'</div>';
+  }).join('');
+  var tags='<div class="kps-tags">'+(main.time?'<span class="kps-tag">⏱ '+String(main.time).replace(/\s*min\.?\s*$/i,'')+' min</span>':'')+'<span class="kps-tag">🌿 '+Math.round(m.carb)+'g net</span></div>';
+  return '<div class="kps-meal'+(eaten?' eaten':'')+'" data-testid="kps-meal-'+grp+'">'
+    +photo
+    +'<div class="kps-meal-in">'
+    +'<div class="kps-label">'+label+'</div>'
+    +'<div class="kps-name">'+main.name+'</div>'
+    +'<div class="kps-macros"><span class="kps-mk">🔥 '+kcal+' kcal</span><span class="kps-mp">P '+Math.round(m.prot)+'g</span><span class="kps-ml">L '+Math.round(m.fat)+'g</span><span class="kps-mg">G '+Math.round(m.carb)+'g</span></div>'
+    +rowsHtml+tags
+    +'<div class="kps-btns">'
+    +'<button type="button" class="kps-btn-recipe" data-testid="kps-recipe-'+grp+'" onclick="openRecipe('+main.id+')">Recette ›</button>'
+    +'<button type="button" class="kps-btn-swap" data-testid="kps-swap-'+grp+'" onclick="kpPlanSwap('+di+',\''+slotName+'\')">⟳ Remplacer</button>'
+    +'<button type="button" class="kps-btn-chk'+(eaten?' on':'')+'" data-testid="kps-chk-'+grp+'" aria-label="Repas pris" onclick="kpMealEatenDay('+di+',\''+grp+'\')">✓</button>'
+    +'</div></div></div>';
+}
+window.kpPlanRender=function(){
+  var body=document.getElementById('kpPlanBody'); if(!body) return;
+  if(typeof menu==='undefined'||!menu||!menu.length){
+    body.innerHTML='<div class="kps-empty">🌱 Aucune semaine générée pour l\'instant.<br><br><button class="kps-regen" onclick="kpPlanRegen()">✨ Générer ma semaine</button></div>';
+    return;
+  }
+  var now=new Date(); var mon=new Date(now); mon.setDate(now.getDate()-((now.getDay()+6)%7));
+  var sun=new Date(mon); sun.setDate(mon.getDate()+6);
+  function fdate(dt){ try{ return dt.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}); }catch(e){ return dt.getDate()+'/'+(dt.getMonth()+1); } }
+  var heroR=null; try{ heroR=MAIN_RECIPES[menu[kpPlanDay].lunch]||MAIN_RECIPES[menu[0].lunch]; }catch(e){}
+  var hu=kpsPhotoUrl(heroR);
+  var heroStyle=hu?'background-image:linear-gradient(180deg,rgba(28,46,22,.25),rgba(28,46,22,.78)),url(\''+hu+'\');background-size:cover;background-position:center;':'';
+  var okN=0,total=0;
+  try{ var q=window.kpWeekQuality&&window.kpWeekQuality(); if(q&&q.length){ total=q.length; okN=q.filter(function(c){return c.ok;}).length; } }catch(e){}
+  var score=total?Math.round(okN/total*100):0;
+  var medal=score>=90?'🥇 Or':(score>=75?'🥈 Argent':(score>=60?'🥉 Bronze':'—'));
+  var circles=KPS_INIT.map(function(init,i){
+    var cls=doneDays[i]?' done':(i===TODAY_IDX?' today':'');
+    return '<span class="kps-wday'+cls+'" onclick="kpPlanSelDay('+i+')">'+(doneDays[i]?'✓':init)+'</span>';
+  }).join('');
+  var chips=KPS_SHORT.map(function(s,i){
+    var c=kpsDayCounts(i);
+    return '<button type="button" class="kps-chip'+(i===kpPlanDay?' active':'')+'" data-testid="kps-chip-'+i+'" onclick="kpPlanSelDay('+i+')"><b>'+s+'</b><small>'+c.eaten+'/'+c.planned+'</small></button>';
+  }).join('');
+  var dc=kpsDayCounts(kpPlanDay);
+  var dayKcal=0;
+  try{
+    var dd=menu[kpPlanDay], mm={fat:0,prot:0,carb:0};
+    var meals=(profile&&profile.meals)||{breakfast:true,lunch:true,dinner:true};
+    if(meals.breakfast&&dd.bfast!=null) addRecipeMacros(BFAST_RECIPES[dd.bfast],mm);
+    if(meals.lunch){ addRecipeMacros(recipeAtSlot(dd,'lunchStarter'),mm); addRecipeMacros(recipeAtSlot(dd,'lunch'),mm); addRecipeMacros(recipeAtSlot(dd,'lunchDessert'),mm); }
+    if(meals.dinner){ addRecipeMacros(recipeAtSlot(dd,'dinnerStarter'),mm); addRecipeMacros(recipeAtSlot(dd,'dinner'),mm); addRecipeMacros(recipeAtSlot(dd,'dinnerDessert'),mm); }
+    dayKcal=Math.round(mm.fat*9+mm.prot*4+mm.carb*4);
+  }catch(e){}
+  var pctDay=dc.planned?Math.round(dc.eaten/dc.planned*100):0;
+  body.innerHTML=''
+    +'<div class="kps-hero" style="'+heroStyle+'"><button type="button" class="kps-close" data-testid="kps-close" onclick="kpPlanSheetClose()">✕</button><div class="kps-hero-t">Mon plan</div><div class="kps-hero-s">Semaine du '+fdate(mon)+' - '+fdate(sun)+'</div></div>'
+    +'<div class="kps-card kps-score"><div class="kps-score-ring" style="--pct:'+score+'"><span>'+score+'</span></div>'
+    +'<div class="kps-score-in"><div class="kps-score-top">🏆 <b>Score Qualité</b> <span class="kps-medal">'+medal+'</span></div>'
+    +'<div class="kps-score-sub">'+okN+'/'+total+' critères validés</div></div></div>'
+    +'<div class="kps-card"><div class="kps-sec-t">Progression de la semaine</div><div class="kps-week">'+circles+'</div></div>'
+    +'<div class="kps-actions"><button type="button" class="kps-courses" data-testid="kps-courses" onclick="kpPlanCourses()">🛒 Liste de courses</button>'
+    +'<button type="button" class="kps-regen" data-testid="kps-regen" onclick="kpPlanRegen()">✨ Régénérer</button></div>'
+    +'<div class="kps-chips">'+chips+'</div>'
+    +'<div class="kps-dayhead" id="kpsDayTitle"><div><div class="kps-dayname">'+DAYS[kpPlanDay]+'</div><div class="kps-daysub">'+dc.planned+' repas • '+dayKcal+' kcal</div></div>'
+    +'<div class="kps-daybar"><div class="kps-daybar-i"><i style="width:'+pctDay+'%"></i></div><span>'+dc.eaten+'/'+dc.planned+'</span></div></div>'
+    +kpsMealCard(kpPlanDay,'b')+kpsMealCard(kpPlanDay,'l')+kpsMealCard(kpPlanDay,'d');
+};
 window.kpRenderDashboard=function(){
   var host=$id('kpDashHost'); if(!host) return;
   try{ var _p=document.getElementById('kpWeekPulse'); if(_p&&host.contains(_p)){ var _t=document.getElementById('tab-plan'); if(_t) _t.appendChild(_p); } }catch(e){}
@@ -28871,8 +29166,8 @@ window.kpRenderDashboard=function(){
     return '<span class="kpn-seg" style="width:'+p+'%;background:'+color+'">'+(p>=16?p+'%':'')+'</span>';
   }
   var repBar=eatK>0
-    ? kpnSeg(eatFatK,'#e8a659')+kpnSeg(eatProtK,'#8fae62')+kpnSeg(eatCarbK,'#79bcd8')
-    : '<span class="kpn-seg" style="width:100%;background:#79bcd8">0%</span>';
+    ? kpnSeg(eatFatK,'#1f7ec7')+kpnSeg(eatProtK,'#3fa9f5')+kpnSeg(eatCarbK,'#a9d7f8')
+    : '<span class="kpn-seg" style="width:100%;background:#a9d7f8">0%</span>';
   function kpnRow(lab,val,tgt,color){
     var p=tgt>0?Math.min(100,Math.round(val/tgt*100)):0;
     return '<div class="kpn-row"><div class="kpn-row-top"><span class="kpn-row-lab">'+lab+'</span><span class="kpn-row-val"><b>'+Math.round(val)+'g</b> / '+Math.round(tgt)+'g</span></div>'
@@ -28885,12 +29180,12 @@ window.kpRenderDashboard=function(){
     +'<div class="kpn-ring" style="--pct:'+ringPct+'"><div class="kpn-ring-in"><b>'+kcalRest+'</b><small>kcal restantes</small><span>'+eatK+'/'+kcalT+'</span></div></div>'
     +'<div class="kpn-rep"><div class="kpn-rep-title">Répartition kcal</div>'
     +'<div class="kpn-rep-bar">'+repBar+'</div>'
-    +'<div class="kpn-rep-legend"><span><i style="background:#e8a659"></i>Lipides</span><span><i style="background:#8fae62"></i>Prot.</span><span><i style="background:#79bcd8"></i>Gluc.</span></div>'
+    +'<div class="kpn-rep-legend"><span><i style="background:#1f7ec7"></i>Lipides</span><span><i style="background:#3fa9f5"></i>Prot.</span><span><i style="background:#a9d7f8"></i>Gluc.</span></div>'
     +'</div></div>'
     +'<div class="kpn-rows">'
-    +kpnRow('Glucides nets',eat.carb,carbT,'#79bcd8')
-    +kpnRow('Protéines',eat.prot,protT,'#8fae62')
-    +kpnRow('Lipides',eat.fat,fatT,'#e8a659')
+    +kpnRow('Glucides nets',eat.carb,carbT,'#3fa9f5')
+    +kpnRow('Protéines',eat.prot,protT,'#3fa9f5')
+    +kpnRow('Lipides',eat.fat,fatT,'#3fa9f5')
     +'</div>'
     +'<div class="kpn-foot">'
     +'<div class="kpn-foot-it"><span class="kpn-foot-ico">🌿</span><b>'+fibres+'g</b><small>Fibres</small></div>'
@@ -28916,7 +29211,7 @@ window.kpRenderDashboard=function(){
   var htmls=cards.map(function(c){return c.html;});
   var dots=htmls.length>1?'<div class="kpd-dots" id="kpdDots">'+htmls.map(function(_,i){return '<span class="kpd-dot'+(i===0?' on':'')+'"></span>';}).join('')+'</div>':'';
   var mealsCard=htmls.length?('<div class="kpd-card" data-testid="kpd-meals"><div class="kpd-meals-head"><span class="kpd-card-title">Repas du jour</span>'
-    +'<button type="button" class="kpd-seeall" onclick="setDayView(\'day\')" data-testid="kpd-seeall">Voir tout ›</button></div>'
+    +'<button type="button" class="kpd-seeall" onclick="kpPlanSheetOpen()" data-testid="kpd-seeall">Voir tout ›</button></div>'
     +'<div class="kpd-meals-scroll" id="kpdScroll">'+htmls.join('')+'</div>'+dots+'</div>'):'';
   var _prevSc=$id('kpdScroll'); var _prevLeft=_prevSc?_prevSc.scrollLeft:0;
   host.innerHTML=greet+gen+mealsCard+nutri+kpHydroHTML()+modes+tip;

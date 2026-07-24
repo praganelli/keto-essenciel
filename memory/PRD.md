@@ -566,3 +566,15 @@ Bugs signalés :
 - NAV BASSE (mobile) : pastille verte Material supprimée → icônes outline fines (SVG stroke 1.8 remplacés dans le markup : Plan calendrier, Recettes livre, Suivi courbe, Profil personne) + libellés toujours visibles, actif = vert #2f5b26. Overrides @media dans kpHomeModule.
 
 ## Nettoyage accueil (fork, juillet 2026) : cartes 'Progression aujourd'hui' (kpd-prog) + 4 tuiles stats (kpd-tiles) retirées du innerHTML (calculs conservés pour le score nutri) ; #kpWeekPulse masqué via media query mobile.
+
+## Feuille « Mon plan » (bottom sheet semaine) — fork juillet 2026
+- « Voir tout » (carte Repas du jour) ouvre kpPlanSheetOpen() : bottom sheet glissante (#kpPlanSheet z-index 900, sous recipeOverlay z1300) reproduisant les mockups : hero photo « Mon plan » + dates semaine (lundi→dimanche), carte Score Qualité (kpWeekQuality() → okN/total, anneau /100 + médaille), « Progression de la semaine » (7 cercles, done=vert ✓, aujourd'hui=doré), boutons Liste de courses (ferme + scroll #shopping-wrap) / ✨ Régénérer (generateMenu), chips jours (x/3 repas pris, actif vert), sections jour + cartes repas (photo, label PETIT-DÉJEUNER/DÉJEUNER/DÎNER, macros colorées, sous-lignes Entrée/Plat/Légumes/Dessert avec kcal, tags temps + g net, boutons Recette ›/⟳ Remplacer (swapMeal)/✓ pris (kpMealEatenDay day-aware)).
+- Fonctions : kpPlanSheetOpen/Close/Render/SelDay/Swap/Regen/Courses, kpMealEatenDay(di,grp), kpsMealCard, kpsDayCounts. CSS kps-*.
+- Testé : sélection jour, swap (recette changée), coche repas (chip 1/3), modale recette au-dessus de la feuille.
+
+## Design premium « LUX » — glassmorphism + bleu ciel (fork, juillet 2026)
+- PRIORITÉ 1 appliquée : tableau de bord accueil. Fond app mobile = blanc cassé #f4f7fb + 3 halos radiaux bleus très légers (body @media<=980 !important). Police Inter (Google Fonts ajoutée ligne ~26) appliquée à tout #kpDashHost.
+- Cartes verre : .kpd-card/.kpn-card/.kph-card/.kpd-gen/.kpd-mode/.kpd-tip → rgba(255,255,255,.55-.6) + backdrop-filter blur(18-22px) saturate(1.4-1.5) + bordure blanche fine rgba(255,255,255,.9) + radius 18-26px + ombre froide rgba(120,145,175).
+- Accent unique Bleu Ciel : #3fa9f5 (CTA gradient #54b4f7→#2b8fd9, coches, anneaux, barres macros, verres, + nav, actif nav #2b8fd9). Segments répartition = camaïeu bleu (#1f7ec7/#3fa9f5/#a9d7f8) — constantes JS kpnRow/repBar/legend MODIFIÉES en bleu.
+- Le bloc CSS « LUX » est EN FIN de style kpHomeModule (gagne la cascade) — toute nouvelle règle kpd-* doit être ajoutée AVANT ce bloc ou y être répercutée.
+- PAS ENCORE converti au lux (à valider avec user avant) : carte verte « Menu du jour » (kpday), feuille « Mon plan » (kps-, verts), popup jour (#day-panel, vert), header app.
