@@ -28341,7 +28341,7 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 }
 /* ── Dashboard (mobile) ── */
 #kpDashHost{ display:none; }
-@media(max-width:980px){ #kpDashHost{ display:block; margin-bottom:16px; } .plan-gen-hero{ display:none !important; } .recipe-of-day{ display:none !important; } .wfl-progress{ display:none !important; } }
+@media(max-width:980px){ #kpDashHost{ display:block; margin-bottom:16px; } .plan-gen-hero{ display:none !important; } .recipe-of-day{ display:none !important; } .wfl-progress{ display:none !important; } #kpWeekPulse{ display:none !important; } }
 .kpd-greet{ display:flex; align-items:flex-start; justify-content:space-between; gap:6px; margin:4px 0 16px; }
 .kpd-greet h2{ font-family:'Plus Jakarta Sans',sans-serif; font-size:28px; font-weight:800; color:#232b22; margin:6px 0 8px; letter-spacing:-.02em; }
 .kpd-greet p{ font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:500; line-height:1.45; color:#5c645a; margin:0; max-width:225px; }
@@ -28919,7 +28919,7 @@ window.kpRenderDashboard=function(){
     +'<button type="button" class="kpd-seeall" onclick="setDayView(\'day\')" data-testid="kpd-seeall">Voir tout ›</button></div>'
     +'<div class="kpd-meals-scroll" id="kpdScroll">'+htmls.join('')+'</div>'+dots+'</div>'):'';
   var _prevSc=$id('kpdScroll'); var _prevLeft=_prevSc?_prevSc.scrollLeft:0;
-  host.innerHTML=greet+prog+tiles+gen+mealsCard+nutri+kpHydroHTML()+modes+tip;
+  host.innerHTML=greet+gen+mealsCard+nutri+kpHydroHTML()+modes+tip;
   kpPlacePulse();
   var sc=$id('kpdScroll'), dt=$id('kpdDots');
   if(sc&&_prevLeft) sc.scrollLeft=_prevLeft;

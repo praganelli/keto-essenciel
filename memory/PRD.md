@@ -564,3 +564,5 @@ Bugs signalés :
 - ACCUEIL — section « BIEN-ÊTRE / Hydratation » (kph-*) : 6 verres cliquables (0,33L, objectif 2,0L), kpHydroTap (verre n = remplit jusqu'à n, re-tap dernier = décrémente), bouton + incrémente ; persistance localStorage kp_hydro_v1 par date (clé Y-M-D). Affichée aussi sans menu généré.
 - ACCUEIL — avatar photo de profil à gauche de « Bonjour » : bouton rond 56px (kpd-ava), tap → input file image → crop carré canvas 200px → base64 jpeg dans localStorage kp_avatar_v1 (PAS dans profile pour ne pas gonfler la sync Firestore). Placeholder = initiale du prénom ou 🥑 + badge 📷.
 - NAV BASSE (mobile) : pastille verte Material supprimée → icônes outline fines (SVG stroke 1.8 remplacés dans le markup : Plan calendrier, Recettes livre, Suivi courbe, Profil personne) + libellés toujours visibles, actif = vert #2f5b26. Overrides @media dans kpHomeModule.
+
+## Nettoyage accueil (fork, juillet 2026) : cartes 'Progression aujourd'hui' (kpd-prog) + 4 tuiles stats (kpd-tiles) retirées du innerHTML (calculs conservés pour le score nutri) ; #kpWeekPulse masqué via media query mobile.
