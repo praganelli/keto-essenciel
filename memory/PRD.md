@@ -578,3 +578,11 @@ Bugs signalés :
 - Accent unique Bleu Ciel : #3fa9f5 (CTA gradient #54b4f7→#2b8fd9, coches, anneaux, barres macros, verres, + nav, actif nav #2b8fd9). Segments répartition = camaïeu bleu (#1f7ec7/#3fa9f5/#a9d7f8) — constantes JS kpnRow/repBar/legend MODIFIÉES en bleu.
 - Le bloc CSS « LUX » est EN FIN de style kpHomeModule (gagne la cascade) — toute nouvelle règle kpd-* doit être ajoutée AVANT ce bloc ou y être répercutée.
 - PAS ENCORE converti au lux (à valider avec user avant) : carte verte « Menu du jour » (kpday), feuille « Mon plan » (kps-, verts), popup jour (#day-panel, vert), header app.
+
+## LUX 2 — extension design premium (fork, juillet 2026)
+- Nav basse flottante : verre blanc (.7 + blur 26) bordure blanche, pastille ACTIVE = dégradé bleu translucide + inset ring bleu, transitions .3s, icônes line-art conservées, + bleu.
+- Toggle Semaine/Jour (.vtab.active) + pills jours (.wfl-pill active bleu / done bleu clair) + lignes semaine (.wfl-day) → verre + bleu.
+- Carte kpday (Menu du jour) : verre blanc, header transparent, tag/kcal/macros/CTA bleus (done = doré conservé).
+- Feuille Mon plan (kps-) : fond #f2f6fa, cartes/meals verre, ring score/chips/régénérer/labels/boutons bleus.
+- Popup #day-panel : hero verre blanc (fini le vert), date sombre Inter, eyebrow pill bleue, bouton Marquer complétée bleu, tuiles macro verre.
+- Tout le bloc LUX2 est à la FIN du style kpHomeModule.
