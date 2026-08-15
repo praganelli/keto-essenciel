@@ -663,3 +663,11 @@ Bugs signalés :
 - Objectif atteint : barre pulse en ambré une fois + micro-confettis 1 s au-dessus de la carte. Bouton « + » définitivement supprimé.
 - Code : keto.html CSS lignes ~29314+ (.kph2-*), JS lignes ~30213+ (kpHydroHTML/kpHydroSet/kpHydroCelebrate). Ancien code bouteille/orbite supprimé.
 - ⚠️ IMPORTANT : le backend sert **/app/backend/keto_app.html** (copie). Après toute modification de /app/keto.html, exécuter `cp /app/keto.html /app/backend/keto_app.html` puis `sudo supervisorctl restart backend`.
+
+## Hydratation v5 — Titre section + enrichissements (Juin 2026)
+- Titre « Hydratation » sorti de la carte, même style que « Résumé nutritionnel » (.kpn-title) ; badge pill « X / 8 verres » (fond vert avocat pâle) aligné à droite sur la même ligne.
+- Verres : reflet lumineux qui glisse (200 ms) + micro-gouttes de condensation au remplissage.
+- Appui long (550 ms) sur un verre rempli = vide ce verre (kpHydroLPStart/kpHydroTap, flag __kphLP).
+- Sous la grille : litres en grand vert avocat (« 1,5L ») + « Dernier verre il y a X min » (localStorage kp_hydro_last_v1, interval 30 s __kphLastIv).
+- Message d'encouragement dynamique sous la barre (0 / 1-3 / 4 / 5-7 / 8 verres).
+- Rappel : sync obligatoire `cp /app/keto.html /app/backend/keto_app.html` + restart backend.

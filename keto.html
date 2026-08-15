@@ -29311,18 +29311,20 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
 .reg-stepper-label,.reg-stepper-count{ color:#6F7566 !important; font-family:'Inter',sans-serif !important; }
 .auth-plans-link{ background:rgba(255,255,255,.55) !important; border:1px solid rgba(91,138,64,.3) !important; border-radius:12px !important; }
 
-/* ═══ HYDRATATION — grille 4×2, verres réalistes, barre Vert Avocat, confettis ═══ */
-.kph2{ position:relative; padding:20px 18px 18px !important; overflow:visible; }
-.kph2-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
-.kph2-title{ font-family:'Inter','Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:600; letter-spacing:-.01em; color:#232B22; }
-.kph2-count{ font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; color:#5B8A40; }
-.kph2-count b{ font-size:15px; font-weight:800; }
+/* ═══ HYDRATATION — titre section + grille 4×2, verres réalistes, barre Vert Avocat ═══ */
+/* Ligne de titre hors carte : titre style « Résumé nutritionnel » + badge pill */
+.kph2-headrow{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 2px 12px; }
+.kph2-count{ font-family:'Inter','Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:700; color:#3F6B2C;
+  background:rgba(91,138,64,.12); border-radius:999px; padding:6px 13px; white-space:nowrap; }
+.kph2-count b{ font-size:14px; font-weight:800; }
+.kph2{ position:relative; padding:20px 18px 16px !important; overflow:visible; }
 /* Grille 4 colonnes × 2 rangées */
-.kph2-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px 10px; justify-items:center; margin-bottom:18px; }
+.kph2-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px 10px; justify-items:center; margin-bottom:14px; }
 .kph2-g{ width:46px; height:54px; padding:0; border:none; background:transparent; cursor:pointer; overflow:visible;
-  transition:transform .2s ease-in-out, filter .4s ease-in-out; -webkit-tap-highlight-color:transparent; }
+  transition:transform .2s ease-in-out, filter .4s ease-in-out; -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; touch-action:manipulation; }
 .kph2-g:active{ transform:scale(.9); }
-.kph2-g svg{ width:100%; height:100%; display:block; overflow:visible; }
+.kph2-g svg{ width:100%; height:100%; display:block; overflow:visible; pointer-events:none; }
 /* Contour : gris très pâle → Vert Avocat + lueur douce quand rempli */
 .kph2-line{ stroke:rgba(178,184,170,.55); transition:stroke .4s ease-in-out; }
 .kph2-g.full .kph2-line{ stroke:#5B8A40; }
@@ -29330,11 +29332,25 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
 /* Eau : montée fluide 400ms ease-in-out (fond du verre → 86%) */
 .kph2-w{ y:37px; height:5px; transition:y .4s ease-in-out, height .4s ease-in-out; }
 .kph2-g.full .kph2-w{ y:7px; height:35px; }
+/* Reflet lumineux qui glisse sur le verre en 200ms au remplissage */
+.kph2-swp{ opacity:0; }
+.kph2-g.full .kph2-swp{ animation:kph2Swp .2s ease-in-out .2s 1 both; }
+@keyframes kph2Swp{ 0%{ opacity:0; transform:translateX(0); } 40%{ opacity:.9; } 100%{ opacity:0; transform:translateX(26px); } }
+/* Condensation subtile (micro-gouttes) sur le pourtour du verre rempli */
+.kph2-cond circle{ fill:rgba(255,255,255,.95); }
+.kph2-cond{ opacity:0; transition:opacity .5s ease-in-out .25s; }
+.kph2-g.full .kph2-cond{ opacity:.8; }
+/* Quantité en litres + dernier verre */
+.kph2-qty{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0 2px 10px; }
+.kph2-litres{ font-family:'Inter','Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; letter-spacing:-.02em; color:#3F6B2C; }
+.kph2-last{ font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600; color:#8A927F; text-align:right; }
 /* Barre de progression pill + pourcentage */
 .kph2-bottom{ display:flex; align-items:center; gap:10px; }
 .kph2-bar{ flex:1; height:8px; border-radius:999px; background:#ECEDE7; overflow:hidden; }
 .kph2-bar i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#8FB471,#5B8A40); transition:width .3s ease-in-out, background .4s ease-in-out; }
 .kph2-pct{ font-family:'Inter',sans-serif; font-size:12px; font-weight:700; color:#5B8A40; min-width:34px; text-align:right; transition:color .4s ease-in-out; }
+/* Message d'encouragement dynamique */
+.kph2-msg{ margin-top:12px; text-align:center; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#8A927F; }
 /* Objectif atteint : pulsation ambrée douce (une fois) */
 .kph2-bar.goal i{ background:linear-gradient(90deg,#F2C879,#E8A33D); }
 .kph2-bar.goal + .kph2-pct{ color:#C9862B; }
@@ -30177,11 +30193,37 @@ function kpHydroSound(){
     o.start(t); o.stop(t+.19);
   }catch(e){}
 }
+function kpHydroLitresTxt(n){ var l=Math.round(n*KPH_GLASS*100)/100; return String(l).replace('.',',')+'L'; }
+function kpHydroMsg(n){
+  if(n<=0) return 'Commencez votre hydratation du jour 💧';
+  if(n<=3) return 'Bon début, continuez ! 💧';
+  if(n===4) return 'Vous êtes à mi-chemin, courage ! 💧';
+  if(n<=7) return 'Presque là, encore un effort ! 💪';
+  return 'Objectif atteint, bravo ! 🎉';
+}
+function kpHydroLastTxt(){
+  if(kpHydroGet()<=0) return '';
+  var ts=0; try{ ts=parseInt(localStorage.getItem('kp_hydro_last_v1')||'0',10); }catch(e){}
+  if(!ts) return '';
+  var m=Math.floor((Date.now()-ts)/60000);
+  if(m<1) return 'Dernier verre à l\'instant';
+  if(m<60) return 'Dernier verre il y a '+m+' min';
+  var h=Math.floor(m/60);
+  return 'Dernier verre il y a '+h+' h'+(m%60?' '+(m%60)+' min':'');
+}
+/* Mise à jour temps réel du « Dernier verre il y a … » */
+if(!window.__kphLastIv){
+  window.__kphLastIv=setInterval(function(){
+    var el=document.getElementById('kphLastTxt');
+    if(el) el.textContent=kpHydroLastTxt();
+  }, 30000);
+}
 window.kpHydroSet=function(n){
   n=Math.max(0,Math.min(KPH_MAX,n));
   var prev=kpHydroGet();
   try{ var o=JSON.parse(localStorage.getItem('kp_hydro_v1')||'{}'); o[kpHydroKey()]=n; localStorage.setItem('kp_hydro_v1',JSON.stringify(o)); }catch(e){}
-  /* Mise à jour EN PLACE pour laisser l'animation de remplissage (400 ms) se jouer */
+  if(n>prev){ try{ localStorage.setItem('kp_hydro_last_v1', String(Date.now())); }catch(e){} }
+  /* Mise à jour EN PLACE pour laisser les animations (400 ms) se jouer */
   var animated=false;
   try{
     var card=document.querySelector('[data-testid="kph-card"]');
@@ -30192,7 +30234,10 @@ window.kpHydroSet=function(n){
       var bar=card.querySelector('.kph2-bar');
       if(bar){ bar.classList.toggle('goal', pct>=100); var bi=bar.querySelector('i'); if(bi) bi.style.width=pct+'%'; }
       var pctEl=card.querySelector('.kph2-pct'); if(pctEl) pctEl.textContent=pct+'%';
-      var cnt=card.querySelector('.kph2-count b'); if(cnt) cnt.textContent=n;
+      var cnt=document.querySelector('.kph2-count b'); if(cnt) cnt.textContent=n;
+      var lit=card.querySelector('.kph2-litres'); if(lit) lit.textContent=kpHydroLitresTxt(n);
+      var lt=document.getElementById('kphLastTxt'); if(lt) lt.textContent=kpHydroLastTxt();
+      var mg=card.querySelector('.kph2-msg'); if(mg) mg.textContent=kpHydroMsg(n);
       var prevPct=Math.min(100,Math.round(prev/KPH_MAX*100));
       if(pct>=100 && prevPct<100){ try{ kpHydroCelebrate(card); }catch(e){} }
       if(n>prev) kpHydroSound();
@@ -30203,7 +30248,21 @@ window.kpHydroSet=function(n){
   }catch(e){}
   if(!animated){ try{ kpRenderDashboard(); }catch(e){} }
 };
-window.kpHydroTap=function(i){ var c=kpHydroGet(); kpHydroSet(c===i+1 ? i : i+1); };
+/* ── Clic court : remplir / vider le dernier verre · Appui long : vider ce verre ── */
+var __kphLP={t:null,fired:false};
+window.kpHydroLPStart=function(i){
+  __kphLP.fired=false;
+  clearTimeout(__kphLP.t);
+  if(kpHydroGet()>i){
+    __kphLP.t=setTimeout(function(){ __kphLP.fired=true; kpHydroSet(i); }, 550);
+  }
+};
+window.kpHydroLPCancel=function(){ clearTimeout(__kphLP.t); };
+window.kpHydroTap=function(i){
+  if(__kphLP.fired){ __kphLP.fired=false; return; }
+  clearTimeout(__kphLP.t);
+  var c=kpHydroGet(); kpHydroSet(c===i+1 ? i : i+1);
+};
 /* ── Célébration objectif : pulsation ambrée + micro-confettis (1 s) ── */
 window.kpHydroCelebrate=function(card){
   var bar=card.querySelector('.kph2-bar');
@@ -30222,11 +30281,13 @@ window.kpHydroCelebrate=function(card){
     setTimeout(function(){ try{ host.innerHTML=''; }catch(e){} }, 1200);
   }
 };
-/* ── Verre réaliste SVG : cylindre légèrement évasé, reflet gauche ── */
+/* ── Verre réaliste SVG : cylindre évasé, reflet gauche, sweep lumineux, condensation ── */
 function kpHydroGlassSVG(){
   return '<svg viewBox="0 0 40 48" aria-hidden="true">'
     +'<path d="M9 4 L31 4 L28.5 40 Q20 44.5 11.5 40 Z" fill="rgba(255,255,255,.35)"/>'
     +'<rect class="kph2-w" x="9" width="22" rx="1.5" clip-path="url(#kph2Clip)" fill="url(#kph2Water)"/>'
+    +'<rect class="kph2-swp" x="4" y="2" width="9" height="44" clip-path="url(#kph2Clip)" fill="url(#kph2Sheen)"/>'
+    +'<g class="kph2-cond"><circle cx="11.8" cy="15" r=".9"/><circle cx="28.8" cy="12" r=".8"/><circle cx="27.6" cy="25" r="1"/><circle cx="12.6" cy="29" r=".7"/><circle cx="26.6" cy="35" r=".7"/></g>'
     +'<path class="kph2-line" d="M9 4 L31 4 L28.5 40 Q20 44.5 11.5 40 Z" fill="none" stroke-width="1.5"/>'
     +'<path d="M12.6 8.5 L11.4 35" stroke="rgba(255,255,255,.85)" stroke-width="2" fill="none" stroke-linecap="round"/>'
     +'</svg>';
@@ -30234,20 +30295,27 @@ function kpHydroGlassSVG(){
 function kpHydroHTML(){
   var n=kpHydroGet();
   var pct=Math.min(100,Math.round(n/KPH_MAX*100));
-  var out='<div class="kpd-card kph-card kph2" data-testid="kph-card">';
+  /* Ligne de titre : même style que « Résumé nutritionnel » + badge pill */
+  var out='<div class="kph2-headrow"><div class="kpn-title">Hydratation</div>'
+    +'<span class="kph2-count" data-testid="kph-count"><b>'+n+'</b> / '+KPH_MAX+' verres</span></div>';
+  out+='<div class="kpd-card kph-card kph2" data-testid="kph-card">';
   out+='<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>'
     +'<clipPath id="kph2Clip"><path d="M9 4 L31 4 L28.5 40 Q20 44.5 11.5 40 Z"/></clipPath>'
     +'<linearGradient id="kph2Water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CBE5F7" stop-opacity=".55"/><stop offset="1" stop-color="#8FC3E8" stop-opacity=".7"/></linearGradient>'
+    +'<linearGradient id="kph2Sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
     +'</defs></svg>';
-  out+='<div class="kph2-head"><span class="kph2-title">Hydratation</span>'
-    +'<span class="kph2-count" data-testid="kph-count"><b>'+n+'</b> / '+KPH_MAX+' verres</span></div>';
   out+='<div class="kph2-grid">';
   for(var i=0;i<KPH_MAX;i++){
-    out+='<button type="button" class="kph2-g'+(i<n?' full':'')+'" data-testid="kph-glass-'+i+'" aria-label="Verre '+(i+1)+'" onclick="kpHydroTap('+i+')">'+kpHydroGlassSVG()+'</button>';
+    out+='<button type="button" class="kph2-g'+(i<n?' full':'')+'" data-testid="kph-glass-'+i+'" aria-label="Verre '+(i+1)+'"'
+      +' onclick="kpHydroTap('+i+')" onpointerdown="kpHydroLPStart('+i+')" onpointerup="kpHydroLPCancel()" onpointerleave="kpHydroLPCancel()" oncontextmenu="return false">'
+      +kpHydroGlassSVG()+'</button>';
   }
   out+='</div>';
+  out+='<div class="kph2-qty"><span class="kph2-litres" data-testid="kph-litres">'+kpHydroLitresTxt(n)+'</span>'
+    +'<span class="kph2-last" id="kphLastTxt">'+kpHydroLastTxt()+'</span></div>';
   out+='<div class="kph2-bottom"><div class="kph2-bar'+(pct>=100?' goal':'')+'"><i style="width:'+pct+'%"></i></div>'
     +'<span class="kph2-pct" data-testid="kph-pct">'+pct+'%</span></div>';
+  out+='<div class="kph2-msg" data-testid="kph-msg">'+kpHydroMsg(n)+'</div>';
   out+='<div class="kph2-confetti"></div>';
   out+='</div>';
   return out;
