@@ -632,3 +632,8 @@ Bugs signalés :
 ## BADGE QUALITÉ + NAV ICÔNES SEULES (juin 2026)
 - Badge .kpd-qual (frosted pill verte : Excellent ≥95 / Optimal ≥80 / Bon ≥60 / À optimiser) inséré à côté du titre « Repas du jour » dans kpRenderDashboard, via window.kpWeekQuality() ; classe .max (score 100) → pulsation dorée kpdQualPulse. CSS dans kpPlanTabLux.
 - Nav : libellés masqués (sélecteurs haute spécificité requis : `.bnav-tab:not(.active) .bnav-label` existait à l.28758 avec display:inline !important) ; icônes/svg 26px, padding tabs 13/15px. Dans kpNavLux.
+
+## MON PLAN : COURSES + RÉGÉNÉRER (juin 2026)
+- kpPlanCourses → kpOpenShoppingCourses() (popup mobile #kpShopModal existante : liste groupée Protéines/Légumes/Corps gras/Autres, générée depuis le menu semaine, cases toggleShop). CSS frosted dans kpPlanTabLux : #kpShopModal glass, .shop-cb outlined 1px #5B8A40 (coché = fond vert + ✓, texte barré grisé .55), bandeau .shop-banner glass, #kpShopOverlay z-index 1250 (au-dessus du kpPlanSheet z=900).
+- kpPlanRegen → ferme la feuille puis kpGenWizardOpen() (questionnaire complet, plus de génération directe). Fallback generateMenu() si wizard indisponible.
+- Vérifié : liste 51 articles + coche barrée OK ; Régénérer ouvre le wizard étape 1.

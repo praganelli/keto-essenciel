@@ -29544,6 +29544,22 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
 .kpd-qual.max{ animation:kpdQualPulse 2.2s ease-in-out infinite; }
 @keyframes kpdQualPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(232,163,61,0); } 50%{ box-shadow:0 0 0 5px rgba(232,163,61,.28); } }
 
+/* ── Liste de courses : frosted glass + cases outlined Vert Avocat ── */
+#kpShopOverlay{ z-index:1250 !important; }
+.shop-banner{ background:rgba(255,255,255,.6) !important; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(91,138,64,.25) !important; border-radius:12px !important; box-shadow:none !important; }
+.shop-banner h3{ color:#1F241C !important; }
+#kpShopModal{ background:rgba(249,249,247,.94) !important; backdrop-filter:blur(25px) saturate(1.4) !important; -webkit-backdrop-filter:blur(25px) saturate(1.4) !important; border:1px solid rgba(91,138,64,.25) !important; border-radius:16px !important; }
+.shop-card{ background:transparent !important; border:none !important; box-shadow:none !important; }
+.shop-banner h3{ font-family:'Inter',sans-serif !important; color:#1F241C !important; }
+.shop-cat-label{ font-family:'Inter',sans-serif !important; font-size:11px !important; font-weight:700 !important; letter-spacing:.1em; text-transform:uppercase; color:#3F6B2C !important; }
+.shop-item{ background:rgba(255,255,255,.55) !important; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(91,138,64,.14) !important; border-radius:10px !important; }
+.shop-cb{ width:20px !important; height:20px !important; border:1px solid #5B8A40 !important; border-radius:6px !important; background:transparent !important; transition:background .2s ease-in-out; }
+.shop-item.checked .shop-cb{ background:#5B8A40 !important; border-color:#5B8A40 !important; }
+.shop-item.checked .shop-cb::after{ content:'✓'; font-size:11px; color:#fff; }
+.shop-item.checked .shop-name{ text-decoration:line-through !important; opacity:.55 !important; color:#6F7566 !important; }
+.shop-prog-bar{ background:#E9EDE4 !important; border-radius:99px; overflow:hidden; }
+.shop-prog-fill{ background:linear-gradient(90deg,#8FB471,#5B8A40) !important; transition:width .35s ease-in-out; }
+
 /* ── Toast d'invitation Premium (discret & élégant) ── */
 .kpd-prem-toast{
   position:fixed; left:50%; bottom:calc(112px + env(safe-area-inset-bottom));
@@ -30122,8 +30138,8 @@ window.kpPlanSelDay=function(i){
   var t=document.getElementById('kpsDayTitle'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
 };
 window.kpPlanSwap=function(di,slot){ try{ swapMeal(di,slot); }catch(e){} kpPlanRender(); try{ kpRenderDashboard(); }catch(e){} };
-window.kpPlanRegen=function(){ try{ generateMenu(); }catch(e){} kpPlanDay=(typeof TODAY_IDX!=='undefined')?TODAY_IDX:0; kpPlanRender(); };
-window.kpPlanCourses=function(){ kpPlanSheetClose(); setTimeout(function(){ var el=document.getElementById('shopping-wrap'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },380); };
+window.kpPlanRegen=function(){ kpPlanSheetClose(); setTimeout(function(){ try{ kpGenWizardOpen(); }catch(e){ try{ generateMenu(); }catch(_){} } }, 380); };
+window.kpPlanCourses=function(){ try{ if(typeof kpOpenShoppingCourses==='function'){ kpOpenShoppingCourses(); return; } }catch(e){} kpPlanSheetClose(); setTimeout(function(){ var el=document.getElementById('shopping-wrap'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },380); };
 window.kpMealEatenDay=function(di,grp){
   var k=di+'-'+grp;
   if(mealsEaten[k]){ delete mealsEaten[k]; } else { mealsEaten[k]=true; }
