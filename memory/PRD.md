@@ -643,3 +643,8 @@ Bugs signalés :
 - Flux : supprime users/{uid}/ketoProfile/data + users/{uid} (Firestore) → user.delete() ; si auth/requires-recent-login → reauth (EmailAuthProvider.credential avec champ mot de passe intégré au popup, ou reauthenticateWithPopup Google) puis retry ; purge localStorage (clés kp*/keto*) ; message « Votre compte a été supprimé avec succès. » dans #authMsg + toast ; redirection location.hash='#login'.
 - TESTÉ EN RÉEL : compte jetable qa.del.1786802837@example.com créé puis supprimé (currentUser=false, message OK). Compte démo intact.
 - Note : le quiz « Bilan keto » s'ouvre en overlay pour les visiteurs déconnectés (comportement pré-existant).
+
+## HYDRATATION v3 — BOUTEILLE CENTRALE (juin 2026)
+- kpHydroHTML : bouton .kph-add SUPPRIMÉ (+ CSS display:none) ; bouteille kpBottleHTML(pct) insérée entre la barre et les verres (bouchon/col/corps frosted, contours #5B8A40, reflet gauche .kph-bottle-shine, eau .kph-water bleu pâle translucide, hauteur = % objectif, transition .7s overshoot).
+- Effets au clic (window.kpHydroFX, appelé depuis kpHydroSet en place) : vagues rotatives continues (.kph-wave x2, accélérées 800ms via classe .agitate puis stabilisation), 6 bulles aléatoires (.kph-bub, fade à la surface), reflet lumineux glissant (.kph-sweep.run 600ms), splash 4 gouttes (.kph-drop ≤400ms). Objectif 100% → pulsation dorée (.kph-bottle.goal). Bouteille vide → classe .empty (vagues masquées).
+- Vérifié : clic verre → eau 50%, 6 bulles, 4 gouttes, sweep ; goal pulse à 8 verres ; état vide propre. Verres cliquables + anims existantes conservés.
