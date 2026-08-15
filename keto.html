@@ -29130,6 +29130,22 @@ body.dark .sv-hero{ background:var(--lux-glass) !important; }
     hh.appendChild(im);
   }
 
+  /* ── Verrou anti-swipe : bloque le scroll du body tant que l'écran de connexion est actif
+        (l'inscription reste accessible uniquement via le lien dédié) ── */
+  setInterval(function(){
+    try{
+      var s=document.getElementById('authScreen');
+      var w=document.getElementById('kpWelcomeScreen');
+      var authActive = s && getComputedStyle(s).display!=='none' && !s.classList.contains('hide');
+      var welcomeShown = w && getComputedStyle(w).display!=='none';
+      var lock = !!(authActive && !welcomeShown);
+      if(lock !== document.body.classList.contains('klxa-lock')){
+        document.body.classList.toggle('klxa-lock', lock);
+        if(lock){ try{ window.scrollTo(0,0); }catch(e){} }
+      }
+    }catch(e){}
+  }, 400);
+
   /* ── Nav liquide : disparaît au scroll bas, réapparaît au scroll haut ── */
   var nav=document.querySelector('.bottom-nav'), last=0, tick=false;
   if(nav){
@@ -29243,6 +29259,12 @@ body.dark .sv-hero{ background:var(--lux-glass) !important; }
 .klxa-namerow .auth-field{ flex:1; min-width:0; }
 /* Nettoyage héritages */
 .auth-card::before,.auth-card::after{ display:none !important; content:none !important; }
+/* FIX espace vide en haut de toutes les pages : l'écran d'auth masqué (.hide)
+   ne doit plus occuper d'espace dans le flux (le routeur de hash ré-impose display:flex inline) */
+#authScreen.hide{ display:none !important; }
+/* Écran de connexion : aucun geste de swipe ne doit provoquer de navigation */
+#authScreen{ touch-action:pan-y; overscroll-behavior:contain; }
+body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
 #authLoginForm,#authRegisterForm{ padding-top:0 !important; margin-top:0 !important; }
 .kpl-welcome{ margin:4px 0 18px !important; }
 #authScreen .auth-scroll-hint{ background:rgba(255,255,255,.8) !important; color:#3F6B2C !important;
