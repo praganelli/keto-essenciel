@@ -29859,6 +29859,161 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
   };
 })();
 </script>
+<style id="kpDelAccount">
+/* ═══ Suppression de compte (Profil) ═══ */
+.kp-delacct-btn{
+  display:block; width:100%; margin:22px 0 8px; padding:13px 16px;
+  background:transparent; border:1px solid rgba(224,122,122,.5); border-radius:12px;
+  color:rgba(203,98,98,.85); font-family:'Inter',sans-serif; font-size:13px; font-weight:500;
+  cursor:pointer; transition:background .2s ease-in-out, transform .15s ease-in-out;
+}
+.kp-delacct-btn:active{ transform:scale(.98); background:rgba(224,122,122,.07); }
+#kpDelOverlay{ position:fixed; inset:0; z-index:1400; background:rgba(31,36,28,.35);
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center; padding:24px;
+  opacity:0; pointer-events:none; transition:opacity .28s ease-in-out; }
+#kpDelOverlay.open{ opacity:1; pointer-events:auto; }
+.kp-del-card{ width:100%; max-width:360px; background:rgba(249,249,247,.94);
+  backdrop-filter:blur(25px) saturate(1.4); -webkit-backdrop-filter:blur(25px) saturate(1.4);
+  border:1px solid rgba(224,122,122,.35); border-radius:16px; padding:24px 20px;
+  box-shadow:0 24px 60px -24px rgba(31,36,28,.45);
+  transform:translateY(14px); transition:transform .28s ease-in-out; }
+#kpDelOverlay.open .kp-del-card{ transform:translateY(0); }
+.kp-del-title{ font-family:'Inter',sans-serif; font-size:17px; font-weight:800; color:#1F241C; margin-bottom:10px; }
+.kp-del-msg{ font-family:'Inter',sans-serif; font-size:13px; color:#6F7566; line-height:1.5; margin-bottom:18px; }
+.kp-del-pass{ display:none; margin-bottom:14px; }
+.kp-del-pass.show{ display:block; }
+.kp-del-pass label{ display:block; font-family:'Inter',sans-serif; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#3F6B2C; margin-bottom:6px; }
+.kp-del-pass input{ width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(91,138,64,.45);
+  background:rgba(255,255,255,.8); font-family:'Inter',sans-serif; font-size:14px; color:#1F241C; }
+.kp-del-pass input:focus{ outline:none; border-color:#5B8A40; box-shadow:0 0 0 3px rgba(91,138,64,.13); }
+.kp-del-err{ font-family:'Inter',sans-serif; font-size:12px; color:#c05a5a; margin:-6px 0 12px; display:none; }
+.kp-del-actions{ display:flex; gap:10px; }
+.kp-del-actions button{ flex:1; padding:13px 10px; border-radius:12px; font-family:'Inter',sans-serif;
+  font-size:13.5px; font-weight:600; cursor:pointer; background:transparent;
+  transition:background .2s ease-in-out, transform .15s ease-in-out; }
+.kp-del-actions button:active{ transform:scale(.97); }
+.kp-del-cancel{ border:1px solid #5B8A40; color:#3F6B2C; }
+.kp-del-confirm{ border:1px solid rgba(224,122,122,.6); color:rgba(203,98,98,.95); }
+.kp-del-confirm[disabled]{ opacity:.5; pointer-events:none; }
+</style>
+<script id="kpDelAccountJS">
+(function(){
+  /* Bouton sobre en bas du Profil */
+  function inject(){
+    var tab=document.getElementById('tab-profile');
+    if(!tab || document.getElementById('kpDelAcctBtn')) return;
+    var b=document.createElement('button');
+    b.type='button'; b.id='kpDelAcctBtn'; b.className='kp-delacct-btn';
+    b.setAttribute('data-testid','delete-account-btn');
+    b.textContent='Supprimer mon compte';
+    b.onclick=window.kpDelConfirmOpen;
+    tab.appendChild(b);
+  }
+  function ensurePopup(){
+    if(document.getElementById('kpDelOverlay')) return;
+    var ov=document.createElement('div'); ov.id='kpDelOverlay';
+    ov.innerHTML='<div class="kp-del-card">'
+      +'<div class="kp-del-title">Supprimer votre compte&nbsp;?</div>'
+      +'<div class="kp-del-msg">Êtes-vous sûr de vouloir supprimer votre compte&nbsp;? Cette action est irréversible et supprimera définitivement toutes vos données personnelles.</div>'
+      +'<div class="kp-del-pass" id="kpDelPass"><label>Confirmez votre mot de passe</label><input type="password" id="kpDelPwd" autocomplete="current-password" placeholder="Mot de passe"></div>'
+      +'<div class="kp-del-err" id="kpDelErr"></div>'
+      +'<div class="kp-del-actions">'
+      +'<button type="button" class="kp-del-cancel" onclick="kpDelConfirmClose()">Annuler</button>'
+      +'<button type="button" class="kp-del-confirm" id="kpDelGo" data-testid="delete-account-confirm" onclick="kpDelAccountRun()">Confirmer la suppression</button>'
+      +'</div></div>';
+    ov.addEventListener('click', function(e){ if(e.target===ov) kpDelConfirmClose(); });
+    document.body.appendChild(ov);
+  }
+  window.kpDelConfirmOpen=function(){
+    ensurePopup();
+    document.getElementById('kpDelErr').style.display='none';
+    document.getElementById('kpDelPass').classList.remove('show');
+    var go=document.getElementById('kpDelGo'); go.disabled=false; go.textContent='Confirmer la suppression';
+    requestAnimationFrame(function(){ document.getElementById('kpDelOverlay').classList.add('open'); });
+  };
+  window.kpDelConfirmClose=function(){
+    var ov=document.getElementById('kpDelOverlay'); if(ov) ov.classList.remove('open');
+  };
+  function showErr(msg){
+    var e=document.getElementById('kpDelErr'); e.textContent=msg; e.style.display='block';
+  }
+  function purgeLocal(){
+    try{
+      var keys=[]; for(var i=0;i<localStorage.length;i++){ keys.push(localStorage.key(i)); }
+      keys.forEach(function(k){ if(/^(kp|keto)/i.test(k)||/keto/i.test(k)){ try{ localStorage.removeItem(k); }catch(e){} } });
+    }catch(e){}
+  }
+  function afterDeleted(){
+    purgeLocal();
+    kpDelConfirmClose();
+    /* Redirection vers l'écran de connexion */
+    setTimeout(function(){ try{ location.hash='#login'; }catch(e){} }, 400);
+    /* Message discret sur l'écran de connexion (réaffiché par onAuthStateChanged) */
+    var tries=0, t=setInterval(function(){
+      tries++;
+      var m=document.getElementById('authMsg');
+      if(m){ m.textContent='Votre compte a été supprimé avec succès.'; m.style.color='#3F6B2C'; }
+      if(tries>6) clearInterval(t);
+    }, 700);
+    try{ if(typeof toast==='function') toast('✅ Votre compte a été supprimé avec succès.'); }catch(e){}
+  }
+  function deleteData(user){
+    var fs=null;
+    try{ fs=authFirebase.firestore(); }catch(e){}
+    if(!fs) return Promise.resolve();
+    var uref=fs.collection('users').doc(user.uid);
+    /* Profil, plan, historique, courses, hydratation : tout vit dans users/{uid}/ketoProfile/data + doc racine */
+    return uref.collection('ketoProfile').doc('data').delete().catch(function(){})
+      .then(function(){ return uref.delete().catch(function(){}); });
+  }
+  window.kpDelAccountRun=function(){
+    var user=null;
+    try{ user=authInstance&&authInstance.currentUser; }catch(e){}
+    if(!user){ showErr('Aucun compte connecté.'); return; }
+    var go=document.getElementById('kpDelGo');
+    go.disabled=true; go.textContent='Suppression…';
+    var passRow=document.getElementById('kpDelPass');
+    function doDelete(){
+      return deleteData(user).then(function(){ return user.delete(); }).then(afterDeleted);
+    }
+    doDelete().catch(function(err){
+      if(err && err.code==='auth/requires-recent-login'){
+        var provider=(user.providerData&&user.providerData[0]&&user.providerData[0].providerId)||'password';
+        if(provider==='google.com'){
+          try{
+            var gp=new firebase.auth.GoogleAuthProvider();
+            user.reauthenticateWithPopup(gp).then(doDelete).catch(function(e2){
+              go.disabled=false; go.textContent='Confirmer la suppression';
+              showErr('Ré-authentification Google nécessaire. Veuillez réessayer.');
+            });
+          }catch(e3){ go.disabled=false; showErr('Ré-authentification impossible.'); }
+        }else{
+          var pwd=(document.getElementById('kpDelPwd')||{}).value||'';
+          if(!passRow.classList.contains('show')||!pwd){
+            passRow.classList.add('show');
+            go.disabled=false; go.textContent='Confirmer la suppression';
+            showErr('Par sécurité, saisissez votre mot de passe puis confirmez à nouveau.');
+            return;
+          }
+          try{
+            var cred=firebase.auth.EmailAuthProvider.credential(user.email, pwd);
+            user.reauthenticateWithCredential(cred).then(doDelete).catch(function(e4){
+              go.disabled=false; go.textContent='Confirmer la suppression';
+              showErr('Mot de passe incorrect. Veuillez réessayer.');
+            });
+          }catch(e5){ go.disabled=false; showErr('Ré-authentification impossible.'); }
+        }
+      }else{
+        go.disabled=false; go.textContent='Confirmer la suppression';
+        showErr('La suppression a échoué. Vérifiez votre connexion puis réessayez.');
+      }
+    });
+  };
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', inject); }
+  else{ inject(); }
+})();
+</script>
 <script id="kpHomeModule">
 (function(){
 window.KPD_AVO=KPD_AVO;

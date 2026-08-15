@@ -637,3 +637,9 @@ Bugs signalés :
 - kpPlanCourses → kpOpenShoppingCourses() (popup mobile #kpShopModal existante : liste groupée Protéines/Légumes/Corps gras/Autres, générée depuis le menu semaine, cases toggleShop). CSS frosted dans kpPlanTabLux : #kpShopModal glass, .shop-cb outlined 1px #5B8A40 (coché = fond vert + ✓, texte barré grisé .55), bandeau .shop-banner glass, #kpShopOverlay z-index 1250 (au-dessus du kpPlanSheet z=900).
 - kpPlanRegen → ferme la feuille puis kpGenWizardOpen() (questionnaire complet, plus de génération directe). Fallback generateMenu() si wizard indisponible.
 - Vérifié : liste 51 articles + coche barrée OK ; Régénérer ouvre le wizard étape 1.
+
+## SUPPRESSION DE COMPTE (juin 2026)
+- Blocs <style id="kpDelAccount"> + <script id="kpDelAccountJS"> (avant kpHomeModule). Bouton sobre rouge pâle outlined #kpDelAcctBtn injecté en bas de #tab-profile. Popup frosted #kpDelOverlay : Annuler (vert outlined) / Confirmer (rouge pâle outlined).
+- Flux : supprime users/{uid}/ketoProfile/data + users/{uid} (Firestore) → user.delete() ; si auth/requires-recent-login → reauth (EmailAuthProvider.credential avec champ mot de passe intégré au popup, ou reauthenticateWithPopup Google) puis retry ; purge localStorage (clés kp*/keto*) ; message « Votre compte a été supprimé avec succès. » dans #authMsg + toast ; redirection location.hash='#login'.
+- TESTÉ EN RÉEL : compte jetable qa.del.1786802837@example.com créé puis supprimé (currentUser=false, message OK). Compte démo intact.
+- Note : le quiz « Bilan keto » s'ouvre en overlay pour les visiteurs déconnectés (comportement pré-existant).
