@@ -253,3 +253,11 @@ Architecture choisie par l'utilisateur : Netlify (statique) + Firebase Cloud Fun
 - Frontend : panneau admin rendu OK, 0 erreur console/page. App /api/app charge sans erreur.
 - keto_app.html (servi /api/app & /api/download) synchronisé avec les endpoints Emergent.
 - SEUL non-testable par moi : le flux admin authentifié complet (nécessite le mot de passe Firebase admin). Toutes les briques sous-jacentes validées.
+
+#====================================================================================================
+## REFONTE UI « LIQUID LUX iOS 26 » — Vert Avocat / Goutte d'huile ambrée — Juin 2026
+#====================================================================================================
+- Blocs kpLiquidLux (CSS) + kpLiquidLuxJS (JS) dans keto.html (~l.28810) : fond #F9F9F7, cartes frosted glass blur(25px) 12px, boutons outlined 1px #5B8A40, accents ambre #E8A33D, goutte d'huile SVG (KPD_DROP) en-tête de chaque écran, nav gooey verte + hide-on-scroll, en-têtes .klx-head (Suivi/Profil/Recettes) injectés en JS.
+- Fixes : exemption .klx-head dans le verrou Suivi gratuit ; .bottom-nav-pill display:block (2 display:none legacy surchargés) ; couleurs JS résumé nutritionnel remappées vert/ambre ; overrides #tab-profile (id-card, gender, selects) ; kp-status-card + kp-cprofile-save outlined.
+- Testing agent (frontend only, iteration_14.json) : 8/9 PASS initial, pill gooey réactivée ensuite et vérifiée (translateX bouge entre onglets). Login screen inchangé. 0 erreur console.
+- RAPPEL SYNC : /api/app sert /app/backend/keto_app.html → cp /app/keto.html /app/backend/keto_app.html après chaque édition.

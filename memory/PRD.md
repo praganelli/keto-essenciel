@@ -586,3 +586,16 @@ Bugs signalés :
 - Feuille Mon plan (kps-) : fond #f2f6fa, cartes/meals verre, ring score/chips/régénérer/labels/boutons bleus.
 - Popup #day-panel : hero verre blanc (fini le vert), date sombre Inter, eyebrow pill bleue, bouton Marquer complétée bleu, tuiles macro verre.
 - Tout le bloc LUX2 est à la FIN du style kpHomeModule.
+
+## Avocat filigrane (fork, juillet 2026) : .kpd-avo → 92px, opacity .4, mix-blend-mode multiply, sans drop-shadow (règle en fin de bloc LUX2).
+
+## LIQUID LUX — refonte iOS 26 Vert Avocat (fork, juin 2026) — REMPLACE le thème bleu
+- Directive user : primaire Vert Avocat (tracés/bordures/sélections), accent Jaune Orangé ambré (données critiques/notifs), fond #F9F9F7, goutte d'huile ambrée opacité 30% en haut de chaque écran (remplace l'avocat), boutons OUTLINED 1px vert exclusivement, cartes frosted glass blur(25px) coins 12px max, nav flottante avec bulle gooey verte élastique + disparition au scroll bas, police Inter/SF Pro, transitions ease-in-out. Login screen INTACT.
+- Implémentation : blocs <style id="kpLiquidLux"> + <script id="kpLiquidLuxJS"> insérés entre kpHomeStyles et kpHomeModule (~ligne 28810). Palette : --avo #5B8A40, --avo2 #3F6B2C, --oil #E8A33D, --oil2 #C07A1A, --lux-glass rgba(255,255,255,.55), --lux-border rgba(91,138,64,.16).
+- Goutte d'huile : SVG data-uri window.KPD_DROP (défini dans kpLiquidLuxJS). Le greet dashboard (ligne ~29160) utilise window.KPD_DROP. En-têtes .klx-head injectés en JS dans tab-suivi/tab-profile/tab-library ; .klx-drop-abs dans #tab-help .help-hero.
+- Constantes JS couleurs remappées : repBar/kpnSeg/legend/kpnRow → #5B8A40/#8FB471/#E8A33D (~lignes 29561-29580).
+- Fix verrou Suivi gratuit : kpUpdateSuiviLock exempte .klx-head (sinon masqué).
+- Bulle gooey : .bottom-nav-pill display:block !important dans kpLiquidLux (2 règles legacy display:none aux ~lignes 547/6451 sont surchargées). JS updateBottomNav (ligne ~12160) inchangé.
+- Nav scroll : listener dans kpLiquidLuxJS ajoute/retire .nav-hidden sur .bottom-nav.
+- ⚠️ CRITIQUE : le fichier SERVI par GET /api/app est /app/backend/keto_app.html — après toute modif de /app/keto.html, exécuter : cp /app/keto.html /app/backend/keto_app.html
+- Testé : testing_agent frontend 9/9 PASS (iteration_14.json + fix pill vérifié manuellement : translateX 16→246px entre onglets).

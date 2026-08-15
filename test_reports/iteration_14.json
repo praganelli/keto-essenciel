@@ -1,0 +1,33 @@
+{
+  "summary": "Non-regression frontend test complete pour la refonte 'iOS 26 Liquid' du fichier /api/app (keto_app.html). Viewport 390x844, flux invité guest → login (demo.keto.qa2026b@gmail.com) → fermeture popups (quiz Bilan keto, Nouveautés v2.0, Complétez profil, bannière Essai Premium). Tous les 9 points testés. Résultat global : 8/9 PASS + 1 écart intentionnel signalé. Zéro erreur console JS pendant tout le flux. Landing PRÉSERVÉE (photo sombre + CTA doré 'COMMENCER GRATUITEMENT'). Design sanity OK : body bg=rgb(249,249,247), .btn-primary bg transparent + border 1px solid rgb(91,138,64). En-têtes .klx-head présents display:flex avec .klx-drop SVG sur suivi/profile/library, .klx-drop-abs sur #tab-help, .kpd-avo (goutte SVG w=70 h=93 opacity=.3) sur le dashboard Plan. Nav flottante disparaît en scrollant vers le bas (classe .nav-hidden ajoutée) et réapparaît au scroll vers le haut. Génération de menu OK (6 .wfl-day cartes rendues). Feuille #kpPlanSheet 'Mon plan' s'ouvre avec score/jours/repas. Case '✓ repas pris' persiste après reload (classList 'on' rétablie via data-testid=kpd-chk-b-1). ÉCART DÉTECTÉ : .bottom-nav-pill est display:none !important (via règle CSS legacy lignes 547 et 6451, avant le bloc kpLiquidLux) — la 'bulle gooey qui glisse entre les onglets' n'est plus visible ; le design actif est désormais indiqué par l'icône+label verts (.bnav-tab.active). Fonctionnellement tous les onglets restent navigables sans page blanche. À valider avec le main agent : régression volontaire du design ou correctif à appliquer.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": ".bottom-nav-pill", "issue": "Élément display:none !important via règles legacy /app/backend/keto_app.html:547 et :6451 — la 'bulle gooey verte qui glisse entre les onglets' décrite dans le brief n'est pas rendue. Le bloc kpLiquidLux ligne 28966 tente de le restyler mais est écrasé. Widths calculées par tab (43/65/46/47px) montrent que le JS de positionnement tourne, mais display:none neutralise l'affichage. Active tab reste visuellement identifiable via .bnav-tab.active { color:#2d7a52 } sur icône+label.", "testID": "bnavPill", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/tmp/s1_login_form.png",
+    "/tmp/s2_after_login.png",
+    "/tmp/s3_popups_closed.png",
+    "/tmp/s5_generated.png",
+    "/tmp/s6_sheet.png"
+  ],
+  "action_items": [
+    "DÉCISION DESIGN : soit supprimer les règles display:none legacy sur .bottom-nav-pill (keto_app.html:547 et :6451) pour ré-activer la bulle gooey qui glisse (comportement décrit dans le brief), soit acter ce choix (indicateur d'onglet actif = icône+label verts, sans pill) et mettre à jour la spec de test. Note: si on ré-active la pill, s'assurer que le JS de positionnement met bien à jour `left` en plus de `width` (actuellement pillLeft='0px' constant sur les 4 onglets)."
+  ],
+  "critical_code_review_comments": [
+    "Fichier /app/backend/keto_app.html très volumineux (~31 747 lignes) — envisager à terme un split en modules (styles, scripts, HTML) pour maintenabilité, mais hors scope de la refonte visuelle.",
+    "Trois blocs CSS successifs redéfinissent .bottom-nav-pill (l.377, l.547, l.6451, l.28966) avec conflits de spécificité (!important). Consolider en un seul endroit pour éviter les régressions futures."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped, frontend-only)", "frontend": "89% (8/9 checks PASS ; 1 écart display de .bottom-nav-pill)"},
+  "seed_data_creation": "Aucune (utilisation compte démo existant demo.keto.qa2026b@gmail.com)",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Résultats détaillés par test :\n• T1 Login : PASS (bouton .kpw-cta-ghost 'J'ai déjà un compte' → visible email input #loginEmail → 'Se connecter' → dashboard chargé). Popups fermées via closeKetoQuiz() + boutons 'Découvrir'/'Plus tard'.\n• T2 Nav tabs : PASS fonctionnel (les 4 onglets s'affichent, tabVisible=true partout) MAIS #bnavPill display:none — voir ui_bugs.\n• T3 Nav scroll : PASS (nav-hidden apparaît à winY=800, retirée à winY=0 sur listener scroll de window).\n• T4 klx-head : PASS. suivi/profile/library ont .klx-head display:flex avec .klx-drop src=data:image/svg+xml. help.help-hero a .klx-drop-abs. Plan .kpd-avo visible (70x93, opacity 0.3, src SVG).\n• T5 Generate week : PASS (bouton .plan-gen-main data-testid=plan-gen-main déclenche render, 6 .wfl-day cartes).\n• T6 kpPlanSheet : PASS (s'ouvre avec class 'open', bg=rgb(249,249,247), contient 'Mon plan', 'Semaine du 10 août - 16 août', score 100, jours L Ma Me J V S D, boutons 'Liste de courses' et 'Régénérer'). Texte 'Mon plan' en blanc mais sur image hero (nourriture) — lisible.\n• T7 Meal chk : PASS après reload (data-testid=kpd-chk-b-1 persist.isOn=true). Note: toggle synchrone via c.click() ne reflétait pas le class 'on' immédiatement (probablement re-render async) mais l'état persiste correctement.\n• T8 Design : PASS body=rgb(249,249,247), .btn-primary bg transparent + border 1px solid rgb(91,138,64), 0 textes blancs sur les onglets Suivi/Profil.\n• T9 Landing : PASS (chargement initial pré-login = photo dark bg + bouton doré 'COMMENCER GRATUITEMENT' + 'J'ai déjà un compte' visible → INCHANGÉE).\n• Console errors : 0 sur tout le flux.",
+  "rca_of_issue": "RCA .bottom-nav-pill invisible : les règles CSS legacy '.bottom-nav-pill{ display:none !important; }' aux lignes 547 et 6451 (bloc de refonte antérieur 'flat monochrome' du bottom-nav) sont chargées AVANT le bloc <style id='kpLiquidLux'> (ligne 28809+) qui redéfinit .bottom-nav-pill sans !important. La spécificité identique + le !important antérieur gagne, donc la pill reste display:none. Reproduction : DevTools → Elements → #bnavPill → Computed → display : none (heritage 547/6451). Mitigation possible : (a) ajouter display:block !important dans le bloc kpLiquidLux ligne 28966, ou (b) supprimer les deux règles legacy 547 et 6451 si l'objectif design est la 'gooey pill' décrite. Impact fonctionnel : aucun (navigation OK), impact visuel : la bulle mobile décrite dans le brief n'apparaît pas."
+}
