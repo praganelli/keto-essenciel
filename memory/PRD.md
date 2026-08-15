@@ -676,3 +676,10 @@ Bugs signalés :
 - Cause racine : `doGenerate()` du wizard « Générer ma semaine » sauvegardait la sélection des repas (st.meals {bfast,lunch,dinner}) uniquement dans localStorage `kp_wizard_prefs`, sans jamais la propager vers `profile.meals` {breakfast,lunch,dinner} — la seule source lue par generateMenu() et toutes les vues du plan.
 - Fix (keto.html, doGenerate ~l.29837) : mapping st.meals → profile.meals + save() AVANT generateMenu() ; puis re-rendu immédiat de toutes les vues (renderPlan, renderWeekGrid, kpRenderDashboard, kpRenderMealsToggles, kpPlanRender si feuille ouverte).
 - Testé e2e : exclusion petit-déj → 7 jours bfast=null, aucun créneau petit-déj sur dashboard ni feuille « Mon plan », rafraîchissement instantané sans reload.
+
+## Temps réel plan hebdo + types de repas (Juin 2026)
+- Sync wizard → profile.courses : les toggles Entrée/Plat/Dessert de l'étape « Détails » (déjeuner/dîner) sont agrégés vers profile.courses avant génération (garde-fou : main=true si rien coché). « Collation » n'a AUCUN slot dans le moteur de génération (non modifiable per contraintes) → sans effet.
+- kpsMealCard : supporte main=null (carte déjeuner/dîner rendue avec entrée/dessert seuls ; bouton Remplacer masqué sans plat). kpsDayCounts compte un groupe si n'importe quel slot actif est non nul.
+- Hooks temps réel : wrapper generateMenu re-rend aussi kpPlanRender (feuille ouverte OU fermée → zéro DOM fantôme) ; kpdQueue (hook save) re-rend la feuille si ouverte.
+- Testé e2e via wizard UI : 2/4/5/7 slots par jour exacts sur les 7 jours ; combinaisons E+P+D, P seul, E+D sans plat ; cross-validation en temps réel feuille ouverte (petit-déj apparaît, entrée/dessert disparaissent instantanément).
+- ⚠️ LEÇON CRITIQUE : ne JAMAIS lancer plusieurs search_replace en PARALLÈLE sur keto.html — course d'écriture, la dernière écriture écrase les autres (2 éditions perdues silencieusement dans cette session). Toujours éditer ce fichier séquentiellement.
