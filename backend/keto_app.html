@@ -29145,6 +29145,333 @@ body.dark .sv-hero{ background:var(--lux-glass) !important; }
   }
 })();
 </script>
+<style id="kpAuthLux">
+/* ═══════════════════════════════════════════════════════════════════
+   AUTH LUX iOS 26 — Connexion & Inscription
+   Haut : dégradé F9F9F7 → vert avocat pâle + goutte flottante + logo fade-in
+   Bas : carte frosted glass (blur 25px) en slide-up · champs & boutons outlined
+   ═══════════════════════════════════════════════════════════════════ */
+#authScreen{
+  min-height:100vh; min-height:100dvh;
+  display:flex; flex-direction:column; align-items:stretch;
+  background:linear-gradient(180deg,#F9F9F7 0%,#F2F5EB 42%,#E8EFDC 100%) !important;
+  position:relative; overflow-x:hidden; padding:0 !important;
+}
+.kp-auth-editorial{ display:none !important; }
+.kpl-sprig{ display:none !important; }
+.auth-tabs{ display:none !important; }
+.auth-logo{ display:none !important; }
+
+/* ── Zone supérieure (hero) ── */
+.klxa-hero{
+  flex:1 0 auto; min-height:26vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:12px; padding:44px 24px 22px; position:relative; text-align:center;
+}
+.klxa-drop{ width:clamp(52px, 9vh, 82px); height:auto; filter:drop-shadow(0 14px 22px rgba(200,140,40,.25));
+  animation:klxaFloat 4.8s ease-in-out infinite; }
+@keyframes klxaFloat{ 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-14px) rotate(2deg); } }
+.klxa-logo{ width:min(205px,54vw); height:auto; opacity:0; animation:klxaFade 1.1s ease-in-out .25s forwards; }
+@keyframes klxaFade{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+.klxa-welcome{ display:none; font-family:'Inter','SF Pro Display',sans-serif; font-size:26px; font-weight:800;
+  letter-spacing:-.02em; color:#1F241C; line-height:1.18; opacity:0; }
+.klxa-welcome em{ color:#3F6B2C; font-style:normal; }
+/* Mode inscription : titre + feuilles, logo masqué, goutte réduite */
+#authScreen.klxa-reg .klxa-logo{ display:none; }
+#authScreen.klxa-reg .klxa-welcome{ display:block; animation:klxaFade .9s ease-in-out .1s forwards; }
+#authScreen.klxa-reg .klxa-drop{ width:60px; }
+.klxa-leaf{ display:none; position:absolute; top:-40px; width:26px; height:26px; pointer-events:none; opacity:0; }
+#authScreen.klxa-reg .klxa-leaf{ display:block; animation:klxaLeafFall var(--d,9s) linear var(--dl,0s) infinite; }
+@keyframes klxaLeafFall{
+  0%{ transform:translateY(0) rotate(0) translateX(0); opacity:0; }
+  8%{ opacity:.75; }
+  70%{ opacity:.5; }
+  100%{ transform:translateY(52vh) rotate(300deg) translateX(34px); opacity:0; }
+}
+
+/* ── Carte frosted glass (zone inférieure, slide-up) ── */
+.auth-card{
+  flex:0 0 auto; width:100% !important; max-width:560px; margin:auto auto 0 !important;
+  background:rgba(255,255,255,.6) !important;
+  backdrop-filter:blur(25px) saturate(1.5) !important;
+  -webkit-backdrop-filter:blur(25px) saturate(1.5) !important;
+  border:1px solid rgba(91,138,64,.18) !important; border-bottom:none !important;
+  border-radius:24px 24px 0 0 !important;
+  box-shadow:0 -20px 52px -26px rgba(31,36,28,.28) !important;
+  padding:30px 24px calc(34px + env(safe-area-inset-bottom)) !important;
+  animation:klxaSlideUp .65s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes klxaSlideUp{ from{ transform:translateY(64px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+
+/* ── Transition Connexion ⇆ Inscription (slide horizontal 60fps) ── */
+#authLoginForm.klxa-in-left{ animation:klxaInLeft .42s ease-in-out both; }
+#authRegisterForm.klxa-in-right{ animation:klxaInRight .42s ease-in-out both; }
+@keyframes klxaInRight{ from{ transform:translateX(64px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+@keyframes klxaInLeft{ from{ transform:translateX(-64px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+
+/* ── Typo & titres ── */
+.kpl-title{ font-family:'Inter','SF Pro Display',sans-serif !important; font-weight:800 !important; color:#1F241C !important; letter-spacing:-.02em; }
+.kpl-subtitle{ color:#6F7566 !important; font-family:'Inter',sans-serif !important; }
+
+/* ── Champs : bordure 1px Vert Avocat, halo doux au focus ── */
+.kpl-inputs{ background:transparent !important; border:none !important; box-shadow:none !important;
+  display:flex; flex-direction:column; gap:12px; padding:0 !important; }
+.kpl-row-sep{ display:none !important; }
+.kpl-row{
+  background:rgba(255,255,255,.78) !important;
+  border:1px solid rgba(91,138,64,.5) !important; border-radius:12px !important;
+  transition:border-color .25s ease-in-out, box-shadow .25s ease-in-out;
+}
+.kpl-row:focus-within{ border-color:#5B8A40 !important;
+  box-shadow:0 0 0 3px rgba(91,138,64,.13), 0 0 16px rgba(91,138,64,.28) !important; }
+.kpl-ico{ color:#5B8A40 !important; }
+.auth-input{
+  background:rgba(255,255,255,.78) !important;
+  border:1px solid rgba(91,138,64,.5) !important; border-radius:12px !important;
+  color:#1F241C !important; font-family:'Inter',sans-serif !important;
+  transition:border-color .25s ease-in-out, box-shadow .25s ease-in-out;
+}
+.auth-input:focus{ outline:none !important; border-color:#5B8A40 !important;
+  box-shadow:0 0 0 3px rgba(91,138,64,.13), 0 0 16px rgba(91,138,64,.28) !important; }
+.auth-field-label{ color:#3F6B2C !important; font-family:'Inter',sans-serif !important; }
+/* Validation email temps réel */
+.auth-input.klxa-ok{ border-color:#5B8A40 !important; box-shadow:0 0 0 3px rgba(91,138,64,.12) !important; }
+.auth-input.klxa-err{ border-color:#E8A33D !important; box-shadow:0 0 0 3px rgba(232,163,61,.16) !important; }
+
+/* Prénom + Nom côte à côte */
+.klxa-namerow{ display:flex; gap:10px; }
+.klxa-namerow .auth-field{ flex:1; min-width:0; }
+/* Nettoyage héritages */
+.auth-card::before,.auth-card::after{ display:none !important; content:none !important; }
+#authLoginForm,#authRegisterForm{ padding-top:0 !important; margin-top:0 !important; }
+.kpl-welcome{ margin:4px 0 18px !important; }
+#authScreen .auth-scroll-hint{ background:rgba(255,255,255,.8) !important; color:#3F6B2C !important;
+  border:1px solid #5B8A40 !important; box-shadow:0 8px 20px -10px rgba(31,36,28,.3) !important;
+  backdrop-filter:blur(16px) !important; }
+
+/* Indicateur de force du mot de passe */
+.klxa-strength{ display:flex; gap:6px; margin-top:8px; }
+.klxa-strength i{ flex:1; height:3.5px; border-radius:999px; background:rgba(91,138,64,.14); transition:background .3s ease-in-out; }
+.klxa-strength[data-s="1"] i:nth-child(-n+1),
+.klxa-strength[data-s="2"] i:nth-child(-n+2),
+.klxa-strength[data-s="3"] i:nth-child(-n+3),
+.klxa-strength[data-s="4"] i:nth-child(-n+4){ background:#5B8A40; }
+.klxa-strength[data-s="1"] i:nth-child(1){ background:#9CBF83; }
+.klxa-strength[data-s="2"] i:nth-child(-n+2){ background:#83AE66; }
+
+/* ── Boutons : outlined 1px Vert Avocat, pression subtile ── */
+.kpl-btn-login,.reg-next,.auth-btn-primary{
+  background:transparent !important; border:1px solid #5B8A40 !important; color:#3F6B2C !important;
+  border-radius:12px !important; box-shadow:none !important; font-weight:600 !important;
+  font-family:'Inter',sans-serif !important;
+  transition:transform .18s ease-in-out, background .25s ease-in-out !important;
+}
+.kpl-btn-login:active,.reg-next:active,.auth-btn-primary:active{ transform:scale(.965) !important; background:rgba(91,138,64,.1) !important; }
+.kpl-btn-login:hover,.reg-next:hover{ transform:none; filter:none !important; box-shadow:none !important; background:rgba(91,138,64,.07) !important; }
+.reg-back{ border:1px solid rgba(91,138,64,.3) !important; color:#6F7566 !important; border-radius:12px !important; background:transparent !important; }
+.kpl-btn-google{ background:rgba(255,255,255,.85) !important; border:1px solid rgba(91,138,64,.25) !important;
+  color:#1F241C !important; border-radius:12px !important; box-shadow:none !important; }
+
+/* ── Liens ── */
+.kpl-forgot{ color:#3F6B2C !important; font-weight:500 !important; font-family:'Inter',sans-serif !important; font-size:12.5px !important; }
+.kpl-remember span{ color:#6F7566 !important; font-family:'Inter',sans-serif !important; }
+.kpl-remember input{ accent-color:#5B8A40 !important; }
+.kpl-signup-card{ background:rgba(255,255,255,.55) !important; border:1px solid rgba(91,138,64,.35) !important;
+  border-radius:12px !important; box-shadow:none !important; }
+.kpl-signup-ico{ background:rgba(91,138,64,.1) !important; color:#3F6B2C !important; }
+.kpl-signup-q{ color:#6F7566 !important; } .kpl-signup-cta{ color:#3F6B2C !important; }
+.kpl-signup-arrow{ color:#5B8A40 !important; }
+.kpl-back-login{ color:#3F6B2C !important; font-weight:500 !important; font-family:'Inter',sans-serif !important; }
+.kpl-secure{ color:#8B9180 !important; }
+.kpl-divider span{ color:#8B9180 !important; }
+/* Stepper inscription */
+.reg-stepper-fill{ background:#5B8A40 !important; }
+.reg-stepper-label,.reg-stepper-count{ color:#6F7566 !important; font-family:'Inter',sans-serif !important; }
+.auth-plans-link{ background:rgba(255,255,255,.55) !important; border:1px solid rgba(91,138,64,.3) !important; border-radius:12px !important; }
+
+/* ═══ HYDRATATION PREMIUM — liquid fill, vague, célébration dorée ═══ */
+.kph-glass{
+  position:relative; overflow:hidden;
+  background:rgba(255,255,255,.5) !important;
+  border:1px solid #5B8A40 !important; border-radius:9px !important;
+  transition:transform .2s cubic-bezier(.34,1.5,.5,1), border-color .3s ease-in-out;
+}
+.kph-glass:active{ transform:scale(.88); }
+.kph-glass::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:0%;
+  background:linear-gradient(180deg, rgba(160,205,238,.5), rgba(110,170,215,.62));
+  transition:height .55s cubic-bezier(.34,1.45,.5,1);
+}
+.kph-glass.full{ border-color:#8FBBDD !important; background:rgba(255,255,255,.72) !important;
+  animation:klxaGlassPop .5s cubic-bezier(.3,1.6,.5,1); }
+.kph-glass.full::after{ height:86%; }
+.kph-glass.full::before{
+  content:''; position:absolute; bottom:calc(86% - 4px); left:-4px; width:220%; height:7px; z-index:1;
+  background:radial-gradient(circle at 6px -1px, transparent 6px, rgba(160,205,238,.65) 7px);
+  background-size:13px 9px;
+  animation:klxaWave 2.4s linear infinite;
+}
+@keyframes klxaWave{ from{ transform:translateX(0); } to{ transform:translateX(-13px); } }
+@keyframes klxaGlassPop{ 0%{ transform:scale(1); } 40%{ transform:scale(1.09); } 100%{ transform:scale(1); } }
+/* Barre de progression : liquide ondulant bleu pâle → bleu */
+.kph-bar{ height:12px !important; border-radius:999px !important; background:#E9EDE4 !important; overflow:hidden !important; position:relative; }
+.kph-bar i{
+  display:block; height:100%; border-radius:999px;
+  background:linear-gradient(90deg,#C4E0F4,#7FB6E0) !important;
+  position:relative; overflow:hidden;
+  transition:width .6s ease-in-out !important;
+}
+.kph-bar i::after{
+  content:''; position:absolute; top:0; bottom:0; left:-32px; right:0;
+  background:repeating-linear-gradient(112deg, rgba(255,255,255,.4) 0 9px, transparent 9px 18px);
+  animation:klxaBarFlow 1.9s linear infinite;
+}
+@keyframes klxaBarFlow{ from{ transform:translateX(0); } to{ transform:translateX(18px); } }
+/* 100 % : pulsation dorée discrète */
+.kph-bar.goal{ animation:klxaGoalPulse 1.5s ease-in-out 3; }
+.kph-bar.goal i{ background:linear-gradient(90deg,#A9D3EF,#5FA5D8) !important; }
+@keyframes klxaGoalPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(232,163,61,0); } 50%{ box-shadow:0 0 0 6px rgba(232,163,61,.35); } }
+</style>
+<script id="kpAuthLuxJS">
+(function(){
+  /* ── Hero de l'écran d'auth : goutte flottante + logo fade-in + feuilles ── */
+  var scr=document.getElementById('authScreen');
+  if(scr && !scr.querySelector('.klxa-hero')){
+    var logoEl=scr.querySelector('.kpl-logo');
+    var logoSrc=logoEl?logoEl.getAttribute('src'):'';
+    var leafSvg='<svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 2C7 7 5 12 6.5 17.5 12 19 17 16 18.5 10 19.4 6.4 16 3 12 2Z" fill="rgba(91,138,64,.5)"/><path d="M11 5C9 9 8.6 13 9.6 16.6" stroke="rgba(63,107,44,.55)" stroke-width="1.1" fill="none" stroke-linecap="round"/></svg>';
+    var leaves='';
+    var confs=[[8,'9s','0s'],[26,'11s','2.2s'],[46,'8.4s','4s'],[64,'10.5s','1.2s'],[80,'9.6s','3.1s'],[92,'11.4s','5s']];
+    confs.forEach(function(c){ leaves+='<span class="klxa-leaf" style="left:'+c[0]+'%;--d:'+c[1]+';--dl:'+c[2]+'">'+leafSvg+'</span>'; });
+    var hero=document.createElement('div'); hero.className='klxa-hero';
+    hero.innerHTML=leaves
+      +'<img class="klxa-drop" src="'+(window.KPD_DROP||'')+'" alt="" draggable="false">'
+      +(logoSrc?'<img class="klxa-logo" src="'+logoSrc+'" alt="Keto-Essenciel" draggable="false">':'')
+      +'<div class="klxa-welcome">Bienvenue chez<br><em>Keto-Essenciel</em></div>';
+    scr.insertBefore(hero, scr.firstElementChild);
+  }
+
+  /* ── Transition slide gauche/droite entre connexion et inscription ── */
+  function wireSwitch(){
+    var orig=window.authSwitchTab;
+    if(typeof orig!=='function' || orig.__klxa) return false;
+    var wrapped=function(tab){
+      orig(tab);
+      var s=document.getElementById('authScreen');
+      if(s) s.classList.toggle('klxa-reg', tab==='register');
+      var f=document.getElementById(tab==='register'?'authRegisterForm':'authLoginForm');
+      if(f){
+        f.classList.remove('klxa-in-left','klxa-in-right');
+        void f.offsetWidth;
+        f.classList.add(tab==='register'?'klxa-in-right':'klxa-in-left');
+      }
+    };
+    wrapped.__klxa=true;
+    window.authSwitchTab=wrapped; window.switchAuthTab=wrapped;
+    return true;
+  }
+  if(!wireSwitch()){ document.addEventListener('DOMContentLoaded', wireSwitch); setTimeout(wireSwitch, 800); }
+
+  /* ── Prénom + Nom sur la même ligne ── */
+  var fn=document.getElementById('regFirstname'), ln=document.getElementById('regLastname');
+  if(fn && ln && !document.querySelector('.klxa-namerow')){
+    var f1=fn.closest('.auth-field'), f2=ln.closest('.auth-field');
+    if(f1 && f2 && f1.parentElement===f2.parentElement){
+      var row=document.createElement('div'); row.className='klxa-namerow';
+      f1.parentElement.insertBefore(row, f1);
+      row.appendChild(f1); row.appendChild(f2);
+    }
+  }
+
+  /* ── Validation email en temps réel (vert = ok · ambre = erreur) ── */
+  var reEmail=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var em=document.getElementById('regEmail');
+  if(em){
+    em.addEventListener('input', function(){
+      var v=em.value.trim();
+      em.classList.remove('klxa-ok','klxa-err');
+      if(!v) return;
+      em.classList.add(reEmail.test(v)?'klxa-ok':'klxa-err');
+    });
+  }
+
+  /* ── Indicateur de force du mot de passe (barres fines vertes) ── */
+  var pw=document.getElementById('regPassword');
+  if(pw && !document.getElementById('klxaStrength')){
+    var bar=document.createElement('div');
+    bar.className='klxa-strength'; bar.id='klxaStrength'; bar.setAttribute('data-s','0');
+    bar.innerHTML='<i></i><i></i><i></i><i></i>';
+    var host=pw.closest('.auth-field')||pw.parentElement;
+    host.appendChild(bar);
+    pw.addEventListener('input', function(){
+      var v=pw.value, s=0;
+      if(v.length>=6) s++;
+      if(v.length>=10) s++;
+      if(/[A-Z]/.test(v)&&/[a-z]/.test(v)) s++;
+      if(/\d/.test(v)&&/[^A-Za-z0-9]/.test(v)) s++;
+      bar.setAttribute('data-s', v?String(Math.max(1,s)):'0');
+    });
+  }
+})();
+</script>
+<style id="kpNavLux">
+/* ═══════════════════════════════════════════════════════════════════
+   NAV LUX — Capsule « Liquid Glass » flottante (uniquement le menu bas)
+   Détachée des bords · blur 24px · bordure blanche fine · spring ≤300ms
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width:1023px){
+  .bottom-nav{
+    position:fixed !important;
+    left:0 !important; right:0 !important;
+    bottom:calc(14px + env(safe-area-inset-bottom)) !important;
+    padding:0 18px !important;
+    background:transparent !important;
+    border:none !important; box-shadow:none !important;
+    pointer-events:none;
+    transition:transform .3s cubic-bezier(.4,0,.2,1) !important;
+  }
+  .bottom-nav.nav-hidden{ transform:translateY(calc(100% + 60px)) !important; }
+
+  /* Capsule en verre liquide */
+  .bottom-nav .bottom-nav-inner{
+    pointer-events:auto;
+    max-width:560px !important; margin:0 auto !important;
+    width:auto !important;
+    border-radius:30px !important;
+    background:rgba(255,255,255,.42) !important;
+    backdrop-filter:blur(24px) saturate(1.65) !important;
+    -webkit-backdrop-filter:blur(24px) saturate(1.65) !important;
+    border:1px solid rgba(255,255,255,.65) !important;
+    box-shadow:
+      0 12px 36px -8px rgba(31,36,28,.22),
+      0 3px 10px rgba(31,36,28,.08),
+      inset 0 1px 0 rgba(255,255,255,.85) !important;
+    padding:8px 10px !important;
+    overflow:visible !important;
+  }
+
+  /* Indicateur actif : zone arrondie Vert Avocat, déplacement spring ≤300ms */
+  .bottom-nav-pill{
+    top:6px !important; height:calc(100% - 12px) !important;
+    border-radius:24px !important;
+    background:rgba(91,138,64,.14) !important;
+    border:1px solid rgba(91,138,64,.32) !important;
+    box-shadow:0 3px 10px -4px rgba(91,138,64,.35) !important;
+    transition:transform .28s cubic-bezier(.34,1.56,.64,1), width .28s cubic-bezier(.34,1.56,.64,1) !important;
+  }
+
+  /* Icônes filaires + libellés très fins */
+  .bnav-label{ font-weight:500 !important; font-size:10.5px !important; letter-spacing:.02em !important; }
+  .bnav-tab.active .bnav-label{ font-weight:600 !important; }
+  .bnav-icon{ transition:transform .18s cubic-bezier(.34,1.56,.64,1); }
+  .bnav-tab:active .bnav-icon{ transform:scale(.82); }
+  .bnav-tab.active .bnav-icon{ animation:knvIconPop .3s cubic-bezier(.3,1.7,.5,1); }
+  @keyframes knvIconPop{ 0%{ transform:scale(.8); } 60%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
+
+  /* Le contenu défile derrière : dégagement en bas de chaque page */
+  #tab-plan,#tab-library,#tab-suivi,#tab-profile,#tab-help,#tab-lpev{ padding-bottom:118px !important; }
+}
+</style>
 <script id="kpHomeModule">
 (function(){
 window.KPD_AVO=KPD_AVO;
@@ -29308,7 +29635,7 @@ function kpHydroHTML(){
     +'<div class="kpd-card kph-card" data-testid="kph-card">'
     +'<div class="kph-top"><span class="kph-ico">💧</span><span class="kph-hint">Touchez un verre pour ajuster</span>'
     +'<div class="kph-val"><b>'+String(litres).replace('.',',')+'</b> L<small>/ 2,0 L</small></div></div>'
-    +'<div class="kph-bar"><i style="width:'+pct+'%"></i></div>'
+    +'<div class="kph-bar'+(pct>=100?' goal':'')+'"><i style="width:'+pct+'%"></i></div>'
     +'<div class="kph-glasses">'+glasses+'<button type="button" class="kph-add" data-testid="kph-add" aria-label="Ajouter un verre" onclick="kpHydroSet(kpHydroGet()+1)">+</button></div>'
     +'<div class="kph-foot"><span>'+n+' / '+KPH_MAX+' verres</span><span class="kph-rest">'+(rest>0?rest+' verre'+(rest>1?'s':'')+' restant'+(rest>1?'s':''):'objectif atteint 🎉')+'</span></div>'
     +'</div>';

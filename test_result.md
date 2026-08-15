@@ -261,3 +261,8 @@ Architecture choisie par l'utilisateur : Netlify (statique) + Firebase Cloud Fun
 - Fixes : exemption .klx-head dans le verrou Suivi gratuit ; .bottom-nav-pill display:block (2 display:none legacy surchargés) ; couleurs JS résumé nutritionnel remappées vert/ambre ; overrides #tab-profile (id-card, gender, selects) ; kp-status-card + kp-cprofile-save outlined.
 - Testing agent (frontend only, iteration_14.json) : 8/9 PASS initial, pill gooey réactivée ensuite et vérifiée (translateX bouge entre onglets). Login screen inchangé. 0 erreur console.
 - RAPPEL SYNC : /api/app sert /app/backend/keto_app.html → cp /app/keto.html /app/backend/keto_app.html après chaque édition.
+
+## AUTH LUX + HYDRATATION + NAV CAPSULE — Juin 2026
+- Écrans connexion/inscription iOS26 (kpAuthLux) : testés 6/8 PASS par testing agent (iteration_15) — bascule slide, validation email, Prénom/Nom flex, force mdp 1→4, hydratation liquid-fill+goal pulse, 0 erreur JS du redesign. Landing intacte.
+- Nav capsule liquid glass (kpNavLux) : vérifiée par métriques (radius 30px, bottom 14px, latéral 18px, bg rgba .42, blur 24, pill transition .28s spring).
+- ÉCHEC NON-CODE : login réel bloqué PAR INTERMITTENCE dans le navigateur headless (Firestore WebChannel code=unavailable ; l'auth réussit, le profil Firestore ne se charge pas → authScreen reste affiché). Multiples logins réussis plus tôt le même jour avec le même code. À surveiller côté utilisateur réel.
