@@ -29311,106 +29311,41 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
 .reg-stepper-label,.reg-stepper-count{ color:#6F7566 !important; font-family:'Inter',sans-serif !important; }
 .auth-plans-link{ background:rgba(255,255,255,.55) !important; border:1px solid rgba(91,138,64,.3) !important; border-radius:12px !important; }
 
-/* ═══ HYDRATATION PREMIUM — liquid fill, vague, célébration dorée ═══ */
-/* Verre cristal transparent (frosted glass) */
-.kph-glass{
-  position:relative; overflow:hidden;
-  background:rgba(255,255,255,.32) !important;
-  backdrop-filter:blur(8px) saturate(1.3) !important;
-  -webkit-backdrop-filter:blur(8px) saturate(1.3) !important;
-  border:1px solid rgba(255,255,255,.78) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 6px rgba(120,150,180,.14), 0 2px 6px -2px rgba(31,36,28,.14) !important;
-  border-radius:9px !important;
-  transition:transform .2s cubic-bezier(.34,1.5,.5,1);
-}
-.kph-glass:active{ transform:scale(.9); }
-/* Reflet vertical du cristal */
-.kph-glass::before{
-  content:''; position:absolute; top:6%; bottom:10%; left:14%; width:13%;
-  background:linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.04));
-  border-radius:99px; z-index:2; pointer-events:none;
-}
-/* Eau bleu pâle translucide : montée fluide ~600ms de bas en haut,
-   surface ondulante intégrée, léger débordement (overshoot) puis stabilisation */
-.kph-glass::after{
-  content:''; position:absolute; left:0; right:0; bottom:0; height:0%; z-index:1;
-  background:
-    radial-gradient(circle at 7px -3.5px, rgba(255,255,255,0) 6.5px, rgba(168,212,242,.55) 7px) left 0 top 0/14px 9px repeat-x,
-    linear-gradient(180deg, rgba(188,224,246,.48) 0%, rgba(128,184,226,.62) 100%);
-  transition:height .6s cubic-bezier(.34,1.3,.45,1);
-  animation:klxaWaterShift 2.3s linear infinite;
-}
-.kph-glass.full::after{ height:86%; }
-@keyframes klxaWaterShift{ from{ background-position:0 0, 0 0; } to{ background-position:14px 0, 0 0; } }
-/* ── Bouteille d'eau centrale (Frosted Glass, contours Vert Avocat) ── */
-.kph-bottle{ width:92px; margin:14px auto 4px; display:flex; flex-direction:column; align-items:center;
-  transition:filter .4s ease-in-out; }
-.kph-bottle-cap{ width:26px; height:10px; border-radius:5px 5px 2px 2px; background:rgba(91,138,64,.35);
-  border:1px solid #5B8A40; }
-.kph-bottle-neck{ width:34px; height:12px; border:1px solid #5B8A40; border-bottom:none; border-top:none;
-  background:rgba(255,255,255,.35); }
-.kph-bottle-body{ position:relative; width:92px; height:150px; overflow:hidden;
-  border:1px solid #5B8A40; border-radius:16px 16px 22px 22px;
-  background:rgba(255,255,255,.32);
-  backdrop-filter:blur(10px) saturate(1.3); -webkit-backdrop-filter:blur(10px) saturate(1.3);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 6px 16px -8px rgba(31,36,28,.18); }
-.kph-bottle-shine{ position:absolute; top:8%; bottom:10%; left:12%; width:11%; z-index:3; pointer-events:none;
-  background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.05)); border-radius:99px; }
-.kph-water{ position:absolute; left:0; right:0; bottom:0; height:0%; z-index:1;
-  background:linear-gradient(180deg, rgba(188,224,246,.5), rgba(128,184,226,.62));
-  transition:height .7s cubic-bezier(.34,1.25,.45,1); }
-/* Vagues organiques (rotation continue, balancement gauche-droite) */
-.kph-wave{ position:absolute; top:-14px; left:-55%; width:210%; height:28px; border-radius:41%;
-  background:rgba(150,200,238,.5); animation:kphWaveRot 5s linear infinite; }
-.kph-wave2{ border-radius:38%; background:rgba(180,216,244,.4); animation-duration:7s; animation-direction:reverse; }
-@keyframes kphWaveRot{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
-.kph-bottle.agitate .kph-wave{ animation-duration:1.1s; top:-17px; }
-.kph-bottle.agitate .kph-wave2{ animation-duration:1.6s; }
-.kph-bottle.agitate .kph-water{ transition:height .7s cubic-bezier(.34,1.45,.45,1); }
-/* Reflet lumineux glissant au remplissage */
-.kph-sweep{ position:absolute; top:0; left:-40%; width:34%; height:20px; z-index:2; opacity:0; pointer-events:none;
-  background:linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,.7), rgba(255,255,255,0));
-  transform:skewX(-18deg); }
-.kph-sweep.run{ animation:kphSweep .6s ease-in-out both; }
-@keyframes kphSweep{ 0%{ left:-40%; opacity:0; } 25%{ opacity:.9; } 100%{ left:110%; opacity:0; } }
-/* Bulles */
-.kph-bub{ position:absolute; bottom:4px; border-radius:50%; z-index:2; pointer-events:none;
-  background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.7);
-  animation:kphBub .6s ease-in-out both; }
-@keyframes kphBub{ 0%{ transform:translateY(0) scale(.7); opacity:0; } 15%{ opacity:.85; }
-  100%{ transform:translateY(-110px) scale(1.05); opacity:0; } }
-/* Splash discret (gouttes à la surface, ≤400ms) */
-.kph-drop{ position:absolute; top:-4px; width:4px; height:4px; border-radius:50%; z-index:3; pointer-events:none;
-  background:rgba(160,205,238,.85); animation:kphDrop .38s ease-in-out both; }
-@keyframes kphDrop{ 0%{ transform:translateY(0) scale(.8); opacity:.9; }
-  50%{ transform:translateY(-11px) scale(1); opacity:1; }
-  100%{ transform:translateY(2px) scale(.7); opacity:0; } }
-/* 100% : pulsation dorée */
-.kph-bottle.goal .kph-bottle-body{ animation:kphBottleGold 2.4s ease-in-out infinite; border-color:#E8A33D; }
-@keyframes kphBottleGold{ 0%,100%{ box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 0 0 0 rgba(232,163,61,0); }
-  50%{ box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 0 0 8px rgba(232,163,61,.22); } }
-.kph-bottle.empty .kph-wave{ opacity:0; }
-.kph-wave{ transition:opacity .3s ease-in-out; }
+/* ═══ HYDRATATION — grille 4×2, verres réalistes, barre Vert Avocat, confettis ═══ */
+.kph2{ position:relative; padding:20px 18px 18px !important; overflow:visible; }
+.kph2-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
+.kph2-title{ font-family:'Inter','Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:600; letter-spacing:-.01em; color:#232B22; }
+.kph2-count{ font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; color:#5B8A40; }
+.kph2-count b{ font-size:15px; font-weight:800; }
+/* Grille 4 colonnes × 2 rangées */
+.kph2-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px 10px; justify-items:center; margin-bottom:18px; }
+.kph2-g{ width:46px; height:54px; padding:0; border:none; background:transparent; cursor:pointer; overflow:visible;
+  transition:transform .2s ease-in-out, filter .4s ease-in-out; -webkit-tap-highlight-color:transparent; }
+.kph2-g:active{ transform:scale(.9); }
+.kph2-g svg{ width:100%; height:100%; display:block; overflow:visible; }
+/* Contour : gris très pâle → Vert Avocat + lueur douce quand rempli */
+.kph2-line{ stroke:rgba(178,184,170,.55); transition:stroke .4s ease-in-out; }
+.kph2-g.full .kph2-line{ stroke:#5B8A40; }
+.kph2-g.full{ filter:drop-shadow(0 0 6px rgba(91,138,64,.4)); }
+/* Eau : montée fluide 400ms ease-in-out (fond du verre → 86%) */
+.kph2-w{ y:37px; height:5px; transition:y .4s ease-in-out, height .4s ease-in-out; }
+.kph2-g.full .kph2-w{ y:7px; height:35px; }
+/* Barre de progression pill + pourcentage */
+.kph2-bottom{ display:flex; align-items:center; gap:10px; }
+.kph2-bar{ flex:1; height:8px; border-radius:999px; background:#ECEDE7; overflow:hidden; }
+.kph2-bar i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#8FB471,#5B8A40); transition:width .3s ease-in-out, background .4s ease-in-out; }
+.kph2-pct{ font-family:'Inter',sans-serif; font-size:12px; font-weight:700; color:#5B8A40; min-width:34px; text-align:right; transition:color .4s ease-in-out; }
+/* Objectif atteint : pulsation ambrée douce (une fois) */
+.kph2-bar.goal i{ background:linear-gradient(90deg,#F2C879,#E8A33D); }
+.kph2-bar.goal + .kph2-pct{ color:#C9862B; }
+.kph2-bar.goalpulse{ animation:kph2GoalPulse 1.2s ease-in-out 1; }
+@keyframes kph2GoalPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(232,163,61,0); } 50%{ box-shadow:0 0 0 7px rgba(232,163,61,.35); } }
+/* Micro-confettis au-dessus de la carte (1 s) */
+.kph2-confetti{ position:absolute; left:8%; right:8%; top:-4px; height:0; pointer-events:none; z-index:5; }
+.kph2-confetti span{ position:absolute; top:0; border-radius:2px; opacity:0; animation:kph2Conf 1s ease-in-out forwards; }
+@keyframes kph2Conf{ 0%{ transform:translate(0,0) rotate(0deg); opacity:0; } 15%{ opacity:1; } 100%{ transform:translate(var(--dx,0px),-46px) rotate(var(--rot,120deg)); opacity:0; } }
 /* Plus de bouton + */
 .kph-add{ display:none !important; }
-/* Barre de progression : liquide ondulant bleu pâle → bleu */
-.kph-bar{ height:12px !important; border-radius:999px !important; background:#E9EDE4 !important; overflow:hidden !important; position:relative; }
-.kph-bar i{
-  display:block; height:100%; border-radius:999px;
-  background:linear-gradient(90deg,#C4E0F4,#7FB6E0) !important;
-  position:relative; overflow:hidden;
-  transition:width .6s ease-in-out !important;
-}
-.kph-bar i::after{
-  content:''; position:absolute; top:0; bottom:0; left:-32px; right:0;
-  background:repeating-linear-gradient(112deg, rgba(255,255,255,.4) 0 9px, transparent 9px 18px);
-  animation:klxaBarFlow 1.9s linear infinite;
-}
-@keyframes klxaBarFlow{ from{ transform:translateX(0); } to{ transform:translateX(18px); } }
-/* 100 % : pulsation dorée discrète */
-.kph-bar.goal{ animation:klxaGoalPulse 1.5s ease-in-out 3; }
-.kph-bar.goal i{ background:linear-gradient(90deg,#A9D3EF,#5FA5D8) !important; }
-@keyframes klxaGoalPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(232,163,61,0); } 50%{ box-shadow:0 0 0 6px rgba(232,163,61,.35); } }
 </style>
 <script id="kpAuthLuxJS">
 (function(){
@@ -30221,9 +30156,9 @@ window.kpHomeSetMode=function(id){
   try{ kpRenderDashboard(); }catch(e){}
 };
 /* ── Hydratation (verres d'eau, par jour) ── */
-var KPH_GLASS=0.33, KPH_GOAL=2.0, KPH_MAX=6;
+var KPH_GLASS=0.25, KPH_GOAL=2.0, KPH_MAX=8;
 function kpHydroKey(){ var dt=new Date(); return dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate(); }
-function kpHydroGet(){ try{ var o=JSON.parse(localStorage.getItem('kp_hydro_v1')||'{}'); return o[kpHydroKey()]||0; }catch(e){ return 0; } }
+function kpHydroGet(){ try{ var o=JSON.parse(localStorage.getItem('kp_hydro_v1')||'{}'); return Math.min(KPH_MAX,o[kpHydroKey()]||0); }catch(e){ return 0; } }
 var __kphAC=null;
 function kpHydroSound(){
   try{
@@ -30243,94 +30178,79 @@ function kpHydroSound(){
   }catch(e){}
 }
 window.kpHydroSet=function(n){
-  n=Math.max(0,Math.min(12,n));
+  n=Math.max(0,Math.min(KPH_MAX,n));
   var prev=kpHydroGet();
   try{ var o=JSON.parse(localStorage.getItem('kp_hydro_v1')||'{}'); o[kpHydroKey()]=n; localStorage.setItem('kp_hydro_v1',JSON.stringify(o)); }catch(e){}
-  /* Mise à jour EN PLACE pour laisser l'animation de remplissage se jouer (600 ms) */
+  /* Mise à jour EN PLACE pour laisser l'animation de remplissage (400 ms) se jouer */
   var animated=false;
   try{
     var card=document.querySelector('[data-testid="kph-card"]');
     if(card){
-      var glasses=card.querySelectorAll('.kph-glass');
+      var glasses=card.querySelectorAll('.kph2-g');
       for(var i=0;i<glasses.length;i++){ glasses[i].classList.toggle('full', i<n); }
-      var litres=Math.round(n*KPH_GLASS*10)/10;
-      var pct=Math.min(100,Math.round(litres/KPH_GOAL*100));
-      var bar=card.querySelector('.kph-bar');
+      var pct=Math.min(100,Math.round(n/KPH_MAX*100));
+      var bar=card.querySelector('.kph2-bar');
       if(bar){ bar.classList.toggle('goal', pct>=100); var bi=bar.querySelector('i'); if(bi) bi.style.width=pct+'%'; }
-      var val=card.querySelector('.kph-val b'); if(val) val.textContent=String(litres).replace('.',',');
-      var wat=document.getElementById('kphWater'); if(wat) wat.style.height=pct+'%';
-      var bot=document.getElementById('kphBottle'); if(bot){ bot.classList.toggle('goal', pct>=100); bot.classList.toggle('empty', pct<=0); }
-      try{ kpHydroFX(n>prev); }catch(e){}
-      var rest=Math.max(0,KPH_MAX-n);
-      var foot=card.querySelector('.kph-foot');
-      if(foot){ foot.innerHTML='<span>'+n+' / '+KPH_MAX+' verres</span><span class="kph-rest">'+(rest>0?rest+' verre'+(rest>1?'s':'')+' restant'+(rest>1?'s':''):'objectif atteint 🎉')+'</span>'; }
+      var pctEl=card.querySelector('.kph2-pct'); if(pctEl) pctEl.textContent=pct+'%';
+      var cnt=card.querySelector('.kph2-count b'); if(cnt) cnt.textContent=n;
+      var prevPct=Math.min(100,Math.round(prev/KPH_MAX*100));
+      if(pct>=100 && prevPct<100){ try{ kpHydroCelebrate(card); }catch(e){} }
       if(n>prev) kpHydroSound();
       animated=true;
       clearTimeout(window.__kphSync);
-      window.__kphSync=setTimeout(function(){ try{ kpRenderDashboard(); }catch(e){} }, 1400);
+      window.__kphSync=setTimeout(function(){ try{ kpRenderDashboard(); }catch(e){} }, 1500);
     }
   }catch(e){}
   if(!animated){ try{ kpRenderDashboard(); }catch(e){} }
 };
 window.kpHydroTap=function(i){ var c=kpHydroGet(); kpHydroSet(c===i+1 ? i : i+1); };
-/* ── Bouteille d'eau centrale animée ── */
-function kpBottleHTML(pct){
-  return '<div class="kph-bottle'+(pct>=100?' goal':'')+(pct<=0?' empty':'')+'" data-testid="kph-bottle" id="kphBottle">'
-    +'<div class="kph-bottle-cap"></div>'
-    +'<div class="kph-bottle-neck"></div>'
-    +'<div class="kph-bottle-body">'
-    +'<div class="kph-water" id="kphWater" style="height:'+pct+'%">'
-    +'<div class="kph-wave kph-wave1"></div><div class="kph-wave kph-wave2"></div>'
-    +'<span class="kph-sweep"></span>'
-    +'</div>'
-    +'<span class="kph-bottle-shine"></span>'
-    +'</div></div>';
-}
-window.kpHydroFX=function(added){
-  var bot=document.getElementById('kphBottle'), water=document.getElementById('kphWater');
-  if(!bot || !water) return;
-  /* Vague : amplitude accrue puis stabilisation */
-  bot.classList.remove('agitate'); void bot.offsetWidth; bot.classList.add('agitate');
-  setTimeout(function(){ bot.classList.remove('agitate'); }, 800);
-  if(!added) return;
-  /* Reflet lumineux glissant */
-  var sw=water.querySelector('.kph-sweep');
-  if(sw){ sw.classList.remove('run'); void sw.offsetWidth; sw.classList.add('run'); }
-  /* Bulles */
-  for(var i=0;i<6;i++){
-    var b=document.createElement('span'); b.className='kph-bub';
-    var sz=(3+Math.random()*4).toFixed(1), d=(420+Math.random()*330)|0;
-    b.style.cssText='left:'+(12+Math.random()*76)+'%;width:'+sz+'px;height:'+sz+'px;animation-duration:'+d+'ms;animation-delay:'+((Math.random()*180)|0)+'ms';
-    water.appendChild(b);
-    (function(el){ setTimeout(function(){ try{ el.remove(); }catch(e){} }, 1000); })(b);
-  }
-  /* Splash discret à la surface (≤400ms) */
-  for(var j=0;j<4;j++){
-    var s=document.createElement('span'); s.className='kph-drop';
-    s.style.cssText='left:'+(28+Math.random()*44)+'%;animation-delay:'+((Math.random()*70)|0)+'ms';
-    water.appendChild(s);
-    (function(el){ setTimeout(function(){ try{ el.remove(); }catch(e){} }, 480); })(s);
+/* ── Célébration objectif : pulsation ambrée + micro-confettis (1 s) ── */
+window.kpHydroCelebrate=function(card){
+  var bar=card.querySelector('.kph2-bar');
+  if(bar){ bar.classList.remove('goalpulse'); void bar.offsetWidth; bar.classList.add('goalpulse'); setTimeout(function(){ bar.classList.remove('goalpulse'); }, 1300); }
+  var host=card.querySelector('.kph2-confetti');
+  if(host){
+    host.innerHTML='';
+    var cols=['#5B8A40','#E8A33D','#8FC3E8','#CDE3B5','#F2C879'];
+    for(var k=0;k<14;k++){
+      var sp=document.createElement('span');
+      sp.style.cssText='left:'+(4+Math.random()*92).toFixed(1)+'%;background:'+cols[k%cols.length]
+        +';animation-delay:'+((Math.random()*180)|0)+'ms;--dx:'+((Math.random()*36-18)|0)+'px;--rot:'+((Math.random()*260-130)|0)+'deg'
+        +';width:'+(4+Math.random()*3).toFixed(1)+'px;height:'+(6+Math.random()*4).toFixed(1)+'px';
+      host.appendChild(sp);
+    }
+    setTimeout(function(){ try{ host.innerHTML=''; }catch(e){} }, 1200);
   }
 };
+/* ── Verre réaliste SVG : cylindre légèrement évasé, reflet gauche ── */
+function kpHydroGlassSVG(){
+  return '<svg viewBox="0 0 40 48" aria-hidden="true">'
+    +'<path d="M9 4 L31 4 L28.5 40 Q20 44.5 11.5 40 Z" fill="rgba(255,255,255,.35)"/>'
+    +'<rect class="kph2-w" x="9" width="22" rx="1.5" clip-path="url(#kph2Clip)" fill="url(#kph2Water)"/>'
+    +'<path class="kph2-line" d="M9 4 L31 4 L28.5 40 Q20 44.5 11.5 40 Z" fill="none" stroke-width="1.5"/>'
+    +'<path d="M12.6 8.5 L11.4 35" stroke="rgba(255,255,255,.85)" stroke-width="2" fill="none" stroke-linecap="round"/>'
+    +'</svg>';
+}
 function kpHydroHTML(){
   var n=kpHydroGet();
-  var litres=Math.round(n*KPH_GLASS*10)/10;
-  var pct=Math.min(100,Math.round(litres/KPH_GOAL*100));
-  var rest=Math.max(0,KPH_MAX-n);
-  var glasses='';
+  var pct=Math.min(100,Math.round(n/KPH_MAX*100));
+  var out='<div class="kpd-card kph-card kph2" data-testid="kph-card">';
+  out+='<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>'
+    +'<clipPath id="kph2Clip"><path d="M9 4 L31 4 L28.5 40 Q20 44.5 11.5 40 Z"/></clipPath>'
+    +'<linearGradient id="kph2Water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CBE5F7" stop-opacity=".55"/><stop offset="1" stop-color="#8FC3E8" stop-opacity=".7"/></linearGradient>'
+    +'</defs></svg>';
+  out+='<div class="kph2-head"><span class="kph2-title">Hydratation</span>'
+    +'<span class="kph2-count" data-testid="kph-count"><b>'+n+'</b> / '+KPH_MAX+' verres</span></div>';
+  out+='<div class="kph2-grid">';
   for(var i=0;i<KPH_MAX;i++){
-    glasses+='<button type="button" class="kph-glass'+(i<n?' full':'')+'" data-testid="kph-glass-'+i+'" aria-label="Verre '+(i+1)+'" onclick="kpHydroTap('+i+')"></button>';
+    out+='<button type="button" class="kph2-g'+(i<n?' full':'')+'" data-testid="kph-glass-'+i+'" aria-label="Verre '+(i+1)+'" onclick="kpHydroTap('+i+')">'+kpHydroGlassSVG()+'</button>';
   }
-  return '<div class="kpn-eyebrow">Bien-être</div>'
-    +'<div class="kpn-title">Hydratation</div>'
-    +'<div class="kpd-card kph-card" data-testid="kph-card">'
-    +'<div class="kph-top"><span class="kph-ico">💧</span><span class="kph-hint">Touchez un verre pour ajuster</span>'
-    +'<div class="kph-val"><b>'+String(litres).replace('.',',')+'</b> L<small>/ 2,0 L</small></div></div>'
-    +'<div class="kph-bar'+(pct>=100?' goal':'')+'"><i style="width:'+pct+'%"></i></div>'
-    +kpBottleHTML(pct)
-    +'<div class="kph-glasses">'+glasses+'</div>'
-    +'<div class="kph-foot"><span>'+n+' / '+KPH_MAX+' verres</span><span class="kph-rest">'+(rest>0?rest+' verre'+(rest>1?'s':'')+' restant'+(rest>1?'s':''):'objectif atteint 🎉')+'</span></div>'
-    +'</div>';
+  out+='</div>';
+  out+='<div class="kph2-bottom"><div class="kph2-bar'+(pct>=100?' goal':'')+'"><i style="width:'+pct+'%"></i></div>'
+    +'<span class="kph2-pct" data-testid="kph-pct">'+pct+'%</span></div>';
+  out+='<div class="kph2-confetti"></div>';
+  out+='</div>';
+  return out;
 }
 /* ── Photo de profil (avatar accueil) ── */
 function kpAvatarGet(){ try{ return localStorage.getItem('kp_avatar_v1')||''; }catch(e){ return ''; } }

@@ -648,3 +648,18 @@ Bugs signalés :
 - kpHydroHTML : bouton .kph-add SUPPRIMÉ (+ CSS display:none) ; bouteille kpBottleHTML(pct) insérée entre la barre et les verres (bouchon/col/corps frosted, contours #5B8A40, reflet gauche .kph-bottle-shine, eau .kph-water bleu pâle translucide, hauteur = % objectif, transition .7s overshoot).
 - Effets au clic (window.kpHydroFX, appelé depuis kpHydroSet en place) : vagues rotatives continues (.kph-wave x2, accélérées 800ms via classe .agitate puis stabilisation), 6 bulles aléatoires (.kph-bub, fade à la surface), reflet lumineux glissant (.kph-sweep.run 600ms), splash 4 gouttes (.kph-drop ≤400ms). Objectif 100% → pulsation dorée (.kph-bottle.goal). Bouteille vide → classe .empty (vagues masquées).
 - Vérifié : clic verre → eau 50%, 6 bulles, 4 gouttes, sweep ; goal pulse à 8 verres ; état vide propre. Verres cliquables + anims existantes conservés.
+
+## HYDRATATION v4 — LAYOUT 2 COLONNES + BOUTEILLE SVG RÉALISTE (juin 2026)
+- kpHydroHTML : layout .kph-duo (verres en colonne gauche .kph-glass-col, bouteille droite). Bouton + toujours supprimé.
+- Bouteille = SVG inline (viewBox 0 0 110 260, KPH_BOTTLE_PATH style Evian : goulot étroit, épaules, corps évasé bas, bouchon) ; plastique givré rgba(255,255,255,.38), contour stroke #5B8A40, reflets plastiques gauche/droite (paths blancs). Eau = rect clipé (#kphClip) + ellipse de surface #kphSurf.
+- Animations : montée eau via transitions CSS y/height .6s ease-in-out (kpBottleUpdate définit style.y/height/cy) ; ondulation organique continue (kphSurfIdle 4.2s) + stabilisation 400ms après ajout (classe settle) ; 2-3 bulles SVG lentes (var --rise) ; reflet #kphSweep.run 300ms côté droit ; passage à 100% (prevPct<100) → goalpulse 1 fois (halo ambré drop-shadow) + 6 étoiles ✦ 1s au-dessus (#kphStars) ; état goal = halo doux permanent.
+- Vérifié : clic verre → waterY animé (127.75px à 4/6), bulles + sweep OK, layout 2 colonnes rendu propre.
+
+## Refonte Hydratation v4 — Grille 4×2 (Juin 2026)
+- Remplacement du layout circulaire (bouteille centrale + arc) par une **grille régulière 4 colonnes × 2 rangées = 8 verres** (KPH_MAX=8, 0,25 L/verre, objectif 2,0 L).
+- Carte compacte frosted glass : titre « Hydratation » en haut à gauche, compteur « X / 8 verres » en haut à droite (Vert Avocat).
+- Verres réalistes SVG (cylindre évasé, reflet gauche) : vides = contour gris pâle + fond d'eau ; remplis = eau bleu pâle translucide, contour Vert Avocat + lueur. Remplissage 400 ms ease-in-out, ordre gauche→droite.
+- Barre de progression pill en bas (Vert Avocat, transition 300 ms ease-in-out) + pourcentage à droite.
+- Objectif atteint : barre pulse en ambré une fois + micro-confettis 1 s au-dessus de la carte. Bouton « + » définitivement supprimé.
+- Code : keto.html CSS lignes ~29314+ (.kph2-*), JS lignes ~30213+ (kpHydroHTML/kpHydroSet/kpHydroCelebrate). Ancien code bouteille/orbite supprimé.
+- ⚠️ IMPORTANT : le backend sert **/app/backend/keto_app.html** (copie). Après toute modification de /app/keto.html, exécuter `cp /app/keto.html /app/backend/keto_app.html` puis `sudo supervisorctl restart backend`.
