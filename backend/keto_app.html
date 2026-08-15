@@ -8088,7 +8088,7 @@ document.addEventListener('DOMContentLoaded',function(){
         <div class="plan-gen-title">Votre menu de la semaine</div>
         <div class="plan-gen-sub" id="planGenSub">🥑 Personnalisé selon votre profil keto</div>
       </div>
-      <button class="plan-gen-main" onclick="generateMenu()" data-testid="plan-gen-main">✨ Générer ma semaine</button>
+      <button class="plan-gen-main" onclick="kpGenWizardOpen()" data-testid="plan-gen-main">✨ Générer ma semaine</button>
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
       <div class="view-toggle">
@@ -29549,6 +29549,287 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
 .kpd-prem-toast .kpt-txt b{ color:#C07A1A; }
 .kpd-prem-toast .kpt-btn{ background:transparent; border:1px solid #E8A33D; color:#C07A1A; border-radius:10px; padding:8px 12px; font-family:'Inter',sans-serif; font-weight:600; font-size:12px; cursor:pointer; flex:0 0 auto; }
 </style>
+<style id="kpGenWizard">
+/* ═══ Assistant « Générer ma semaine » — popup premium multi-étapes ═══ */
+#kpwOverlay{ position:fixed; inset:0; background:rgba(31,36,28,.32); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+  z-index:1140; opacity:0; pointer-events:none; transition:opacity .3s ease-in-out; }
+#kpwOverlay.open{ opacity:1; pointer-events:auto; }
+#kpwSheet{ position:fixed; left:0; right:0; bottom:0; max-height:88dvh; z-index:1150;
+  background:rgba(249,249,247,.92);
+  backdrop-filter:blur(25px) saturate(1.4); -webkit-backdrop-filter:blur(25px) saturate(1.4);
+  border:1px solid #5B8A40; border-bottom:none; border-radius:28px 28px 0 0;
+  box-shadow:0 -24px 60px -28px rgba(31,36,28,.4);
+  transform:translateY(105%); transition:transform .42s cubic-bezier(.4,0,.2,1); will-change:transform;
+  display:flex; flex-direction:column; overflow:hidden;
+  padding-bottom:env(safe-area-inset-bottom);
+  max-width:560px; margin:0 auto; }
+#kpwSheet.open{ transform:translateY(0); }
+#kpwProg{ height:3px; background:rgba(91,138,64,.14); flex:0 0 auto; }
+#kpwProg i{ display:block; height:100%; background:#5B8A40; border-radius:0 99px 99px 0; width:0; transition:width .35s ease-in-out; }
+.kpw-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px 4px; flex:0 0 auto; }
+.kpw-step-lbl{ font-family:'Inter',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#8B9180; }
+.kpw-close{ width:32px; height:32px; border-radius:50%; border:1px solid rgba(91,138,64,.3); background:rgba(255,255,255,.6);
+  color:#3F6B2C; font-size:14px; font-weight:700; cursor:pointer; }
+#kpwBody{ flex:1 1 auto; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:6px 20px 14px; }
+.kpw-title{ font-family:'Inter','SF Pro Display',sans-serif; font-size:21px; font-weight:800; letter-spacing:-.02em; color:#1F241C; margin:2px 0 14px; }
+.kpw-in-left{ animation:kpwInLeft .38s ease-in-out both; }
+.kpw-in-right{ animation:kpwInRight .38s ease-in-out both; }
+@keyframes kpwInLeft{ from{ transform:translateX(56px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+@keyframes kpwInRight{ from{ transform:translateX(-56px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+/* Cartes sélectionnables */
+.kpw-cards{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.kpw-card{ position:relative; background:rgba(255,255,255,.55); backdrop-filter:blur(25px); -webkit-backdrop-filter:blur(25px);
+  border:1px solid rgba(91,138,64,.16); border-radius:12px; padding:14px 12px; cursor:pointer; text-align:left;
+  transition:border-color .22s ease-in-out, background .22s ease-in-out, transform .15s ease-in-out; }
+.kpw-card:active{ transform:scale(.97); }
+.kpw-card.sel{ border:1px solid #5B8A40; background:rgba(91,138,64,.1); box-shadow:0 0 0 1px #5B8A40 inset; }
+.kpw-card-ico{ font-size:20px; display:block; margin-bottom:6px; }
+.kpw-card-name{ font-family:'Inter',sans-serif; font-size:13.5px; font-weight:700; color:#1F241C; line-height:1.2; }
+.kpw-card-sub{ font-family:'Inter',sans-serif; font-size:11px; color:#6F7566; margin-top:3px; }
+.kpw-prem{ position:absolute; top:8px; right:8px; display:inline-flex; align-items:center; gap:3px;
+  background:rgba(232,163,61,.14); border:1px solid rgba(232,163,61,.5); color:#C07A1A;
+  font-size:8.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 6px; border-radius:99px; line-height:1; }
+/* Toggles */
+.kpw-tgl-group{ background:rgba(255,255,255,.55); border:1px solid rgba(91,138,64,.16); border-radius:12px; padding:4px 14px; margin-bottom:12px; }
+.kpw-tgl-group h4{ font-family:'Inter',sans-serif; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#3F6B2C; margin:10px 0 4px; }
+.kpw-tgl{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(91,138,64,.1); cursor:pointer; }
+.kpw-tgl:last-child{ border-bottom:none; }
+.kpw-tgl span{ font-family:'Inter',sans-serif; font-size:13.5px; color:#1F241C; }
+.kpw-sw{ width:42px; height:24px; border-radius:99px; background:rgba(91,138,64,.15); border:1px solid rgba(91,138,64,.3);
+  position:relative; flex:0 0 auto; transition:background .25s ease-in-out, border-color .25s ease-in-out; }
+.kpw-sw::after{ content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff;
+  box-shadow:0 1px 4px rgba(31,36,28,.25); transition:transform .25s cubic-bezier(.34,1.4,.5,1); }
+.kpw-tgl.on .kpw-sw{ background:#5B8A40; border-color:#5B8A40; }
+.kpw-tgl.on .kpw-sw::after{ transform:translateX(18px); }
+/* Badges restrictions */
+.kpw-badges{ display:flex; flex-wrap:wrap; gap:8px; }
+.kpw-badge{ background:rgba(255,255,255,.55); border:1px solid rgba(91,138,64,.2); border-radius:99px; padding:9px 14px;
+  font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; color:#6F7566; cursor:pointer;
+  transition:all .2s ease-in-out; }
+.kpw-badge.sel{ border:1px solid #5B8A40; background:rgba(91,138,64,.12); color:#3F6B2C; }
+.kpw-other{ width:100%; margin-top:14px; padding:12px 14px; border-radius:12px; border:1px solid rgba(91,138,64,.45);
+  background:rgba(255,255,255,.7); font-family:'Inter',sans-serif; font-size:13.5px; color:#1F241C;
+  transition:border-color .25s ease-in-out, box-shadow .25s ease-in-out; }
+.kpw-other:focus{ outline:none; border-color:#5B8A40; box-shadow:0 0 0 3px rgba(91,138,64,.13), 0 0 14px rgba(91,138,64,.25); }
+/* Récapitulatif */
+.kpw-recap{ background:rgba(255,255,255,.55); border:1px solid rgba(91,138,64,.16); border-radius:12px; padding:4px 16px; }
+.kpw-recap-row{ display:flex; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px solid rgba(91,138,64,.12); }
+.kpw-recap-row:last-child{ border-bottom:none; }
+.kpw-recap-k{ font-family:'Inter',sans-serif; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#3F6B2C; flex:0 0 auto; padding-top:2px; }
+.kpw-recap-v{ font-family:'Inter',sans-serif; font-size:13px; color:#1F241C; text-align:right; line-height:1.4; }
+/* Pied : navigation */
+.kpw-foot{ display:flex; gap:10px; padding:12px 20px calc(14px + env(safe-area-inset-bottom)); flex:0 0 auto;
+  border-top:1px solid rgba(91,138,64,.12); background:rgba(249,249,247,.85); }
+.kpw-btn{ flex:1; padding:14px 16px; border-radius:12px; font-family:'Inter',sans-serif; font-size:14.5px; font-weight:600;
+  cursor:pointer; background:transparent; transition:background .22s ease-in-out, transform .15s ease-in-out; }
+.kpw-btn:active{ transform:scale(.97); }
+.kpw-btn-back{ border:1px solid rgba(91,138,64,.3); color:#6F7566; }
+.kpw-btn-next{ border:1px solid #5B8A40; color:#3F6B2C; }
+.kpw-btn-next:active{ background:rgba(91,138,64,.1); }
+.kpw-btn[disabled]{ opacity:.4; pointer-events:none; }
+/* Spinner génération */
+.kpw-spin{ display:flex; flex-direction:column; align-items:center; gap:14px; padding:44px 0 34px; }
+.kpw-spin i{ width:34px; height:34px; border-radius:50%; border:2px solid rgba(91,138,64,.18); border-top-color:#5B8A40;
+  animation:kpwSpin .8s linear infinite; }
+.kpw-spin span{ font-family:'Inter',sans-serif; font-size:13px; color:#6F7566; }
+@keyframes kpwSpin{ to{ transform:rotate(360deg); } }
+</style>
+<script id="kpGenWizardJS">
+(function(){
+  var CROWN='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8l4.2 3.8L12 5.6l4.8 6.2L21 8v9.4H3z"/></svg>';
+  var GOALS=[
+    {v:-500, ico:'🔥', n:'Perte de poids', s:'Déficit soutenu'},
+    {v:-250, ico:'🌿', n:'Perte douce',    s:'Déficit modéré'},
+    {v:0,    ico:'⚖️', n:'Maintien',       s:'Équilibre & vitalité'},
+    {v:200,  ico:'💪', n:'Prise de masse', s:'Surplus contrôlé'}
+  ];
+  var MEALS=[
+    {id:'bfast',  ico:'☕', n:'Petit Déjeuner'},
+    {id:'lunch',  ico:'🥗', n:'Déjeuner'},
+    {id:'dinner', ico:'🍽️', n:'Dîner'}
+  ];
+  var SUBCATS=[['entree','Entrée'],['plat','Plat principal'],['collation','Collation'],['dessert','Dessert']];
+  var RESTR=['Sans Gluten','Sans Lactose','Sans Fruits à Coque','Sans Œufs','Sans Poisson','Sans Porc','Végétarien','Végétalien'];
+  var TOTAL=6, st=null, dir=1;
+
+  function defaults(){
+    var mode='standard';
+    try{ mode=(profile&&profile.dietMode)||'standard'; }catch(e){}
+    var goal=0; try{ goal=(profile&&profile.goal!=null)?parseInt(profile.goal):0; }catch(e){}
+    var saved={};
+    try{ saved=JSON.parse(localStorage.getItem('kp_wizard_prefs')||'{}'); }catch(e){}
+    return {
+      step:0, goal:goal, mode:mode,
+      meals:saved.meals||{bfast:true,lunch:true,dinner:true},
+      details:saved.details||{bfast:{plat:true},lunch:{plat:true},dinner:{plat:true}},
+      restr:saved.restr||[], other:saved.other||''
+    };
+  }
+  function ensure(){
+    if(document.getElementById('kpwSheet')) return;
+    var ov=document.createElement('div'); ov.id='kpwOverlay'; ov.onclick=close;
+    var sh=document.createElement('div'); sh.id='kpwSheet';
+    sh.innerHTML='<div id="kpwProg"><i></i></div>'
+      +'<div class="kpw-head"><span class="kpw-step-lbl" id="kpwStepLbl"></span>'
+      +'<button type="button" class="kpw-close" onclick="kpGenWizardClose()" aria-label="Fermer">✕</button></div>'
+      +'<div id="kpwBody"></div>'
+      +'<div class="kpw-foot" id="kpwFoot"></div>';
+    document.body.appendChild(ov); document.body.appendChild(sh);
+  }
+  function esc(s){ return String(s).replace(/</g,'&lt;'); }
+  function modeCards(){
+    var isPrem=false; try{ isPrem=(typeof isPremium==='function')?isPremium():false; }catch(e){}
+    var html='';
+    try{
+      Object.keys(DIET_MODES).filter(function(k){return k!=='vegan';}).forEach(function(id){
+        var m=DIET_MODES[id], locked=(id!=='standard')&&!isPrem;
+        html+='<button type="button" class="kpw-card'+(st.mode===id?' sel':'')+'" data-mode="'+id+'" data-locked="'+(locked?'1':'0')+'">'
+          +(locked?'<span class="kpw-prem">'+CROWN+' Premium</span>':'')
+          +'<span class="kpw-card-ico">'+m.emoji+'</span>'
+          +'<div class="kpw-card-name">'+m.label+'</div>'
+          +'<div class="kpw-card-sub">'+Math.round(m.fat*100)+'% L · '+Math.round(m.prot*100)+'% P · '+Math.round(m.carb*100)+'% G</div></button>';
+      });
+    }catch(e){}
+    return html;
+  }
+  function stepHTML(){
+    var s=st.step;
+    if(s===0){
+      return '<div class="kpw-title">Quel est votre objectif&nbsp;?</div><div class="kpw-cards">'
+        +GOALS.map(function(g){
+          return '<button type="button" class="kpw-card'+(st.goal===g.v?' sel':'')+'" data-goal="'+g.v+'">'
+            +'<span class="kpw-card-ico">'+g.ico+'</span><div class="kpw-card-name">'+g.n+'</div>'
+            +'<div class="kpw-card-sub">'+g.s+'</div></button>';
+        }).join('')+'</div>';
+    }
+    if(s===1){
+      return '<div class="kpw-title">Choisissez votre mode alimentaire</div><div class="kpw-cards">'+modeCards()+'</div>';
+    }
+    if(s===2){
+      return '<div class="kpw-title">Quels repas souhaitez-vous planifier&nbsp;?</div><div class="kpw-cards">'
+        +MEALS.map(function(m){
+          return '<button type="button" class="kpw-card'+(st.meals[m.id]?' sel':'')+'" data-meal="'+m.id+'">'
+            +'<span class="kpw-card-ico">'+m.ico+'</span><div class="kpw-card-name">'+m.n+'</div></button>';
+        }).join('')+'</div>';
+    }
+    if(s===3){
+      var groups='';
+      MEALS.forEach(function(m){
+        if(!st.meals[m.id]) return;
+        st.details[m.id]=st.details[m.id]||{plat:true};
+        groups+='<div class="kpw-tgl-group"><h4>'+m.ico+' '+m.n+'</h4>'
+          +SUBCATS.map(function(c){
+            var on=!!st.details[m.id][c[0]];
+            return '<div class="kpw-tgl'+(on?' on':'')+'" data-dmeal="'+m.id+'" data-dcat="'+c[0]+'"><span>'+c[1]+'</span><span class="kpw-sw"></span></div>';
+          }).join('')+'</div>';
+      });
+      return '<div class="kpw-title">Personnalisez vos repas</div>'+(groups||'<div class="kpw-card-sub">Aucun repas sélectionné à l\'étape précédente.</div>');
+    }
+    if(s===4){
+      return '<div class="kpw-title">Avez-vous des restrictions alimentaires&nbsp;?</div><div class="kpw-badges">'
+        +RESTR.map(function(r){
+          return '<button type="button" class="kpw-badge'+(st.restr.indexOf(r)>-1?' sel':'')+'" data-restr="'+r+'">'+r+'</button>';
+        }).join('')+'</div>'
+        +'<input type="text" class="kpw-other" id="kpwOther" placeholder="Autre restriction…" value="'+esc(st.other)+'" maxlength="80">';
+    }
+    /* Récapitulatif */
+    var goal=GOALS.filter(function(g){return g.v===st.goal;})[0];
+    var modeLbl=st.mode; try{ modeLbl=DIET_MODES[st.mode]?DIET_MODES[st.mode].label:st.mode; }catch(e){}
+    var mealsTxt=MEALS.filter(function(m){return st.meals[m.id];}).map(function(m){return m.n;}).join(' · ')||'—';
+    var detTxt=MEALS.filter(function(m){return st.meals[m.id];}).map(function(m){
+      var cats=SUBCATS.filter(function(c){return st.details[m.id]&&st.details[m.id][c[0]];}).map(function(c){return c[1];});
+      return m.n+' : '+(cats.join(', ')||'—');
+    }).join('<br>')||'—';
+    var restrTxt=(st.restr.concat(st.other?[st.other]:[])).join(' · ')||'Aucune';
+    return '<div class="kpw-title">Votre plan sur mesure</div><div class="kpw-recap">'
+      +'<div class="kpw-recap-row"><span class="kpw-recap-k">Objectif</span><span class="kpw-recap-v">'+(goal?goal.ico+' '+goal.n:'—')+'</span></div>'
+      +'<div class="kpw-recap-row"><span class="kpw-recap-k">Mode</span><span class="kpw-recap-v">'+modeLbl+'</span></div>'
+      +'<div class="kpw-recap-row"><span class="kpw-recap-k">Repas</span><span class="kpw-recap-v">'+mealsTxt+'</span></div>'
+      +'<div class="kpw-recap-row"><span class="kpw-recap-k">Détails</span><span class="kpw-recap-v">'+detTxt+'</span></div>'
+      +'<div class="kpw-recap-row"><span class="kpw-recap-k">Restrictions</span><span class="kpw-recap-v">'+esc(restrTxt)+'</span></div>'
+      +'</div>';
+  }
+  var STEP_LBL=['Étape 1 · Objectif','Étape 2 · Mode alimentaire','Étape 3 · Repas','Étape 4 · Détails','Étape 5 · Restrictions','Récapitulatif'];
+  function render(){
+    var body=document.getElementById('kpwBody');
+    body.innerHTML='<div class="'+(dir>=0?'kpw-in-left':'kpw-in-right')+'">'+stepHTML()+'</div>';
+    document.getElementById('kpwStepLbl').textContent=STEP_LBL[st.step];
+    document.querySelector('#kpwProg i').style.width=Math.round((st.step+1)/TOTAL*100)+'%';
+    var foot=document.getElementById('kpwFoot');
+    foot.innerHTML=(st.step>0?'<button type="button" class="kpw-btn kpw-btn-back" id="kpwBack">← Retour</button>':'')
+      +(st.step<TOTAL-1
+        ?'<button type="button" class="kpw-btn kpw-btn-next" id="kpwNext">Suivant →</button>'
+        :'<button type="button" class="kpw-btn kpw-btn-next" id="kpwGen" data-testid="kpw-generate">✨ Générer mon plan</button>');
+    body.scrollTop=0;
+    bind();
+  }
+  function bind(){
+    var body=document.getElementById('kpwBody');
+    body.querySelectorAll('[data-goal]').forEach(function(b){ b.onclick=function(){ st.goal=parseInt(b.getAttribute('data-goal')); render(); }; });
+    body.querySelectorAll('[data-mode]').forEach(function(b){
+      b.onclick=function(){
+        if(b.getAttribute('data-locked')==='1'){ try{ kpdPremiumInvite(); }catch(e){} return; }
+        st.mode=b.getAttribute('data-mode'); render();
+      };
+    });
+    body.querySelectorAll('[data-meal]').forEach(function(b){
+      b.onclick=function(){ var id=b.getAttribute('data-meal'); st.meals[id]=!st.meals[id]; render(); };
+    });
+    body.querySelectorAll('[data-dmeal]').forEach(function(t){
+      t.onclick=function(){
+        var m=t.getAttribute('data-dmeal'), c=t.getAttribute('data-dcat');
+        st.details[m]=st.details[m]||{}; st.details[m][c]=!st.details[m][c];
+        t.classList.toggle('on', st.details[m][c]);
+      };
+    });
+    body.querySelectorAll('[data-restr]').forEach(function(b){
+      b.onclick=function(){
+        var r=b.getAttribute('data-restr'), i=st.restr.indexOf(r);
+        if(i>-1) st.restr.splice(i,1); else st.restr.push(r);
+        b.classList.toggle('sel', i===-1);
+      };
+    });
+    var oth=document.getElementById('kpwOther');
+    if(oth) oth.oninput=function(){ st.other=oth.value; };
+    var back=document.getElementById('kpwBack');
+    if(back) back.onclick=function(){ dir=-1; st.step=Math.max(0,st.step-1); render(); };
+    var next=document.getElementById('kpwNext');
+    if(next) next.onclick=function(){ dir=1; st.step=Math.min(TOTAL-1,st.step+1); render(); };
+    var gen=document.getElementById('kpwGen');
+    if(gen) gen.onclick=doGenerate;
+  }
+  function doGenerate(){
+    var body=document.getElementById('kpwBody');
+    document.getElementById('kpwFoot').innerHTML='';
+    body.innerHTML='<div class="kpw-spin"><i></i><span>Génération de votre plan…</span></div>';
+    try{ localStorage.setItem('kp_wizard_prefs', JSON.stringify({meals:st.meals, details:st.details, restr:st.restr, other:st.other})); }catch(e){}
+    setTimeout(function(){
+      try{ if(typeof updateProfile==='function') updateProfile('goal', st.goal); }catch(e){}
+      try{
+        var cur=(typeof profile!=='undefined'&&profile&&profile.dietMode)||'standard';
+        if(st.mode && st.mode!==cur && typeof kpHomeSetMode==='function') kpHomeSetMode(st.mode);
+      }catch(e){}
+      try{ window.generateMenu(); }catch(e){}
+      setTimeout(close, 500);
+    }, 900);
+  }
+  function close(){
+    var ov=document.getElementById('kpwOverlay'), sh=document.getElementById('kpwSheet');
+    if(ov) ov.classList.remove('open');
+    if(sh) sh.classList.remove('open');
+  }
+  window.kpGenWizardClose=close;
+  window.kpGenWizardOpen=function(){
+    ensure();
+    st=defaults(); dir=1;
+    render();
+    requestAnimationFrame(function(){
+      document.getElementById('kpwOverlay').classList.add('open');
+      document.getElementById('kpwSheet').classList.add('open');
+    });
+  };
+})();
+</script>
 <script id="kpHomeModule">
 (function(){
 window.KPD_AVO=KPD_AVO;
@@ -29966,7 +30247,7 @@ window.kpRenderDashboard=function(){
     +'<h3>Générer ma semaine</h3>'
     +'<p>Planifiez 7 jours de repas adaptés à vos objectifs et préférences.</p>'
     +'</div></div>'
-    +'<button type="button" class="kpd-gen-btn" data-testid="kpd-gen-btn" onclick="generateMenu()">Générer ma semaine <span>→</span></button></div>';
+    +'<button type="button" class="kpd-gen-btn" data-testid="kpd-gen-btn" onclick="kpGenWizardOpen()">Générer ma semaine <span>→</span></button></div>';
   var modes=kpHomeModesHTML();
   var tip=kpHomeTipHTML();
   if(typeof menu==='undefined'||!menu||!menu.length){

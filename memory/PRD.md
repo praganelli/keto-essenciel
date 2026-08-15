@@ -622,3 +622,9 @@ Bugs signalés :
 - Barre .kpd-planbar « Voir le plan entier → » (outlined 1px avocat, frosted) insérée après la carte Repas du jour dans kpRenderDashboard → onclick kpPlanSheetOpen() (page Voir tout existante, aucune nouvelle page).
 - Modes alimentaires : badge premium = .kpd-mode-badge.prem (pill ambre + couronne SVG KPD_CROWN) ; clic mode verrouillé → window.kpdPremiumInvite() = toast discret .kpd-prem-toast (auto-hide 4,2s, bouton Découvrir → openPremiumModal('modes')). Fonctions définies dans kpHomeModule après kpHomeTipNext.
 - Vérifié : toggle/weekGrid display:none, barre fonctionne (feuille Mon plan s'ouvre), toast affiché au clic sur mode premium.
+
+## ASSISTANT « GÉNÉRER MA SEMAINE » (juin 2026)
+- Blocs <style id="kpGenWizard"> + <script id="kpGenWizardJS"> (avant kpHomeModule). Popup #kpwSheet slide-up (frosted, radius 28px haut, bordure 1px avocat, safe-area), barre de progression fine verte, 6 étapes avec transitions slide left/right (kpw-in-left/right) : 1 Objectif (GOALS → profile.goal via updateProfile), 2 Mode (DIET_MODES, badges Premium couronne ambre, clic verrouillé → kpdPremiumInvite), 3 Repas (multi-sélection bfast/lunch/dinner), 4 Détails (toggles Entrée/Plat/Collation/Dessert par repas), 5 Restrictions (badges + champ libre), 6 Récap (lignes vertes pâles) + bouton Générer → spinner fin vert 900ms → applique goal + kpHomeSetMode si changé → window.generateMenu() → fermeture slide-down.
+- Prefs repas/détails/restrictions persistées dans localStorage 'kp_wizard_prefs' (PAS encore consommées par le moteur de génération — à brancher si demandé).
+- Boutons interceptés : .plan-gen-main (l.8091) et .kpd-gen-btn (dashboard) → kpGenWizardOpen().
+- Vérifié e2e : 6 étapes, sélections, génération réelle du plan, fermeture.
