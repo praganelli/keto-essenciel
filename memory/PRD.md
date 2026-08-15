@@ -628,3 +628,7 @@ Bugs signalés :
 - Prefs repas/détails/restrictions persistées dans localStorage 'kp_wizard_prefs' (PAS encore consommées par le moteur de génération — à brancher si demandé).
 - Boutons interceptés : .plan-gen-main (l.8091) et .kpd-gen-btn (dashboard) → kpGenWizardOpen().
 - Vérifié e2e : 6 étapes, sélections, génération réelle du plan, fermeture.
+
+## BADGE QUALITÉ + NAV ICÔNES SEULES (juin 2026)
+- Badge .kpd-qual (frosted pill verte : Excellent ≥95 / Optimal ≥80 / Bon ≥60 / À optimiser) inséré à côté du titre « Repas du jour » dans kpRenderDashboard, via window.kpWeekQuality() ; classe .max (score 100) → pulsation dorée kpdQualPulse. CSS dans kpPlanTabLux.
+- Nav : libellés masqués (sélecteurs haute spécificité requis : `.bnav-tab:not(.active) .bnav-label` existait à l.28758 avec display:inline !important) ; icônes/svg 26px, padding tabs 13/15px. Dans kpNavLux.

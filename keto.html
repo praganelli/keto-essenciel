@@ -29489,10 +29489,11 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
     transition:transform .28s cubic-bezier(.34,1.56,.64,1), width .28s cubic-bezier(.34,1.56,.64,1) !important;
   }
 
-  /* Icônes filaires + libellés très fins */
-  .bnav-label{ font-weight:500 !important; font-size:10.5px !important; letter-spacing:.02em !important; }
-  .bnav-tab.active .bnav-label{ font-weight:600 !important; }
+  /* Icônes filaires uniquement (libellés masqués), légèrement plus grandes */
+  .bnav-label, .bnav-tab .bnav-label, .bnav-tab:not(.active) .bnav-label{ display:none !important; }
   .bnav-icon{ transition:transform .18s cubic-bezier(.34,1.56,.64,1); }
+  .bnav-icon, .bnav-svg{ width:26px !important; height:26px !important; }
+  .bnav-tab{ padding:13px 15px !important; min-width:54px; justify-content:center; }
   .bnav-tab:active .bnav-icon{ transform:scale(.82); }
   .bnav-tab.active .bnav-icon{ animation:knvIconPop .3s cubic-bezier(.3,1.7,.5,1); }
   @keyframes knvIconPop{ 0%{ transform:scale(.8); } 60%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
@@ -29531,6 +29532,18 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
   padding:3px 7px; border-radius:99px; line-height:1;
 }
 .kpd-mode-badge.prem svg{ flex:0 0 auto; }
+/* ── Badge qualité du plan (frosted, pulsation dorée si max) ── */
+.kpd-qual{
+  display:inline-flex; align-items:center; gap:4px; margin-left:8px;
+  background:rgba(255,255,255,.6); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(91,138,64,.35); border-radius:99px; padding:4px 9px;
+  font-family:'Inter',sans-serif; font-size:9.5px; font-weight:700; letter-spacing:.05em;
+  text-transform:uppercase; color:#3F6B2C; line-height:1; white-space:nowrap;
+}
+.kpd-qual svg{ flex:0 0 auto; }
+.kpd-qual.max{ animation:kpdQualPulse 2.2s ease-in-out infinite; }
+@keyframes kpdQualPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(232,163,61,0); } 50%{ box-shadow:0 0 0 5px rgba(232,163,61,.28); } }
+
 /* ── Toast d'invitation Premium (discret & élégant) ── */
 .kpd-prem-toast{
   position:fixed; left:50%; bottom:calc(112px + env(safe-area-inset-bottom));
@@ -30370,7 +30383,17 @@ window.kpRenderDashboard=function(){
   }catch(e){}
   var htmls=cards.map(function(c){return c.html;});
   var dots=htmls.length>1?'<div class="kpd-dots" id="kpdDots">'+htmls.map(function(_,i){return '<span class="kpd-dot'+(i===0?' on':'')+'"></span>';}).join('')+'</div>':'';
-  var mealsCard=htmls.length?('<div class="kpd-card" data-testid="kpd-meals"><div class="kpd-meals-head"><span class="kpd-card-title">Repas du jour</span>'
+  var qBadge='';
+  try{
+    var q=window.kpWeekQuality&&window.kpWeekQuality();
+    if(htmls.length && q && q.length){
+      var okQ=q.filter(function(c){return c.ok;}).length, scQ=Math.round(okQ/q.length*100);
+      var lvlQ=scQ>=95?'Excellent':(scQ>=80?'Optimal':(scQ>=60?'Bon':'À optimiser'));
+      qBadge='<span class="kpd-qual'+(scQ>=100?' max':'')+'" data-testid="kpd-qual" title="Qualité du plan : '+okQ+'/'+q.length+' critères validés">'
+        +'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'+lvlQ+'</span>';
+    }
+  }catch(e){}
+  var mealsCard=htmls.length?('<div class="kpd-card" data-testid="kpd-meals"><div class="kpd-meals-head"><span class="kpd-card-title" style="display:inline-flex;align-items:center">Repas du jour'+qBadge+'</span>'
     +'<button type="button" class="kpd-seeall" onclick="kpPlanSheetOpen()" data-testid="kpd-seeall">Voir tout ›</button></div>'
     +'<div class="kpd-meals-scroll" id="kpdScroll">'+htmls.join('')+'</div>'+dots+'</div>'):'';
   var _prevSc=$id('kpdScroll'); var _prevLeft=_prevSc?_prevSc.scrollLeft:0;
