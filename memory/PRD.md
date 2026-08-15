@@ -671,3 +671,8 @@ Bugs signalés :
 - Sous la grille : litres en grand vert avocat (« 1,5L ») + « Dernier verre il y a X min » (localStorage kp_hydro_last_v1, interval 30 s __kphLastIv).
 - Message d'encouragement dynamique sous la barre (0 / 1-3 / 4 / 5-7 / 8 verres).
 - Rappel : sync obligatoire `cp /app/keto.html /app/backend/keto_app.html` + restart backend.
+
+## Bugfix — Exclusion du petit-déjeuner dans le wizard (Juin 2026)
+- Cause racine : `doGenerate()` du wizard « Générer ma semaine » sauvegardait la sélection des repas (st.meals {bfast,lunch,dinner}) uniquement dans localStorage `kp_wizard_prefs`, sans jamais la propager vers `profile.meals` {breakfast,lunch,dinner} — la seule source lue par generateMenu() et toutes les vues du plan.
+- Fix (keto.html, doGenerate ~l.29837) : mapping st.meals → profile.meals + save() AVANT generateMenu() ; puis re-rendu immédiat de toutes les vues (renderPlan, renderWeekGrid, kpRenderDashboard, kpRenderMealsToggles, kpPlanRender si feuille ouverte).
+- Testé e2e : exclusion petit-déj → 7 jours bfast=null, aucun créneau petit-déj sur dashboard ni feuille « Mon plan », rafraîchissement instantané sans reload.

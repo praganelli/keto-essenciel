@@ -29835,12 +29835,31 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
     body.innerHTML='<div class="kpw-spin"><i></i><span>Génération de votre plan…</span></div>';
     try{ localStorage.setItem('kp_wizard_prefs', JSON.stringify({meals:st.meals, details:st.details, restr:st.restr, other:st.other})); }catch(e){}
     setTimeout(function(){
+      /* FIX : synchroniser les repas sélectionnés du questionnaire vers profile.meals
+         AVANT la génération — sinon un repas exclu (ex : petit-déjeuner) restait
+         généré et affiché dans tout le plan de la semaine (données obsolètes). */
+      try{
+        var mm={breakfast:!!st.meals.bfast, lunch:!!st.meals.lunch, dinner:!!st.meals.dinner};
+        if((mm.breakfast||mm.lunch||mm.dinner) && typeof profile!=='undefined' && profile){
+          profile.meals=mm;
+          try{ if(typeof save==='function') save(); }catch(e){}
+        }
+      }catch(e){}
       try{ if(typeof updateProfile==='function') updateProfile('goal', st.goal); }catch(e){}
       try{
         var cur=(typeof profile!=='undefined'&&profile&&profile.dietMode)||'standard';
         if(st.mode && st.mode!==cur && typeof kpHomeSetMode==='function') kpHomeSetMode(st.mode);
       }catch(e){}
       try{ window.generateMenu(); }catch(e){}
+      /* Re-rendu immédiat et complet de toutes les vues du plan (aucune donnée obsolète) */
+      try{ if(typeof renderPlan==='function') renderPlan(); }catch(e){}
+      try{ if(typeof renderWeekGrid==='function') renderWeekGrid(); }catch(e){}
+      try{ if(typeof kpRenderDashboard==='function') kpRenderDashboard(); }catch(e){}
+      try{ if(typeof kpRenderMealsToggles==='function') kpRenderMealsToggles(); }catch(e){}
+      try{
+        var ps=document.getElementById('kpPlanSheet');
+        if(ps && ps.classList.contains('open') && typeof kpPlanRender==='function') kpPlanRender();
+      }catch(e){}
       setTimeout(close, 500);
     }, 900);
   }
