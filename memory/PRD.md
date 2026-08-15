@@ -616,3 +616,9 @@ Bugs signalés :
 - 🐛 CAUSE espace vide en haut de TOUTES les pages : #authScreen gardait class .hide MAIS display:flex inline (ré-imposé par le routeur de hash _checkHash après login) → bloc fantôme ~844px en flux au-dessus de #app. FIX CSS : `#authScreen.hide{ display:none !important; }` (dans kpAuthLux).
 - Verrou anti-swipe écran de connexion : `body.klxa-lock{overflow:hidden}` togglé par interval 400ms dans kpAuthLuxJS (actif si authScreen visible sans .hide ET kpWelcomeScreen masqué) + scrollTo(0,0) ; `#authScreen{touch-action:pan-y; overscroll-behavior:contain}`. L'ancien écran local « Créer un nouveau profil » (sous l'auth dans le flux) n'est plus atteignable par swipe ; l'inscription reste accessible uniquement via le lien « S'inscrire ».
 - Vérifié : pré-login scrollY bloqué à 0 ; post-login contenu au top (logo → Bonjour → Générer ma semaine sans vide).
+
+## ONGLET PLAN ÉPURÉ (juin 2026)
+- Bloc <style id="kpPlanTabLux"> : masque .view-toggle + #weekGrid dans #tab-plan (mobile ≤1023px uniquement — desktop intact) ; #kpPlanSheet entre en slide-left (translateX) sur mobile.
+- Barre .kpd-planbar « Voir le plan entier → » (outlined 1px avocat, frosted) insérée après la carte Repas du jour dans kpRenderDashboard → onclick kpPlanSheetOpen() (page Voir tout existante, aucune nouvelle page).
+- Modes alimentaires : badge premium = .kpd-mode-badge.prem (pill ambre + couronne SVG KPD_CROWN) ; clic mode verrouillé → window.kpdPremiumInvite() = toast discret .kpd-prem-toast (auto-hide 4,2s, bouton Découvrir → openPremiumModal('modes')). Fonctions définies dans kpHomeModule après kpHomeTipNext.
+- Vérifié : toggle/weekGrid display:none, barre fonctionne (feuille Mon plan s'ouvre), toast affiché au clic sur mode premium.

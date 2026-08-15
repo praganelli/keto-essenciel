@@ -29501,6 +29501,54 @@ body.klxa-lock{ overflow:hidden !important; height:100dvh !important; }
   #tab-plan,#tab-library,#tab-suivi,#tab-profile,#tab-help,#tab-lpev{ padding-bottom:118px !important; }
 }
 </style>
+<style id="kpPlanTabLux">
+/* ═══ Onglet Plan : épuré (mobile) — plus de Semaine/Jour ni de reste de semaine ═══ */
+@media (max-width:1023px){
+  #tab-plan .view-toggle{ display:none !important; }
+  #tab-plan #weekGrid{ display:none !important; }
+  /* Feuille « Voir tout » : entrée en glissement latéral (slide left) fluide */
+  #kpPlanSheet{ transform:translateX(103%) !important; transition:transform .32s cubic-bezier(.4,0,.2,1) !important; will-change:transform; }
+  #kpPlanSheet.open{ transform:translateX(0) !important; }
+}
+/* ── Barre « Voir le plan entier » : outlined 1px Vert Avocat ── */
+.kpd-planbar{
+  display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+  margin:2px 0 16px; padding:14px 16px;
+  background:rgba(255,255,255,.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--avo); border-radius:12px;
+  color:var(--avo2); font-family:'Inter',sans-serif; font-size:14.5px; font-weight:600;
+  cursor:pointer; transition:background .25s ease-in-out, transform .18s ease-in-out;
+}
+.kpd-planbar:active{ transform:scale(.97); background:var(--avo-soft); }
+.kpd-planbar-arrow{ font-weight:700; }
+/* ── Badge Premium ambre + couronne sur les modes ── */
+.kpd-mode-badge.prem{
+  display:inline-flex; align-items:center; gap:4px;
+  background:rgba(232,163,61,.14) !important;
+  border:1px solid rgba(232,163,61,.5) !important;
+  color:#C07A1A !important;
+  font-size:9px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  padding:3px 7px; border-radius:99px; line-height:1;
+}
+.kpd-mode-badge.prem svg{ flex:0 0 auto; }
+/* ── Toast d'invitation Premium (discret & élégant) ── */
+.kpd-prem-toast{
+  position:fixed; left:50%; bottom:calc(112px + env(safe-area-inset-bottom));
+  transform:translate(-50%,16px);
+  display:flex; align-items:center; gap:10px;
+  width:calc(100% - 44px); max-width:360px;
+  background:rgba(255,255,255,.88); backdrop-filter:blur(25px) saturate(1.4); -webkit-backdrop-filter:blur(25px) saturate(1.4);
+  border:1px solid rgba(232,163,61,.5); border-radius:14px; padding:12px 14px;
+  box-shadow:0 16px 40px -18px rgba(31,36,28,.35);
+  z-index:1200; opacity:0; pointer-events:none;
+  transition:opacity .3s ease-in-out, transform .3s ease-in-out;
+}
+.kpd-prem-toast.show{ opacity:1; transform:translate(-50%,0); pointer-events:auto; }
+.kpd-prem-toast .kpt-ico{ width:34px; height:34px; border-radius:10px; background:rgba(232,163,61,.16); display:flex; align-items:center; justify-content:center; color:#C07A1A; flex:0 0 auto; }
+.kpd-prem-toast .kpt-txt{ flex:1; font-family:'Inter',sans-serif; font-size:12.5px; color:#1F241C; line-height:1.35; }
+.kpd-prem-toast .kpt-txt b{ color:#C07A1A; }
+.kpd-prem-toast .kpt-btn{ background:transparent; border:1px solid #E8A33D; color:#C07A1A; border-radius:10px; padding:8px 12px; font-family:'Inter',sans-serif; font-weight:600; font-size:12px; cursor:pointer; flex:0 0 auto; }
+</style>
 <script id="kpHomeModule">
 (function(){
 window.KPD_AVO=KPD_AVO;
@@ -29603,6 +29651,22 @@ function kpHomeTipHTML(){
     +'<span class="kpd-chev">›</span></div>';
 }
 window.kpHomeTipNext=function(){ _kpdTipOff++; var el=$id('kpdTipTxt'); if(el) el.textContent=KPD_TIPS[kpdTipIdx()]; };
+/* ── Couronne sobre + invitation Premium discrète ── */
+var KPD_CROWN='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8l4.2 3.8L12 5.6l4.8 6.2L21 8v9.4H3z"/></svg>';
+window.kpdPremiumInvite=function(){
+  var t=document.getElementById('kpdPremToast');
+  if(!t){
+    t=document.createElement('div'); t.id='kpdPremToast'; t.className='kpd-prem-toast';
+    t.innerHTML='<span class="kpt-ico">'+KPD_CROWN+'</span>'
+      +'<span class="kpt-txt">Ce mode alimentaire est réservé aux membres <b>Premium</b>.</span>'
+      +'<button type="button" class="kpt-btn" onclick="kpdPremToastHide();try{openPremiumModal&&openPremiumModal(\'modes\')}catch(e){}">Découvrir</button>';
+    document.body.appendChild(t);
+  }
+  requestAnimationFrame(function(){ t.classList.add('show'); });
+  clearTimeout(window.__kpdPremT);
+  window.__kpdPremT=setTimeout(function(){ t.classList.remove('show'); }, 4200);
+};
+window.kpdPremToastHide=function(){ var t=document.getElementById('kpdPremToast'); if(t) t.classList.remove('show'); clearTimeout(window.__kpdPremT); };
 /* ── Cartes modes alimentaires + univers ── */
 function kpHomeModesHTML(){
   if(typeof DIET_MODES==='undefined') return '';
@@ -29616,8 +29680,8 @@ function kpHomeModesHTML(){
     var label=m.label, emoji=m.emoji;
     if(id==='vegetarien'&&current==='vegan'){ label='Keto Végétalien'; emoji='🌱'; }
     var sub=Math.round(m.fat*100)+'% L · '+Math.round(m.prot*100)+'% P · '+Math.round(m.carb*100)+'% G';
-    var click=locked?"openPremiumModal&&openPremiumModal('modes')":(id==='vegetarien'?"openVeggieSubmodeModal()":"kpHomeSetMode('"+id+"')");
-    var badge=locked?'<span class="kpd-mode-badge">🔒</span>':(on?'<span class="kpd-mode-badge on">✓</span>':'');
+    var click=locked?"kpdPremiumInvite()":(id==='vegetarien'?"openVeggieSubmodeModal()":"kpHomeSetMode('"+id+"')");
+    var badge=locked?'<span class="kpd-mode-badge prem">'+KPD_CROWN+' Premium</span>':(on?'<span class="kpd-mode-badge on">✓</span>':'');
     return '<div class="kpd-mode'+(on?' active':'')+'" data-testid="kpd-mode-'+id+'" onclick="'+click+'" style="--tint:'+(TINT[id]||'#eef2e2')+'">'+badge
       +'<span class="kpd-mode-ico">'+emoji+'</span>'
       +'<div class="kpd-mode-name">'+label+'</div>'
@@ -30029,7 +30093,8 @@ window.kpRenderDashboard=function(){
     +'<button type="button" class="kpd-seeall" onclick="kpPlanSheetOpen()" data-testid="kpd-seeall">Voir tout ›</button></div>'
     +'<div class="kpd-meals-scroll" id="kpdScroll">'+htmls.join('')+'</div>'+dots+'</div>'):'';
   var _prevSc=$id('kpdScroll'); var _prevLeft=_prevSc?_prevSc.scrollLeft:0;
-  host.innerHTML=greet+gen+mealsCard+nutri+kpHydroHTML()+modes+tip;
+  var planBar=mealsCard?'<button type="button" class="kpd-planbar" onclick="kpPlanSheetOpen()" data-testid="kpd-planbar">Voir le plan entier <span class="kpd-planbar-arrow" aria-hidden="true">→</span></button>':'';
+  host.innerHTML=greet+gen+mealsCard+planBar+nutri+kpHydroHTML()+modes+tip;
   kpPlacePulse();
   var sc=$id('kpdScroll'), dt=$id('kpdDots');
   if(sc&&_prevLeft) sc.scrollLeft=_prevLeft;
