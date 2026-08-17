@@ -28585,6 +28585,12 @@ setTimeout(function(){ try{ pfSyncActivityGoal(); }catch(e){} }, 1200);
 .kps-row-lab{ font-family:'Plus Jakarta Sans',sans-serif; font-size:9.5px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:#8a9a70; }
 .kps-row-name{ font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; color:#232b22; margin-top:2px; }
 .kps-row-kcal{ font-family:'Plus Jakarta Sans',sans-serif; font-size:12.5px; font-weight:700; color:#6b7266; white-space:nowrap; }
+/* Ligne composante cliquable → fiche recette individuelle */
+.kps-row-link{ cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background .2s ease-in-out, transform .15s ease-in-out; }
+.kps-row-link:active{ transform:scale(.98); background:#eef1e6; }
+.kps-row-see{ margin-top:5px; display:inline-flex; align-items:center; gap:4px;
+  font-family:'Inter','Plus Jakarta Sans',sans-serif; font-size:11.5px; font-weight:700; color:#3F6B2C; }
+.kps-row-chev{ font-size:14px; line-height:1; }
 .kps-tags{ display:flex; gap:8px; margin:10px 0 12px; }
 .kps-tag{ font-family:'Plus Jakarta Sans',sans-serif; font-size:11.5px; font-weight:700; color:#6b7266; background:#f1ede0; border-radius:99px; padding:5px 11px; }
 .kps-btns{ display:flex; gap:9px; }
@@ -30450,7 +30456,7 @@ function kpsMealCard(di,grp){
     main=BFAST_RECIPES[d.bfast]; if(!main) return '';
     label='Petit-déjeuner'; slotName='breakfast';
     recs=[main];
-    rows.push(['Plat principal', main.name, main.kcal]);
+    rows.push(['Plat principal', main.name, main.kcal, main.id]);
   }else{
     var pre=grp==='l'?'lunch':'dinner';
     if(!(grp==='l'?meals.lunch:meals.dinner)) return '';
@@ -30460,12 +30466,12 @@ function kpsMealCard(di,grp){
     main=mainR||stR||dsR; if(!main) return '';
     label=grp==='l'?'Déjeuner':'Dîner'; slotName=mainR?pre:'';
     recs=[stR,mainR,dsR].filter(Boolean);
-    if(stR) rows.push(['Entrée', stR.name, stR.kcal]);
+    if(stR) rows.push(['Entrée', stR.name, stR.kcal, stR.id]);
     if(mainR){
-      rows.push(['Plat principal', mainR.name, mainR.kcal]);
-      if(d[pre+'Veg']) rows.push(['Légumes', d[pre+'Veg'].name, null]);
+      rows.push(['Plat principal', mainR.name, mainR.kcal, mainR.id]);
+      if(d[pre+'Veg']) rows.push(['Légumes', d[pre+'Veg'].name, null, null]);
     }
-    if(dsR) rows.push(['Dessert', dsR.name, dsR.kcal]);
+    if(dsR) rows.push(['Dessert', dsR.name, dsR.kcal, dsR.id]);
   }
   var m={fat:0,prot:0,carb:0};
   recs.forEach(function(r){ try{ addRecipeMacros(r,m); }catch(e){} });
@@ -30474,7 +30480,15 @@ function kpsMealCard(di,grp){
   var pu=kpsPhotoUrl(main);
   var photo=pu?'<img class="kps-photo" src="'+pu+'" alt="" loading="lazy">':'<div class="kps-photo kps-photo-fb">'+(main.emoji||'🥑')+'</div>';
   var rowsHtml=rows.map(function(rw){
-    return '<div class="kps-row"><div><div class="kps-row-lab">'+rw[0]+'</div><div class="kps-row-name">'+rw[1]+'</div></div>'+(rw[2]!=null?'<span class="kps-row-kcal">'+rw[2]+' kcal</span>':'')+'</div>';
+    var clickable=(rw[3]!=null);
+    var open=clickable?(rw[0]==='Plat principal'&&slotName?'openRecipeFromMenu('+rw[3]+','+di+',\''+slotName+'\')':'openRecipe('+rw[3]+')'):'';
+    return '<div class="kps-row'+(clickable?' kps-row-link':'')+'"'
+      +(clickable?' role="button" tabindex="0" data-testid="kps-row-'+rw[3]+'" onclick="'+open+'"':'')+'>'
+      +'<div><div class="kps-row-lab">'+rw[0]+'</div><div class="kps-row-name">'+rw[1]+'</div>'
+      +(clickable?'<div class="kps-row-see">📖 Voir la recette <span class="kps-row-chev">›</span></div>':'')
+      +'</div>'
+      +(rw[2]!=null?'<span class="kps-row-kcal">'+rw[2]+' kcal</span>':'')
+      +'</div>';
   }).join('');
   var tags='<div class="kps-tags">'+(main.time?'<span class="kps-tag">⏱ '+String(main.time).replace(/\s*min\.?\s*$/i,'')+' min</span>':'')+'<span class="kps-tag">🌿 '+Math.round(m.carb)+'g net</span></div>';
   return '<div class="kps-meal'+(eaten?' eaten':'')+'" data-testid="kps-meal-'+grp+'">'

@@ -683,3 +683,10 @@ Bugs signalés :
 - Hooks temps réel : wrapper generateMenu re-rend aussi kpPlanRender (feuille ouverte OU fermée → zéro DOM fantôme) ; kpdQueue (hook save) re-rend la feuille si ouverte.
 - Testé e2e via wizard UI : 2/4/5/7 slots par jour exacts sur les 7 jours ; combinaisons E+P+D, P seul, E+D sans plat ; cross-validation en temps réel feuille ouverte (petit-déj apparaît, entrée/dessert disparaissent instantanément).
 - ⚠️ LEÇON CRITIQUE : ne JAMAIS lancer plusieurs search_replace en PARALLÈLE sur keto.html — course d'écriture, la dernière écriture écrase les autres (2 éditions perdues silencieusement dans cette session). Toujours éditer ce fichier séquentiellement.
+
+## Fiches recettes par composante dans « Mon plan » (Juin 2026)
+- Chaque ligne de repas (Entrée / Plat principal / Dessert) du plan généré est maintenant cliquable avec « 📖 Voir la recette › » → ouvre la fiche recette individuelle (openRecipe/openRecipeFromMenu pour le plat avec légume d'accompagnement).
+- Lignes non cliquables : « Légumes » (accompagnement sans fiche). Affichage 100% dynamique selon les composantes réellement générées.
+- Rappel : le générateur répartissait DÉJÀ les kcal/macros sur l'ensemble du repas (splitMealKcal : 15/70/15, 25/75, 85/15…) — aucun changement moteur nécessaire.
+- Code : kpsMealCard (rows avec id recette + rowsHtml cliquable), CSS .kps-row-link/.kps-row-see.
+- Testé e2e : 7 lignes cliquables (config complète E+P+D), clic Entrée → fiche correcte (nom, temps, kcal, macros, ingrédients+quantités, étapes).
