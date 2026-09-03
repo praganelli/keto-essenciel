@@ -14,6 +14,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const REFERENCE_WIDTH = 853;
 const REFERENCE_HEIGHT = 1844;
 
+const MOCKUP_SECTIONS = [
+  { source: require("@/assets/images/home-approved-1.jpg"), height: 500 },
+  { source: require("@/assets/images/home-approved-2.jpg"), height: 500 },
+  { source: require("@/assets/images/home-approved-3.jpg"), height: 500 },
+  { source: require("@/assets/images/home-approved-4.jpg"), height: 344 },
+];
+
 type Hotspot = {
   id: string;
   label: string;
@@ -58,12 +65,18 @@ export default function HomeScreen() {
         bounces={false}
       >
         <View style={[styles.mockup, { width: pageWidth, height: pageHeight }]}>
-          <Image
-            source={require("@/assets/images/home-approved.png")}
-            resizeMode="stretch"
-            style={{ width: pageWidth, height: pageHeight }}
-            accessibilityLabel="Page d’accueil Keto-Essenciel"
-          />
+          {MOCKUP_SECTIONS.map((section, index) => (
+            <Image
+              key={index}
+              source={section.source}
+              resizeMode="stretch"
+              style={{
+                width: pageWidth,
+                height: pageWidth * (section.height / REFERENCE_WIDTH),
+              }}
+              accessibilityLabel={index === 0 ? "Page d’accueil Keto-Essenciel" : undefined}
+            />
+          ))}
           {HOTSPOTS.map((item) => (
             <Pressable
               key={item.id}
