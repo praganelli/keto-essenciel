@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: "#FBFAF6" },
   scrollContent: { alignItems: "center" },
   mockup: { position: "relative", backgroundColor: "#FBFAF6", overflow: "hidden" },
-  image: { ...StyleSheet.absoluteFillObject, width: "100%", height: "100%" },
+  image: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
   hotspot: { position: "absolute", borderRadius: 18 },
   hotspotPressed: { backgroundColor: "rgba(135, 170, 51, 0.14)" },
   srOnly: { width: 1, height: 1, opacity: 0 },
