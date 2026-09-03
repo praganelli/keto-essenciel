@@ -3,13 +3,13 @@ import {
   Alert,
   Image,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const REFERENCE_WIDTH = 853;
 const REFERENCE_HEIGHT = 1844;
@@ -60,8 +60,8 @@ export default function HomeScreen() {
         <View style={[styles.mockup, { width: pageWidth, height: pageHeight }]}>
           <Image
             source={require("@/assets/images/home-approved.png")}
-            resizeMode="contain"
-            style={styles.image}
+            resizeMode="stretch"
+            style={{ width: pageWidth, height: pageHeight }}
             accessibilityLabel="Page d’accueil Keto-Essenciel"
           />
           {HOTSPOTS.map((item) => (
@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: "#FBFAF6" },
   scrollContent: { alignItems: "center" },
   mockup: { position: "relative", backgroundColor: "#FBFAF6", overflow: "hidden" },
-  image: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
   hotspot: { position: "absolute", borderRadius: 18 },
   hotspotPressed: { backgroundColor: "rgba(135, 170, 51, 0.14)" },
   srOnly: { width: 1, height: 1, opacity: 0 },
